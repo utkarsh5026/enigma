@@ -1,5 +1,6 @@
 import { Expression } from "./ast.ts";
 import { Token } from "../token/token.ts";
+import { BlockStatement } from "./statement.ts";
 
 /**
  * Represents a prefix expression in the AST.
@@ -122,5 +123,56 @@ export class BooleanExpression implements Expression {
    */
   toString(): string {
     return this.token.literal;
+  }
+}
+
+/**
+ * Represents an if-else expression in the AST.
+ */
+export class IfExpression implements Expression {
+  token: Token;
+  condition: Expression;
+  consequence: BlockStatement;
+  alternative: BlockStatement | null;
+
+  /**
+   * Creates a new IfExpression instance.
+   * @param token The token associated with this expression.
+   * @param condition The condition of the if statement.
+   * @param consequence The block to execute if the condition is true.
+   * @param alternative The optional block to execute if the condition is false.
+   */
+  constructor(
+    token: Token,
+    condition: Expression,
+    consequence: BlockStatement,
+    alternative: BlockStatement | null
+  ) {
+    this.token = token;
+    this.condition = condition;
+    this.consequence = consequence;
+    this.alternative = alternative;
+  }
+
+  expressionNode() {}
+
+  /**
+   * Returns the literal value of the token.
+   * @returns The literal value of the token.
+   */
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  /**
+   * Returns a string representation of the IfExpression.
+   * @returns A string representation of the expression.
+   */
+  toString(): string {
+    let out = `if ${this.condition.toString()} ${this.consequence.toString()}`;
+    if (this.alternative !== null) {
+      out += `else ${this.alternative.toString()}`;
+    }
+    return out;
   }
 }
