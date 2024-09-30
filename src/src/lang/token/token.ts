@@ -34,6 +34,8 @@ export enum TokenType {
     ELSE = "ELSE",
     RETURN = "RETURN",
     WHILE = "WHILE",
+    BREAK = "BREAK",
+    CONTINUE = "CONTINUE",
 
     EQ = "==",
     NOT_EQ = "!=",
@@ -57,6 +59,8 @@ const keywords: Record<string, TokenType> = {
     else: TokenType.ELSE,
     return: TokenType.RETURN,
     while: TokenType.WHILE,
+    break: TokenType.BREAK,
+    continue: TokenType.CONTINUE,
 };
 
 export const lookupIdentifier = (identifier: string): TokenType => {
