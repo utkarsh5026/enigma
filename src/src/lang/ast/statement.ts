@@ -131,3 +131,38 @@ export class BlockStatement implements Statement {
     return this.statements.map((s) => s.toString()).join("");
   }
 }
+
+/**
+ * Represents a while statement in the AST.
+ */
+export class WhileStatement implements Statement {
+  token: Token;
+  condition: Expression;
+  body: BlockStatement;
+
+  constructor(token: Token, condition: Expression, body: BlockStatement) {
+    this.token = token;
+    this.condition = condition;
+    this.body = body;
+  }
+
+  statementNode(): void {}
+
+  /**
+   * Returns the literal value of the token.
+   * @returns The literal value of the token.
+   */
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  /**
+   * Returns a string representation of the WhileStatement.
+   * @returns A string representation of the while loop.
+   */
+  toString(): string {
+    const condition = this.condition.toString();
+    const body = this.body.toString();
+    return `while (${condition}) {\n${body}\n}`;
+  }
+}
