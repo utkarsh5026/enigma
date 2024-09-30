@@ -1,20 +1,20 @@
-import { Token } from "../token/token.ts";
+import {Token} from "../token/token.ts";
 
 /**
  * Represents a node in the Abstract Syntax Tree (AST).
  */
 export interface Node {
-  /**
-   * Returns the literal value of the token associated with this node.
-   * @returns {string} The token's literal value.
-   */
-  tokenLiteral(): string;
+    /**
+     * Returns the literal value of the token associated with this node.
+     * @returns {string} The token's literal value.
+     */
+    tokenLiteral(): string;
 
-  /**
-   * Returns a string representation of the node.
-   * @returns {string} The string representation.
-   */
-  toString(): string;
+    /**
+     * Returns a string representation of the node.
+     * @returns {string} The string representation.
+     */
+    toString(): string;
 }
 
 /**
@@ -31,10 +31,10 @@ export interface Node {
  * - while statements
  */
 export interface Statement extends Node {
-  /**
-   * Marker method to identify this node as a statement.
-   */
-  statementNode(): void;
+    /**
+     * Marker method to identify this node as a statement.
+     */
+    statementNode(): void;
 }
 
 /**
@@ -51,76 +51,85 @@ export interface Statement extends Node {
  *
  */
 export interface Expression extends Node {
-  /**
-   * Marker method to identify this node as an expression.
-   */
-  expressionNode(): void;
+    /**
+     * Marker method to identify this node as an expression.
+     */
+    expressionNode(): void;
 }
 
 /**
  * Represents the root node of the AST.
  */
 export class Program implements Node {
-  /**
-   * The list of statements in the program.
-   */
-  statements: Statement[] = [];
+    /**
+     * The list of statements in the program.
+     */
+    statements: Statement[] = [];
 
-  /**
-   * Returns the literal value of the first token in the program.
-   * @returns {string} The token's literal value or an empty string if there are no statements.
-   */
-  tokenLiteral(): string {
-    if (this.statements.length > 0) {
-      return this.statements[0].tokenLiteral();
-    } else {
-      return "";
+    /**
+     * Returns the literal value of the first token in the program.
+     * @returns {string} The token's literal value or an empty string if there are no statements.
+     */
+    tokenLiteral(): string {
+        if (this.statements.length > 0) {
+            return this.statements[0].tokenLiteral();
+        } else {
+            return "";
+        }
     }
-  }
 
-  /**
-   * Returns a string representation of the entire program.
-   * @returns {string} The string representation of all statements joined by newlines.
-   */
-  toString(): string {
-    return this.statements.map((s) => s.toString()).join("\n");
-  }
+    /**
+     * Returns a string representation of the entire program.
+     * @returns {string} The string representation of all statements joined by newlines.
+     */
+    toString(): string {
+        return this.statements.map((s) => s.toString()).join("\n");
+    }
 }
 
 /**
  * Represents an identifier in the AST.
  */
 export class Identifier implements Expression {
-  /**
-   * The token associated with this identifier.
-   */
-  token: Token;
+    /**
+     * The token associated with this identifier.
+     */
+    token: Token;
 
-  /**
-   * The value of the identifier.
-   */
-  value: string;
+    /**
+     * The value of the identifier.
+     */
+    value: string;
 
-  /**
-   * Creates a new Identifier instance.
-   * @param {Token} token - The token associated with this identifier.
-   * @param {string} value - The value of the identifier.
-   */
-  constructor(token: Token, value: string) {
-    this.token = token;
-    this.value = value;
-  }
+    /**
+     * Creates a new Identifier instance.
+     * @param {Token} token - The token associated with this identifier.
+     * @param {string} value - The value of the identifier.
+     */
+    constructor(token: Token, value: string) {
+        this.token = token;
+        this.value = value;
+    }
 
-  /**
-   * Marker method to identify this node as an expression.
-   */
-  expressionNode() {}
+    /**
+     * Marker method to identify this node as an expression.
+     */
+    expressionNode() {
+    }
 
-  /**
-   * Returns the literal value of the token associated with this identifier.
-   * @returns {string} The token's literal value.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
+    /**
+     * Returns the literal value of the token associated with this identifier.
+     * @returns {string} The token's literal value.
+     */
+    tokenLiteral(): string {
+        return this.token.literal;
+    }
+
+    /**
+     * Returns a string representation of the identifier.
+     * @returns {string} The value of the identifier.
+     */
+    toString(): string {
+        return this.value;
+    }
 }
