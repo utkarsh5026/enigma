@@ -176,3 +176,83 @@ export class IfExpression implements Expression {
     return out;
   }
 }
+
+/**
+ * Represents an index expression in the AST.
+ * This is used for accessing elements in arrays or other indexable structures.
+ */
+export class IndexExpression implements Expression {
+  token: Token;
+  left: Expression;
+  index: Expression;
+
+  /**
+   * Creates a new IndexExpression instance.
+   * @param token The token associated with this expression.
+   * @param left The expression being indexed (e.g., an array).
+   * @param index The expression representing the index.
+   */
+  constructor(token: Token, left: Expression, index: Expression) {
+    this.token = token;
+    this.left = left;
+    this.index = index;
+  }
+
+  expressionNode() {}
+
+  /**
+   * Returns the literal value of the token.
+   * @returns The literal value of the token.
+   */
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  /**
+   * Returns a string representation of the IndexExpression.
+   * @returns A string representation of the expression.
+   */
+  toString(): string {
+    return `(${this.left.toString()}[${this.index.toString()}])`;
+  }
+}
+
+/**
+ * Represents a function call expression in the AST.
+ */
+export class CallExpression implements Expression {
+  token: Token;
+  func: Expression;
+  args: Expression[];
+
+  /**
+   * Creates a new CallExpression instance.
+   * @param token The token associated with this expression.
+   * @param func The expression representing the function being called.
+   * @param args An array of expressions representing the arguments to the function.
+   */
+  constructor(token: Token, func: Expression, args: Expression[]) {
+    this.token = token;
+    this.func = func;
+    this.args = args;
+  }
+
+  expressionNode() {}
+
+  /**
+   * Returns the literal value of the token.
+   * @returns The literal value of the token.
+   */
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  /**
+   * Returns a string representation of the CallExpression.
+   * @returns A string representation of the expression.
+   */
+  toString(): string {
+    const args = this.args.map((a) => a.toString()).join(", ");
+    return `${this.func.toString()}(${args})`;
+  }
+}
