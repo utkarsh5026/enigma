@@ -33,8 +33,13 @@ export enum TokenType {
   IF = "IF",
   ELSE = "ELSE",
   RETURN = "RETURN",
+
   EQ = "==",
   NOT_EQ = "!=",
+  PLUS_ASSIGN = "+=",
+  MINUS_ASSIGN = "-=",
+  ASTERISK_ASSIGN = "*=",
+  SLASH_ASSIGN = "/=",
 }
 
 export interface Token {
