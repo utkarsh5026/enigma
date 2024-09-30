@@ -135,7 +135,7 @@ export class IntegerLiteral implements Expression {
    * @returns A string representation of the integer value.
    */
   toString(): string {
-    return this.token.literal;
+    return this.value.toString();
   }
 }
 
