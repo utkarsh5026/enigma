@@ -48,11 +48,11 @@ export default class Lexer {
 
     switch (this.currCh) {
       case "=":
-        token = this.handleDoubleLiteral(TokenType.EQ, TokenType.ASSIGN, "=");
+        token = this.handleDoubleLiteral(TokenType.EQ, TokenType.ASSIGN);
         break;
 
       case "!":
-        token = this.handleDoubleLiteral(TokenType.NOT_EQ, TokenType.BANG, "=");
+        token = this.handleDoubleLiteral(TokenType.NOT_EQ, TokenType.BANG);
         break;
 
       case ";":
@@ -72,19 +72,28 @@ export default class Lexer {
         break;
 
       case "+":
-        token = this.createTok(TokenType.PLUS, this.currCh);
+        token = this.handleDoubleLiteral(TokenType.PLUS_ASSIGN, TokenType.PLUS);
         break;
 
       case "-":
-        token = this.createTok(TokenType.MINUS, this.currCh);
+        token = this.handleDoubleLiteral(
+          TokenType.MINUS_ASSIGN,
+          TokenType.MINUS
+        );
         break;
 
       case "*":
-        token = this.createTok(TokenType.ASTERISK, this.currCh);
+        token = this.handleDoubleLiteral(
+          TokenType.ASTERISK_ASSIGN,
+          TokenType.ASTERISK
+        );
         break;
 
       case "/":
-        token = this.createTok(TokenType.SLASH, this.currCh);
+        token = this.handleDoubleLiteral(
+          TokenType.SLASH_ASSIGN,
+          TokenType.SLASH
+        );
         break;
 
       case "<":
@@ -266,13 +275,13 @@ export default class Lexer {
    * Handles double-character literals like '==' and '!='.
    * @param tokTypeIfDouble The token type if it's a double-character literal.
    * @param defaultTokType The default token type if it's a single-character literal.
-   * @param peekChar The character to peek for.
+   * @param peekChar The character to peek for. Defaults to "=".
    * @returns A token representing the literal.
    */
   private handleDoubleLiteral(
     tokTypeIfDouble: TokenType,
     defaultTokType: TokenType,
-    peekChar: string
+    peekChar: string = "="
   ): Token {
     const curr = this.currCh;
     if (this.peekChar() === peekChar) {
