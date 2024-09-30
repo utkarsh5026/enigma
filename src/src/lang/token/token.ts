@@ -1,62 +1,64 @@
 export enum TokenType {
-  ILLEGAL = "ILLEGAL",
-  EOF = "EOF",
-  IDENTIFIER = "IDENTIFIER",
-  INT = "INT",
-  STRING = "STRING",
+    ILLEGAL = "ILLEGAL",
+    EOF = "EOF",
+    IDENTIFIER = "IDENTIFIER",
+    INT = "INT",
+    STRING = "STRING",
 
-  ASSIGN = "=",
-  PLUS = "+",
-  MINUS = "-",
-  BANG = "!",
-  ASTERISK = "*",
-  SLASH = "/",
+    ASSIGN = "=",
+    PLUS = "+",
+    MINUS = "-",
+    BANG = "!",
+    ASTERISK = "*",
+    SLASH = "/",
 
-  LESS_THAN = "<",
-  GREATER_THAN = ">",
+    LESS_THAN = "<",
+    GREATER_THAN = ">",
 
-  COMMA = ",",
-  SEMICOLON = ";",
-  COLON = ":",
+    COMMA = ",",
+    SEMICOLON = ";",
+    COLON = ":",
 
-  LPAREN = "(",
-  RPAREN = ")",
-  LBRACE = "{",
-  RBRACE = "}",
-  LBRACKET = "[",
-  RBRACKET = "]",
+    LPAREN = "(",
+    RPAREN = ")",
+    LBRACE = "{",
+    RBRACE = "}",
+    LBRACKET = "[",
+    RBRACKET = "]",
 
-  FUNCTION = "FUNCTION",
-  LET = "LET",
-  TRUE = "TRUE",
-  FALSE = "FALSE",
-  IF = "IF",
-  ELSE = "ELSE",
-  RETURN = "RETURN",
+    FUNCTION = "FUNCTION",
+    LET = "LET",
+    TRUE = "TRUE",
+    FALSE = "FALSE",
+    IF = "IF",
+    ELSE = "ELSE",
+    RETURN = "RETURN",
+    WHILE = "WHILE",
 
-  EQ = "==",
-  NOT_EQ = "!=",
-  PLUS_ASSIGN = "+=",
-  MINUS_ASSIGN = "-=",
-  ASTERISK_ASSIGN = "*=",
-  SLASH_ASSIGN = "/=",
+    EQ = "==",
+    NOT_EQ = "!=",
+    PLUS_ASSIGN = "+=",
+    MINUS_ASSIGN = "-=",
+    ASTERISK_ASSIGN = "*=",
+    SLASH_ASSIGN = "/=",
 }
 
 export interface Token {
-  type: TokenType;
-  literal: string;
+    type: TokenType;
+    literal: string;
 }
 
 const keywords: Record<string, TokenType> = {
-  fn: TokenType.FUNCTION,
-  let: TokenType.LET,
-  true: TokenType.TRUE,
-  false: TokenType.FALSE,
-  if: TokenType.IF,
-  else: TokenType.ELSE,
-  return: TokenType.RETURN,
+    fn: TokenType.FUNCTION,
+    let: TokenType.LET,
+    true: TokenType.TRUE,
+    false: TokenType.FALSE,
+    if: TokenType.IF,
+    else: TokenType.ELSE,
+    return: TokenType.RETURN,
+    while: TokenType.WHILE,
 };
 
 export const lookupIdentifier = (identifier: string): TokenType => {
-  return keywords[identifier] || TokenType.IDENTIFIER;
+    return keywords[identifier] || TokenType.IDENTIFIER;
 };
