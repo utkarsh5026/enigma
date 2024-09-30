@@ -3,5 +3,13 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  
+  "compilerOptions": {
+    "types": ["jest", "node"],
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  }
 }
