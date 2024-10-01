@@ -147,7 +147,6 @@ export class Parser {
         if (returnValue === null) return null;
 
         if (!this.expectPeekAndMove(TokenType.SEMICOLON)) return null;
-        this.forward();
 
         return new ReturnStatement(returnToken, returnValue);
     }
@@ -771,9 +770,7 @@ export class Parser {
      * @private
      */
     private handleEnd(): boolean {
-        if (!this.expectPeekAndMove(TokenType.SEMICOLON)) return false;
-        this.forward();
-        return true;
+        return this.expectPeekAndMove(TokenType.SEMICOLON);
     }
 
     /**
