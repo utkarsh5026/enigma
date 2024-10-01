@@ -99,6 +99,8 @@ export default class Evaluator {
             case literal.IntegerLiteral:
                 return new objects.IntegerObject((node as literal.IntegerLiteral).value);
 
+            case literal.StringLiteral:
+                return new objects.StringObject((node as literal.StringLiteral).value);
             default:
                 return new objects.ErrorObject(
                     `Unknown node type: ${node.constructor.name}`
