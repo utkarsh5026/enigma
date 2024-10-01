@@ -1,0 +1,9 @@
+export enum ObjectType {
+  INTEGER = "INTEGER",
+  BOOLEAN = "BOOLEAN",
+  STRING = "STRING",
+  NULL = "NULL",
+  RETURN_VALUE = "RETURN_VALUE",
+  ERROR = "ERROR",
+  FUNCTION = "FUNCTION",
+}
