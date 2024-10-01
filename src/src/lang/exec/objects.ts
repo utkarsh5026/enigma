@@ -233,19 +233,19 @@ export class ArrayObject implements BaseObject {
  * Represents a hash object in the Mutant programming language.
  */
 export class HashObject implements BaseObject {
-  pairs: Map<BaseObject, BaseObject>;
+  pairs: Map<string, BaseObject>;
 
   /**
    * Creates a new HashObject.
    * @param {Map<BaseObject, BaseObject>} pairs - The key-value pairs of the hash.
    */
-  constructor(pairs: Map<BaseObject, BaseObject>) {
+  constructor(pairs: Map<string, BaseObject>) {
     this.pairs = pairs;
   }
 
   inspect(): string {
     const pairs = Array.from(this.pairs).map(
-      ([key, value]) => `${key.inspect()}: ${value.inspect()}`
+      ([key, value]) => `${key}: ${value.inspect()}`
     );
     return `{${pairs.join(", ")}}`;
   }
