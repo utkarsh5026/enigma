@@ -3,6 +3,7 @@ import * as objects from "./objects";
 import {ObjectType} from "./type.ts";
 import * as statement from "../ast/statement.ts";
 import * as expression from "../ast/expression.ts";
+import {BooleanExpression} from "../ast/expression.ts";
 import * as literal from "../ast/literal.ts";
 
 /**
@@ -56,6 +57,9 @@ export default class Evaluator {
             case statement.ReturnStatement:
                 return this.evalReturnStatement(node as statement.ReturnStatement, env);
 
+            case statement.ExpressionStatement:
+                return this.evaluate((node as statement.ExpressionStatement).expression, env);
+
             case expression.PrefixExpression:
                 return this.evalPrefixExpression(
                     node as expression.PrefixExpression,
@@ -80,6 +84,9 @@ export default class Evaluator {
                     env
                 );
 
+            case BooleanExpression:
+                return this.toBool((node as BooleanExpression).value);
+
             case ast.Identifier:
                 return this.evalIdentifier(node as ast.Identifier, env);
 
@@ -88,6 +95,9 @@ export default class Evaluator {
 
             case literal.ArrayLiteral:
                 return this.evalArrayLiteral(node as literal.ArrayLiteral, env);
+
+            case literal.IntegerLiteral:
+                return new objects.IntegerObject((node as literal.IntegerLiteral).value);
 
             default:
                 return new objects.ErrorObject(
