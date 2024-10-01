@@ -224,6 +224,14 @@ export class Parser {
    */
   private parseExpressionStatement(): ExpressionStatement | null {
     const token = this.currentToken;
+
+    if (
+      this.isCurrentToken(TokenType.IDENTIFIER) &&
+      this.isCompoundAssignmentOperator(this.peekToken.type)
+    ) {
+      return this.parseCompoundStatement();
+    }
+
     const expression = this.parseExpression(Precedence.LOWEST);
 
     if (expression === null) return null;
@@ -231,6 +239,34 @@ export class Parser {
     if (this.isPeekTokenOfType(TokenType.SEMICOLON)) this.forward();
 
     return new ExpressionStatement(token, expression);
+  }
+
+  /**
+   * Parses a compound assignment statement (e.g., +=, -=, *=, /=).
+   * This method handles the parsing of statements like "x += 5" or "y *= 2".
+   *
+   * @returns {ExpressionStatement | null} The parsed compound assignment statement as an ExpressionStatement,
+   *                                       or null if parsing fails.
+   * @private
+   */
+  private parseCompoundStatement(): ExpressionStatement | null {
+    const startToken = this.currentToken;
+    const left = new Identifier(startToken, startToken.literal);
+    this.forward();
+
+    const operatorToken = this.currentToken;
+    const operator = this.getBaseOperator(operatorToken.type);
+    this.forward();
+
+    const right = this.parseExpression(Precedence.LOWEST);
+    if (right === null) return null;
+
+    if (!this.handleEnd()) return null;
+
+    const infixExpr = new InfixExpression(operatorToken, left, operator, right);
+    const assignExpr = new AssignmentExpression(operatorToken, left, infixExpr);
+
+    return new ExpressionStatement(startToken, assignExpr);
   }
 
   /**
@@ -735,9 +771,56 @@ export class Parser {
     });
   }
 
+  /**
+   * Handles the end of a statement by checking for a semicolon and advancing the parser.
+   *
+   * @returns {boolean} True if the statement ends correctly with a semicolon, false otherwise.
+   * @private
+   */
   private handleEnd(): boolean {
     if (!this.expectPeekToken(TokenType.SEMICOLON)) return false;
     this.forward();
     return true;
+  }
+
+  /**
+   * Returns the base operator for a compound assignment operator.
+   * @param {TokenType} tt - The token type of the compound assignment operator.
+   * @returns {string} The base operator as a string.
+   * @throws {Error} If an invalid token type is provided.
+   * @private
+   */
+  private getBaseOperator(tt: TokenType): string {
+    switch (tt) {
+      case TokenType.PLUS_ASSIGN:
+        return "+";
+
+      case TokenType.MINUS_ASSIGN:
+        return "-";
+
+      case TokenType.ASTERISK_ASSIGN:
+        return "*";
+
+      case TokenType.SLASH_ASSIGN:
+        return "/";
+
+      default:
+        throw new Error(`Invalid base operator for token type: ${tt}`);
+    }
+  }
+
+  /**
+   * Checks if a token type is a compound assignment operator.
+   * @param {TokenType} tokenType - The token type to check.
+   * @returns {boolean} - True if the token type is a compound assignment operator, false otherwise.
+   * @private
+   */
+  private isCompoundAssignmentOperator(tokenType: TokenType): boolean {
+    return (
+      tokenType === TokenType.PLUS_ASSIGN ||
+      tokenType === TokenType.MINUS_ASSIGN ||
+      tokenType === TokenType.ASTERISK_ASSIGN ||
+      tokenType === TokenType.SLASH_ASSIGN
+    );
   }
 }
