@@ -366,6 +366,37 @@ describe("Parser", () => {
         const bodyStmt = stmt.body.statements[0] as ExpressionStatement;
         testAssignmentExpression(bodyStmt.expression, "x", "(x + 1)");
     });
+
+    test("Test Assignment Expression", () => {
+        const tests = [
+            {input: "x = 5;", expectedIdentifier: "x", expectedValue: 5},
+            {input: "y = true;", expectedIdentifier: "y", expectedValue: true},
+            {input: "foobar = y;", expectedIdentifier: "foobar", expectedValue: "y"},
+            {input: "x = 1 + 2 * 3;", expectedIdentifier: "x", expectedValue: "(1 + (2 * 3))"},
+            {input: "y = foo(1, 2);", expectedIdentifier: "y", expectedValue: "foo(1, 2)"},
+        ];
+
+
+        tests.forEach(({input, expectedIdentifier, expectedValue}) => {
+            const program = createProgram(input);
+
+            expect(program.statements.length).toBe(1);
+            const stmt = program.statements[0] as ExpressionStatement;
+            expect(stmt.expression).toBeInstanceOf(AssignmentExpression);
+
+            const assignExp = stmt.expression as AssignmentExpression;
+            expect(assignExp.name.value).toBe(expectedIdentifier);
+
+            if (typeof expectedValue === "string") {
+                expect(assignExp.value.toString()).toBe(expectedValue);
+            } else {
+                testLiteralExpression(assignExp.value, expectedValue);
+            }
+
+        });
+    });
+
+
 });
 
 function createProgram(input: string): Program {
