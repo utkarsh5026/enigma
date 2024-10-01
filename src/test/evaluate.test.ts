@@ -52,6 +52,38 @@ describe("Evaluator", () => {
       });
     });
   });
+
+  describe("Boolean Expressions", () => {
+    const tests: [string, boolean][] = [
+      ["true", true],
+      ["false", false],
+      ["1 < 2", true],
+      ["1 > 2", false],
+      ["1 < 1", false],
+      ["1 > 1", false],
+      ["1 == 1", true],
+      ["1 != 1", false],
+      ["1 == 2", false],
+      ["1 != 2", true],
+      ["true == true", true],
+      ["false == false", true],
+      ["true == false", false],
+      ["true != false", true],
+      ["false != true", true],
+      ["(1 < 2) == true", true],
+      ["(1 < 2) == false", false],
+      ["(1 > 2) == true", false],
+      ["(1 > 2) == false", true],
+    ];
+
+    tests.forEach(([input, expected]) => {
+      it(`should evaluate "${input}" to ${expected}`, () => {
+        const evaluated = testEval(input);
+        expect(evaluated).toBeInstanceOf(objects.BooleanObject);
+        expect((evaluated as objects.BooleanObject).value).toBe(expected);
+      });
+    });
+  });
 });
 
 /**
