@@ -6,4 +6,6 @@ export enum ObjectType {
   RETURN_VALUE = "RETURN_VALUE",
   ERROR = "ERROR",
   FUNCTION = "FUNCTION",
+  ARRAY = "ARRAY",
+  HASH = "HASH",
 }
