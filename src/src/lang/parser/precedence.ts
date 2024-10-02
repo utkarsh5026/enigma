@@ -2,6 +2,8 @@ import { TokenType } from "../token/token";
 
 export enum Precedence {
   LOWEST,
+  LOGICAL_OR, // ||
+  LOGICAL_AND, // &&
   EQUALS, // ==
   LESS_GREATER, // > or <
   SUM, // +
@@ -17,6 +19,8 @@ const precedences: { [key in TokenType]?: Precedence } = {
   [TokenType.NOT_EQ]: Precedence.EQUALS,
   [TokenType.LESS_THAN]: Precedence.LESS_GREATER,
   [TokenType.GREATER_THAN]: Precedence.LESS_GREATER,
+  [TokenType.AND]: Precedence.LOGICAL_AND,
+  [TokenType.OR]: Precedence.LOGICAL_OR,
   [TokenType.PLUS]: Precedence.SUM,
   [TokenType.MINUS]: Precedence.SUM,
   [TokenType.SLASH]: Precedence.PRODUCT,
