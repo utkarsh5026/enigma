@@ -176,6 +176,21 @@ describe("Evaluator", () => {
             });
         });
     });
+    
+    describe('Closures', () => {
+        it('should handle closures', () => {
+            const input = `
+        let newAdder = fn(x) {
+          fn(y) { x + y };
+        };
+        let addTwo = newAdder(2);
+        addTwo(2);
+      `;
+            const evaluated = testEval(input);
+            expect(evaluated).toBeInstanceOf(objects.IntegerObject);
+            expect((evaluated as objects.IntegerObject).value).toBe(4);
+        });
+    });
 
     describe("String Literals", () => {
         it("should evaluate string literal", () => {
