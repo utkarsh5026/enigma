@@ -43,6 +43,16 @@ export enum TokenType {
     MINUS_ASSIGN = "-=",
     ASTERISK_ASSIGN = "*=",
     SLASH_ASSIGN = "/=",
+
+    AND = "&&",
+    OR = "||",
+
+    BITWISE_AND = "&",
+    BITWISE_OR = "|",
+    BITWISE_XOR = "^",
+    BITWISE_NOT = "~",
+    BITWISE_LEFT_SHIFT = "<<",
+    BITWISE_RIGHT_SHIFT = ">>",
 }
 
 export interface Token {
