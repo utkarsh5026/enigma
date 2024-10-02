@@ -277,30 +277,3 @@ export class StringObject implements BaseObject {
     return ObjectType.STRING;
   }
 }
-
-export const isError = (obj: BaseObject): obj is ErrorObject =>
-  obj instanceof ErrorObject;
-
-export const isArray = (obj: BaseObject): obj is ArrayObject =>
-  obj instanceof ArrayObject;
-
-export const isHash = (obj: BaseObject): obj is HashObject =>
-  obj instanceof HashObject;
-
-export const isString = (obj: BaseObject): obj is StringObject =>
-  obj instanceof StringObject;
-
-export const isInteger = (obj: BaseObject): obj is IntegerObject =>
-  obj instanceof IntegerObject;
-
-export const isBoolean = (obj: BaseObject): obj is BooleanObject =>
-  obj instanceof BooleanObject;
-
-export const isNull = (obj: BaseObject): obj is NullObject =>
-  obj instanceof NullObject;
-
-export const isFunction = (obj: BaseObject): obj is FunctionObject =>
-  obj instanceof FunctionObject;
-
-export const isReturnValue = (obj: BaseObject): obj is ReturnValue =>
-  obj instanceof ReturnValue;
