@@ -45,10 +45,10 @@ type InfixParseFunction = (expression: Expression) => Expression | null;
  * Parser class responsible for parsing tokens into an Abstract Syntax Tree (AST).
  */
 export class Parser {
-  private lexer: Lexer;
+  private readonly lexer: Lexer;
   private currentToken!: Token;
   private peekToken!: Token;
-  private errors: string[] = [];
+  private readonly errors: string[] = [];
   private loopDepth: number = 0;
   private prefixParseFunctions: Record<TokenType, PrefixParseFunction>;
   private infixParseFunctions: Record<TokenType, InfixParseFunction>;
