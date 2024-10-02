@@ -127,7 +127,7 @@ describe("Lexer", () => {
 
 describe("Lexer double tokens", () => {
   it("handles double tokens", () => {
-    const input = `== != += -= *= /=`;
+    const input = `== != += -= *= /= && ||`;
 
     const tests: Token[] = [
       { type: TokenType.EQ, literal: "==" },
@@ -136,6 +136,8 @@ describe("Lexer double tokens", () => {
       { type: TokenType.MINUS_ASSIGN, literal: "-=" },
       { type: TokenType.ASTERISK_ASSIGN, literal: "*=" },
       { type: TokenType.SLASH_ASSIGN, literal: "/=" },
+      { type: TokenType.AND, literal: "&&" },
+      { type: TokenType.OR, literal: "||" },
       { type: TokenType.EOF, literal: "" },
     ];
 
