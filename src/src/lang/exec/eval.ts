@@ -6,7 +6,7 @@ import * as expression from "../ast/expression.ts";
 import { BooleanExpression } from "../ast/expression.ts";
 import * as literal from "../ast/literal.ts";
 
-Symbol("evaluator");
+const MAX_ITERATIONS = 1000000;
 /**
  * Evaluator class
  *
@@ -22,9 +22,11 @@ Symbol("evaluator");
  * - Manages variable assignments and scoping
  */
 export default class Evaluator {
-  private TRUE = new objects.BooleanObject(true);
-  private FALSE = new objects.BooleanObject(false);
-  private NULL = new objects.NullObject();
+  private readonly TRUE = new objects.BooleanObject(true);
+  private readonly FALSE = new objects.BooleanObject(false);
+  private readonly NULL = new objects.NullObject();
+  private readonly BREAK = new objects.BreakObject();
+  private readonly CONTINUE = new objects.ContinueObject();
 
   /**
    * Evaluates an AST node
@@ -69,6 +71,12 @@ export default class Evaluator {
           node as statement.WhileStatement,
           env
         );
+
+      case statement.BreakStatement:
+        return this.BREAK;
+
+      case statement.ContinueStatement:
+        return this.CONTINUE;
 
       case expression.PrefixExpression:
         return this.evalPrefixExpression(
@@ -470,11 +478,52 @@ export default class Evaluator {
     return value;
   }
 
+  /**
+   * Evaluates a while statement
+   *
+   * This method executes a while loop, repeatedly evaluating the condition
+   * and executing the body until the condition becomes falsy or a return/break
+   * statement is encountered. It also includes a safety check to prevent infinite loops.
+   *
+   * @param ws - The while statement node
+   * @param env - The current environment
+   * @returns The result of the last executed statement in the loop body,
+   *          or NULL if the loop never executed
+   *
+   * @example
+   * const whileStmt = new statement.WhileStatement(
+   *   new BooleanExpression(true),
+   *   new statement.BlockStatement([
+   *     new statement.ExpressionStatement(new literal.IntegerLiteral(1))
+   *   ])
+   * );
+   * const result = evaluator.evaluateWhileStatement(whileStmt, environment);
+   * console.log(result.inspect()); // Outputs: 1 (assuming MAX_ITERATIONS is not reached)
+   */
   private evaluateWhileStatement(
     ws: statement.WhileStatement,
     env: objects.Environment
   ): objects.BaseObject {
-    return this.NULL;
+    let result: objects.BaseObject = this.NULL;
+    let loopCount = 0;
+
+    while (true) {
+      const condition = this.evaluate(ws.condition, env);
+      if (isError(condition)) return condition;
+
+      if (!this.truthy(condition)) break;
+
+      result = this.evalBlockStatement(ws.body, env);
+      if (isError(result)) return result;
+
+      if (isReturnValue(result)) return result;
+
+      loopCount++;
+      if (loopCount > MAX_ITERATIONS)
+        return new objects.ErrorObject("Loop limit exceeded");
+    }
+
+    return result;
   }
 
   /**

@@ -8,4 +8,6 @@ export enum ObjectType {
   FUNCTION = "FUNCTION",
   ARRAY = "ARRAY",
   HASH = "HASH",
+  BREAK = "BREAK",
+  CONTINUE = "CONTINUE",
 }
