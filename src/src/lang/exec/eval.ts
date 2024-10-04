@@ -3,7 +3,6 @@ import * as objects from "./objects";
 import { ObjectType } from "./type.ts";
 import * as statement from "../ast/statement.ts";
 import * as expression from "../ast/expression.ts";
-import { BooleanExpression } from "../ast/expression.ts";
 import * as literal from "../ast/literal.ts";
 
 const MAX_ITERATIONS = 1000000;
@@ -27,6 +26,7 @@ export default class Evaluator {
   private readonly NULL = new objects.NullObject();
   private readonly BREAK = new objects.BreakObject();
   private readonly CONTINUE = new objects.ContinueObject();
+  private loopDepth: number = 0;
 
   /**
    * Evaluates an AST node
@@ -47,6 +47,8 @@ export default class Evaluator {
     node: ast.Node,
     env: objects.Environment
   ): objects.BaseObject {
+    console.log(node.constructor.name, node.toString());
+    console.log(env);
     switch (node.constructor) {
       case ast.Program:
         return this.evalProgram(node as ast.Program, env);
@@ -102,8 +104,14 @@ export default class Evaluator {
           env
         );
 
-      case BooleanExpression:
-        return this.toBool((node as BooleanExpression).value);
+      case expression.BooleanExpression:
+        return this.toBool((node as expression.BooleanExpression).value);
+
+      case expression.AssignmentExpression:
+        return this.evalAssignmentExpression(
+          node as expression.AssignmentExpression,
+          env
+        );
 
       case ast.Identifier:
         return this.evalIdentifier(node as ast.Identifier, env);
@@ -186,8 +194,10 @@ export default class Evaluator {
       result = this.evaluate(statement, env);
 
       if (
-        result instanceof objects.ReturnValue ||
-        result instanceof objects.ErrorObject
+        isReturnValue(result) ||
+        isError(result) ||
+        isBreak(result) ||
+        isContinue(result)
       )
         return result;
     }
@@ -321,6 +331,8 @@ export default class Evaluator {
         return new objects.IntegerObject(leftVal * rightVal);
       case "/":
         return new objects.IntegerObject(leftVal / rightVal);
+      case "%":
+        return new objects.IntegerObject(leftVal % rightVal);
 
       case "<":
         return this.toBool(leftVal < rightVal);
@@ -506,6 +518,7 @@ export default class Evaluator {
   ): objects.BaseObject {
     let result: objects.BaseObject = this.NULL;
     let loopCount = 0;
+    this.loopDepth++;
 
     while (true) {
       const condition = this.evaluate(ws.condition, env);
@@ -516,14 +529,21 @@ export default class Evaluator {
       result = this.evalBlockStatement(ws.body, env);
       if (isError(result)) return result;
 
-      if (isReturnValue(result)) return result;
+      if (isBreak(result)) break;
+      else if (isContinue(result)) continue;
+
+      if (isReturnValue(result)) {
+        this.loopDepth--;
+        return result;
+      }
 
       loopCount++;
       if (loopCount > MAX_ITERATIONS)
         return new objects.ErrorObject("Loop limit exceeded");
     }
 
-    return result;
+    this.loopDepth--;
+    return isBreak(result) || isContinue(result) ? this.NULL : result;
   }
 
   /**
@@ -794,6 +814,39 @@ export default class Evaluator {
   }
 
   /**
+   * Evaluates an assignment expression
+   *
+   * This method evaluates the right-hand side of an assignment expression,
+   * then sets the value in the current environment using the identifier
+   * on the left-hand side.
+   *
+   * @param node - The assignment expression node
+   * @param env - The current environment
+   * @returns The evaluated value that was assigned
+   *
+   * @example
+   * // Assuming 'x' is already defined in the environment
+   * const assignExpr = new expression.AssignmentExpression(
+   *   new ast.Identifier("x"),
+   *   new literal.IntegerLiteral(10)
+   * );
+   * const result = evaluator.evalAssignmentExpression(assignExpr, environment);
+   * console.log(result.inspect()); // Outputs: 10
+   * console.log(environment.get("x").inspect()); // Outputs: 10
+   */
+  private evalAssignmentExpression(
+    node: expression.AssignmentExpression,
+    env: objects.Environment
+  ): objects.BaseObject {
+    const value = this.evaluate(node.value, env);
+    if (isError(value)) return value;
+
+    const name = node.name.value;
+    env.set(name, value);
+    return value;
+  }
+
+  /**
    * Applies a function to its arguments
    *
    * @param fn - The function object
@@ -936,3 +989,9 @@ const isFunction = (obj: objects.BaseObject): obj is objects.FunctionObject =>
 
 const isReturnValue = (obj: objects.BaseObject): obj is objects.ReturnValue =>
   obj instanceof objects.ReturnValue;
+
+const isBreak = (obj: objects.BaseObject): obj is objects.BreakObject =>
+  obj instanceof objects.BreakObject;
+
+const isContinue = (obj: objects.BaseObject): obj is objects.ContinueObject =>
+  obj instanceof objects.ContinueObject;

@@ -254,6 +254,72 @@ describe("Evaluator", () => {
       });
     });
   });
+
+  describe("While Loops with Break and Continue", () => {
+    const tests: [string, number][] = [
+      // Basic while loop
+      ["let x = 0; while (x < 5) { x = x + 1; } x;", 5],
+      ["let x = 0; while (true) { x = x + 1; if (x > 5) { break; } } x;", 6],
+      [
+        `
+        let x = 0;
+        let y = 0;
+        while (x < 3) {
+          x = x + 1;
+          while (true) {
+            y = y + 1;
+            if (y > 2) { break; }
+          }
+        }
+        x * 10 + y;
+      `,
+        35,
+      ],
+      [
+        `
+        let x = 0;
+        let y = 0;
+        let z = 0;
+        while (x < 3) {
+          x = x + 1;
+          y = 0;
+          while (y < 3) {
+            y = y + 1;
+            if (y % 2 == 0) { continue; }
+            z = z + 1;
+          }
+        }
+        z;
+      `,
+        6,
+      ],
+      [
+        `
+        let sum = 0;
+        let i = 0;
+        while (i < 10) {
+          i = i + 1;
+          if (i % 2 == 0) { continue; }
+          if (i > 7) { break; }
+          sum = sum + i;
+        }
+        sum;
+      `,
+        16,
+      ],
+    ];
+
+    tests.forEach(([input, expected]) => {
+      it(`should evaluate "${input
+        .replace(/\s+/g, " ")
+        .trim()}" to ${expected}`, () => {
+        const evaluated = testEval(input);
+        console.log(evaluated);
+        expect(evaluated).toBeInstanceOf(objects.IntegerObject);
+        expect((evaluated as objects.IntegerObject).value).toBe(expected);
+      });
+    });
+  });
 });
 
 /**

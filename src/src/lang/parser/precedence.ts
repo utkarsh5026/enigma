@@ -25,6 +25,7 @@ const precedences: { [key in TokenType]?: Precedence } = {
   [TokenType.MINUS]: Precedence.SUM,
   [TokenType.SLASH]: Precedence.PRODUCT,
   [TokenType.ASTERISK]: Precedence.PRODUCT,
+  [TokenType.MODULUS]: Precedence.PRODUCT,
   [TokenType.LPAREN]: Precedence.CALL,
   [TokenType.LBRACKET]: Precedence.INDEX,
 };

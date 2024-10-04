@@ -757,6 +757,7 @@ export class Parser {
       [TokenType.MINUS]: this.parseInfixExpression,
       [TokenType.SLASH]: this.parseInfixExpression,
       [TokenType.ASTERISK]: this.parseInfixExpression,
+      [TokenType.MODULUS]: this.parseInfixExpression,
       [TokenType.EQ]: this.parseInfixExpression,
       [TokenType.NOT_EQ]: this.parseInfixExpression,
       [TokenType.LESS_THAN]: this.parseInfixExpression,
