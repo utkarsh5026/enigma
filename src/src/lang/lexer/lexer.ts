@@ -10,6 +10,8 @@ export default class Lexer {
   private position: number = 0;
   private readPosition: number = 0;
   private currCh: string = "";
+  private currLine: number = 1;
+  private currColumn: number = 0;
 
   /**
    * Creates a new Lexer instance.
@@ -177,6 +179,8 @@ export default class Lexer {
     this.readPosition = 0;
     this.currCh = "";
     this.readCurrChar();
+    this.currLine = 1;
+    this.currColumn = 1;
   }
 
   /**
@@ -215,6 +219,13 @@ export default class Lexer {
   private advance(): void {
     this.position = this.readPosition;
     this.readPosition++;
+
+    if (this.currCh === "\n") {
+      this.currLine++;
+      this.currColumn = 0;
+    } else {
+      this.currColumn++;
+    }
   }
 
   /**
@@ -232,7 +243,11 @@ export default class Lexer {
    * @returns A new Token object.
    */
   private createTok(type: string, literal: string): Token {
-    return <Token>{ type, literal };
+    return <Token>{
+      type,
+      literal,
+      position: { line: this.currLine, column: this.currColumn },
+    };
   }
 
   /**

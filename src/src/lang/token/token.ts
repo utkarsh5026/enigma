@@ -56,9 +56,15 @@ export enum TokenType {
   BITWISE_RIGHT_SHIFT = ">>",
 }
 
+export interface Position {
+  line: number;
+  column: number;
+}
+
 export interface Token {
   type: TokenType;
   literal: string;
+  position: Position;
 }
 
 const keywords: Record<string, TokenType> = {
