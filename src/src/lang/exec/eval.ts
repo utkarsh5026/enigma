@@ -49,8 +49,6 @@ export default class Evaluator {
     node: ast.Node,
     env: objects.Environment
   ): objects.BaseObject {
-    console.log(node.constructor.name, node.toString());
-    console.log(env);
     switch (node.constructor) {
       case ast.Program:
         return this.evalProgram(node as ast.Program, env);
