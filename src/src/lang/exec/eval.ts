@@ -1,9 +1,11 @@
-import * as ast from "../ast/ast";
-import * as objects from "./objects";
+import * as ast from "../ast/ast.ts";
+import * as objects from "./objects.ts";
+import { ErrorObject } from "./objects.ts";
 import { ObjectType } from "./type.ts";
 import * as statement from "../ast/statement.ts";
 import * as expression from "../ast/expression.ts";
 import * as literal from "../ast/literal.ts";
+import * as utils from "./utils.ts";
 
 const MAX_ITERATIONS = 1000000;
 /**
@@ -73,6 +75,9 @@ export default class Evaluator {
           node as statement.WhileStatement,
           env
         );
+
+      case statement.ConstStatement:
+        return this.evalConstStatement(node as statement.ConstStatement, env);
 
       case statement.BreakStatement:
         return this.BREAK;
@@ -162,7 +167,7 @@ export default class Evaluator {
       result = this.evaluate(statement, env);
 
       if (result instanceof objects.ReturnValue) return result.value;
-      else if (result.type() === ObjectType.ERROR) return result;
+      else if (result instanceof objects.ErrorObject) return result;
     }
 
     return result;
@@ -188,20 +193,22 @@ export default class Evaluator {
     block: statement.BlockStatement,
     env: objects.Environment
   ): objects.BaseObject {
+    const blockEnv = env.newBlockScope();
     let result: objects.BaseObject = this.NULL;
 
     for (const statement of block.statements) {
-      result = this.evaluate(statement, env);
+      result = this.evaluate(statement, blockEnv);
 
       if (
-        isReturnValue(result) ||
-        isError(result) ||
-        isBreak(result) ||
-        isContinue(result)
+        result instanceof objects.ReturnValue ||
+        result instanceof objects.ErrorObject ||
+        result instanceof objects.BreakObject ||
+        result instanceof objects.ContinueObject
       )
         return result;
     }
 
+    console.log(objects.dumpScopeChain(blockEnv));
     return result;
   }
 
@@ -266,17 +273,25 @@ export default class Evaluator {
     env: objects.Environment
   ): objects.BaseObject {
     const left = this.evaluate(node.left, env);
-    if (isError(left)) return left;
+    if (utils.isError(left)) return left;
 
     const right = this.evaluate(node.right, env);
-    if (isError(right)) return right;
+    if (utils.isError(right)) return right;
 
     switch (true) {
-      case isInteger(left) && isInteger(right):
-        return this.evalIntegerInfixExpression(left, right, node.operator);
+      case utils.isInteger(left) && utils.isInteger(right):
+        return this.evalIntegerInfixExpression(
+          left as objects.IntegerObject,
+          right as objects.IntegerObject,
+          node.operator
+        );
 
-      case isString(left) && isString(right):
-        return this.evalStringInfixExpression(left, right, node.operator);
+      case utils.isString(left) && utils.isString(right):
+        return this.evalStringInfixExpression(
+          left as objects.StringObject,
+          right as objects.StringObject,
+          node.operator
+        );
 
       case node.operator === "==":
         return this.toBool(left === right);
@@ -433,7 +448,7 @@ export default class Evaluator {
     env: objects.Environment
   ): objects.BaseObject {
     const condition = this.evaluate(ifExp.condition, env);
-    if (isError(condition)) return condition;
+    if (utils.isError(condition)) return condition;
 
     if (this.truthy(condition)) return this.evaluate(ifExp.consequence, env);
     else if (ifExp.alternative) return this.evaluate(ifExp.alternative, env);
@@ -458,7 +473,7 @@ export default class Evaluator {
     env: objects.Environment
   ): objects.BaseObject {
     const value = this.evaluate(rs.returnValue, env);
-    if (isError(value)) return value;
+    if (utils.isError(value)) return value;
 
     return new objects.ReturnValue(value);
   }
@@ -483,10 +498,29 @@ export default class Evaluator {
     ls: statement.LetStatement,
     env: objects.Environment
   ): objects.BaseObject {
+    const identifier = ls.name.value;
+    if (env.has(identifier))
+      return err(`Identifier ${identifier} already declared`);
+
     const value = this.evaluate(ls.value, env);
     if (value instanceof objects.ErrorObject) return value;
 
-    env.set(ls.name.value, value);
+    env.set(identifier, value);
+    return value;
+  }
+
+  private evalConstStatement(
+    node: statement.ConstStatement,
+    env: objects.Environment
+  ): objects.BaseObject {
+    const identifier = node.name.value;
+    if (env.has(identifier))
+      return err(`Identifier ${identifier} already declared`);
+
+    const value = this.evaluate(node.value, env);
+    if (value instanceof objects.ErrorObject) return value;
+
+    env.setConst(identifier, value);
     return value;
   }
 
@@ -522,17 +556,17 @@ export default class Evaluator {
 
     while (true) {
       const condition = this.evaluate(ws.condition, env);
-      if (isError(condition)) return condition;
+      if (utils.isError(condition)) return condition;
 
       if (!this.truthy(condition)) break;
 
       result = this.evalBlockStatement(ws.body, env);
-      if (isError(result)) return result;
+      if (utils.isError(result)) return result;
 
-      if (isBreak(result)) break;
-      else if (isContinue(result)) continue;
+      if (utils.isBreak(result)) break;
+      else if (utils.isContinue(result)) continue;
 
-      if (isReturnValue(result)) {
+      if (utils.isReturnValue(result)) {
         this.loopDepth--;
         return result;
       }
@@ -543,7 +577,9 @@ export default class Evaluator {
     }
 
     this.loopDepth--;
-    return isBreak(result) || isContinue(result) ? this.NULL : result;
+    return utils.isBreak(result) || utils.isContinue(result)
+      ? this.NULL
+      : result;
   }
 
   /**
@@ -617,7 +653,7 @@ export default class Evaluator {
     env: objects.Environment
   ): objects.BaseObject {
     const elements = this.evalExpressions(node.elements, env);
-    if (elements.length === 1 && isError(elements[0])) return elements[0];
+    if (elements.length === 1 && utils.isError(elements[0])) return elements[0];
 
     return new objects.ArrayObject(elements);
   }
@@ -643,10 +679,10 @@ export default class Evaluator {
     env: objects.Environment
   ): objects.BaseObject {
     const functionObj = this.evaluate(ce.func, env);
-    if (isError(functionObj)) return functionObj;
+    if (utils.isError(functionObj)) return functionObj;
 
     const args = this.evalExpressions(ce.args, env);
-    if (args.length === 1 && isError(args[0])) return args[0];
+    if (args.length === 1 && utils.isError(args[0])) return args[0];
 
     return this.applyFunction(functionObj, args);
   }
@@ -718,13 +754,14 @@ export default class Evaluator {
     env: objects.Environment
   ): objects.BaseObject {
     const left = this.evaluate(node.left, env);
-    if (isError(left)) return left;
+    if (utils.isError(left)) return left;
 
     const index = this.evaluate(node.index, env);
-    if (isError(index)) return index;
+    if (utils.isError(index)) return index;
 
-    if (isArray(left)) return this.evalArrayIndexExpression(left, index);
-    else if (isHash(left)) return this.evalHashIndexExpression(left, index);
+    if (utils.isArray(left)) return this.evalArrayIndexExpression(left, index);
+    else if (utils.isHash(left))
+      return this.evalHashIndexExpression(left, index);
 
     return new objects.ErrorObject(
       `Index operator not supported: ${left.type()}`
@@ -770,7 +807,7 @@ export default class Evaluator {
     hash: objects.HashObject,
     index: objects.BaseObject
   ): objects.BaseObject {
-    const isHashable = isString(index) || isInteger(index);
+    const isHashable = utils.isString(index) || utils.isInteger(index);
     if (!isHashable)
       return new objects.ErrorObject("Index must be a string or an integer");
 
@@ -805,7 +842,7 @@ export default class Evaluator {
 
     for (const arg of args) {
       const evaluated = this.evaluate(arg, env);
-      if (isError(evaluated)) return [evaluated];
+      if (utils.isError(evaluated)) return [evaluated];
 
       result.push(evaluated);
     }
@@ -838,12 +875,18 @@ export default class Evaluator {
     node: expression.AssignmentExpression,
     env: objects.Environment
   ): objects.BaseObject {
-    const value = this.evaluate(node.value, env);
-    if (isError(value)) return value;
-
     const name = node.name.value;
-    env.set(name, value);
-    return value;
+    const definingScope = env.getDefiningScope(name);
+
+    if (!definingScope)
+      return err(`Cannot assign to undeclared variable '${name}'.`);
+
+    if (definingScope.isConstant(name))
+      return err(`Cannot assign to constant variable '${name}'.`);
+
+    const value = this.evaluate(node.value, env);
+    if (value instanceof ErrorObject) return value;
+    return definingScope.set(name, value);
   }
 
   /**
@@ -863,10 +906,10 @@ export default class Evaluator {
     fn: objects.BaseObject,
     args: objects.BaseObject[]
   ): objects.BaseObject {
-    if (isFunction(fn)) {
+    if (utils.isFunction(fn)) {
       const extendedEnv = this.extendFunctionEnv(fn, args);
       const evaluated = this.evaluate(fn.body, extendedEnv);
-      if (evaluated instanceof objects.ErrorObject) return evaluated;
+      if (utils.isError(evaluated)) return evaluated;
 
       return this.unWrapReturnValue(evaluated);
     }
@@ -914,7 +957,7 @@ export default class Evaluator {
    * console.log(unwrapped.inspect()); // Outputs: 42
    */
   private unWrapReturnValue(obj: objects.BaseObject): objects.BaseObject {
-    if (isReturnValue(obj)) return obj.value;
+    if (utils.isReturnValue(obj)) return obj.value;
     return obj;
   }
 
@@ -969,29 +1012,11 @@ export default class Evaluator {
   }
 }
 
-const isError = (obj: objects.BaseObject): obj is objects.ErrorObject =>
-  obj instanceof objects.ErrorObject;
-
-const isArray = (obj: objects.BaseObject): obj is objects.ArrayObject =>
-  obj instanceof objects.ArrayObject;
-
-const isHash = (obj: objects.BaseObject): obj is objects.HashObject =>
-  obj instanceof objects.HashObject;
-
-const isString = (obj: objects.BaseObject): obj is objects.StringObject =>
-  obj instanceof objects.StringObject;
-
-const isInteger = (obj: objects.BaseObject): obj is objects.IntegerObject =>
-  obj instanceof objects.IntegerObject;
-
-const isFunction = (obj: objects.BaseObject): obj is objects.FunctionObject =>
-  obj instanceof objects.FunctionObject;
-
-const isReturnValue = (obj: objects.BaseObject): obj is objects.ReturnValue =>
-  obj instanceof objects.ReturnValue;
-
-const isBreak = (obj: objects.BaseObject): obj is objects.BreakObject =>
-  obj instanceof objects.BreakObject;
-
-const isContinue = (obj: objects.BaseObject): obj is objects.ContinueObject =>
-  obj instanceof objects.ContinueObject;
+/**
+ * Creates an ErrorObject with the given message.
+ * @param {string} message - The error message.
+ * @returns {objects.ErrorObject} An ErrorObject with the specified message.
+ */
+function err(message: string): objects.ErrorObject {
+  return new objects.ErrorObject(message);
+}
