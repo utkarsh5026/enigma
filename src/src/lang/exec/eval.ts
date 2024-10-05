@@ -77,6 +77,9 @@ export default class Evaluator {
       case statement.ConstStatement:
         return this.evalConstStatement(node as statement.ConstStatement, env);
 
+      case statement.ForStatement:
+        return this.evalForStatement(node as statement.ForStatement, env);
+
       case statement.BreakStatement:
         return this.BREAK;
 
@@ -575,9 +578,78 @@ export default class Evaluator {
     }
 
     this.loopDepth--;
-    return utils.isBreak(result) || utils.isContinue(result)
-      ? this.NULL
-      : result;
+    return this.processLoopResult(result);
+  }
+
+  /**
+   * Evaluates a for statement
+   *
+   * This method handles the execution of a for loop, including its initialization,
+   * condition checking, body execution, and increment operations.
+   *
+   * @param forLoop - The for statement node
+   * @param env - The current environment
+   * @returns The result of the last executed statement in the loop body,
+   *          or NULL if the loop never executed
+   *
+   * @example
+   * const forStmt = new statement.ForStatement(
+   *   new statement.LetStatement(new ast.Identifier("i"), new literal.IntegerLiteral(0)),
+   *   new expression.InfixExpression(new ast.Identifier("i"), "<", new literal.IntegerLiteral(5)),
+   *   new expression.AssignmentExpression(new ast.Identifier("i"), new expression.InfixExpression(new ast.Identifier("i"), "+", new literal.IntegerLiteral(1))),
+   *   new statement.BlockStatement([
+   *     new statement.ExpressionStatement(new ast.Identifier("i"))
+   *   ])
+   * );
+   * const result = evaluator.evalForStatement(forStmt, environment);
+   * console.log(result.inspect()); // Outputs: 4 (assuming MAX_ITERATIONS is not reached)
+   */
+  private evalForStatement(
+    forLoop: statement.ForStatement,
+    env: objects.Environment
+  ): objects.BaseObject {
+    const loopEnv = new objects.Environment(env);
+    const initResult = this.evaluate(forLoop.initializer, loopEnv);
+    if (initResult instanceof objects.ErrorObject) return initResult;
+
+    let result: objects.BaseObject = this.NULL;
+    let loopCount = 0;
+    this.loopDepth++;
+
+    while (true) {
+      const condition = this.evaluate(forLoop.condition, loopEnv);
+      if (condition instanceof objects.ErrorObject) {
+        this.loopDepth--;
+        return condition;
+      }
+
+      if (!this.truthy(condition)) break;
+
+      result = this.evaluate(forLoop.body, loopEnv);
+      if (
+        result instanceof objects.ReturnValue ||
+        result instanceof objects.ErrorObject
+      ) {
+        this.loopDepth--;
+        return result;
+      }
+
+      if (result instanceof objects.BreakObject) break;
+      if (result instanceof objects.ContinueObject) continue;
+
+      const incrementResult = this.evaluate(forLoop.increment, loopEnv);
+      if (incrementResult instanceof objects.ErrorObject) {
+        this.loopDepth--;
+        return incrementResult;
+      }
+
+      loopCount++;
+      if (loopCount > MAX_ITERATIONS)
+        return new objects.ErrorObject("Loop limit exceeded");
+    }
+
+    this.loopDepth--;
+    return this.processLoopResult(result);
   }
 
   /**
@@ -1007,6 +1079,12 @@ export default class Evaluator {
    */
   private toBool(res: boolean): objects.BooleanObject {
     return res ? this.TRUE : this.FALSE;
+  }
+
+  private processLoopResult(result: objects.BaseObject): objects.BaseObject {
+    if (utils.isBreak(result)) return this.NULL;
+    if (utils.isContinue(result)) return this.NULL;
+    return result;
   }
 }
 
