@@ -80,6 +80,9 @@ export class Parser {
       case TokenType.LET:
         return this.parseLetStatement();
 
+      case TokenType.CONST:
+        return this.parseConstStatement();
+
       case TokenType.RETURN:
         return this.parseReturnStatement();
 
@@ -160,6 +163,26 @@ export class Parser {
     this.loopDepth--;
 
     return new statements.WhileStatement(whileToken, condition, body);
+  }
+
+  private parseConstStatement(): statements.ConstStatement | null {
+    const constToken = this.currentToken;
+
+    if (!this.expectPeekAndMove(TokenType.IDENTIFIER)) return null;
+    const name = new ast.Identifier(
+      this.currentToken,
+      this.currentToken.literal
+    );
+
+    if (!this.expectPeekAndMove(TokenType.ASSIGN)) return null;
+    this.forward();
+
+    const value = this.parseExpression(Precedence.LOWEST);
+    if (value === null) return null;
+
+    if (!this.expectPeekAndMove(TokenType.SEMICOLON)) return null;
+
+    return new statements.ConstStatement(constToken, name, value);
   }
 
   /**

@@ -81,6 +81,7 @@ const keywords: Record<string, TokenType> = {
   break: TokenType.BREAK,
   continue: TokenType.CONTINUE,
   for: TokenType.FOR,
+  const: TokenType.CONST,
 };
 
 export const lookupIdentifier = (identifier: string): TokenType => {
