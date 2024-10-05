@@ -257,7 +257,16 @@ export class CallExpression implements Expression {
   }
 }
 
+/**
+ * Represents an assignment expression in the AST.
+ */
 export class AssignmentExpression implements Expression {
+  /**
+   * Creates a new AssignmentExpression instance.
+   * @param token The token associated with this expression.
+   * @param name The identifier being assigned to.
+   * @param value The expression representing the value being assigned.
+   */
   constructor(
     public token: Token,
     public name: Identifier,
@@ -266,10 +275,18 @@ export class AssignmentExpression implements Expression {
 
   expressionNode() {}
 
+  /**
+   * Returns the literal value of the token.
+   * @returns The literal value of the token.
+   */
   tokenLiteral(): string {
     return this.token.literal;
   }
 
+  /**
+   * Returns a string representation of the AssignmentExpression.
+   * @returns A string representation of the expression.
+   */
   toString(): string {
     return `${this.name.toString()} = ${this.value.toString()}`;
   }

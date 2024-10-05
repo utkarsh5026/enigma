@@ -172,6 +172,9 @@ export class WhileStatement implements Statement {
   }
 }
 
+/**
+ * Represents a break statement in the AST.
+ */
 export class BreakStatement implements Statement {
   token: Token;
 
@@ -190,6 +193,9 @@ export class BreakStatement implements Statement {
   }
 }
 
+/**
+ * Represents a continue statement in the AST.
+ */
 export class ContinueStatement implements Statement {
   token: Token;
 
@@ -205,5 +211,79 @@ export class ContinueStatement implements Statement {
 
   toString(): string {
     return "continue;";
+  }
+}
+
+/**
+ * Represents a for statement in the AST.
+ */
+export class ForStatement implements Statement {
+  token: Token;
+  initializer: Statement;
+  condition: Expression;
+  increment: Expression;
+  body: BlockStatement;
+
+  /**
+   * Creates a new ForStatement instance.
+   * @param token The token associated with this statement.
+   * @param initializer The statement to initialize the loop.
+   * @param condition The expression to evaluate as the loop condition.
+   * @param increment The expression to evaluate as the loop increment.
+   * @param body The block statement to execute as the loop body.
+   */
+  constructor(
+    token: Token,
+    initializer: Statement,
+    condition: Expression,
+    increment: Expression,
+    body: BlockStatement
+  ) {
+    this.token = token;
+    this.initializer = initializer;
+    this.condition = condition;
+    this.increment = increment;
+    this.body = body;
+  }
+
+  statementNode(): void {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  toString(): string {
+    return `for (${this.initializer.toString()}; ${this.condition.toString()}; ${this.increment.toString()}) {\n${this.body.toString()}\n}`;
+  }
+}
+
+/**
+ * Represents a const statement in the AST.
+ */
+export class ConstStatement implements Statement {
+  token: Token;
+  name: Identifier;
+  value: Expression;
+
+  /**
+   * Creates a new ConstStatement instance.
+   * @param token The token associated with this statement.
+   * @param name The identifier being assigned to.
+   * @param value The expression representing the value being assigned.
+   */
+  constructor(token: Token, name: Identifier, value: Expression) {
+    this.token = token;
+    this.name = name;
+    this.value = value;
+  }
+
+  statementNode() {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  toString(): string {
+    return `const ${this.name.toString()} = ${this.value.toString()};`;
   }
 }

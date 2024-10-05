@@ -37,6 +37,8 @@ export enum TokenType {
   WHILE = "WHILE",
   BREAK = "BREAK",
   CONTINUE = "CONTINUE",
+  FOR = "FOR",
+  CONST = "CONST",
 
   EQ = "==",
   NOT_EQ = "!=",
@@ -78,8 +80,13 @@ const keywords: Record<string, TokenType> = {
   while: TokenType.WHILE,
   break: TokenType.BREAK,
   continue: TokenType.CONTINUE,
+  for: TokenType.FOR,
 };
 
 export const lookupIdentifier = (identifier: string): TokenType => {
   return keywords[identifier] || TokenType.IDENTIFIER;
+};
+
+export const getKeywords = (): string[] => {
+  return Object.keys(keywords);
 };
