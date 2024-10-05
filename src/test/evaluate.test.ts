@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it, test } from "@jest/globals";
 import Evaluator from "../src/lang/exec/eval";
 import Lexer from "../src/lang/lexer/lexer";
 import { Parser } from "../src/lang/parser/parser";
 import * as objects from "../src/lang/exec/objects";
+import { IntegerObject } from "../src/lang/exec/objects";
 
 describe("Evaluator", () => {
   describe("Bang Operator", () => {
@@ -314,11 +315,46 @@ describe("Evaluator", () => {
         .replace(/\s+/g, " ")
         .trim()}" to ${expected}`, () => {
         const evaluated = testEval(input);
-        console.log(evaluated);
         expect(evaluated).toBeInstanceOf(objects.IntegerObject);
         expect((evaluated as objects.IntegerObject).value).toBe(expected);
       });
     });
+  });
+
+  test("block scope variable shadowing", () => {
+    const input = `
+      let x = 10;
+      let result = 0;
+      {
+        let x = 20;
+        result = x;
+      }
+      result = result + x;
+    `;
+    const result = testEval(input);
+    expect(result).toBeInstanceOf(IntegerObject);
+    expect((result as IntegerObject).value).toBe(30);
+  });
+
+  test("nested block scope with reassignments", () => {
+    const input = `
+      let x = 10;
+      let result = 0;
+      {
+        let y = 20;
+        {
+          x = 30;
+          y = 40;
+          let z = 50;
+          result = x + y + z;
+        }
+        result = result + x + y;
+      }
+      result = result + x;
+    `;
+    const result = testEval(input);
+    expect(result).toBeInstanceOf(IntegerObject);
+    expect((result as IntegerObject).value).toBe(220);
   });
 });
 
