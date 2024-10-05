@@ -8,18 +8,30 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "build:grammar": "lezer-generator src/grammer/enigma.grammar -o src/grammer/parser.js"
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/language": "^6.10.3",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@lezer/common": "^1.2.2",
+    "@lezer/highlight": "^1.2.1",
+    "@lezer/lr": "^1.4.2",
+    "@monaco-editor/react": "^4.6.0",
+    "@uiw/react-codemirror": "^4.23.4",
+    "antd": "^5.21.2",
+    "framer-motion": "^11.11.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@lezer/generator": "^1.7.1",
     "@types/jest": "^29.5.13",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

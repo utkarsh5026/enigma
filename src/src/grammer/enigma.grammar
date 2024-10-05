@@ -1,0 +1,89 @@
+@top Program { expression* }
+
+@precedence {
+  call,
+  unary,
+  multiply,
+  add,
+  compare,
+  and,
+  or,
+  right assign
+}
+
+expression {
+  Identifier |
+  Number |
+  String |
+  Boolean |
+  FunctionDeclaration |
+  VariableDeclaration |
+  IfStatement |
+  WhileLoop |
+  ReturnStatement |
+  BreakStatement |
+  ContinueStatement |
+  BinaryExpression |
+  UnaryExpression |
+  ParenthesizedExpression |
+  CallExpression |
+  ArrayLiteral |
+  ObjectLiteral
+}
+
+FunctionDeclaration { "fn" Identifier "(" ParameterList? ")" Block }
+ParameterList { Identifier ("," Identifier)* }
+Block { "{" expression* "}" }
+
+VariableDeclaration { "let" Identifier ("=" expression)? }
+
+IfStatement { "if" ParenthesizedExpression Block ("else" (IfStatement | Block))? }
+
+WhileLoop { "while" ParenthesizedExpression Block }
+
+ReturnStatement { "return" expression? }
+BreakStatement { "break" }
+ContinueStatement { "continue" }
+
+BinaryExpression {
+  expression !multiply ("*" | "/" | "%") expression |
+  expression !add ("+" | "-") expression |
+  expression !compare ("==" | "!=" | "<" | ">" | "<=" | ">=") expression |
+  expression !and "&&" expression |
+  expression !or "||" expression |
+  expression !assign "=" expression
+}
+
+UnaryExpression { !unary ("!" | "-" | "~") expression }
+
+ParenthesizedExpression { "(" expression ")" }
+
+CallExpression { expression !call ArgList }
+ArgList { "(" (expression ("," expression)*)? ")" }
+
+ArrayLiteral { "[" (expression ("," expression)*)? "]" }
+ObjectLiteral { "{" (PropertyAssignment ("," PropertyAssignment)*)? "}" }
+PropertyAssignment { (Identifier | String) ":" expression }
+
+@tokens {
+  Identifier { @asciiLetter }
+  Number { $[0-9]+ }
+  String { '@asciiLetter' }
+  Boolean { "true" | "false" }
+
+  space { $[ \t\n\r]+ }
+
+  "(" ")" "[" "]" "{" "}"
+  "+" "-" "*" "/" "%"
+  "=" "==" "!=" "<" ">" "<=" ">="
+  "+=" "-=" "*=" "/="
+  "&&" "||"
+  "&" "|" "^" "~" "<<" ">>"
+  "," ";" ":"
+
+  @precedence { Boolean, Identifier }
+}
+
+kw<term> { @specialize<Identifier, term> }
+
+@skip { space }
