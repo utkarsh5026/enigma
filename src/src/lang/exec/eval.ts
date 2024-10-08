@@ -280,19 +280,13 @@ export default class Evaluator {
     if (utils.isError(right)) return right;
 
     switch (true) {
-      case utils.isInteger(left) && utils.isInteger(right):
-        return this.evalIntegerInfixExpression(
-          left as objects.IntegerObject,
-          right as objects.IntegerObject,
-          node.operator
-        );
+      case left instanceof objects.IntegerObject &&
+        right instanceof objects.IntegerObject:
+        return this.evalIntegerInfixExpression(left, right, node.operator);
 
-      case utils.isString(left) && utils.isString(right):
-        return this.evalStringInfixExpression(
-          left as objects.StringObject,
-          right as objects.StringObject,
-          node.operator
-        );
+      case left instanceof objects.StringObject &&
+        right instanceof objects.StringObject:
+        return this.evalStringInfixExpression(left, right, node.operator);
 
       case node.operator === "==":
         return this.toBool(left === right);
