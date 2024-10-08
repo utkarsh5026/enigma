@@ -47,7 +47,7 @@ export default class Lexer {
   public nextToken(): Token {
     let token: Token;
     this.skipWhitespace();
-
+    this.skipComments();
     switch (this.currCh) {
       case "=":
         token = this.handleDoubleLiteral(TokenType.EQ, TokenType.ASSIGN);
@@ -120,6 +120,14 @@ export default class Lexer {
         break;
 
       case "/":
+        if (this.peekChar() === "/") {
+          this.skipSingleLineComment();
+          return this.nextToken();
+        } else if (this.peekChar() === "*") {
+          this.skipMultiLineComment();
+          return this.nextToken();
+        }
+
         token = this.handleDoubleLiteral(
           TokenType.SLASH_ASSIGN,
           TokenType.SLASH
@@ -343,5 +351,56 @@ export default class Lexer {
     this.position = this.position - steps;
     this.readPosition = this.readPosition - steps;
     this.currCh = this.input[this.position];
+  }
+
+  /**
+   * Skips over any comments in the input.
+   * This method handles both single-line and multi-line comments.
+   */
+  private skipComments(): void {
+    while (true) {
+      this.skipWhitespace();
+
+      if (this.currCh === "/" && this.peekChar() === "/")
+        this.skipSingleLineComment();
+      else if (this.currCh === "/" && this.peekChar() === "*")
+        this.skipMultiLineComment();
+      else break;
+    }
+  }
+
+  /**
+   * Skips over a single-line comment.
+   * A single-line comment starts with '//' and continues until the end of the line.
+   */
+  private skipSingleLineComment(): void {
+    while (this.currCh !== "\n" && this.currCh !== "\0") {
+      this.readCurrChar();
+    }
+  }
+
+  /**
+   * Skips over a multi-line comment.
+   * A multi-line comment starts with '/*' and ends with '*\/'.
+   * This method also handles nested multi-line comments.
+   */
+  private skipMultiLineComment(): void {
+    this.readCurrChar(); // skip the first '/'
+    this.readCurrChar(); // skip the '*'
+    let depth = 1;
+
+    while (depth > 0 && this.currCh !== "\0") {
+      if (this.currCh === "/" && this.peekChar() === "*") {
+        depth++;
+        this.readCurrChar();
+        this.readCurrChar();
+      } else if (this.currCh === "*" && this.peekChar() === "/") {
+        depth--;
+        this.readCurrChar();
+        this.readCurrChar();
+      } else {
+        this.readCurrChar();
+      }
+    }
   }
 }
