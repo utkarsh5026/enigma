@@ -2,9 +2,17 @@ import Lexer from "../lexer/lexer";
 import { Token, TokenType } from "../token/token";
 import * as literals from "../ast/literal.ts";
 import * as ast from "../ast/ast.ts";
+import { Expression } from "../ast/ast.ts";
 import * as statements from "../ast/statement.ts";
+import { BlockStatement } from "../ast/statement.ts";
 import { getPrecedence, Precedence } from "./precedence.ts";
 import * as expressions from "../ast/expression.ts";
+
+interface ErrorMessage {
+  message: string;
+  line: number;
+  column: number;
+}
 
 /**
  * Represents a function that parses a prefix expression.
@@ -26,7 +34,7 @@ export class Parser {
   private readonly lexer: Lexer;
   private currentToken!: Token;
   private peekToken!: Token;
-  private readonly errors: string[] = [];
+  private readonly errors: ErrorMessage[] = [];
   private loopDepth: number = 0;
   private prefixParseFunctions: Record<TokenType, PrefixParseFunction>;
   private infixParseFunctions: Record<TokenType, InfixParseFunction>;
@@ -71,7 +79,7 @@ export class Parser {
    * Returns any parsing errors that occurred during parsing.
    * @returns {string[]} An array of error messages.
    */
-  public parserErrors(): string[] {
+  public parserErrors(): ErrorMessage[] {
     return this.errors;
   }
 
@@ -126,19 +134,19 @@ export class Parser {
    */
   private parseLetStatement(): statements.LetStatement | null {
     const letToken = this.currentToken;
-    if (!this.expectPeekAndMove(TokenType.IDENTIFIER)) return null;
+    if (!this.consume(TokenType.IDENTIFIER)) return null;
 
     const name = new ast.Identifier(
       this.currentToken,
       this.currentToken.literal
     );
-    if (!this.expectPeekAndMove(TokenType.ASSIGN)) return null;
+    if (!this.consume(TokenType.ASSIGN)) return null;
 
     this.forward();
     const value = this.parseExpression(Precedence.LOWEST);
     if (value === null) return null;
 
-    if (!this.expectPeekAndMove(TokenType.SEMICOLON)) return null;
+    if (!this.consume(TokenType.SEMICOLON)) return null;
 
     return new statements.LetStatement(letToken, name, value);
   }
@@ -163,7 +171,7 @@ export class Parser {
     const returnValue = this.parseExpression(Precedence.LOWEST);
     if (returnValue === null) return null;
 
-    if (!this.expectPeekAndMove(TokenType.SEMICOLON)) return null;
+    if (!this.consume(TokenType.SEMICOLON)) return null;
 
     return new statements.ReturnStatement(returnToken, returnValue);
   }
@@ -176,14 +184,13 @@ export class Parser {
   private parseWhileStatement(): statements.WhileStatement | null {
     const whileToken = this.currentToken;
 
-    if (!this.expectPeekAndMove(TokenType.LPAREN)) return null;
+    if (!this.consume(TokenType.LPAREN)) return null;
     this.forward();
 
     const condition = this.parseExpression(Precedence.LOWEST);
-    if (condition == null || !this.expectPeekAndMove(TokenType.RPAREN))
-      return null;
+    if (condition == null || !this.consume(TokenType.RPAREN)) return null;
 
-    if (!this.expectPeekAndMove(TokenType.LBRACE)) return null;
+    if (!this.consume(TokenType.LBRACE)) return null;
 
     this.loopDepth++;
     const body = this.parseBlockStatement();
@@ -195,19 +202,19 @@ export class Parser {
   private parseConstStatement(): statements.ConstStatement | null {
     const constToken = this.currentToken;
 
-    if (!this.expectPeekAndMove(TokenType.IDENTIFIER)) return null;
+    if (!this.consume(TokenType.IDENTIFIER)) return null;
     const name = new ast.Identifier(
       this.currentToken,
       this.currentToken.literal
     );
 
-    if (!this.expectPeekAndMove(TokenType.ASSIGN)) return null;
+    if (!this.consume(TokenType.ASSIGN)) return null;
     this.forward();
 
     const value = this.parseExpression(Precedence.LOWEST);
     if (value === null) return null;
 
-    if (!this.expectPeekAndMove(TokenType.SEMICOLON)) return null;
+    if (!this.consume(TokenType.SEMICOLON)) return null;
 
     return new statements.ConstStatement(constToken, name, value);
   }
@@ -219,7 +226,7 @@ export class Parser {
    */
   private parseBreakStatement(): statements.BreakStatement | null {
     if (this.loopDepth === 0) {
-      this.errors.push(`Break statement must be inside a loop.`);
+      this.error(`Break statement must be inside a loop.`);
       return null;
     }
 
@@ -236,7 +243,7 @@ export class Parser {
    */
   private parseContinueStatement(): statements.ContinueStatement | null {
     if (this.loopDepth === 0) {
-      this.errors.push(`Continue statement must be inside a loop.`);
+      this.error("Continue statement must be inside a loop.");
       return null;
     }
 
@@ -263,7 +270,10 @@ export class Parser {
 
     const expression = this.parseExpression(Precedence.LOWEST);
 
-    if (expression === null) return null;
+    if (expression === null) {
+      this.error("Expected expression");
+      return null;
+    }
 
     if (this.isPeekTokenOfType(TokenType.SEMICOLON)) this.forward();
 
@@ -288,7 +298,10 @@ export class Parser {
     this.forward();
 
     const right = this.parseExpression(Precedence.LOWEST);
-    if (right === null) return null;
+    if (right === null) {
+      this.error("Expected expression");
+      return null;
+    }
 
     if (!this.handleEnd()) return null;
 
@@ -310,24 +323,32 @@ export class Parser {
   private parseForLoopStatement(): statements.ForStatement | null {
     const forToken = this.currentToken;
 
-    if (!this.expectPeekAndMove(TokenType.LPAREN))
-      return this.createParseError("Expected '(' after 'for'");
+    if (!this.consume(TokenType.LPAREN)) return null;
 
     this.forward(); // Move past '('
     const init = this.parseStatement();
-    if (init === null)
-      return this.createParseError("Expected initialization statement");
+    if (init === null) {
+      this.error("Expected initialization statement");
+      return null;
+    }
 
     const condition = this.parseExpression(Precedence.LOWEST);
-    if (condition === null)
-      return this.createParseError("Expected condition expression");
+    if (condition === null) {
+      this.error("Expected condition expression");
+      return null;
+    }
 
     const update = this.parseExpression(Precedence.LOWEST);
-    if (update === null)
-      return this.createParseError("Expected update expression");
+    if (update === null) {
+      this.error("Expected update expression");
+      return null;
+    }
 
     const body = this.parseBlockStatement();
-    if (body === null) return this.createParseError("Expected body statement");
+    if (body === null) {
+      this.error("Expected body statement");
+      return null;
+    }
 
     return new statements.ForStatement(forToken, init, condition, update, body);
   }
@@ -357,7 +378,7 @@ export class Parser {
    * @returns {boolean} True if the peek token matches and the parser advanced, false otherwise.
    * @private
    */
-  private expectPeekAndMove(type: TokenType): boolean {
+  private consume(type: TokenType): boolean {
     if (this.isPeekTokenOfType(type)) {
       this.forward();
       return true;
@@ -373,8 +394,9 @@ export class Parser {
    * @private
    */
   private addTokenTypeError(type: TokenType): void {
-    const message = `Expected next token to be ${type}, got ${this.peekToken.type} instead`;
-    this.errors.push(message);
+    const peek = this.peekToken;
+    const message = `Expected next token to be ${type}, got ${peek.type} instead`;
+    this.error(message, peek);
   }
 
   /**
@@ -450,10 +472,11 @@ export class Parser {
    * @private
    */
   private parseIntegerLiteral(): ast.Expression | null {
-    const value = parseInt(this.currentToken.literal, 10);
+    const tok = this.currentToken;
+    const value = parseInt(tok.literal, 10);
     if (isNaN(value)) {
-      const message = `Could not parse ${this.currentToken.literal} as integer`;
-      this.errors.push(message);
+      const message = `Could not parse ${tok.literal} as integer`;
+      this.error(message);
       return null;
     }
 
@@ -468,15 +491,18 @@ export class Parser {
   private parseFunctionLiteral(): ast.Expression | null {
     const token = this.currentToken;
 
-    if (!this.expectPeekAndMove(TokenType.LPAREN)) return null;
+    if (!this.consume(TokenType.LPAREN)) return null;
 
     const parameters = this.parseFunctionParameters();
 
-    if (parameters === null) return null;
+    if (parameters === null) {
+      this.error("Failed to parse function parameters");
+      return null;
+    }
 
-    if (!this.expectPeekAndMove(TokenType.LBRACE)) return null;
+    if (!this.consume(TokenType.LBRACE)) return null;
+
     const body = this.parseBlockStatement();
-
     return new literals.FunctionLiteral(token, parameters, body);
   }
 
@@ -513,7 +539,7 @@ export class Parser {
       identifiers.push(ident);
     }
 
-    if (!this.expectPeekAndMove(TokenType.RPAREN)) return null;
+    if (!this.consume(TokenType.RPAREN)) return null;
     return identifiers;
   }
 
@@ -554,7 +580,7 @@ export class Parser {
       if (exp !== null) list.push(exp);
     }
 
-    if (!this.expectPeekAndMove(end)) return [];
+    if (!this.consume(end)) return [];
     return list;
   }
 
@@ -571,7 +597,7 @@ export class Parser {
       this.forward(); // Skip { or ,
 
       const key = this.parseExpression(Precedence.LOWEST);
-      if (key == null || !this.expectPeekAndMove(TokenType.COLON)) return null;
+      if (key == null || !this.consume(TokenType.COLON)) return null;
 
       this.forward(); // Skip : (colon)
 
@@ -582,7 +608,7 @@ export class Parser {
 
       const isUnexpectedEnd =
         !this.isPeekTokenOfType(TokenType.RBRACE) &&
-        !this.expectPeekAndMove(TokenType.COMMA);
+        !this.consume(TokenType.COMMA);
 
       if (isUnexpectedEnd) {
         this.addTokenTypeError(TokenType.RBRACE);
@@ -590,7 +616,7 @@ export class Parser {
       }
     }
 
-    if (!this.expectPeekAndMove(TokenType.RBRACE)) return null;
+    if (!this.consume(TokenType.RBRACE)) return null;
     return new literals.HashLiteral(token, pairs);
   }
 
@@ -605,8 +631,7 @@ export class Parser {
     this.forward();
     const index = this.parseExpression(Precedence.LOWEST);
 
-    if (index == null || !this.expectPeekAndMove(TokenType.RBRACKET))
-      return null;
+    if (index == null || !this.consume(TokenType.RBRACKET)) return null;
 
     return new expressions.IndexExpression(token, left, index);
   }
@@ -660,7 +685,7 @@ export class Parser {
     this.forward();
     const expression = this.parseExpression(Precedence.LOWEST);
 
-    if (!this.expectPeekAndMove(TokenType.RPAREN)) return null;
+    if (!this.consume(TokenType.RPAREN)) return null;
     return expression;
   }
 
@@ -671,30 +696,35 @@ export class Parser {
    */
   private parseIfExpression(): ast.Expression | null {
     const ifToken = this.currentToken;
-    if (!this.expectPeekAndMove(TokenType.LPAREN)) return null;
+    if (!this.consume(TokenType.LPAREN)) return null;
+
+    const conditions: Expression[] = [];
+    const consequences: BlockStatement[] = [];
 
     this.forward();
     const condition = this.parseExpression(Precedence.LOWEST);
 
-    if (condition == null || !this.expectPeekAndMove(TokenType.RPAREN))
-      return null;
+    if (!condition || !this.consume(TokenType.RPAREN)) return null;
 
-    if (!this.expectPeekAndMove(TokenType.LBRACE)) return null;
+    if (!this.consume(TokenType.LBRACE)) return null;
 
     const consequence = this.parseBlockStatement();
+
+    conditions.push(condition);
+    consequences.push(consequence);
 
     let alternative: statements.BlockStatement | null = null;
     if (this.isPeekTokenOfType(TokenType.ELSE)) {
       this.forward();
 
-      if (!this.expectPeekAndMove(TokenType.LBRACE)) return null;
+      if (!this.consume(TokenType.LBRACE)) return null;
       alternative = this.parseBlockStatement();
     }
 
     return new expressions.IfExpression(
       ifToken,
-      condition,
-      consequence,
+      conditions,
+      consequences,
       alternative
     );
   }
@@ -709,7 +739,7 @@ export class Parser {
     left: ast.Expression
   ): ast.Expression | null {
     if (!(left instanceof ast.Identifier)) {
-      this.errors.push("Invalid assignment target.");
+      this.error("Invalid assignment target.");
       return null;
     }
 
@@ -768,7 +798,7 @@ export class Parser {
    */
   private noPrefixParseFnError(type: TokenType): void {
     const message = `No prefix parse function for ${type} found`;
-    this.errors.push(message);
+    this.error(message);
   }
 
   /**
@@ -864,7 +894,7 @@ export class Parser {
    * @private
    */
   private handleEnd(): boolean {
-    return this.expectPeekAndMove(TokenType.SEMICOLON);
+    return this.consume(TokenType.SEMICOLON);
   }
 
   /**
@@ -908,8 +938,20 @@ export class Parser {
     );
   }
 
-  private createParseError(message: string): null {
-    this.errors.push(message);
-    return null;
+  /**
+   * Adds an error message to the errors array.
+   *
+   * @param {string} message - The error message to be added.
+   * @param {Token} [token] - The token associated with the error. If not provided, the current token is used.
+   * @private
+   */
+  private error(message: string, token?: Token): void {
+    if (!token) token = this.currentToken;
+    const errorMsg = {
+      message,
+      line: token.position.line,
+      column: token.position.column,
+    };
+    this.errors.push(errorMsg);
   }
 }
