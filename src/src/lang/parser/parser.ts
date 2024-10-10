@@ -2,9 +2,7 @@ import Lexer from "../lexer/lexer";
 import { Token, TokenType } from "../token/token";
 import * as literals from "../ast/literal.ts";
 import * as ast from "../ast/ast.ts";
-import { Expression } from "../ast/ast.ts";
 import * as statements from "../ast/statement.ts";
-import { BlockStatement } from "../ast/statement.ts";
 import { getPrecedence, Precedence } from "./precedence.ts";
 import * as expressions from "../ast/expression.ts";
 
@@ -695,23 +693,25 @@ export class Parser {
    * @private
    */
   private parseIfExpression(): ast.Expression | null {
-    const ifToken = this.currentToken;
-    if (!this.consume(TokenType.LPAREN)) return null;
+    const token = this.currentToken;
+    const conditions: ast.Expression[] = [];
+    const consequences: statements.BlockStatement[] = [];
 
-    const conditions: Expression[] = [];
-    const consequences: BlockStatement[] = [];
+    const ifPart = this.parseIfPart();
+    if (ifPart === null) return null;
 
-    this.forward();
-    const condition = this.parseExpression(Precedence.LOWEST);
+    conditions.push(ifPart[0]);
+    consequences.push(ifPart[1]);
 
-    if (!condition || !this.consume(TokenType.RPAREN)) return null;
+    while (this.isPeekTokenOfType(TokenType.ELIF)) {
+      this.forward();
 
-    if (!this.consume(TokenType.LBRACE)) return null;
+      const elifPart = this.parseIfPart();
+      if (elifPart === null) return null;
 
-    const consequence = this.parseBlockStatement();
-
-    conditions.push(condition);
-    consequences.push(consequence);
+      conditions.push(elifPart[0]);
+      consequences.push(elifPart[1]);
+    }
 
     let alternative: statements.BlockStatement | null = null;
     if (this.isPeekTokenOfType(TokenType.ELSE)) {
@@ -722,11 +722,37 @@ export class Parser {
     }
 
     return new expressions.IfExpression(
-      ifToken,
+      token,
       conditions,
       consequences,
       alternative
     );
+  }
+
+  /**
+   * Parses a single if-part (condition and consequence) of an if-expression.
+   * This method handles the parsing of the condition in parentheses and the
+   * consequence block in braces.
+   *
+   * @returns {[ast.Expression, statements.BlockStatement] | null} A tuple containing
+   * the parsed condition expression and consequence block statement, or null if parsing fails.
+   * @private
+   */
+  private parseIfPart(): [ast.Expression, statements.BlockStatement] | null {
+    if (!this.consume(TokenType.LPAREN)) return null;
+    this.forward();
+
+    const condition = this.parseExpression(Precedence.LOWEST);
+    if (!condition) {
+      this.error("Expected condition expression");
+      return null;
+    }
+
+    if (!this.consume(TokenType.RPAREN)) return null;
+    if (!this.consume(TokenType.LBRACE)) return null;
+
+    const consequence = this.parseBlockStatement();
+    return [condition, consequence];
   }
 
   /**
