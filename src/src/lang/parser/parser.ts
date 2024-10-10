@@ -64,9 +64,17 @@ export class Parser {
   public parseProgram(): ast.Program {
     const program = new ast.Program();
     while (this.currentToken.type !== TokenType.EOF) {
-      const stmt = this.parseStatement();
-      if (stmt !== null) program.statements.push(stmt);
-
+      try {
+        const stmt = this.parseStatement();
+        if (stmt !== null) program.statements.push(stmt);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          this.error(error.message);
+        } else {
+          this.error("An unknown error occurred");
+        }
+        this.synchronize();
+      }
       this.forward();
     }
 
@@ -979,5 +987,35 @@ export class Parser {
       column: token.position.column,
     };
     this.errors.push(errorMsg);
+  }
+
+  /**
+   * Synchronizes the parser state after encountering an error.
+   * This method advances the parser to a point where it can safely continue parsing.
+   * It stops at a semicolon or at the beginning of a new statement or declaration.
+   *
+   * @private
+   */
+  private synchronize(): void {
+    this.forward();
+    while (!this.isCurrentToken(TokenType.EOF)) {
+      if (this.isCurrentToken(TokenType.SEMICOLON)) {
+        this.forward();
+        return;
+      }
+
+      switch (this.peekToken.type) {
+        case TokenType.CLASS:
+        case TokenType.FUNCTION:
+        case TokenType.LET:
+        case TokenType.FOR:
+        case TokenType.IF:
+        case TokenType.WHILE:
+        case TokenType.RETURN:
+          return;
+      }
+
+      this.forward();
+    }
   }
 }
