@@ -442,11 +442,17 @@ export default class Evaluator {
     ifExp: expression.IfExpression,
     env: objects.Environment
   ): objects.BaseObject {
-    const condition = this.evaluate(ifExp.condition, env);
-    if (utils.isError(condition)) return condition;
+    const conditions = ifExp.conditions.length;
+    for (let i = 0; i < conditions; i++) {
+      const condition = this.evaluate(ifExp.conditions[i], env);
+      if (condition instanceof objects.ErrorObject) return condition;
 
-    if (this.truthy(condition)) return this.evaluate(ifExp.consequence, env);
-    else if (ifExp.alternative) return this.evaluate(ifExp.alternative, env);
+      const truthy = this.truthy(condition);
+      if (truthy) return this.evaluate(ifExp.consequences[i], env);
+    }
+
+    if (ifExp.alternative !== null)
+      return this.evaluate(ifExp.alternative, env);
 
     return this.NULL;
   }
