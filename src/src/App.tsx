@@ -1,61 +1,67 @@
 import "./App.css";
 import MutantEditor from "./components/Editor";
+import { Terminal, Code, FileCode, Github, Coffee } from "lucide-react";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
-      <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3"
-              >
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1="10" y1="14" x2="21" y2="3" />
-              </svg>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                Enigma Language Playground
-              </h1>
-            </div>
-            <div>
-              <a
-                href="https://github.com/yourusername/enigma-language"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-6 w-6"
-                >
-                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-                </svg>
-              </a>
-            </div>
-          </div>
+    <div className="w-screen h-screen flex flex-col bg-[#0d1117] text-white">
+      {/* Top navbar */}
+      <div className="bg-[#161b22] border-b border-[#30363d] px-4 py-2 flex items-center">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#f97583]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#f2cc60]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#4d9375]"></div>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-[calc(100vh-4rem)]">
+        <div className="flex items-center mx-auto">
+          <Terminal size={20} className="text-[#4d9375] mr-2" />
+          <span className="font-bold tracking-tight text-lg">
+            Enigma Language Explorer
+          </span>
+        </div>
+
+        <div className="flex items-center gap-4 text-[#8b949e]">
+          <a
+            href="https://github.com/yourrepo/enigma"
+            className="hover:text-white transition-colors"
+          >
+            <Github size={18} />
+          </a>
+          <a href="#" className="hover:text-white transition-colors">
+            <Coffee size={18} />
+          </a>
+        </div>
+      </div>
+
+      {/* File tabs */}
+      <div className="flex bg-[#21262d] border-b border-[#30363d]">
+        <div className="flex">
+          <div className="flex items-center py-2 px-4 bg-[#0d1117] border-t-2 border-t-[#4d9375] border-r border-r-[#30363d]">
+            <FileCode size={16} className="text-[#4d9375] mr-2" />
+            <span className="text-white text-sm font-medium">main.enigma</span>
+            <button className="ml-3 text-[#8b949e] hover:text-white">
+              <span className="text-xs">×</span>
+            </button>
+          </div>
+
+          <button className="flex items-center py-2 px-4 text-[#8b949e] hover:text-white hover:bg-[#161b22]">
+            <Code size={16} className="mr-2" />
+            <span className="text-sm">utils.enigma</span>
+            <button className="ml-3 text-[#8b949e] hover:text-white">
+              <span className="text-xs">×</span>
+            </button>
+          </button>
+        </div>
+
+        <button className="ml-auto px-4 text-[#8b949e] hover:text-white">
+          <span className="text-xl">+</span>
+        </button>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1">
         <MutantEditor />
-      </main>
+      </div>
     </div>
   );
 }
