@@ -10,4 +10,6 @@ export enum ObjectType {
   HASH = "HASH",
   BREAK = "BREAK",
   CONTINUE = "CONTINUE",
+  CLASS = "CLASS",
+  INSTANCE = "INSTANCE",
 }

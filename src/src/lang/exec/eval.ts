@@ -1081,6 +1081,16 @@ export default class Evaluator {
     return res ? this.TRUE : this.FALSE;
   }
 
+  /**
+   * Processes the result of a loop execution
+   *
+   * This method handles the final result of a loop, converting break and continue
+   * statements to null values, and passing through all other results unchanged.
+   *
+   * @param result - The result object from the loop execution
+   * @returns The processed result, either NULL for break/continue
+   *  or the original result
+   */
   private processLoopResult(result: objects.BaseObject): objects.BaseObject {
     if (utils.isBreak(result)) return this.NULL;
     if (utils.isContinue(result)) return this.NULL;

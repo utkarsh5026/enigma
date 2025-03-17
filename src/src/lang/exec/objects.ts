@@ -285,6 +285,8 @@ export class FunctionObject implements BaseObject {
   body: BlockStatement;
   /** The environment in which the function was created. */
   env: Environment;
+  /** The bound instance for this function, if any. */
+  boundInstance: InstanceObject | null;
 
   /**
    * Creates a new FunctionObject.
@@ -295,11 +297,13 @@ export class FunctionObject implements BaseObject {
   constructor(
     parameters: Identifier[],
     body: BlockStatement,
-    env: Environment
+    env: Environment,
+    boundInstance: InstanceObject | null = null
   ) {
     this.parameters = parameters;
     this.body = body;
     this.env = env;
+    this.boundInstance = boundInstance;
   }
 
   inspect(): string {
@@ -396,6 +400,40 @@ export class BreakObject implements BaseObject {
 
   type(): ObjectType {
     return ObjectType.BREAK;
+  }
+}
+
+/**
+ * Represents a class object in the Enigma programming language.
+ */
+export class ClassObject implements BaseObject {
+  constructor(
+    public name: string,
+    public methods: Map<string, FunctionObject>,
+    public constructorMethod: FunctionObject | null,
+    public superclass: ClassObject | null
+  ) {}
+  type() {
+    return ObjectType.CLASS;
+  }
+  inspect() {
+    return `class ${this.name}`;
+  }
+}
+
+/**
+ * Represents an instance object in the Mutant programming language.
+ */
+export class InstanceObject implements BaseObject {
+  constructor(
+    public classObject: ClassObject,
+    public fields: Map<string, BaseObject>
+  ) {}
+  type() {
+    return ObjectType.INSTANCE;
+  }
+  inspect() {
+    return `instance of ${this.classObject.name}`;
   }
 }
 

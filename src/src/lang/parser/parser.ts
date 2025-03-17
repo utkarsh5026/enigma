@@ -120,6 +120,9 @@ export class Parser {
       case TokenType.LBRACE:
         return this.parseBlockStatement();
 
+      case TokenType.CLASS:
+        return this.parseClassDeclaration();
+
       default:
         return this.parseExpressionStatement();
     }
@@ -1017,5 +1020,61 @@ export class Parser {
 
       this.forward();
     }
+  }
+
+  private parseClassDeclaration(): statements.ClassDeclaration | null {
+    const token = this.currentToken;
+    if (!this.consume(TokenType.IDENTIFIER)) return null;
+
+    const name = new ast.Identifier(
+      this.currentToken,
+      this.currentToken.literal
+    );
+
+    let superClass: ast.Identifier | null = null;
+    if (this.isPeekTokenOfType(TokenType.EXTENDS)) {
+      this.forward();
+      if (!this.consume(TokenType.IDENTIFIER)) return null;
+      superClass = new ast.Identifier(
+        this.currentToken,
+        this.currentToken.literal
+      );
+    }
+
+    if (!this.consume(TokenType.LBRACE)) return null;
+    const constructorMethod: statements.ConstructorDefinition | null = null;
+    const methods: statements.MethodDefinition[] = [];
+
+    while (
+      !this.isCurrentToken(TokenType.RBRACE) &&
+      !this.isCurrentToken(TokenType.EOF)
+    ) {
+      if (
+        this.isCurrentToken(TokenType.IDENTIFIER) &&
+        this.isPeekTokenOfType(TokenType.LPAREN)
+      ) {
+        if (this.currentToken.literal === "init") {
+          if (constructorMethod !== null)
+            throw new Error("Cannot have multiple constructors");
+
+          constructorMethod = this.parseConstructorDefinition();
+        } else {
+          const method = this.parseMethodDefinition();
+          if (method !== null) methods.push(method);
+        }
+      } else {
+        throw new Error(
+          `Unexpected token inside class: ${this.currentToken.literal}`
+        );
+      }
+    }
+
+    return new statements.ClassDeclaration(
+      token,
+      name,
+      constructorMethod,
+      methods,
+      superClass
+    );
   }
 }

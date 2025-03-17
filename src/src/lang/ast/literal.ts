@@ -178,3 +178,21 @@ export class FunctionLiteral implements Expression {
     return `${this.tokenLiteral()}(${params}) ${this.body.toString()}`;
   }
 }
+
+export class FStringLiteral implements Expression {
+  token: Token;
+  value: string;
+
+  constructor(token: Token, value: string) {
+    this.token = token;
+    this.value = value;
+  }
+
+  expressionNode() {}
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+  toString(): string {
+    return this.token.literal;
+  }
+}
