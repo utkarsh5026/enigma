@@ -13,7 +13,17 @@ import SyntaxReference from "./SyntaxReference";
 import FeatureCard from "./FeatureCard";
 import CodeExample from "./CodeExample";
 import { highlightSyntax } from "./syntax";
-
+/**
+ * LanguageGuide Component
+ *
+ * This component serves as a guide for the Enigma Programming Language,
+ * providing an overview, examples, and a syntax reference. It allows users
+ * to navigate between different sections to learn about the language's
+ * features and capabilities.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered LanguageGuide component.
+ */
 const LanguageGuide: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     "overview" | "examples" | "reference"
