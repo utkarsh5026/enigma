@@ -1,9 +1,18 @@
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { ASTNodes } from "@/lang/ast";
-import { getNodeColor } from "./nodeColor";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getNodeStyle, getNodeCategory } from "./nodeStyles";
 
 interface AstNodeProps {
   node: ASTNodes;
@@ -12,31 +21,6 @@ interface AstNodeProps {
   isLast?: boolean;
 }
 
-/**
- * AstNode Component
- *
- * This component is responsible for rendering a single node of the Abstract Syntax Tree (AST).
- * It displays the node type, its simple properties, and allows for expandable complex properties.
- *
- * Props:
- * - node (ASTNodes): The AST node to be rendered. This can be a literal, statement, or expression.
- * - depth (number): The depth of the node in the AST hierarchy, used for indentation and styling.
- * - path (string): A unique path identifier for the node, useful for keying child components.
- * - isLast (boolean): Indicates if this node is the last child in its parent, used for styling.
- *
- * State:
- * - expanded (boolean): Tracks whether the node's complex properties are currently expanded or collapsed.
- *
- * Functions:
- * - hasChildren(node: ASTNodes): Determines if the given node has any children that can be expanded.
- * - formatSimpleValue(value: string): Formats simple values (strings, numbers) for display.
- * - getSimpleProperties(): Extracts and formats properties of the node that are simple enough to display directly.
- * - getComplexProperties(): Extracts properties of the node that are complex objects or arrays of objects.
- *
- * Rendering:
- * The component renders a tree-like structure with connectors for visual hierarchy.
- * It displays the node type, simple properties as badges, and expandable sections for complex properties.
- */
 const AstNode: React.FC<AstNodeProps> = ({
   node,
   depth,
@@ -44,7 +28,6 @@ const AstNode: React.FC<AstNodeProps> = ({
   isLast = false,
 }) => {
   const [expanded, setExpanded] = useState(depth < 2);
-
   const nodeType = node.constructor.name;
 
   const hasChildren = (node: ASTNodes): boolean => {
@@ -170,115 +153,125 @@ const AstNode: React.FC<AstNodeProps> = ({
   const simpleProps = getSimpleProperties();
   const complexProps = getComplexProperties();
 
+  // Get node styling
+  const nodeStyle = getNodeStyle(nodeType);
+
   return (
-    <div className={`relative bg-ctp-surface2 ${depth > 0 ? "ml-6" : ""}`}>
+    <div className={`relative ${depth > 0 ? "ml-6" : ""}`}>
       {/* Tree line connector */}
       {depth > 0 && (
         <div
-          className="absolute left-0 top-0 bottom-0 -ml-6 border-l-2 border-dashed border-gray-300 dark:border-gray-700"
+          className="absolute left-0 top-0 bottom-0 -ml-6 border-l border-[#30363d]"
           style={{
-            height: isLast ? "14px" : "100%",
+            height: isLast ? "16px" : "100%",
             left: "-2px",
           }}
         />
       )}
 
       {depth > 0 && (
-        <div className="absolute border-t-2 border-dashed border-gray-300 dark:border-gray-700 w-[20px] top-[14px] left-[-20px]" />
+        <div className="absolute border-t border-[#30363d] w-[20px] top-[16px] left-[-20px]" />
       )}
 
       <div className="relative mb-2">
-        {/* Node content */}
-        <div
-          className={cn(
-            "p-2 rounded-md border relative",
-            getNodeColor(nodeType)
-          )}
+        <Collapsible
+          open={expanded}
+          onOpenChange={setExpanded}
+          className="border border-[#30363d] rounded-md overflow-hidden"
         >
-          <div className="flex items-center">
-            {hasExpandableChildren && (
-              <button
-                onClick={() => setExpanded(!expanded)}
-                className="mr-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-              >
-                {expanded ? (
-                  <ChevronDown size={16} />
-                ) : (
-                  <ChevronRight size={16} />
-                )}
-              </button>
-            )}
+          <CollapsibleTrigger
+            className={`w-full p-2 flex items-center justify-between hover:bg-[#161b22] transition-colors text-left cursor-pointer focus:outline-none ${nodeStyle.background}`}
+            disabled={!hasExpandableChildren}
+          >
+            <div className="flex items-center">
+              {hasExpandableChildren && (
+                <ChevronRight
+                  size={14}
+                  className={`mr-2 transition-transform duration-200 ${
+                    expanded ? "rotate-90" : ""
+                  } text-[#8b949e]`}
+                />
+              )}
 
-            <div className="font-medium">{nodeType}</div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className={`font-medium ${nodeStyle.text}`}>
+                    {nodeType}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>{getNodeCategory(nodeType)}</TooltipContent>
+              </Tooltip>
 
-            {/* Basic properties badge */}
-            {Object.keys(simpleProps).length > 0 && (
-              <div className="ml-3 flex flex-wrap gap-1">
-                {Object.entries(simpleProps).map(([key, value]) => (
-                  <Badge
-                    variant="outline"
-                    key={`${path}-${key}`}
-                    className="text-xs"
-                  >
-                    {key}: {value}
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Expanded content */}
-          {expanded && hasExpandableChildren && (
-            <div className="mt-2 pl-2 border-l-2 border-gray-200 dark:border-gray-700">
-              {/* Complex properties */}
-              {Object.entries(complexProps).map(
-                ([key, value], index, array) => {
-                  if (Array.isArray(value)) {
-                    return (
-                      <div key={`${path}-${key}`} className="mb-2">
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                          {key}:
-                        </div>
-                        {value.length === 0 ? (
-                          <div className="text-xs italic text-gray-400 dark:text-gray-500">
-                            Empty array
-                          </div>
-                        ) : (
-                          value.map((item, i) => (
-                            <AstNode
-                              key={`${path}-${key}-${i}`}
-                              node={item}
-                              depth={depth + 1}
-                              path={`${path}-${key}-${i}`}
-                              isLast={
-                                i === value.length - 1 &&
-                                index === array.length - 1
-                              }
-                            />
-                          ))
-                        )}
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div key={`${path}-${key}`}>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                          {key}:
-                        </div>
-                        <AstNode
-                          node={value}
-                          depth={depth + 1}
-                          path={`${path}-${key}`}
-                          isLast={index === array.length - 1}
-                        />
-                      </div>
-                    );
-                  }
-                }
+              {/* Basic properties badge */}
+              {Object.keys(simpleProps).length > 0 && (
+                <div className="ml-3 flex flex-wrap gap-1">
+                  {Object.entries(simpleProps).map(([key, value]) => (
+                    <Badge
+                      key={`${path}-${key}`}
+                      className="text-xs bg-[#1f2937] text-[#9ece6a] border-none"
+                    >
+                      {key}: {value}
+                    </Badge>
+                  ))}
+                </div>
               )}
             </div>
+          </CollapsibleTrigger>
+
+          {/* Expanded content */}
+          {hasExpandableChildren && (
+            <CollapsibleContent>
+              <div className="p-2 pt-0 border-t border-[#30363d] bg-[#0d1117]">
+                {/* Complex properties */}
+                {Object.entries(complexProps).map(
+                  ([key, value], index, array) => {
+                    if (Array.isArray(value)) {
+                      return (
+                        <div key={`${path}-${key}`} className="mt-2">
+                          <div className="text-xs text-[#565f89] mb-1 font-medium">
+                            {key}:
+                          </div>
+                          {value.length === 0 ? (
+                            <div className="text-xs italic text-[#565f89] ml-2">
+                              Empty array
+                            </div>
+                          ) : (
+                            value.map((item, i) => (
+                              <AstNode
+                                key={`${path}-${key}-${i}`}
+                                node={item}
+                                depth={depth + 1}
+                                path={`${path}-${key}-${i}`}
+                                isLast={
+                                  i === value.length - 1 &&
+                                  index === array.length - 1
+                                }
+                              />
+                            ))
+                          )}
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div key={`${path}-${key}`} className="mt-2">
+                          <div className="text-xs text-[#565f89] mb-1 font-medium">
+                            {key}:
+                          </div>
+                          <AstNode
+                            node={value}
+                            depth={depth + 1}
+                            path={`${path}-${key}`}
+                            isLast={index === array.length - 1}
+                          />
+                        </div>
+                      );
+                    }
+                  }
+                )}
+              </div>
+            </CollapsibleContent>
           )}
-        </div>
+        </Collapsible>
       </div>
     </div>
   );
