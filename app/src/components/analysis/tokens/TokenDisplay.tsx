@@ -1,5 +1,6 @@
-import React from "react";
-import { Token, TokenType } from "../../../lang/token/token";
+import React, { useState } from "react";
+import { Token } from "@/lang/token/token";
+import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -7,150 +8,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight } from "lucide-react";
+import { Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { tokenCategories } from "./tokens";
-
-// Color mapping for different token types using Tokyo Night colors
-const getTokenColor = (type: TokenType): string => {
-  const colorMap: Partial<Record<TokenType, string>> = {
-    [TokenType.IDENTIFIER]:
-      "text-tokyo-blue bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.INT]:
-      "text-tokyo-orange bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.STRING]:
-      "text-tokyo-green bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-
-    // Keywords
-    [TokenType.FUNCTION]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.LET]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.CONST]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.IF]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.ELSE]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.RETURN]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.WHILE]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.FOR]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.BREAK]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.CONTINUE]:
-      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-
-    // Boolean literals
-    [TokenType.TRUE]:
-      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.FALSE]:
-      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.NULL]:
-      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-
-    // Operators
-    [TokenType.ASSIGN]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.PLUS]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.MINUS]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.BANG]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.ASTERISK]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.SLASH]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.EQ]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.NOT_EQ]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.PLUS_ASSIGN]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.MINUS_ASSIGN]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.ASTERISK_ASSIGN]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.SLASH_ASSIGN]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-
-    // Comparisons
-    [TokenType.LESS_THAN]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.GREATER_THAN]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-
-    // Logical operators
-    [TokenType.AND]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-    [TokenType.OR]:
-      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-
-    // Punctuation
-    [TokenType.COMMA]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.SEMICOLON]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.COLON]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.LPAREN]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.RPAREN]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.LBRACE]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.RBRACE]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.LBRACKET]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.RBRACKET]:
-      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-
-    // Special
-    [TokenType.EOF]:
-      "text-tokyo-comment bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
-    [TokenType.ILLEGAL]:
-      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
-  };
-
-  return (
-    colorMap[type] ||
-    "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20"
-  );
-};
-
-// Get category for a token type
-const getTokenCategory = (type: TokenType): string => {
-  for (const [category, types] of Object.entries(tokenCategories)) {
-    if (types.includes(type)) {
-      return category;
-    }
-  }
-  return "Other";
-};
+import { getTokenCategory, getCategoryIcon } from "./tokens";
+import CodeTokens from "./CodeTokens";
 
 interface TokenDisplayProps {
   tokens: Token[];
 }
 
 const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+
   // Group tokens by line
   const tokensByLine = tokens.reduce<Record<number, Token[]>>((acc, token) => {
     const { line } = token.position;
@@ -161,146 +31,162 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
     return acc;
   }, {});
 
+  // Get unique categories
+  const uniqueCategories = [
+    ...new Set(tokens.map((token) => getTokenCategory(token.type))),
+  ];
+
   // Get an array of line numbers
   const lineNumbers = Object.keys(tokensByLine)
     .map(Number)
     .sort((a, b) => a - b);
 
-  // Visualize the source code by line
-  const lineVisualizations = lineNumbers.map((lineNum) => {
-    const lineTokens = tokensByLine[lineNum];
-    // Sort tokens by column to ensure they appear in order
-    lineTokens.sort((a, b) => a.position.column - b.position.column);
-
-    return (
-      <pre
-        key={`line-${lineNum}`}
-        className="text-sm  whitespace-pre-wrap overflow-x-auto p-2 border-l-2 bg-tok bg-tokyo-bg-dark border-tokyo-bg-highlight mb-1 font-family-mono"
-      >
-        <span className=" mr-4 select-none text-tokyo-fg-dark">{lineNum}</span>
-        {lineTokens.map((token, idx) => (
-          <span
-            key={`token-${lineNum}-${idx}`}
-            className={cn(
-              "rounded px-1 py-0.5 mr-0.5",
-              getTokenColor(token.type)
-            )}
-            title={`${token.type} at position ${token.position.column}`}
-          >
-            {token.literal || " "}
-          </span>
-        ))}
-      </pre>
-    );
-  });
-
   return (
-    <Card className="w-full shadow-lg border-tokyo-bg-highlight bg-tokyo-bg dark:bg-tokyo-bg">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-bold text-tokyo-fg">
-          Token Analysis
-        </CardTitle>
-        <CardDescription className="text-tokyo-fg-dark">
-          Visualized token stream from lexical analysis
-        </CardDescription>
-      </CardHeader>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="w-full shadow-lg border-tokyo-bg-highlight bg-tokyo-bg dark:bg-tokyo-bg">
+        <CardHeader className="pb-2">
+          <motion.div
+            initial={{ x: -20 }}
+            animate={{ x: 0 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <CardTitle className="text-2xl font-bold text-tokyo-fg flex items-center">
+              <Terminal size={24} className="mr-2 text-tokyo-cyan" />
+              Token Analysis
+            </CardTitle>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <CardDescription className="text-tokyo-fg-dark">
+              Visualized token stream from lexical analysis
+            </CardDescription>
+          </motion.div>
+        </CardHeader>
 
-      <CardContent className="space-y-6">
-        {/* Source code visualization */}
-        <div className="space-y-3">
-          <h3 className="text-lg font-medium text-tokyo-fg">
-            Source Code Tokenization
-          </h3>
-          <div className="bg-tokyo-bg-dark rounded-lg p-4">
-            {lineVisualizations.length > 0 ? (
-              lineVisualizations
-            ) : (
-              <p className="text-tokyo-comment italic">No tokens to display</p>
-            )}
-          </div>
-        </div>
+        <CardContent className="space-y-6">
+          {/* Category filter pills */}
+          {tokens.length > 0 && (
+            <motion.div
+              className="flex flex-wrap gap-2 mb-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: 0.3,
+                staggerChildren: 0.1,
+              }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Badge
+                  variant={activeFilter === null ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setActiveFilter(null)}
+                >
+                  All
+                </Badge>
+              </motion.div>
 
-        {/* Token tables by line */}
-        <div className="space-y-3">
-          <h3 className="text-lg font-medium text-tokyo-fg">
-            Detailed Token Analysis
-          </h3>
+              {uniqueCategories.map((category, index) => (
+                <motion.div
+                  key={category}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    transition: {
+                      delay: 0.3 + index * 0.05,
+                    },
+                  }}
+                >
+                  <Badge
+                    variant={activeFilter === category ? "default" : "outline"}
+                    className="cursor-pointer flex items-center"
+                    onClick={() =>
+                      setActiveFilter(
+                        category === activeFilter ? null : category
+                      )
+                    }
+                  >
+                    {getCategoryIcon(category)}
+                    {category}
+                  </Badge>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
 
-          {lineNumbers.map((lineNum) => (
-            <Collapsible key={`line-table-${lineNum}`} className="mb-4">
-              <CollapsibleTrigger className="flex items-center w-full p-3 text-left font-medium bg-tokyo-bg-dark rounded-lg hover:bg-tokyo-bg-highlight transition-colors">
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-90 text-tokyo-fg" />
-                    <span className="text-tokyo-fg">Line {lineNum}</span>
-                    <Badge
-                      variant="outline"
-                      className="ml-2 font-mono bg-tokyo-bg-highlight text-tokyo-fg"
+          {/* Statistics and legend */}
+          {tokens.length > 0 && (
+            <motion.div
+              className="bg-tokyo-bg-dark/60 rounded-lg p-3 mb-4 border border-tokyo-bg-highlight/30"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="flex flex-wrap gap-y-2 gap-x-4 text-sm">
+                <motion.div
+                  className="flex items-center"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <span className="text-tokyo-fg-dark mr-2">Total Tokens:</span>
+                  <Badge className="bg-tokyo-cyan">{tokens.length}</Badge>
+                </motion.div>
+
+                {uniqueCategories.map((category, index) => {
+                  const count = tokens.filter(
+                    (token) => getTokenCategory(token.type) === category
+                  ).length;
+
+                  return (
+                    <motion.div
+                      key={category}
+                      className="flex items-center"
+                      whileHover={{ scale: 1.05 }}
+                      initial={{ opacity: 0 }}
+                      animate={{
+                        opacity: 1,
+                        transition: { delay: 0.4 + index * 0.1 },
+                      }}
                     >
-                      {tokensByLine[lineNum].length} tokens
-                    </Badge>
-                  </div>
-                </div>
-              </CollapsibleTrigger>
-
-              <CollapsibleContent className="pt-2">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-tokyo-bg-highlight hover:bg-tokyo-bg-highlight/50">
-                      <TableHead className="w-[100px] text-tokyo-fg">
-                        Position
-                      </TableHead>
-                      <TableHead className="w-[150px] text-tokyo-fg">
-                        Category
-                      </TableHead>
-                      <TableHead className="w-[150px] text-tokyo-fg">
-                        Type
-                      </TableHead>
-                      <TableHead className="text-tokyo-fg">Literal</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {tokensByLine[lineNum].map((token, idx) => (
-                      <TableRow
-                        key={`token-detail-${lineNum}-${idx}`}
-                        className="border-tokyo-bg-highlight hover:bg-tokyo-bg-highlight/50"
+                      <span className="text-tokyo-fg-dark mr-2">
+                        {category}:
+                      </span>
+                      <Badge
+                        className={cn(
+                          activeFilter === category
+                            ? "bg-tokyo-green"
+                            : "bg-tokyo-bg-highlight"
+                        )}
                       >
-                        <TableCell className="font-mono text-tokyo-fg">
-                          Col {token.position.column}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className="font-normal bg-tokyo-bg text-tokyo-fg"
-                          >
-                            {getTokenCategory(token.type)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            className={cn(
-                              "font-mono",
-                              getTokenColor(token.type)
-                            )}
-                          >
-                            {token.type}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <code className="px-2 py-1 bg-tokyo-bg-highlight rounded font-mono text-tokyo-fg">
-                            {token.literal || "<empty>"}
-                          </code>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CollapsibleContent>
-            </Collapsible>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+                        {count}
+                      </Badge>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Source code visualization with tooltips */}
+          <CodeTokens
+            tokensByLine={tokensByLine}
+            activeFilter={activeFilter}
+            lineNumbers={lineNumbers}
+          />
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
