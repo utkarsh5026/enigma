@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { getKeywords } from "../lang/token/token";
+import { getKeywords } from "../../lang/token/token";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 
 interface EnigmaEditorProps {
