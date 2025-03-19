@@ -89,7 +89,7 @@ const NavBar: React.FC<NavBarProps> = ({ activeTab, setActiveTab }) => {
           </button>
 
           <a
-            href="https://github.com/yourrepo/enigma"
+            href="https://github.com/utkarsh5026/enigma"
             className="relative p-2 rounded-md text-tokyo-fg-dark hover:text-tokyo-fg hover:bg-[#1e2030]/50 transition-all duration-200"
             title="GitHub Repository"
             onMouseEnter={() => setIsHovered("github")}
