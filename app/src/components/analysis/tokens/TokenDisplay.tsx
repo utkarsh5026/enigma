@@ -18,10 +18,28 @@ interface TokenDisplayProps {
   tokens: Token[];
 }
 
+/**
+ * TokenDisplay component displays a visual representation of tokens
+ * generated from lexical analysis of source code.
+ *
+ * This component takes in an array of tokens and organizes them by
+ * their respective line numbers. It allows users to filter tokens
+ * based on their categories and provides a summary of the total
+ * tokens and their counts by category.
+ *
+ * @param {Token[]} tokens - An array of tokens to be displayed.
+ *
+ * The component features:
+ * - A header with the title "Token Analysis" and a description.
+ * - A filter section that allows users to view all tokens or filter
+ *   by specific categories.
+ * - A summary section that shows the total number of tokens and
+ *   counts for each category.
+ * - A detailed view of tokens organized by line numbers.
+ */
 const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
-  // Group tokens by line
   const tokensByLine = tokens.reduce<Record<number, Token[]>>((acc, token) => {
     const { line } = token.position;
     if (!acc[line]) {
@@ -31,12 +49,10 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
     return acc;
   }, {});
 
-  // Get unique categories
   const uniqueCategories = [
     ...new Set(tokens.map((token) => getTokenCategory(token.type))),
   ];
 
-  // Get an array of line numbers
   const lineNumbers = Object.keys(tokensByLine)
     .map(Number)
     .sort((a, b) => a - b);
@@ -71,7 +87,6 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Category filter pills */}
           {tokens.length > 0 && (
             <motion.div
               className="flex flex-wrap gap-2 mb-4"
@@ -126,7 +141,6 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
             </motion.div>
           )}
 
-          {/* Statistics and legend */}
           {tokens.length > 0 && (
             <motion.div
               className="bg-tokyo-bg-dark/60 rounded-lg p-3 mb-4 border border-tokyo-bg-highlight/30"
@@ -178,7 +192,6 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
             </motion.div>
           )}
 
-          {/* Source code visualization with tooltips */}
           <CodeTokens
             tokensByLine={tokensByLine}
             activeFilter={activeFilter}
