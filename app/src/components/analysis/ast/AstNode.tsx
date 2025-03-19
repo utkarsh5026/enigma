@@ -12,6 +12,31 @@ interface AstNodeProps {
   isLast?: boolean;
 }
 
+/**
+ * AstNode Component
+ *
+ * This component is responsible for rendering a single node of the Abstract Syntax Tree (AST).
+ * It displays the node type, its simple properties, and allows for expandable complex properties.
+ *
+ * Props:
+ * - node (ASTNodes): The AST node to be rendered. This can be a literal, statement, or expression.
+ * - depth (number): The depth of the node in the AST hierarchy, used for indentation and styling.
+ * - path (string): A unique path identifier for the node, useful for keying child components.
+ * - isLast (boolean): Indicates if this node is the last child in its parent, used for styling.
+ *
+ * State:
+ * - expanded (boolean): Tracks whether the node's complex properties are currently expanded or collapsed.
+ *
+ * Functions:
+ * - hasChildren(node: ASTNodes): Determines if the given node has any children that can be expanded.
+ * - formatSimpleValue(value: string): Formats simple values (strings, numbers) for display.
+ * - getSimpleProperties(): Extracts and formats properties of the node that are simple enough to display directly.
+ * - getComplexProperties(): Extracts properties of the node that are complex objects or arrays of objects.
+ *
+ * Rendering:
+ * The component renders a tree-like structure with connectors for visual hierarchy.
+ * It displays the node type, simple properties as badges, and expandable sections for complex properties.
+ */
 const AstNode: React.FC<AstNodeProps> = ({
   node,
   depth,
