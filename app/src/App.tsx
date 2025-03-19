@@ -1,13 +1,5 @@
 import MutantEditor from "./components/Editor";
-import {
-  Terminal,
-  Code,
-  Github,
-  Coffee,
-  BookOpen,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Terminal } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import NavBar from "./components/layout/NavBar";
@@ -28,8 +20,6 @@ function App() {
   const tokyoBg = "#1a1b26";
   const tokyoBgDark = "#16161e";
   const tokyoBgHighlight = "#292e42";
-  const tokyoFg = "#a9b1d6";
-  const tokyoFgDark = "#787c99";
   const tokyoComment = "#565f89";
   const tokyoCyan = "#7dcfff";
 
@@ -42,18 +32,11 @@ function App() {
         {activeTab === "editor" ? (
           <MutantEditor />
         ) : (
-          <div
-            className="h-full overflow-auto"
-            style={{ backgroundColor: tokyoBg }}
-          >
+          <div className="h-full overflow-auto bg-tokyo-bg">
             <div className="max-w-4xl mx-auto py-10 px-4">
               <div className="text-center mb-8">
                 <div className="inline-flex items-center mb-3">
-                  <Terminal
-                    size={36}
-                    style={{ color: tokyoCyan }}
-                    className="mr-2"
-                  />
+                  <Terminal size={36} className="mr-2 text-tokyo-cyan" />
                   <h1 className="text-3xl font-bold">About Enigma Language</h1>
                 </div>
                 <p className="text-lg text-tokyo-purple">
@@ -62,22 +45,16 @@ function App() {
                 </p>
               </div>
 
-              <div
-                style={{
-                  backgroundColor: tokyoBgDark,
-                  borderColor: tokyoBgHighlight,
-                }}
-                className="border rounded-lg p-6 mb-8"
-              >
+              <div className="rounded-lg p-6 mb-8 border-2 border-tokyo-bg-highlight bg-tokyo-bg-dark">
                 <h2 className="text-xl font-bold mb-4">Project Overview</h2>
-                <p style={{ color: tokyoComment }} className="mb-4">
+                <p className="mb-4 text-tokyo-fg">
                   Enigma is a programming language designed for educational
                   purposes, helping developers understand the inner workings of
                   language parsing, abstract syntax trees, and interpretation.
                   It features a clean, expressive syntax inspired by modern
                   programming languages.
                 </p>
-                <p style={{ color: tokyoComment }}>
+                <p className="mb-4 text-tokyo-fg">
                   With this interactive explorer, you can write Enigma code and
                   see in real-time how it gets tokenized and parsed into an
                   abstract syntax tree (AST). This visualization helps to bridge
@@ -92,7 +69,7 @@ function App() {
                     backgroundColor: tokyoBgDark,
                     borderColor: tokyoBgHighlight,
                   }}
-                  className="border rounded-lg p-6"
+                  className="border rounded-lg p-6 bg-tokyo-bg-dark "
                 >
                   <h2 className="text-xl font-bold mb-4 bg-tokyo-bg-dark">
                     Features
