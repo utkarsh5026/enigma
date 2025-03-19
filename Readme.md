@@ -1,10 +1,10 @@
-# 🚀 Enigma Language Explorer 
+# 🚀 Enigma Language Explorer
 
 Welcome to the Enigma Language Explorer! ✨ This is an interactive playground where you can write code in Enigma (a programming language I created from scratch) and see how it's processed behind the scenes. It's my way of sharing the fascinating world of programming language design!
 
 ## 🧩 What is Enigma?
 
-Enigma is a fun, expressive programming language I designed to combine my favorite features from several languages. Think JavaScript meets Ruby with a dash of functional programming goodness! 
+* Enigma is a fun, expressive programming language I designed to combine my favorite features from several languages. Think JavaScript meets Ruby with a dash of functional programming goodness!
 
 ### ✨ Language Features
 
@@ -163,13 +163,13 @@ let classroom = {
     // Calculate average grade
     let sum = 0;
     let count = len(students);
-    
+  
     let i = 0;
     while (i < count) {
       sum = sum + students[i]["grade"];
       i = i + 1;
     }
-    
+  
     return sum / count;
   }
 };
@@ -221,14 +221,14 @@ let findPrimes = fn(max) {
   
   for (let i = 2; i <= max; i = i + 1) {
     let isPrime = true;
-    
+  
     for (let j = 2; j * j <= i; j = j + 1) {
       if (i % j == 0) {
         isPrime = false;
         break;  // Skip remaining factors
       }
     }
-    
+  
     if (isPrime) {
       primes[len(primes)] = i;
     }
@@ -294,13 +294,13 @@ let calculateAverages = fn(studentList) {
     let student = studentList[i];
     let scores = student["scores"];
     let sum = 0;
-    
+  
     let j = 0;
     while (j < len(scores)) {
       sum = sum + scores[j];
       j = j + 1;
     }
-    
+  
     let avg = sum / len(scores);
     results[student["name"]] = avg;
     i = i + 1;
