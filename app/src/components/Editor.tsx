@@ -80,8 +80,10 @@ const MutantEditor: React.FC = () => {
     <div className="flex flex-col h-full bg-[#0d1117] text-white">
       <div className="border-b border-[#30363d] bg-[#161b22] px-4 py-3">
         <h1 className="text-xl font-bold text-white flex items-center gap-2">
-          <Code size={20} className="text-[#4d9375]" />
-          <span>Enigma Language Explorer</span>
+          <Code size={20} className="text-tokyo-green" />
+          <span className="text-tokyo-green font-mono text-tokyo-fg-dark">
+            Enigma Language Explorer
+          </span>
         </h1>
         <p className="text-[#8b949e] text-sm mt-1">
           Write code in the editor to analyze tokens, AST, and execution results

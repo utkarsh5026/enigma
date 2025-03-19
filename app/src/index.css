@@ -53,6 +53,11 @@
   --tokyo-yellow: #e0af68;
   --tokyo-blue: #7aa2f7;
   --tokyo-purple: #9d7cd8;
+  
+  /* Font families */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "Source Code Pro", "Cascadia Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .dark {
@@ -102,6 +107,11 @@
   --tokyo-yellow: #e0af68;
   --tokyo-blue: #7aa2f7;
   --tokyo-purple: #9d7cd8;
+  
+  /* Font families - same in dark mode */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 
@@ -157,6 +167,11 @@
   --color-tokyo-yellow: var(--tokyo-yellow);
   --color-tokyo-blue: var(--tokyo-blue);
   --color-tokyo-purple: var(--tokyo-purple);
+  
+  /* Font families */
+  --font-family-sans: var(--font-sans);
+  --font-family-serif: var(--font-serif);
+  --font-family-mono: var(--font-mono);
 }
 
 @layer base {

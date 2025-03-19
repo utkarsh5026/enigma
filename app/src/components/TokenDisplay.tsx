@@ -242,9 +242,11 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
     return (
       <pre
         key={`line-${lineNum}`}
-        className="text-sm font-mono whitespace-pre-wrap overflow-x-auto p-2 border-l-2 border-tokyo-bg-highlight mb-1"
+        className="text-sm font-mono whitespace-pre-wrap overflow-x-auto p-2 border-l-2 bg-tok bg-tokyo-bg-dark border-tokyo-bg-highlight mb-1"
       >
-        <span className="text-tokyo-comment mr-4 select-none">{lineNum}</span>
+        <span className="text-tokyo-comment mr-4 select-none text-tokyo-fg-dark">
+          {lineNum}
+        </span>
         {lineTokens.map((token, idx) => (
           <span
             key={`token-${lineNum}-${idx}`}

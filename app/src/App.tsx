@@ -1,4 +1,3 @@
-import "./App.css";
 import MutantEditor from "./components/Editor";
 import {
   Terminal,
@@ -10,6 +9,8 @@ import {
   Sun,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+
+import NavBar from "./components/layout/NavBar";
 
 function App() {
   const [activeTab, setActiveTab] = useState<"editor" | "about">("editor");
@@ -24,10 +25,6 @@ function App() {
     }
   }, [darkMode]);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
   const tokyoBg = "#1a1b26";
   const tokyoBgDark = "#16161e";
   const tokyoBgHighlight = "#292e42";
@@ -35,93 +32,10 @@ function App() {
   const tokyoFgDark = "#787c99";
   const tokyoComment = "#565f89";
   const tokyoCyan = "#7dcfff";
-  const tokyoGreen = "#9ece6a";
-  const tokyoOrange = "#ff9e64";
-  const tokyoRed = "#f7768e";
-  const tokyoYellow = "#e0af68";
-  const tokyoBlue = "#7aa2f7";
-  const tokyoPurple = "#9d7cd8";
 
   return (
-    <div
-      className="w-screen h-screen flex flex-col"
-      style={{ backgroundColor: tokyoBg, color: tokyoFg }}
-    >
-      {/* Top navbar */}
-      <div
-        style={{
-          backgroundColor: tokyoBgDark,
-          borderBottomColor: tokyoBgHighlight,
-        }}
-        className="border-b px-4 py-2 flex items-center"
-      >
-        <div className="flex items-center gap-2">
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: tokyoRed }}
-          ></div>
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: tokyoYellow }}
-          ></div>
-          <div
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: tokyoGreen }}
-          ></div>
-        </div>
-
-        <div className="flex items-center mx-auto">
-          <Terminal size={20} style={{ color: tokyoCyan }} className="mr-2" />
-          <span className="font-bold tracking-tight text-lg">
-            Enigma Language Explorer
-          </span>
-        </div>
-
-        <div
-          className="flex items-center gap-4"
-          style={{ color: tokyoComment }}
-        >
-          <button
-            className="hover:text-white transition-colors"
-            onClick={toggleDarkMode}
-            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
-            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          <button
-            style={{ color: activeTab === "editor" ? tokyoFg : tokyoComment }}
-            className="hover:text-white transition-colors"
-            onClick={() => setActiveTab("editor")}
-            title="Editor"
-          >
-            <Code size={18} />
-          </button>
-          <button
-            style={{ color: activeTab === "about" ? tokyoFg : tokyoComment }}
-            className="hover:text-white transition-colors"
-            onClick={() => setActiveTab("about")}
-            title="About"
-          >
-            <BookOpen size={18} />
-          </button>
-          <a
-            href="https://github.com/yourrepo/enigma"
-            className="hover:text-white transition-colors"
-            title="GitHub Repository"
-            style={{ color: tokyoComment }}
-          >
-            <Github size={18} />
-          </a>
-          <a
-            href="#"
-            className="hover:text-white transition-colors"
-            title="Buy me a coffee"
-            style={{ color: tokyoComment }}
-          >
-            <Coffee size={18} />
-          </a>
-        </div>
-      </div>
+    <div className="w-screen h-screen flex flex-col font-family-mono bg-tokyo-bg">
+      <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main content */}
       <div className="flex-1 overflow-hidden">
@@ -142,7 +56,7 @@ function App() {
                   />
                   <h1 className="text-3xl font-bold">About Enigma Language</h1>
                 </div>
-                <p style={{ color: tokyoComment }} className="text-lg">
+                <p className="text-lg text-tokyo-purple">
                   An educational programming language with a clean syntax and
                   powerful features
                 </p>

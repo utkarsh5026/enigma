@@ -266,7 +266,6 @@ let result = fibonacci(10);
           overviewRulerBorder: false, // Hide the overview ruler border
           hideCursorInOverviewRuler: true, // Hide the cursor in the overview ruler
           renderLineHighlight: "line",
-          renderIndentGuides: true,
           smoothScrolling: true,
           cursorBlinking: "smooth",
           cursorSmoothCaretAnimation: "on",
