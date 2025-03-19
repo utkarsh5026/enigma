@@ -132,7 +132,10 @@ export const highlightSyntax = (code: string): JSX.Element => {
         processCurrentWord();
 
         return (
-          <div key={`line-${lineIndex}`} className="leading-relaxed">
+          <div
+            key={`line-${lineIndex}`}
+            className="leading-relaxed font-['JetBrains Mono']"
+          >
             {result}
           </div>
         );
