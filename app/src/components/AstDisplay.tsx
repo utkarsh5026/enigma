@@ -231,7 +231,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
     const complexProps = getComplexProperties();
 
     return (
-      <div className={`relative ${depth > 0 ? "ml-6" : ""}`}>
+      <div className={`relative bg-ctp-surface2 ${depth > 0 ? "ml-6" : ""}`}>
         {/* Tree line connector */}
         {depth > 0 && (
           <div

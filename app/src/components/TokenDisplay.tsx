@@ -24,114 +24,114 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Color mapping for different token types
+// Color mapping for different token types using Tokyo Night colors
 const getTokenColor = (type: TokenType): string => {
   const colorMap: Partial<Record<TokenType, string>> = {
     [TokenType.IDENTIFIER]:
-      "text-blue-500 bg-blue-50 dark:bg-blue-950 dark:text-blue-300",
+      "text-tokyo-blue bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.INT]:
-      "text-green-600 bg-green-50 dark:bg-green-950 dark:text-green-300",
+      "text-tokyo-orange bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.STRING]:
-      "text-amber-600 bg-amber-50 dark:bg-amber-950 dark:text-amber-300",
+      "text-tokyo-green bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
 
     // Keywords
     [TokenType.FUNCTION]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.LET]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.CONST]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.IF]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.ELSE]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.RETURN]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.WHILE]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.FOR]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.BREAK]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.CONTINUE]:
-      "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-300",
+      "text-tokyo-purple bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
 
     // Boolean literals
     [TokenType.TRUE]:
-      "text-red-600 bg-red-50 dark:bg-red-950 dark:text-red-300",
+      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.FALSE]:
-      "text-red-600 bg-red-50 dark:bg-red-950 dark:text-red-300",
+      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.NULL]:
-      "text-red-600 bg-red-50 dark:bg-red-950 dark:text-red-300",
+      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
 
     // Operators
     [TokenType.ASSIGN]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.PLUS]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.MINUS]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.BANG]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.ASTERISK]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.SLASH]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.EQ]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.NOT_EQ]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.PLUS_ASSIGN]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.MINUS_ASSIGN]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.ASTERISK_ASSIGN]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.SLASH_ASSIGN]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
 
     // Comparisons
     [TokenType.LESS_THAN]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.GREATER_THAN]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
 
     // Logical operators
     [TokenType.AND]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
     [TokenType.OR]:
-      "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-300",
+      "text-tokyo-cyan bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
 
     // Punctuation
     [TokenType.COMMA]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.SEMICOLON]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.COLON]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.LPAREN]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.RPAREN]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.LBRACE]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.RBRACE]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.LBRACKET]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.RBRACKET]:
-      "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300",
+      "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
 
     // Special
     [TokenType.EOF]:
-      "text-gray-400 bg-gray-50 dark:bg-gray-800 dark:text-gray-500",
+      "text-tokyo-comment bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20",
     [TokenType.ILLEGAL]:
-      "text-red-600 bg-red-100 dark:bg-red-900 dark:text-red-300",
+      "text-tokyo-red bg-tokyo-bg-highlight/50 dark:bg-tokyo-bg-highlight/30",
   };
 
   return (
     colorMap[type] ||
-    "text-gray-600 bg-gray-50 dark:bg-gray-800 dark:text-gray-300"
+    "text-tokyo-fg-dark bg-tokyo-bg-highlight/30 dark:bg-tokyo-bg-highlight/20"
   );
 };
 
@@ -242,9 +242,9 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
     return (
       <pre
         key={`line-${lineNum}`}
-        className="text-sm font-mono whitespace-pre-wrap overflow-x-auto p-2 border-l-2 border-gray-200 dark:border-gray-700 mb-1"
+        className="text-sm font-mono whitespace-pre-wrap overflow-x-auto p-2 border-l-2 border-tokyo-bg-highlight mb-1"
       >
-        <span className="text-gray-400 mr-4 select-none">{lineNum}</span>
+        <span className="text-tokyo-comment mr-4 select-none">{lineNum}</span>
         {lineTokens.map((token, idx) => (
           <span
             key={`token-${lineNum}-${idx}`}
@@ -262,10 +262,12 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
   });
 
   return (
-    <Card className="w-full shadow-lg border-0 bg-white dark:bg-gray-900">
+    <Card className="w-full shadow-lg border-tokyo-bg-highlight bg-tokyo-bg dark:bg-tokyo-bg">
       <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-bold">Token Analysis</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-2xl font-bold text-tokyo-fg">
+          Token Analysis
+        </CardTitle>
+        <CardDescription className="text-tokyo-fg-dark">
           Visualized token stream from lexical analysis
         </CardDescription>
       </CardHeader>
@@ -273,28 +275,35 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
       <CardContent className="space-y-6">
         {/* Source code visualization */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Source Code Tokenization</h3>
-          <div className="bg-gray-50 dark:bg-gray-950 rounded-lg p-4">
+          <h3 className="text-lg font-medium text-tokyo-fg">
+            Source Code Tokenization
+          </h3>
+          <div className="bg-tokyo-bg-dark rounded-lg p-4">
             {lineVisualizations.length > 0 ? (
               lineVisualizations
             ) : (
-              <p className="text-gray-500 italic">No tokens to display</p>
+              <p className="text-tokyo-comment italic">No tokens to display</p>
             )}
           </div>
         </div>
 
         {/* Token tables by line */}
         <div className="space-y-3">
-          <h3 className="text-lg font-medium">Detailed Token Analysis</h3>
+          <h3 className="text-lg font-medium text-tokyo-fg">
+            Detailed Token Analysis
+          </h3>
 
           {lineNumbers.map((lineNum) => (
             <Collapsible key={`line-table-${lineNum}`} className="mb-4">
-              <CollapsibleTrigger className="flex items-center w-full p-3 text-left font-medium bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <CollapsibleTrigger className="flex items-center w-full p-3 text-left font-medium bg-tokyo-bg-dark rounded-lg hover:bg-tokyo-bg-highlight transition-colors">
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
-                    <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
-                    <span>Line {lineNum}</span>
-                    <Badge variant="outline" className="ml-2 font-mono">
+                    <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-90 text-tokyo-fg" />
+                    <span className="text-tokyo-fg">Line {lineNum}</span>
+                    <Badge
+                      variant="outline"
+                      className="ml-2 font-mono bg-tokyo-bg-highlight text-tokyo-fg"
+                    >
                       {tokensByLine[lineNum].length} tokens
                     </Badge>
                   </div>
@@ -304,21 +313,33 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
               <CollapsibleContent className="pt-2">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Position</TableHead>
-                      <TableHead className="w-[150px]">Category</TableHead>
-                      <TableHead className="w-[150px]">Type</TableHead>
-                      <TableHead>Literal</TableHead>
+                    <TableRow className="border-tokyo-bg-highlight hover:bg-tokyo-bg-highlight/50">
+                      <TableHead className="w-[100px] text-tokyo-fg">
+                        Position
+                      </TableHead>
+                      <TableHead className="w-[150px] text-tokyo-fg">
+                        Category
+                      </TableHead>
+                      <TableHead className="w-[150px] text-tokyo-fg">
+                        Type
+                      </TableHead>
+                      <TableHead className="text-tokyo-fg">Literal</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {tokensByLine[lineNum].map((token, idx) => (
-                      <TableRow key={`token-detail-${lineNum}-${idx}`}>
-                        <TableCell className="font-mono">
+                      <TableRow
+                        key={`token-detail-${lineNum}-${idx}`}
+                        className="border-tokyo-bg-highlight hover:bg-tokyo-bg-highlight/50"
+                      >
+                        <TableCell className="font-mono text-tokyo-fg">
                           Col {token.position.column}
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-normal">
+                          <Badge
+                            variant="outline"
+                            className="font-normal bg-tokyo-bg text-tokyo-fg"
+                          >
                             {getTokenCategory(token.type)}
                           </Badge>
                         </TableCell>
@@ -333,7 +354,7 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <code className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded font-mono">
+                          <code className="px-2 py-1 bg-tokyo-bg-highlight rounded font-mono text-tokyo-fg">
                             {token.literal || "<empty>"}
                           </code>
                         </TableCell>

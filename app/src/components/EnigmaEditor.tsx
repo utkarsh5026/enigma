@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { getKeywords } from "../lang/token/token";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
-import { cn } from "@/lib/utils";
 
 interface EnigmaEditorProps {
   code: string;
