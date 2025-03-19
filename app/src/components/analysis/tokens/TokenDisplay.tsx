@@ -1,5 +1,5 @@
 import React from "react";
-import { Token, TokenType } from "../lang/token/token";
+import { Token, TokenType } from "../../../lang/token/token";
 import {
   Card,
   CardContent,
@@ -23,6 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { tokenCategories } from "./tokens";
 
 // Color mapping for different token types using Tokyo Night colors
 const getTokenColor = (type: TokenType): string => {
@@ -135,74 +136,6 @@ const getTokenColor = (type: TokenType): string => {
   );
 };
 
-// Group tokens into categories for better organization
-const tokenCategories = {
-  Keywords: [
-    TokenType.FUNCTION,
-    TokenType.LET,
-    TokenType.CONST,
-    TokenType.IF,
-    TokenType.ELSE,
-    TokenType.RETURN,
-    TokenType.WHILE,
-    TokenType.FOR,
-    TokenType.BREAK,
-    TokenType.CONTINUE,
-    TokenType.ELIF,
-    TokenType.CLASS,
-    TokenType.EXTENDS,
-    TokenType.SUPER,
-    TokenType.THIS,
-    TokenType.NEW,
-  ],
-  Literals: [
-    TokenType.INT,
-    TokenType.STRING,
-    TokenType.TRUE,
-    TokenType.FALSE,
-    TokenType.NULL,
-  ],
-  Identifiers: [TokenType.IDENTIFIER],
-  Operators: [
-    TokenType.ASSIGN,
-    TokenType.PLUS,
-    TokenType.MINUS,
-    TokenType.BANG,
-    TokenType.ASTERISK,
-    TokenType.SLASH,
-    TokenType.MODULUS,
-    TokenType.EQ,
-    TokenType.NOT_EQ,
-    TokenType.LESS_THAN,
-    TokenType.GREATER_THAN,
-    TokenType.PLUS_ASSIGN,
-    TokenType.MINUS_ASSIGN,
-    TokenType.ASTERISK_ASSIGN,
-    TokenType.SLASH_ASSIGN,
-    TokenType.AND,
-    TokenType.OR,
-    TokenType.BITWISE_AND,
-    TokenType.BITWISE_OR,
-    TokenType.BITWISE_XOR,
-    TokenType.BITWISE_NOT,
-    TokenType.BITWISE_LEFT_SHIFT,
-    TokenType.BITWISE_RIGHT_SHIFT,
-  ],
-  Punctuation: [
-    TokenType.COMMA,
-    TokenType.SEMICOLON,
-    TokenType.COLON,
-    TokenType.DOT,
-    TokenType.LPAREN,
-    TokenType.RPAREN,
-    TokenType.LBRACE,
-    TokenType.RBRACE,
-    TokenType.LBRACKET,
-    TokenType.RBRACKET,
-  ],
-  Special: [TokenType.EOF, TokenType.ILLEGAL],
-};
-
 // Get category for a token type
 const getTokenCategory = (type: TokenType): string => {
   for (const [category, types] of Object.entries(tokenCategories)) {
@@ -242,11 +175,9 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
     return (
       <pre
         key={`line-${lineNum}`}
-        className="text-sm font-mono whitespace-pre-wrap overflow-x-auto p-2 border-l-2 bg-tok bg-tokyo-bg-dark border-tokyo-bg-highlight mb-1"
+        className="text-sm  whitespace-pre-wrap overflow-x-auto p-2 border-l-2 bg-tok bg-tokyo-bg-dark border-tokyo-bg-highlight mb-1 font-family-mono"
       >
-        <span className="text-tokyo-comment mr-4 select-none text-tokyo-fg-dark">
-          {lineNum}
-        </span>
+        <span className=" mr-4 select-none text-tokyo-fg-dark">{lineNum}</span>
         {lineTokens.map((token, idx) => (
           <span
             key={`token-${lineNum}-${idx}`}
