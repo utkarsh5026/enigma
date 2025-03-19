@@ -4,7 +4,7 @@ import TokenDisplay from "@/components/analysis/tokens/TokenDisplay";
 import LanguageGuide from "@/components/guide/LanguageGuide";
 import ASTDisplay from "@/components/analysis/ast/AstDisplay";
 import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
-import Lexer from "../lang/lexer/lexer";
+import Lexer from "@/lang/lexer/lexer";
 import { Token, TokenType } from "../lang/token/token";
 import {
   Terminal,
