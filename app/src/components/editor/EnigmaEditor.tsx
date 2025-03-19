@@ -110,7 +110,7 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
             [/"/, "string", "@string"],
 
             // Brackets
-            [/[{}()\[\]]/, "@brackets"],
+            [/[{}()[\]]/, "@brackets"],
 
             // Operators
             [
