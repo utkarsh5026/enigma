@@ -1,22 +1,59 @@
 import React, { useEffect, useMemo } from "react";
 import { getKeywords } from "../../lang/token/token";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
+import { editor } from "monaco-editor";
 
 interface EnigmaEditorProps {
   code: string;
   onCodeChange: (code: string) => void;
 }
 
+const sampleCode = `// Sample Enigma code
+let fibonacci = fn(n) {
+  if (n < 2) {
+    return n;
+  } else {
+    return fibonacci(n - 1) + fibonacci(n - 2);
+  }
+};
+
+let result = fibonacci(10);
+`;
+
+/**
+ * EnigmaEditor Component
+ *
+ * This component renders a Monaco Editor instance configured for the Enigma programming language.
+ * It provides syntax highlighting, code completion, and a dark theme for an enhanced coding experience.
+ *
+ * Props:
+ * - code: string - The current code to be displayed in the editor.
+ * - onCodeChange: function - Callback function that is called when the code changes. It receives the updated code as a parameter.
+ *
+ * Usage:
+ * <EnigmaEditor code={yourCode} onCodeChange={handleCodeChange} />
+ *
+ * The component uses the Monaco Editor library to provide a rich code editing experience. It registers
+ * the Enigma language, defines its syntax highlighting rules, and sets up code completion items.
+ *
+ * The editor supports various features such as:
+ * - Syntax highlighting for keywords, types, operators, and comments.
+ * - Code snippets for common constructs like if-else statements, while loops, functions, and variable declarations.
+ * - A customizable dark theme that mimics the GitHub dark theme.
+ *
+ * The editor also handles user interactions, such as focusing the editor and updating the code state
+ * when the content changes.
+ */
 const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
   const monaco = useMonaco();
   const keywords = useMemo(() => getKeywords(), []);
 
   useEffect(() => {
     if (monaco) {
-      // Register the language
+      // Register the Enigma language with Monaco
       monaco.languages.register({ id: "enigma" });
 
-      // Define the tokenizer for syntax highlighting
+      // Define the syntax highlighting rules for the Enigma language
       monaco.languages.setMonarchTokensProvider("enigma", {
         keywords,
         typeKeywords: ["int", "string", "bool", "array"],
@@ -45,7 +82,7 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
           "<<",
           ">>",
         ],
-        symbols: /[=><!~?:&|+\-*\/\^%]+/,
+        symbols: /[=><!~?:&|+\-*^%]+/,
 
         tokenizer: {
           root: [
@@ -105,7 +142,7 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
         },
       });
 
-      // Register a completion provider
+      // Register a completion item provider for the Enigma language
       monaco.languages.registerCompletionItemProvider("enigma", {
         provideCompletionItems: (model, position) => {
           const word = model.getWordUntilPosition(position);
@@ -123,7 +160,7 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
               insertText: keyword,
               range,
             })),
-            // Common programming constructs
+
             {
               label: "if-else",
               kind: monaco.languages.CompletionItemKind.Snippet,
@@ -162,62 +199,50 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
         },
       });
 
-      // Define the cyberpunk-inspired theme
+      // Define a dark theme for the Enigma editor
       monaco.editor.defineTheme("enigmaDark", {
         base: "vs-dark",
         inherit: true,
         rules: [
-          { token: "keyword", foreground: "ff7b72" }, // red tone
-          { token: "identifier", foreground: "d2a8ff" }, // purple tone
-          { token: "type", foreground: "79c0ff" }, // blue tone
-          { token: "number", foreground: "f2cc60" }, // yellow tone
-          { token: "string", foreground: "a5d6ff" }, // light blue tone
-          { token: "comment", foreground: "8b949e", fontStyle: "italic" },
-          { token: "operator", foreground: "ff7b72" }, // red tone
-          { token: "delimiter", foreground: "8b949e" },
-          { token: "brackets", foreground: "8b949e" },
+          { token: "keyword", foreground: "ff7b72" }, // GitHub Dark red for keywords
+          { token: "identifier", foreground: "c9d1d9" }, // GitHub Dark default text color
+          { token: "type", foreground: "79c0ff" }, // GitHub Dark blue for types
+          { token: "number", foreground: "d2a8ff" }, // GitHub Dark purple for numbers
+          { token: "string", foreground: "a5d6ff" }, // GitHub Dark light blue for strings
+          { token: "comment", foreground: "8b949e", fontStyle: "italic" }, // GitHub Dark gray for comments
+          { token: "operator", foreground: "ff7b72" }, // GitHub Dark red for operators
+          { token: "delimiter", foreground: "8b949e" }, // GitHub Dark gray for delimiters
+          { token: "brackets", foreground: "8b949e" }, // GitHub Dark gray for brackets
         ],
         colors: {
-          "editor.background": "#0d1117", // Dark background
-          "editor.foreground": "#e6edf3", // Light text
-          "editorCursor.foreground": "#4d9375", // Green cursor
-          "editor.lineHighlightBackground": "#161b22", // Slightly lighter for line highlight
-          "editor.selectionBackground": "#3b4149", // Selection color
-          "editorLineNumber.foreground": "#484f58", // Line number color
-          "editorLineNumber.activeForeground": "#8b949e", // Active line number
-          "editorIndentGuide.background": "#21262d", // Indent guide
-          "editorIndentGuide.activeBackground": "#30363d", // Active indent guide
-          "editorGutter.background": "#0d1117", // Gutter background
-          "editor.inactiveSelectionBackground": "#272e38", // Inactive selection
+          "editor.background": "#0d1117", // GitHub Dark background
+          "editor.foreground": "#c9d1d9", // GitHub Dark default text
+          "editorCursor.foreground": "#58a6ff", // GitHub Dark blue cursor
+          "editor.lineHighlightBackground": "#161b22", // GitHub Dark line highlight
+          "editor.selectionBackground": "#2d3139", // GitHub Dark selection
+          "editorLineNumber.foreground": "#484f58", // GitHub Dark line number
+          "editorLineNumber.activeForeground": "#8b949e", // GitHub Dark active line number
+          "editorIndentGuide.background": "#21262d", // GitHub Dark indent guide
+          "editorIndentGuide.activeBackground": "#30363d", // GitHub Dark active indent guide
+          "editorGutter.background": "#0d1117", // GitHub Dark gutter
+          "editor.inactiveSelectionBackground": "#272e38", // GitHub Dark inactive selection
         },
       });
     }
   }, [monaco, keywords]);
 
   // Pre-defined code samples for demonstration
-  const sampleCode = `// Sample Enigma code
-let fibonacci = fn(n) {
-  if (n < 2) {
-    return n;
-  } else {
-    return fibonacci(n - 1) + fibonacci(n - 2);
-  }
-};
 
-let result = fibonacci(10);
-`;
-
-  const handleEditorDidMount = (editor: any) => {
-    // Set initial value if code is empty
+  const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor) => {
     if (!code) {
       onCodeChange(sampleCode);
     }
 
-    // Setup editor
     editor.updateOptions({
       renderLineHighlight: "all",
       cursorBlinking: "phase",
       cursorSmoothCaretAnimation: "on",
+      theme: "enigmaDark",
     });
 
     // Focus the editor
