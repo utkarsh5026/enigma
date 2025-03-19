@@ -5,7 +5,7 @@ import LanguageGuide from "@/components/guide/LanguageGuide";
 import ASTDisplay from "@/components/analysis/ast/AstDisplay";
 import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
 import Lexer from "@/lang/lexer/lexer";
-import { Token, TokenType } from "../lang/token/token";
+import { Token, TokenType } from "@/lang/token/token";
 import {
   Terminal,
   Code,
@@ -15,7 +15,7 @@ import {
   FileCode,
   ChevronsRight,
 } from "lucide-react";
-import QuickReference from "./guide/QuickReference";
+import QuickReference from "@/components/guide/QuickReference";
 
 const MutantEditor: React.FC = () => {
   const [code, setCode] = useState<string>("");
