@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -36,6 +37,22 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --tokyo-bg: #16161e;
+  
+  /* Tokyo Night Theme Colors */
+  --tokyo-bg: #1a1b26;
+  --tokyo-bg-dark: #16161e;
+  --tokyo-bg-highlight: #292e42;
+  --tokyo-fg: #a9b1d6;
+  --tokyo-fg-dark: #787c99;
+  --tokyo-comment: #565f89;
+  --tokyo-cyan: #7dcfff;
+  --tokyo-green: #9ece6a;
+  --tokyo-orange: #ff9e64;
+  --tokyo-red: #f7768e;
+  --tokyo-yellow: #e0af68;
+  --tokyo-blue: #7aa2f7;
+  --tokyo-purple: #9d7cd8;
 }
 
 .dark {
@@ -70,7 +87,24 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  
+  /* Tokyo Night Theme Colors - same in dark mode */
+  --tokyo-bg: #1a1b26;
+  --tokyo-bg-dark: #16161e;
+  --tokyo-bg-highlight: #292e42;
+  --tokyo-fg: #a9b1d6;
+  --tokyo-fg-dark: #787c99;
+  --tokyo-comment: #565f89;
+  --tokyo-cyan: #7dcfff;
+  --tokyo-green: #9ece6a;
+  --tokyo-orange: #ff9e64;
+  --tokyo-red: #f7768e;
+  --tokyo-yellow: #e0af68;
+  --tokyo-blue: #7aa2f7;
+  --tokyo-purple: #9d7cd8;
 }
+
+
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -108,6 +142,21 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Tokyo Night Theme Colors */
+  --color-tokyo-bg: var(--tokyo-bg);
+  --color-tokyo-bg-dark: var(--tokyo-bg-dark);
+  --color-tokyo-bg-highlight: var(--tokyo-bg-highlight);
+  --color-tokyo-fg: var(--tokyo-fg);
+  --color-tokyo-fg-dark: var(--tokyo-fg-dark);
+  --color-tokyo-comment: var(--tokyo-comment);
+  --color-tokyo-cyan: var(--tokyo-cyan);
+  --color-tokyo-green: var(--tokyo-green);
+  --color-tokyo-orange: var(--tokyo-orange);
+  --color-tokyo-red: var(--tokyo-red);
+  --color-tokyo-yellow: var(--tokyo-yellow);
+  --color-tokyo-blue: var(--tokyo-blue);
+  --color-tokyo-purple: var(--tokyo-purple);
 }
 
 @layer base {
