@@ -1,17 +1,26 @@
 import React, { useState } from "react";
-import EnigmaEditor from "./EnigmaEditor";
-import TokenDisplay from "./TokenDisplay";
-import LanguageGuide from "./guide/LanguageGuide";
-import ASTDisplay from "./AstDisplay";
+import EnigmaEditor from "@/components/editor/EnigmaEditor";
+import TokenDisplay from "@/components/analysis/tokens/TokenDisplay";
+import LanguageGuide from "@/components/guide/LanguageGuide";
+import ASTDisplay from "@/components/analysis/ast/AstDisplay";
+import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
 import Lexer from "../lang/lexer/lexer";
 import { Token, TokenType } from "../lang/token/token";
-import { Terminal, Code, Braces, Play, BookOpen, FileCode } from "lucide-react";
+import {
+  Terminal,
+  Code,
+  Braces,
+  Play,
+  BookOpen,
+  FileCode,
+  ChevronsRight,
+} from "lucide-react";
 
 const MutantEditor: React.FC = () => {
   const [code, setCode] = useState<string>("");
   const [tokens, setTokens] = useState<Token[]>([]);
   const [activeTab, setActiveTab] = useState<
-    "tokens" | "ast" | "eval" | "guide"
+    "tokens" | "ast" | "execution" | "eval" | "guide"
   >("tokens");
   const [showGuide, setShowGuide] = useState<boolean>(false);
 
@@ -34,7 +43,7 @@ const MutantEditor: React.FC = () => {
 
   // VSCode-like tab interfaces
   const Tab: React.FC<{
-    id: "tokens" | "ast" | "eval" | "guide";
+    id: "tokens" | "ast" | "execution" | "eval" | "guide";
     icon: React.ReactNode;
     label: string;
   }> = ({ id, icon, label }) => (
@@ -78,18 +87,6 @@ const MutantEditor: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full bg-[#0d1117] text-white">
-      <div className="border-b border-[#30363d] bg-[#161b22] px-4 py-3">
-        <h1 className="text-xl font-bold text-white flex items-center gap-2">
-          <Code size={20} className="text-tokyo-green" />
-          <span className="text-tokyo-green font-mono text-tokyo-fg-dark">
-            Enigma Language Explorer
-          </span>
-        </h1>
-        <p className="text-[#8b949e] text-sm mt-1">
-          Write code in the editor to analyze tokens, AST, and execution results
-        </p>
-      </div>
-
       <div className="flex flex-1 overflow-hidden">
         {/* Left panel (editor) */}
         <div className="w-1/2 border-r border-[#30363d] flex flex-col">
@@ -102,6 +99,7 @@ const MutantEditor: React.FC = () => {
               <button
                 className="p-1.5 rounded hover:bg-[#21262d] text-[#8b949e] hover:text-white"
                 title="Run code"
+                onClick={() => setActiveTab("execution")}
               >
                 <Play size={14} />
               </button>
@@ -143,6 +141,16 @@ const MutantEditor: React.FC = () => {
               label="AST"
             />
             <Tab
+              id="execution"
+              icon={
+                <ChevronsRight
+                  size={14}
+                  className={activeTab === "execution" ? "text-[#4d9375]" : ""}
+                />
+              }
+              label="Execution"
+            />
+            <Tab
               id="eval"
               icon={
                 <Play
@@ -167,11 +175,23 @@ const MutantEditor: React.FC = () => {
           <div className="flex-1 overflow-auto">
             {activeTab === "tokens" && <TokenDisplay tokens={tokens} />}
             {activeTab === "ast" && <ASTDisplay code={code} />}
+            {activeTab === "execution" && (
+              <ExecutionVisualizer
+                code={code}
+                onCodeChange={handleCodeChange}
+              />
+            )}
             {activeTab === "eval" && (
               <div className="flex items-center justify-center h-full text-[#8b949e] bg-[#0d1117] matrix-bg">
                 <div className="text-center">
                   <Play size={32} className="mx-auto mb-2 text-[#4d9375]" />
                   <p>Execution output coming soon</p>
+                  <button
+                    className="mt-4 bg-[#4d9375] hover:bg-[#3a7057] text-white py-2 px-4 rounded-md text-sm"
+                    onClick={() => setActiveTab("execution")}
+                  >
+                    Try the Step-by-Step Execution Visualizer
+                  </button>
                 </div>
               </div>
             )}
@@ -258,6 +278,8 @@ let fibonacci = fn(n) {
 // Calculate 10th Fibonacci number
 let result = fibonacci(10);`;
                           handleCodeChange(example);
+                          // Switch to execution tab to see it run
+                          setActiveTab("execution");
                         }}
                       >
                         Try in Editor
