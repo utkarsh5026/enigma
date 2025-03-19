@@ -6,16 +6,9 @@ import {
   ExecutionState,
   EnvironmentSnapshot,
 } from "@/lang/exec/stepwise";
-import CodeSamplesSelector from "./CodeSampleSelector";
 import ExecutionEducationalInfo from "./ExecutinEducationVisualizer";
 // import HighlightedAstViewer from "./HighLightedAstViewer";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -364,34 +357,9 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
 
   return (
     <Card className="w-full h-full shadow-lg border-0 bg-[#0d1117] flex flex-col">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-bold text-white flex items-center gap-2">
-          <Play size={20} className="text-[#4d9375]" />
-          Code Execution Visualizer
-        </CardTitle>
-        <CardDescription className="text-[#8b949e]">
-          Watch how your Enigma code executes step by step
-        </CardDescription>
-      </CardHeader>
-
       <CardContent className="space-y-4 flex-grow overflow-auto">
         {/* Code sample selector */}
-        {onCodeChange && (
-          <CodeSamplesSelector
-            onSelectSample={(sampleCode) => {
-              // Update code in parent component
-              onCodeChange(sampleCode);
-              // Reset execution state
-              setExecutionState(null);
-              setError(null);
-              setIsRunning(false);
-              if (autoRunRef.current) {
-                clearInterval(autoRunRef.current);
-                autoRunRef.current = null;
-              }
-            }}
-          />
-        )}
+
         {/* Error display */}
         {error && <ErrorDisplay error={error} />}
 
@@ -487,56 +455,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
             <span className="text-xs font-mono text-[#8b949e] w-12">
               {autoRunSpeed}ms
             </span>
-          </div>
-        </div>
-
-        {/* Code visualization with current line highlight */}
-        <div className="border rounded-md bg-[#161b22] p-3">
-          <div className="flex items-center gap-2 mb-3">
-            <Code size={14} className="text-[#4d9375]" />
-            <h3 className="text-sm font-medium">Source Code</h3>
-            {executionState?.currentStep && (
-              <Badge variant="outline" className="text-xs ml-auto">
-                Line {executionState.currentStep.lineNumber}, Column{" "}
-                {executionState.currentStep.columnNumber}
-              </Badge>
-            )}
-          </div>
-
-          <div className="bg-[#0d1117] rounded-md p-1 max-h-64 overflow-auto">
-            <pre className="text-sm font-mono">
-              {code.split("\n").map((line, idx) => {
-                // Get column range for highlighting
-                const isCurrentLine =
-                  executionState?.currentStep?.lineNumber === idx + 1;
-                const column = executionState?.currentStep?.columnNumber || 0;
-
-                // Highlight the current line
-                return (
-                  <div
-                    key={idx}
-                    className={`px-2 py-0.5 ${
-                      isCurrentLine
-                        ? "bg-[#21262d] font-medium border-l-2 border-[#4d9375]"
-                        : ""
-                    }`}
-                  >
-                    <span className="text-[#8b949e] mr-3 select-none w-8 inline-block text-right">
-                      {idx + 1}
-                    </span>
-                    {/* If this is the current line, consider highlighting part of it */}
-                    {isCurrentLine ? (
-                      <span>
-                        {/* We could add character-level highlighting here */}
-                        {line || " "}
-                      </span>
-                    ) : (
-                      line || " "
-                    )}
-                  </div>
-                );
-              })}
-            </pre>
           </div>
         </div>
 
