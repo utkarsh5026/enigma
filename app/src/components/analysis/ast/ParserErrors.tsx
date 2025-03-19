@@ -1,5 +1,11 @@
-import { X } from "lucide-react";
+// ParserErrors.tsx
+import { AlertTriangle } from "lucide-react";
 import React from "react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface ParserErrorsProps {
   errors: { message: string; line: number; column: number }[];
@@ -9,38 +15,36 @@ interface ParserErrorsProps {
  * ParserErrors component displays a list of parser errors.
  *
  * This component takes an array of errors as props and renders them in a user-friendly format.
- * Each error includes a message, line number, and column number, which are displayed in a styled list.
- *
- * Props:
- * - errors: An array of error objects, where each object contains:
- *   - message: A string describing the error.
- *   - line: A number indicating the line where the error occurred.
- *   - column: A number indicating the column where the error occurred.
- *
- * If there are no errors, the component returns null and does not render anything.
+ * Each error includes a message, line number, and column number, displayed in a styled list.
  */
 const ParserErrors: React.FC<ParserErrorsProps> = ({ errors }) => {
   if (errors.length === 0) return null;
 
   return (
-    <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md p-4 mb-4">
-      <div className="flex items-center mb-2">
-        <X size={16} className="text-red-600 dark:text-red-400 mr-2" />
-        <h3 className="text-red-700 dark:text-red-300 font-medium">
-          Parser Errors ({errors.length})
-        </h3>
-      </div>
-      <ul className="space-y-1 text-sm">
-        {errors.map((error) => (
-          <li key={error.message} className="text-red-600 dark:text-red-400">
-            <span className="font-mono bg-red-100 dark:bg-red-900 px-1 py-0.5 rounded mr-2">
-              Ln {error.line}, Col {error.column}
-            </span>
-            {error.message}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Collapsible className="mb-6 border border-[#f7768e] rounded-md overflow-hidden">
+      <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-[#1a0e12] hover:bg-[#281218] text-[#f7768e] transition-colors focus:outline-none">
+        <div className="flex items-center">
+          <AlertTriangle size={16} className="mr-2" />
+          <h3 className="font-medium">Parser Errors ({errors.length})</h3>
+        </div>
+        <span className="text-xs opacity-70">Click to expand</span>
+      </CollapsibleTrigger>
+
+      <CollapsibleContent>
+        <div className="bg-[#0d1117] p-3 border-t border-[#f7768e]/30">
+          <ul className="space-y-2 text-sm">
+            {errors.map((error, index) => (
+              <li key={index} className="flex items-start text-[#f7768e]/90">
+                <span className="font-mono bg-[#24131a] px-1.5 py-0.5 rounded mr-2 text-xs">
+                  Ln {error.line}, Col {error.column}
+                </span>
+                <span className="opacity-90">{error.message}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 

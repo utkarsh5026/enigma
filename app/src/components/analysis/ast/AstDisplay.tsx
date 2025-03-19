@@ -1,13 +1,6 @@
 import React, { useMemo } from "react";
 import Lexer from "@/lang/lexer/lexer";
 import { Parser } from "@/lang/parser/parser";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import ParserErrors from "./ParserErrors";
 import AstNode from "./AstNode";
 import { X, FileCode } from "lucide-react";
@@ -17,7 +10,6 @@ interface ASTDisplayProps {
 }
 
 const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
-  // Parse the code to get the AST
   const ast = useMemo(() => {
     if (!code || code.trim() === "") {
       return null;
@@ -39,7 +31,6 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
     }
   }, [code]);
 
-  // Render content based on code and AST state
   const renderContent = () => {
     if (!code || code.trim() === "") {
       return (
@@ -71,7 +62,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
         {ast.errors && ast.errors.length > 0 && (
           <ParserErrors errors={ast.errors} />
         )}
-        <div className="bg-gray-50 dark:bg-gray-950 rounded-lg p-4 overflow-x-auto">
+        <div className="rounded-lg p-4 overflow-x-auto">
           <AstNode node={ast.program} depth={0} path="root" />
         </div>
       </>
@@ -79,16 +70,16 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
   };
 
   return (
-    <Card className="w-full shadow-lg border-0 bg-white dark:bg-gray-900">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-bold">AST Analysis</CardTitle>
-        <CardDescription>
-          Abstract Syntax Tree representation of your code
-        </CardDescription>
-      </CardHeader>
+    <div className="w-full h-full overflow-auto bg-[#0d1117] text-[#a9b1d6] p-4">
+      <div className="mb-4">
+        <h2 className="text-2xl font-bold mb-1">Abstract Syntax Tree</h2>
+        <p className="text-[#565f89] text-sm">
+          Visual representation of the parsed code structure
+        </p>
+      </div>
 
-      <CardContent className="space-y-6">{renderContent()}</CardContent>
-    </Card>
+      <div className="space-y-6">{renderContent()}</div>
+    </div>
   );
 };
 
