@@ -2,10 +2,11 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import Lexer from "@/lang/lexer/lexer";
 import { Parser } from "@/lang/parser/parser";
 import {
-  StepwiseEvaluator,
+  EnhancedStepwiseEvaluator,
   ExecutionState,
   EnvironmentSnapshot,
-} from "@/lang/exec/stepwise";
+} from "@/lang/exec/stepwise"; // Import our enhanced evaluator
+import EnhancedCallStackVisualizer from "./CallStackVisualizer"; // Import our enhanced call stack
 import ExecutionEducationalInfo from "./ExecutinEducationVisualizer";
 // import HighlightedAstViewer from "./HighLightedAstViewer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,19 +23,27 @@ import {
   Database,
   Layers,
   Braces,
+  HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { sampleCodeSnippets } from "./snippets";
 
 interface ExecutionVisualizerProps {
   code: string;
   onCodeChange?: (code: string) => void;
 }
 
-const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
+/**
+ * Improved ExecutionVisualizer component with enhanced call stack visualization
+ */
+const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   code,
   onCodeChange,
 }) => {
-  const [evaluator] = useState<StepwiseEvaluator>(new StepwiseEvaluator());
+  // Use our enhanced evaluator
+  const [evaluator] = useState<EnhancedStepwiseEvaluator>(
+    new EnhancedStepwiseEvaluator()
+  );
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
   );
@@ -42,6 +51,24 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   const [autoRunSpeed, setAutoRunSpeed] = useState<number>(500); // ms per step
   const [error, setError] = useState<string | null>(null);
   const autoRunRef = useRef<NodeJS.Timeout | null>(null);
+  const [selectedExample, setSelectedExample] = useState<string>("");
+
+  // Load a code example
+  const loadExample = (exampleKey: string) => {
+    if (exampleKey in sampleCodeSnippets) {
+      const exampleCode =
+        sampleCodeSnippets[exampleKey as keyof typeof sampleCodeSnippets];
+      if (onCodeChange) {
+        onCodeChange(exampleCode);
+      }
+      setSelectedExample(exampleKey);
+
+      // Reset execution state and prepare new example
+      stopAutoRun();
+      setExecutionState(null);
+      setError(null);
+    }
+  };
 
   // Prepare the code for execution
   const prepareExecution = useCallback(() => {
@@ -64,12 +91,11 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       }
 
       evaluator.prepare(program, code);
-      setExecutionState(new ExecutionState());
 
       // Add initial console output to help users understand what's happening
       const initialState = new ExecutionState();
       initialState.output.push({
-        value: "Execution started. Use the controls to step through the code.",
+        value: "Execution prepared. Use the controls to step through the code.",
         type: "log",
         timestamp: Date.now(),
       });
@@ -234,49 +260,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
     );
   };
 
-  // Call Stack Visualizer Component
-  const CallStackVisualizer: React.FC<{
-    callStack: ExecutionState["callStack"];
-  }> = ({ callStack }) => {
-    return (
-      <div className="border rounded-md bg-[#161b22] p-3">
-        <div className="flex items-center gap-2 mb-3">
-          <Layers size={14} className="text-[#4d9375]" />
-          <h3 className="text-sm font-medium">Call Stack</h3>
-        </div>
-
-        {callStack.length > 0 ? (
-          <div className="space-y-2">
-            {callStack
-              .slice()
-              .reverse()
-              .map((frame, idx) => (
-                <div
-                  key={idx}
-                  className="px-3 py-2 bg-[#21262d] rounded-md text-sm"
-                  style={{ marginLeft: `${idx * 12}px` }}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{frame.functionName}</span>
-                    <Badge variant="outline" className="text-xs">
-                      line {frame.startLine}
-                    </Badge>
-                  </div>
-                  <div className="mt-1 font-mono text-xs text-[#8b949e]">
-                    ({frame.args.join(", ")})
-                  </div>
-                </div>
-              ))}
-          </div>
-        ) : (
-          <div className="text-[#8b949e] italic text-sm">
-            No active function calls
-          </div>
-        )}
-      </div>
-    );
-  };
-
   // Output Visualizer Component
   const OutputVisualizer: React.FC<{
     outputs: ExecutionState["output"];
@@ -315,6 +298,11 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                       : "text-[#a9b1d6]"
                   )}
                 >
+                  {output.functionContext && (
+                    <span className="text-[#565f89]">
+                      [{output.functionContext}]{" "}
+                    </span>
+                  )}
                   {output.type === "log" && "> "}
                   {output.type === "error" && "! "}
                   {output.type === "return" && "← "}
@@ -359,6 +347,27 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
     <Card className="w-full h-full shadow-lg border-0 bg-[#0d1117] flex flex-col">
       <CardContent className="space-y-4 flex-grow overflow-auto">
         {/* Code sample selector */}
+        <div className="flex flex-wrap gap-2 p-3 bg-[#161b22] rounded-md">
+          <div className="text-sm text-[#8b949e] mr-2 flex items-center">
+            <HelpCircle size={14} className="mr-1" />
+            Examples:
+          </div>
+
+          {Object.keys(sampleCodeSnippets).map((key) => (
+            <button
+              key={key}
+              onClick={() => loadExample(key)}
+              className={cn(
+                "text-xs py-1 px-2 rounded-md",
+                selectedExample === key
+                  ? "bg-[#4d9375] text-white"
+                  : "bg-[#21262d] text-[#8b949e] hover:bg-[#30363d] hover:text-white"
+              )}
+            >
+              {key}
+            </button>
+          ))}
+        </div>
 
         {/* Error display */}
         {error && <ErrorDisplay error={error} />}
@@ -452,7 +461,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
               disabled={isRunning}
               className="w-32"
             />
-            <span className="text-xs font-mono text-[#8b949e] w-12">
+            <span className="text-xs font-mono text-[#8b949e] w-16">
               {autoRunSpeed}ms
             </span>
           </div>
@@ -475,6 +484,12 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                 />
               </svg>
               <h3 className="text-sm font-medium">Current Execution Step</h3>
+
+              {executionState.currentStep.inFunction && (
+                <Badge className="bg-[#7aa2f7]/20 text-[#7aa2f7] border-[#7aa2f7]/30">
+                  In function: {executionState.currentStep.functionName}
+                </Badge>
+              )}
             </div>
             <p className="text-sm bg-[#0d1117] p-3 rounded-md">
               {executionState.currentStep.description}
@@ -507,15 +522,20 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                 <Braces size={14} className="text-[#4d9375]" />
                 <h3 className="text-sm font-medium">Abstract Syntax Tree</h3>
               </div>
+              {/* Uncomment this to enable the AST viewer */}
               {/* <HighlightedAstViewer
                 code={code}
                 highlightedNodePath={executionState?.currentStep?.nodePath}
               /> */}
             </div>
 
-            {/* Call Stack */}
+            {/* Enhanced Call Stack - this is the key improvement */}
             {executionState && (
-              <CallStackVisualizer callStack={executionState.callStack} />
+              <EnhancedCallStackVisualizer
+                callStack={executionState.callStack}
+                currentStep={executionState.currentStep}
+                code={code}
+              />
             )}
           </div>
 
@@ -526,11 +546,13 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                 environment={executionState.currentStep.environment}
               />
             )}
+
+            {/* Output visualization */}
+            {executionState && (
+              <OutputVisualizer outputs={executionState.output} />
+            )}
           </div>
         </div>
-
-        {/* Output visualization */}
-        {executionState && <OutputVisualizer outputs={executionState.output} />}
 
         {/* Execution status */}
         <div className="text-xs text-[#8b949e] flex justify-between items-center">
@@ -567,9 +589,9 @@ export const ExecutionVisualizerCore: React.FC<ExecutionVisualizerProps> = (
 ) => {
   return (
     <div className="h-full flex flex-col">
-      <ExecutionVisualizer {...props} />
+      <ImprovedExecutionVisualizer {...props} />
     </div>
   );
 };
 
-export default ExecutionVisualizer;
+export default ImprovedExecutionVisualizer;

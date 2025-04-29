@@ -1,7 +1,6 @@
 import React from "react";
 import { Info } from "lucide-react";
 
-// Map node types to educational descriptions about how they work in execution
 const educationalInfo: Record<string, string> = {
   // Statements
   LetStatement:
