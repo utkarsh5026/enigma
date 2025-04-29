@@ -1,8 +1,4 @@
-import {lookupIdentifier, Token, TokenType} from "../token/token.ts";
-
-const EMPTY_STRING = "";
-const LEFT_BRACE = "{";
-const RIGHT_BRACE = "}";
+import { lookupIdentifier, Token, TokenType } from "../token/token.ts";
 
 /**
  * Lexer class for tokenizing input strings.
@@ -10,463 +6,427 @@ const RIGHT_BRACE = "}";
  * that can be used by a parser.
  */
 export default class Lexer {
-    private readonly input: string;
-    private position: number = 0;
-    private readPosition: number = 0;
-    private currCh: string = "";
-    private currLine: number = 1;
-    private currColumn: number = 0;
-    private readonly _lines: string[];
+  private readonly input: string;
+  private position: number = 0;
+  private readPosition: number = 0;
+  private currCh: string = "";
+  private currLine: number = 1;
+  private currColumn: number = 0;
 
-    /**
-     * Creates a new Lexer instance.
-     * @param input The input string to be tokenized.
-     */
-    constructor(input: string) {
-        this.input = input;
-        this._lines = input.split("\n");
+  /**
+   * Creates a new Lexer instance.
+   * @param input The input string to be tokenized.
+   */
+  constructor(input: string) {
+    this.input = input;
+    this.readCurrChar();
+  }
+
+  /**
+   * Checks if a character is a letter or underscore.
+   * @param ch The character to check.
+   * @returns True if the character is a letter or underscore, false otherwise.
+   */
+  private static isLetter(ch: string): boolean {
+    return (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch === "_";
+  }
+
+  /**
+   * Checks if a character is a digit.
+   * @param ch The character to check.
+   * @returns True if the character is a digit, false otherwise.
+   */
+  private static isDigit(ch: string): boolean {
+    return ch >= "0" && ch <= "9";
+  }
+
+  /**
+   * Reads the next token from the input.
+   * @returns The next token in the input.
+   */
+  public nextToken(): Token {
+    let token: Token;
+    this.skipWhitespace();
+    this.skipComments();
+    switch (this.currCh) {
+      case "=":
+        token = this.handleDoubleLiteral(TokenType.EQ, TokenType.ASSIGN);
+        break;
+
+      case "!":
+        token = this.handleDoubleLiteral(TokenType.NOT_EQ, TokenType.BANG);
+        break;
+
+      case ";":
+        token = this.createTok(TokenType.SEMICOLON, this.currCh);
+        break;
+
+      case "(":
+        token = this.createTok(TokenType.LPAREN, this.currCh);
+        break;
+
+      case ")":
+        token = this.createTok(TokenType.RPAREN, this.currCh);
+        break;
+
+      case ",":
+        token = this.createTok(TokenType.COMMA, this.currCh);
+        break;
+
+      case "+":
+        token = this.handleDoubleLiteral(TokenType.PLUS_ASSIGN, TokenType.PLUS);
+        break;
+
+      case "-":
+        token = this.handleDoubleLiteral(
+          TokenType.MINUS_ASSIGN,
+          TokenType.MINUS
+        );
+        break;
+
+      case "*":
+        token = this.handleDoubleLiteral(
+          TokenType.ASTERISK_ASSIGN,
+          TokenType.ASTERISK
+        );
+        break;
+
+      case "%":
+        token = this.createTok(TokenType.MODULUS, this.currCh);
+        break;
+
+      case "&":
+        token = this.handleDoubleLiteral(
+          TokenType.AND,
+          TokenType.BITWISE_AND,
+          "&"
+        );
+        break;
+
+      case "|":
+        token = this.handleDoubleLiteral(
+          TokenType.OR,
+          TokenType.BITWISE_OR,
+          "|"
+        );
+        break;
+
+      case "^":
+        token = this.createTok(TokenType.BITWISE_XOR, this.currCh);
+        break;
+
+      case "~":
+        token = this.createTok(TokenType.BITWISE_NOT, this.currCh);
+        break;
+
+      case "/":
+        if (this.peekChar() === "/") {
+          this.skipSingleLineComment();
+          return this.nextToken();
+        } else if (this.peekChar() === "*") {
+          this.skipMultiLineComment();
+          return this.nextToken();
+        }
+
+        token = this.handleDoubleLiteral(
+          TokenType.SLASH_ASSIGN,
+          TokenType.SLASH
+        );
+        break;
+
+      case "<":
+        token = this.createTok(TokenType.LESS_THAN, this.currCh);
+        break;
+
+      case ">":
+        token = this.createTok(TokenType.GREATER_THAN, this.currCh);
+        break;
+
+      case "{":
+        token = this.createTok(TokenType.LBRACE, this.currCh);
+        break;
+
+      case "}":
+        token = this.createTok(TokenType.RBRACE, this.currCh);
+        break;
+
+      case "[":
+        token = this.createTok(TokenType.LBRACKET, this.currCh);
+        break;
+
+      case "]":
+        token = this.createTok(TokenType.RBRACKET, this.currCh);
+        break;
+
+      case ":":
+        token = this.createTok(TokenType.COLON, this.currCh);
+        break;
+
+      case '"':
+        token = this.createTok(TokenType.STRING, this.readString());
+        break;
+
+      case "\0":
+        token = this.createTok(TokenType.EOF, "");
+        break;
+
+      default:
+        token = this.handleIdentifier();
+        break;
+    }
+
+    this.readCurrChar();
+    return token;
+  }
+
+  /**
+   * Resets the lexer to the beginning of the input.
+   */
+  public reset(): void {
+    this.position = 0;
+    this.readPosition = 0;
+    this.currCh = "";
+    this.readCurrChar();
+    this.currLine = 1;
+    this.currColumn = 1;
+  }
+
+  /**
+   * Skips whitespace characters in the input.
+   */
+  private skipWhitespace(): void {
+    while (
+      this.currCh === " " ||
+      this.currCh === "\t" ||
+      this.currCh === "\n" ||
+      this.currCh === "\r"
+    ) {
+      this.readCurrChar();
+    }
+  }
+
+  /**
+   * Reads the current character and advances the position.
+   */
+  private readCurrChar(): void {
+    this.currCh = this.isOut() ? "\0" : this.input[this.readPosition];
+    this.advance();
+  }
+
+  /**
+   * Checks if the read position is out of bounds.
+   * @returns True if the read position is out of bounds, false otherwise.
+   */
+  private isOut(): boolean {
+    return this.readPosition >= this.input.length;
+  }
+
+  /**
+   * Advances the position and read position.
+   */
+  private advance(): void {
+    this.position = this.readPosition;
+    this.readPosition++;
+
+    if (this.currCh === "\n") {
+      this.currLine++;
+      this.currColumn = 0;
+    } else {
+      this.currColumn++;
+    }
+  }
+
+  /**
+   * Peeks at the next character without advancing the position.
+   * @returns The next character in the input.
+   */
+  private peekChar(): string {
+    return this.isOut() ? "\0" : this.input[this.readPosition];
+  }
+
+  /**
+   * Creates a new token.
+   * @param type The type of the token.
+   * @param literal The literal value of the token.
+   * @returns A new Token object.
+   */
+  private createTok(type: string, literal: string): Token {
+    return <Token>{
+      type,
+      literal,
+      position: { line: this.currLine, column: this.currColumn },
+    };
+  }
+
+  /**
+   * Reads a string literal from the input.
+   * @returns The string literal without quotes.
+   */
+  private readString(): string {
+    const result = [];
+    while (true) {
+      this.readCurrChar();
+      if (this.currCh === "\0") throw new Error("Unterminated string");
+      if (this.currCh === '"') break;
+
+      if (this.currCh === "\\") {
         this.readCurrChar();
+        result.push(this.handleEscapeSequence());
+        continue;
+      }
+
+      result.push(this.currCh);
     }
 
-    /**
-     * Checks if a character is a letter or underscore.
-     * @param ch The character to check.
-     * @returns True if the character is a letter or underscore, false otherwise.
-     */
-    private static isLetter(ch: string): boolean {
-        return (ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch === "_";
+    return result.join("");
+  }
+
+  /**
+   * Handles identifiers and numbers in the input.
+   * @returns A token representing an identifier, number, or illegal character.
+   */
+  private handleIdentifier(): Token {
+    if (Lexer.isLetter(this.currCh)) {
+      const literal = this.readIdentifier();
+      const identType = lookupIdentifier(literal);
+      return this.createTok(identType, literal);
+    } else if (Lexer.isDigit(this.currCh)) {
+      const literal = this.readNumber();
+      return this.createTok(TokenType.INT, literal);
     }
 
-    /**
-     * Checks if a character is a digit.
-     * @param ch The character to check.
-     * @returns True if the character is a digit, false otherwise.
-     */
-    private static isDigit(ch: string): boolean {
-        return ch >= "0" && ch <= "9";
+    return this.createTok(TokenType.ILLEGAL, this.currCh);
+  }
+
+  /**
+   * Reads an identifier from the input.
+   * @returns The identifier as a string.
+   */
+  private readIdentifier(): string {
+    const position = this.position;
+    while (Lexer.isLetter(this.currCh)) {
+      this.readCurrChar();
     }
 
-    /**
-     * Reads the next token from the input.
-     * @returns The next token in the input.
-     */
-    public nextToken(): Token {
-        let token: Token;
-        this.skipWhitespace();
-        this.skipComments();
-        switch (this.currCh) {
-            case "=":
-                token = this.handleDoubleLiteral(TokenType.EQ, TokenType.ASSIGN);
-                break;
+    const literal = this.input.slice(position, this.position);
+    this.moveBack(1);
+    return literal;
+  }
 
-            case "!":
-                token = this.handleDoubleLiteral(TokenType.NOT_EQ, TokenType.BANG);
-                break;
+  /**
+   * Reads a number from the input.
+   * @returns The number as a string.
+   */
+  private readNumber(): string {
+    const position = this.position;
+    while (Lexer.isDigit(this.currCh)) {
+      this.readCurrChar();
+    }
 
-            case ";":
-                token = this.createTok(TokenType.SEMICOLON, this.currCh);
-                break;
+    const literal = this.input.slice(position, this.position);
+    this.moveBack(1);
+    return literal;
+  }
 
-            case "(":
-                token = this.createTok(TokenType.LPAREN, this.currCh);
-                break;
+  /**
+   * Handles double-character literals like '==' and '!='.
+   * @param tokTypeIfDouble The token type if it's a double-character literal.
+   * @param defaultTokType The default token type if it's a single-character literal.
+   * @param peekChar The character to peek for. Defaults to "=".
+   * @returns A token representing the literal.
+   */
+  private handleDoubleLiteral(
+    tokTypeIfDouble: TokenType,
+    defaultTokType: TokenType,
+    peekChar: string = "="
+  ): Token {
+    const curr = this.currCh;
+    if (this.peekChar() === peekChar) {
+      this.readCurrChar();
+      return this.createTok(tokTypeIfDouble, curr + peekChar);
+    }
 
-            case ")":
-                token = this.createTok(TokenType.RPAREN, this.currCh);
-                break;
+    return this.createTok(defaultTokType, curr);
+  }
 
-            case ",":
-                token = this.createTok(TokenType.COMMA, this.currCh);
-                break;
+  /**
+   * Moves the position back by a specified number of steps.
+   * @param steps The number of steps to move back.
+   */
+  private moveBack(steps: number): void {
+    this.position = this.position - steps;
+    this.readPosition = this.readPosition - steps;
+    this.currCh = this.input[this.position];
+  }
 
-            case "+":
-                token = this.handleDoubleLiteral(TokenType.PLUS_ASSIGN, TokenType.PLUS);
-                break;
+  /**
+   * Skips over any comments in the input.
+   * This method handles both single-line and multi-line comments.
+   */
+  private skipComments(): void {
+    while (true) {
+      this.skipWhitespace();
 
-            case "-":
-                token = this.handleDoubleLiteral(
-                    TokenType.MINUS_ASSIGN,
-                    TokenType.MINUS
-                );
-                break;
+      if (this.currCh === "/" && this.peekChar() === "/")
+        this.skipSingleLineComment();
+      else if (this.currCh === "/" && this.peekChar() === "*")
+        this.skipMultiLineComment();
+      else break;
+    }
+  }
 
-            case "*":
-                token = this.handleDoubleLiteral(
-                    TokenType.ASTERISK_ASSIGN,
-                    TokenType.ASTERISK
-                );
-                break;
+  /**
+   * Skips over a single-line comment.
+   * A single-line comment starts with '//' and continues until the end of the line.
+   */
+  private skipSingleLineComment(): void {
+    while (this.currCh !== "\n" && this.currCh !== "\0") {
+      this.readCurrChar();
+    }
+  }
 
-            case "%":
-                token = this.createTok(TokenType.MODULUS, this.currCh);
-                break;
+  /**
+   * Skips over a multi-line comment.
+   * A multi-line comment starts with '/*' and ends with '*\/'.
+   * This method also handles nested multi-line comments.
+   */
+  private skipMultiLineComment(): void {
+    this.readCurrChar(); // skip the first '/'
+    this.readCurrChar(); // skip the '*'
+    let depth = 1;
 
-            case "&":
-                token = this.handleDoubleLiteral(
-                    TokenType.AND,
-                    TokenType.BITWISE_AND,
-                    "&"
-                );
-                break;
-
-            case "|":
-                token = this.handleDoubleLiteral(
-                    TokenType.OR,
-                    TokenType.BITWISE_OR,
-                    "|"
-                );
-                break;
-
-            case "^":
-                token = this.createTok(TokenType.BITWISE_XOR, this.currCh);
-                break;
-
-            case "~":
-                token = this.createTok(TokenType.BITWISE_NOT, this.currCh);
-                break;
-
-            case "/":
-                if (this.peekChar() === "/") {
-                    this.skipSingleLineComment();
-                    return this.nextToken();
-                } else if (this.peekChar() === "*") {
-                    this.skipMultiLineComment();
-                    return this.nextToken();
-                }
-
-                token = this.handleDoubleLiteral(
-                    TokenType.SLASH_ASSIGN,
-                    TokenType.SLASH
-                );
-                break;
-
-            case "<":
-                token = this.createTok(TokenType.LESS_THAN, this.currCh);
-                break;
-
-            case ">":
-                token = this.createTok(TokenType.GREATER_THAN, this.currCh);
-                break;
-
-            case "{":
-                token = this.createTok(TokenType.LBRACE, this.currCh);
-                break;
-
-            case "}":
-                token = this.createTok(TokenType.RBRACE, this.currCh);
-                break;
-
-            case "[":
-                token = this.createTok(TokenType.LBRACKET, this.currCh);
-                break;
-
-            case "]":
-                token = this.createTok(TokenType.RBRACKET, this.currCh);
-                break;
-
-            case ":":
-                token = this.createTok(TokenType.COLON, this.currCh);
-                break;
-
-            case '"':
-                token = this.createTok(TokenType.STRING, this.readString());
-                break;
-
-            case "\0":
-                token = this.createTok(TokenType.EOF, "");
-                break;
-
-            default:
-                token = this.handleIdentifier();
-                break;
-        }
-
+    while (depth > 0 && this.currCh !== "\0") {
+      if (this.currCh === "/" && this.peekChar() === "*") {
+        depth++;
         this.readCurrChar();
-        return token;
-    }
-
-    /**
-     * Resets the lexer to the beginning of the input.
-     */
-    public reset(): void {
-        this.position = 0;
-        this.readPosition = 0;
-        this.currCh = "";
         this.readCurrChar();
-        this.currLine = 1;
-        this.currColumn = 1;
+      } else if (this.currCh === "*" && this.peekChar() === "/") {
+        depth--;
+        this.readCurrChar();
+        this.readCurrChar();
+      } else {
+        this.readCurrChar();
+      }
+    }
+  }
+
+  private handleEscapeSequence(): string {
+    const escapeMap = {
+      n: "\n",
+      t: "\t",
+      r: "\r",
+      b: "\b",
+      f: "\f",
+      v: "\v",
+      "0": "\0",
+    };
+
+    if (this.currCh in escapeMap) {
+      const char = escapeMap[this.currCh as keyof typeof escapeMap];
+      this.readCurrChar();
+      return char;
     }
 
-    /**
-     * Skips whitespace characters in the input.
-     */
-    private skipWhitespace(): void {
-        while (
-            this.currCh === " " ||
-            this.currCh === "\t" ||
-            this.currCh === "\n" ||
-            this.currCh === "\r"
-            ) {
-            this.readCurrChar();
-        }
-    }
-
-    /**
-     * Reads the current character and advances the position.
-     */
-    private readCurrChar(): void {
-        this.currCh = this.isOut() ? "\0" : this.input[this.readPosition];
-        this.advance();
-    }
-
-    /**
-     * Checks if the read position is out of bounds.
-     * @returns True if the read position is out of bounds, false otherwise.
-     */
-    private isOut(): boolean {
-        return this.readPosition >= this.input.length;
-    }
-
-    /**
-     * Advances the position and read position.
-     */
-    private advance(): void {
-        this.position = this.readPosition;
-        this.readPosition++;
-
-        if (this.currCh === "\n") {
-            this.currLine++;
-            this.currColumn = 0;
-        } else {
-            this.currColumn++;
-        }
-    }
-
-    /**
-     * Peeks at the next character without advancing the position.
-     * @returns The next character in the input.
-     */
-    private peekChar(): string {
-        return this.isOut() ? "\0" : this.input[this.readPosition];
-    }
-
-    /**
-     * Creates a new token.
-     * @param type The type of the token.
-     * @param literal The literal value of the token.
-     * @returns A new Token object.
-     */
-    private createTok(type: string, literal: string): Token {
-        return <Token>{
-            type,
-            literal,
-            position: {line: this.currLine, column: this.currColumn},
-        };
-    }
-
-    /**
-     * Reads a string literal from the input.
-     * @returns The string literal without quotes.
-     */
-    private readString(): string {
-        const result = [];
-        while (true) {
-            this.readCurrChar();
-            if (this.currCh === "\0") throw new Error("Unterminated string");
-            if (this.currCh === '"') break;
-
-            if (this.currCh === "\\") {
-                this.readCurrChar();
-                result.push(this.handleEscapeSequence());
-                continue;
-            }
-
-            result.push(this.currCh);
-        }
-
-        return result.join("");
-    }
-
-    private readFString(): string {
-        const result = [];
-        let braceDepth = 0;
-
-        while (true) {
-            this.readCurrChar();
-
-            if (this.currCh === "\0") throw new Error("Unterminated f-string");
-
-            if (this.currCh === LEFT_BRACE) {
-                let leftBraceCount = 1;
-
-                while (this.peekChar() === LEFT_BRACE) {
-                    leftBraceCount++;
-                    result.push(this.currCh);
-                    this.readCurrChar();
-                }
-
-                if (leftBraceCount % 2 !== 0) braceDepth++;
-                result.push(this.currCh);
-            } else if (this.currCh === RIGHT_BRACE) {
-                if (braceDepth > 0) {
-                    braceDepth--;
-                    result.push(this.currCh);
-                } else {
-                }
-            }
-        }
-    }
-
-    /**
-     * Handles identifiers and numbers in the input.
-     * @returns A token representing an identifier, number, or illegal character.
-     */
-    private handleIdentifier(): Token {
-        if (Lexer.isLetter(this.currCh)) {
-            const literal = this.readIdentifier();
-            const identType = lookupIdentifier(literal);
-            return this.createTok(identType, literal);
-        } else if (Lexer.isDigit(this.currCh)) {
-            const literal = this.readNumber();
-            return this.createTok(TokenType.INT, literal);
-        }
-
-        return this.createTok(TokenType.ILLEGAL, this.currCh);
-    }
-
-    /**
-     * Reads an identifier from the input.
-     * @returns The identifier as a string.
-     */
-    private readIdentifier(): string {
-        const position = this.position;
-        while (Lexer.isLetter(this.currCh)) {
-            this.readCurrChar();
-        }
-
-        const literal = this.input.slice(position, this.position);
-        this.moveBack(1);
-        return literal;
-    }
-
-    /**
-     * Reads a number from the input.
-     * @returns The number as a string.
-     */
-    private readNumber(): string {
-        const position = this.position;
-        while (Lexer.isDigit(this.currCh)) {
-            this.readCurrChar();
-        }
-
-        const literal = this.input.slice(position, this.position);
-        this.moveBack(1);
-        return literal;
-    }
-
-    /**
-     * Handles double-character literals like '==' and '!='.
-     * @param tokTypeIfDouble The token type if it's a double-character literal.
-     * @param defaultTokType The default token type if it's a single-character literal.
-     * @param peekChar The character to peek for. Defaults to "=".
-     * @returns A token representing the literal.
-     */
-    private handleDoubleLiteral(
-        tokTypeIfDouble: TokenType,
-        defaultTokType: TokenType,
-        peekChar: string = "="
-    ): Token {
-        const curr = this.currCh;
-        if (this.peekChar() === peekChar) {
-            this.readCurrChar();
-            return this.createTok(tokTypeIfDouble, curr + peekChar);
-        }
-
-        return this.createTok(defaultTokType, curr);
-    }
-
-    /**
-     * Moves the position back by a specified number of steps.
-     * @param steps The number of steps to move back.
-     */
-    private moveBack(steps: number): void {
-        this.position = this.position - steps;
-        this.readPosition = this.readPosition - steps;
-        this.currCh = this.input[this.position];
-    }
-
-    /**
-     * Skips over any comments in the input.
-     * This method handles both single-line and multi-line comments.
-     */
-    private skipComments(): void {
-        while (true) {
-            this.skipWhitespace();
-
-            if (this.currCh === "/" && this.peekChar() === "/")
-                this.skipSingleLineComment();
-            else if (this.currCh === "/" && this.peekChar() === "*")
-                this.skipMultiLineComment();
-            else break;
-        }
-    }
-
-    /**
-     * Skips over a single-line comment.
-     * A single-line comment starts with '//' and continues until the end of the line.
-     */
-    private skipSingleLineComment(): void {
-        while (this.currCh !== "\n" && this.currCh !== "\0") {
-            this.readCurrChar();
-        }
-    }
-
-    /**
-     * Skips over a multi-line comment.
-     * A multi-line comment starts with '/*' and ends with '*\/'.
-     * This method also handles nested multi-line comments.
-     */
-    private skipMultiLineComment(): void {
-        this.readCurrChar(); // skip the first '/'
-        this.readCurrChar(); // skip the '*'
-        let depth = 1;
-
-        while (depth > 0 && this.currCh !== "\0") {
-            if (this.currCh === "/" && this.peekChar() === "*") {
-                depth++;
-                this.readCurrChar();
-                this.readCurrChar();
-            } else if (this.currCh === "*" && this.peekChar() === "/") {
-                depth--;
-                this.readCurrChar();
-                this.readCurrChar();
-            } else {
-                this.readCurrChar();
-            }
-        }
-    }
-
-    private handleEscapeSequence(): string {
-        const escapeMap = {
-            n: "\n",
-            t: "\t",
-            r: "\r",
-            b: "\b",
-            f: "\f",
-            v: "\v",
-            "0": "\0",
-        };
-
-        if (this.currCh in escapeMap) {
-            const char = escapeMap[this.currCh as keyof typeof escapeMap];
-            this.readCurrChar();
-            return char;
-        }
-
-        return "\\" + this.currCh;
-    }
-
-    private lines(): string[] {
-        return this._lines;
-    }
+    return "\\" + this.currCh;
+  }
 }

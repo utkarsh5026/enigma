@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import Lexer from "@/lang/lexer/lexer";
 import { Parser } from "@/lang/parser/parser";
 import {
-  EnhancedStepwiseEvaluator,
+  StepwiseEvaluator,
   ExecutionState,
   EnvironmentSnapshot,
 } from "@/lang/exec/stepwise"; // Import our enhanced evaluator
@@ -19,9 +19,7 @@ import {
   StepBack,
   RotateCcw,
   Terminal,
-  Code,
   Database,
-  Layers,
   Braces,
   HelpCircle,
 } from "lucide-react";
@@ -41,9 +39,7 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   onCodeChange,
 }) => {
   // Use our enhanced evaluator
-  const [evaluator] = useState<EnhancedStepwiseEvaluator>(
-    new EnhancedStepwiseEvaluator()
-  );
+  const [evaluator] = useState<StepwiseEvaluator>(new StepwiseEvaluator());
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
   );
@@ -90,7 +86,7 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
         return false;
       }
 
-      evaluator.prepare(program, code);
+      evaluator.prepare(program);
 
       // Add initial console output to help users understand what's happening
       const initialState = new ExecutionState();
@@ -298,11 +294,7 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                       : "text-[#a9b1d6]"
                   )}
                 >
-                  {output.functionContext && (
-                    <span className="text-[#565f89]">
-                      [{output.functionContext}]{" "}
-                    </span>
-                  )}
+                  {output.type === "log" && "> "}
                   {output.type === "log" && "> "}
                   {output.type === "error" && "! "}
                   {output.type === "return" && "← "}
@@ -485,9 +477,9 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
               </svg>
               <h3 className="text-sm font-medium">Current Execution Step</h3>
 
-              {executionState.currentStep.inFunction && (
+              {executionState.currentStep && (
                 <Badge className="bg-[#7aa2f7]/20 text-[#7aa2f7] border-[#7aa2f7]/30">
-                  In function: {executionState.currentStep.functionName}
+                  In function: {executionState.currentStep.result?.inspect()}
                 </Badge>
               )}
             </div>
@@ -574,7 +566,7 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                   : "bg-[#21262d]"
               )}
             >
-              Step {executionState.steps?.length || 0}
+              Step {executionState.callStack.length + 1}
             </Badge>
           )}
         </div>

@@ -69,7 +69,7 @@ class Repl {
     const errors = parser.parserErrors();
 
     if (errors.length > 0) {
-      this.printParserErrors(errors);
+      this.printParserErrors(errors.map((error) => error.message));
       return null;
     }
 

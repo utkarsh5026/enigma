@@ -1001,7 +1001,7 @@ export default class Evaluator {
    * const extendedEnv = evaluator.extendFunctionEnv(fnObject, args);
    * // extendedEnv will contain the function's parameters bound to the provided arguments
    */
-  private extendFunctionEnv(
+  protected extendFunctionEnv(
     fn: objects.FunctionObject,
     args: objects.BaseObject[]
   ): objects.Environment {
@@ -1043,7 +1043,7 @@ export default class Evaluator {
    * console.log(evaluator.truthy(evaluator.NULL)); // Outputs: false
    * console.log(evaluator.truthy(new objects.IntegerObject(1))); // Outputs: true
    */
-  private truthy(obj: objects.BaseObject): boolean {
+  protected truthy(obj: objects.BaseObject): boolean {
     switch (obj.constructor) {
       case objects.BooleanObject:
         return (obj as objects.BooleanObject).value;

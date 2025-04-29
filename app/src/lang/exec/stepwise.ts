@@ -77,7 +77,6 @@ export interface OutputEntry {
 export class StepwiseEvaluator extends Evaluator {
   private steps: EvaluationStep[] = [];
   private currentStepIndex: number = 0;
-  private programAst?: ast.Program;
   private globalEnv: objects.Environment;
   private executionState: ExecutionState = new ExecutionState();
   private nodeQueue: {
@@ -86,7 +85,6 @@ export class StepwiseEvaluator extends Evaluator {
     path: string;
   }[] = [];
   private callDepth: number = 0;
-  private originalCode: string = "";
 
   constructor() {
     super();
@@ -99,9 +97,7 @@ export class StepwiseEvaluator extends Evaluator {
    * @param program The AST of the program to execute
    * @param code The original source code (for line mapping)
    */
-  public prepare(program: ast.Program, code: string): void {
-    this.programAst = program;
-    this.originalCode = code;
+  public prepare(program: ast.Program): void {
     this.steps = [];
     this.currentStepIndex = 0;
     this.nodeQueue = [];
@@ -164,8 +160,12 @@ export class StepwiseEvaluator extends Evaluator {
       this.executionState.currentStep = step;
 
       // Check for return values at the top level (program result)
-      if (utils.isReturnValue(step.result) && this.nodeQueue.length === 0) {
-        const returnValue = (step.result as objects.ReturnValue).value;
+      if (
+        step.result &&
+        utils.isReturnValue(step.result) &&
+        this.nodeQueue.length === 0
+      ) {
+        const returnValue = step.result.value;
         this.executionState.output.push({
           value: `Program returned: ${returnValue.inspect()}`,
           type: "return",
@@ -247,8 +247,8 @@ export class StepwiseEvaluator extends Evaluator {
    */
   private getNodePosition(node: ast.Node): { line: number; column: number } {
     if ("token" in node) {
-      const token = (node as any).token as Token;
-      if (token && token.position) {
+      const token = node.token as Token;
+      if (token?.position) {
         return {
           line: token.position.line,
           column: token.position.column,
@@ -319,7 +319,7 @@ export class StepwiseEvaluator extends Evaluator {
         const callExpr = node as expressions.CallExpression;
         let funcName = "anonymous function";
         if (callExpr.func instanceof ast.Identifier) {
-          funcName = (callExpr.func as ast.Identifier).value;
+          funcName = callExpr.func.value;
         }
         return `Calling function '${funcName}' with ${callExpr.args.length} arguments`;
       }
@@ -359,7 +359,6 @@ export class StepwiseEvaluator extends Evaluator {
         return "Creating hash object";
 
       case "IndexExpression": {
-        const indexExpr = node as expressions.IndexExpression;
         return `Accessing element by index`;
       }
 
@@ -415,7 +414,7 @@ export class StepwiseEvaluator extends Evaluator {
     const result = super.evaluate(node, env);
 
     // Handle console output for built-in functions
-    if (this.isConsoleOutput(node, result)) {
+    if (this.isConsoleOutput(node)) {
       const output = result.inspect();
       this.executionState.output.push({
         value: output,
@@ -442,13 +441,13 @@ export class StepwiseEvaluator extends Evaluator {
   /**
    * Check if a node evaluation produces console output
    */
-  private isConsoleOutput(node: ast.Node, result: objects.BaseObject): boolean {
+  private isConsoleOutput(node: ast.Node): boolean {
     // In a real implementation, this would check for calls to console.log or similar
     // For now, this is a simplified version
     if (node instanceof expressions.CallExpression) {
-      const callExpr = node as expressions.CallExpression;
+      const callExpr = node;
       if (callExpr.func instanceof ast.Identifier) {
-        const funcName = (callExpr.func as ast.Identifier).value;
+        const funcName = callExpr.func.value;
         return (
           funcName === "puts" || funcName === "print" || funcName === "console"
         );
@@ -545,7 +544,7 @@ export class StepwiseEvaluator extends Evaluator {
       });
 
       // Add the function to the call stack for visualization
-      this.updateCallStack(node, env, func, args);
+      this.updateCallStack(node, env, args);
     }
   }
 
@@ -555,16 +554,15 @@ export class StepwiseEvaluator extends Evaluator {
   private updateCallStack(
     node: ast.Node,
     env: objects.Environment,
-    func?: objects.FunctionObject,
     args?: objects.BaseObject[]
   ): void {
     if (node instanceof expressions.CallExpression) {
       // Function call - push to stack
-      const callExpr = node as expressions.CallExpression;
+      const callExpr = node;
       let funcName = "anonymous";
 
       if (callExpr.func instanceof ast.Identifier) {
-        funcName = (callExpr.func as ast.Identifier).value;
+        funcName = callExpr.func.value;
       }
 
       const position = this.getNodePosition(node);
@@ -581,10 +579,7 @@ export class StepwiseEvaluator extends Evaluator {
       if (this.executionState.callStack.length > 0) {
         const frame = this.executionState.callStack.pop();
         if (frame) {
-          const returnValue = super.evaluate(
-            (node as statements.ReturnStatement).returnValue,
-            env
-          );
+          const returnValue = super.evaluate(node.returnValue, env);
           this.callDepth--;
 
           // Log the return for visualization

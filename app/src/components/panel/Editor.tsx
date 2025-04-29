@@ -27,12 +27,13 @@ import {
 import LeftPanel from "./LeftPanel";
 import ToolBar from "./ToolBar";
 
+const examples = Object.keys(sampleCodeSnippets);
+
 const ModernEnigmaEditor: React.FC = () => {
   const [code, setCode] = useState("");
-  const [tokens, setTokens] = useState([]);
+  const [tokens, setTokens] = useState<Token[]>([]);
   const [activeTab, setActiveTab] = useState("tokens");
   const [darkMode, setDarkMode] = useState(true);
-  const [examples, setExamples] = useState(Object.keys(sampleCodeSnippets));
   const [selectedExample, setSelectedExample] = useState<
     keyof typeof sampleCodeSnippets | null
   >(null);
@@ -118,10 +119,12 @@ const ModernEnigmaEditor: React.FC = () => {
         textColor={textColor}
         mutedTextColor={mutedTextColor}
         highlightBg={highlightBg}
-        selectedExample={selectedExample}
+        selectedExample={selectedExample ?? ""}
         showExamplesDropdown={showExamplesDropdown}
         setShowExamplesDropdown={setShowExamplesDropdown}
-        loadExample={loadExample}
+        loadExample={(example: string) =>
+          loadExample(example as keyof typeof sampleCodeSnippets)
+        }
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         examples={examples}

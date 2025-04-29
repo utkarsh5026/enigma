@@ -1,13 +1,13 @@
 import { keywords, operators } from "./data";
 
-export const highlightSyntax = (code: string): JSX.Element => {
+export const highlightSyntax = (code: string) => {
   const lines = code.split("\n");
 
   return (
     <pre className="font-mono text-sm whitespace-pre overflow-x-auto">
       {lines.map((line, lineIndex) => {
         // Process line for syntax highlighting
-        const result: JSX.Element[] = [];
+        const result = [];
         let currentWord = "";
         let inString = false;
 
