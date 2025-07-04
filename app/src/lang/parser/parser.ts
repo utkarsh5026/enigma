@@ -1,5 +1,5 @@
 import Lexer from "../lexer/lexer";
-import { Token, TokenType } from "../token/token";
+import { Operator, Token, TokenType } from "../token/token";
 import * as literals from "../ast/literal.ts";
 import * as ast from "../ast/ast.ts";
 import * as statements from "../ast/statement.ts";
@@ -670,7 +670,7 @@ export class Parser {
    */
   private parseInfixExpression(left: ast.Expression): ast.Expression | null {
     const token = this.currentToken;
-    const operator = token.literal;
+    const operator = token.literal as Operator;
     const precedence = this.currentPrecedence();
 
     this.forward();
@@ -941,7 +941,7 @@ export class Parser {
    * @throws {Error} If an invalid token type is provided.
    * @private
    */
-  private getBaseOperator(tt: TokenType): string {
+  private getBaseOperator(tt: TokenType): Operator {
     switch (tt) {
       case TokenType.PLUS_ASSIGN:
         return "+";

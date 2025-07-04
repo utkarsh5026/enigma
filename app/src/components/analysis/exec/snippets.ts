@@ -9,7 +9,7 @@ let fibonacci = fn(n) {
 };
 
 // Calculate the 8th Fibonacci number
-let result = fibonacci(8);
+let result = fibonacci(3);
 `,
 
   factorial: `// Factorial function using recursion
