@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Code, Terminal, Grid, BookOpen } from "lucide-react";
+import { Code, Grid, BookOpen } from "lucide-react";
 import GettingStarted from "./getting-stared";
 import { LanguageFeatures, SyntaxReference, CodeExamples } from "./tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -20,14 +20,15 @@ interface TabButtonProps {
 
 const TabButton: React.FC<TabButtonProps> = ({ tab, isActive, onClick }) => (
   <button
-    className={`px-8 py-4 text-sm font-medium relative transition-colors ${
+    className={`px-3 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm font-medium relative transition-colors whitespace-nowrap ${
       isActive ? "text-tokyo-green" : "text-tokyo-fg-dark hover:text-tokyo-fg"
     }`}
     onClick={() => onClick(tab.id)}
   >
-    <span className="flex items-center gap-2">
+    <span className="flex items-center gap-1.5 sm:gap-2">
       {tab.icon}
-      {tab.label}
+      <span className="hidden sm:inline">{tab.label}</span>
+      <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
     </span>
     {isActive && (
       <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-tokyo-green/80 to-tokyo-green/20"></span>
@@ -75,37 +76,36 @@ const LanguageGuide: React.FC = () => {
   };
 
   return (
-    <ScrollArea className="w-full py-8 relative max-h-screen">
-      <div className="relative z-10 mb-12 text-center">
-        <div className="inline-flex items-center justify-center gap-4 mb-6">
-          <div className="relative">
-            <div className="relative bg-tokyo-bg p-3 rounded-full border-none">
-              <Terminal size={40} className="text-tokyo-green" />
-            </div>
-          </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-tokyo-green via-tokyo-blue to-tokyo-purple text-transparent bg-clip-text">
+    <ScrollArea className="w-full py-4 sm:py-8 relative max-h-screen">
+      <div className="relative z-10 mb-8 sm:mb-12 text-center px-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-tokyo-green via-tokyo-blue to-tokyo-purple text-transparent bg-clip-text text-center sm:text-left">
             Enigma Programming Language
           </h1>
         </div>
-        <p className="text-tokyo-fg text-lg max-w-3xl mx-auto leading-relaxed">
+        <p className="text-tokyo-fg text-sm sm:text-base lg:text-lg max-w-3xl mx-auto leading-relaxed px-2">
           A dynamically-typed language with first-class functions, closures, and
           a clean, expressive syntax. Designed for readability and productivity.
         </p>
       </div>
 
       {/* Navigation tabs */}
-      <div className="flex justify-center mb-10 border-b border-tokyo-comment/40">
-        {tabs.map((tab) => (
-          <TabButton
-            key={tab.id}
-            tab={tab}
-            isActive={activeTab === tab.id}
-            onClick={setActiveTab}
-          />
-        ))}
+      <div className="mb-6 sm:mb-10 border-b border-tokyo-comment/40">
+        <div className="overflow-x-auto">
+          <div className="flex justify-center sm:justify-center min-w-max px-4">
+            {tabs.map((tab) => (
+              <TabButton
+                key={tab.id}
+                tab={tab}
+                isActive={activeTab === tab.id}
+                onClick={setActiveTab}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10 px-4">
         {renderTabContent()}
       </div>
       <ScrollBar orientation="vertical" />
