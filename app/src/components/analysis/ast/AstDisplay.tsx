@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Lexer from "@/lang/lexer/lexer";
 import { Parser } from "@/lang/parser/parser";
-import ParserErrors from "./ParserErrors";
+import ParserErrors from "./parser-errors";
 import { X, TreePine, Search, Info, Maximize2, Minimize2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
