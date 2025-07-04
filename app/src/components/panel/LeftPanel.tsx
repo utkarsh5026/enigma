@@ -1,6 +1,6 @@
 import { FileCode, Play, Copy, Download } from "lucide-react";
 import EditorToolbarButton from "./EditorToolBarButton";
-import EnigmaEditor from "@/components/editor/EnigmaEditor";
+import EnigmaEditor from "@/components/editor/components/enigma-editor";
 
 interface LeftPanelProps {
   code: string;
