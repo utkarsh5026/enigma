@@ -60,7 +60,7 @@ const CodeToken: React.FC<CodeTokenProps> = ({
                 </span>
               </TooltipTrigger>
               <TooltipContent
-                className="p-0 overflow-hidden bg-tokyo-bg-dark border border-tokyo-bg-highlight"
+                className="p-0 overflow-hidden bg-tokyo-bg-dark border border-tokyo-bg-highlight font-cascadia-code"
                 side="bottom"
                 sideOffset={5}
               >
