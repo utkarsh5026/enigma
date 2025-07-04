@@ -23,6 +23,14 @@ export default class Lexer {
   }
 
   /**
+   * Gets the current character.
+   * @returns The current character.
+   */
+  public getCurrCh(): string {
+    return this.currCh;
+  }
+
+  /**
    * Checks if a character is a letter or underscore.
    * @param ch The character to check.
    * @returns True if the character is a letter or underscore, false otherwise.
@@ -194,7 +202,7 @@ export default class Lexer {
   /**
    * Skips whitespace characters in the input.
    */
-  private skipWhitespace(): void {
+  public skipWhitespace(): void {
     while (
       this.currCh === " " ||
       this.currCh === "\t" ||
@@ -208,7 +216,7 @@ export default class Lexer {
   /**
    * Reads the current character and advances the position.
    */
-  private readCurrChar(): void {
+  public readCurrChar(): void {
     this.currCh = this.isOut() ? "\0" : this.input[this.readPosition];
     this.advance();
   }
@@ -240,7 +248,7 @@ export default class Lexer {
    * Peeks at the next character without advancing the position.
    * @returns The next character in the input.
    */
-  private peekChar(): string {
+  public peekChar(): string {
     return this.isOut() ? "\0" : this.input[this.readPosition];
   }
 
