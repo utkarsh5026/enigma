@@ -134,3 +134,8 @@ export const lookupIdentifier = (identifier: string): TokenType => {
 export const getKeywords = (): string[] => {
   return Object.keys(keywords);
 };
+
+export type IntegerOperator = "+" | "-" | "*" | "/" | "%";
+export type BooleanOperator = "<" | ">" | "==" | "!=";
+export type LogicalOperator = "&&" | "||";
+export type Operator = IntegerOperator | BooleanOperator | LogicalOperator;
