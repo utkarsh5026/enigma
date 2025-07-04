@@ -80,9 +80,9 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
         onMount={handleEditorDidMount}
         options={{
           minimap: { enabled: false },
-          fontSize: 14,
+          fontSize: 20,
           fontFamily:
-            "'Cascadia Code', Menlo, Monaco, 'Courier New', monospace",
+            "'Source Code Pro', Menlo, Monaco, 'Courier New', monospace",
           fontLigatures: true,
           lineNumbers: "on",
           tabSize: 2,
