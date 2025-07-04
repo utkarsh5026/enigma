@@ -31,6 +31,35 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 const examples = Object.keys(sampleCodeSnippets);
 
+interface TabTriggerProps {
+  value: string;
+  icon: React.ReactNode;
+  label: string;
+  badge?: number;
+}
+
+const CustomTabTrigger: React.FC<TabTriggerProps> = ({
+  value,
+  icon,
+  label,
+  badge,
+}) => (
+  <TabsTrigger
+    value={value}
+    className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
+  >
+    <div className="flex items-center gap-2">
+      {icon}
+      <span>{label}</span>
+      {badge !== undefined && badge > 0 && (
+        <Badge className="ml-1 text-xs bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30">
+          {badge}
+        </Badge>
+      )}
+    </div>
+  </TabsTrigger>
+);
+
 const ModernEnigmaEditor: React.FC = () => {
   const [code, setCode] = useState("");
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -40,7 +69,6 @@ const ModernEnigmaEditor: React.FC = () => {
   const [showExamplesDropdown, setShowExamplesDropdown] = useState(false);
 
   useEffect(() => {
-    // Load random example code on first render
     const randomExample = getRandomSampleCode();
     handleCodeChange(randomExample);
   }, []);
@@ -136,47 +164,27 @@ const ModernEnigmaEditor: React.FC = () => {
                 {/* Analysis Tabs */}
                 <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
                   <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
-                    <TabsTrigger
+                    <CustomTabTrigger
                       value="tokens"
-                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Terminal size={16} />
-                        <span>Tokens</span>
-                        {tokens.length > 0 && (
-                          <Badge className="ml-1 text-xs bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30">
-                            {tokens.length}
-                          </Badge>
-                        )}
-                      </div>
-                    </TabsTrigger>
-                    <TabsTrigger
+                      icon={<Terminal size={16} />}
+                      label="Tokens"
+                      badge={tokens.length}
+                    />
+                    <CustomTabTrigger
                       value="ast"
-                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Braces size={16} />
-                        <span>AST</span>
-                      </div>
-                    </TabsTrigger>
-                    <TabsTrigger
+                      icon={<Braces size={16} />}
+                      label="AST"
+                    />
+                    <CustomTabTrigger
                       value="execution"
-                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
-                    >
-                      <div className="flex items-center gap-2">
-                        <ChevronsRight size={16} />
-                        <span>Execution</span>
-                      </div>
-                    </TabsTrigger>
-                    <TabsTrigger
+                      icon={<ChevronsRight size={16} />}
+                      label="Execution"
+                    />
+                    <CustomTabTrigger
                       value="guide"
-                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
-                    >
-                      <div className="flex items-center gap-2">
-                        <BookOpen size={16} />
-                        <span>Guide</span>
-                      </div>
-                    </TabsTrigger>
+                      icon={<BookOpen size={16} />}
+                      label="Guide"
+                    />
                   </TabsList>
                 </div>
 
