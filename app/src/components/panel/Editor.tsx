@@ -23,6 +23,7 @@ import {
   sampleCodeSnippets,
   getRandomSampleCode,
 } from "@/components/analysis/exec/snippets";
+import { useNavigate } from "react-router-dom";
 
 import LeftPanel from "./LeftPanel";
 import ToolBar from "./ToolBar";
@@ -47,6 +48,8 @@ const ModernEnigmaEditor: React.FC = () => {
   const mutedTextColor = darkMode ? "#565f89" : "#9699a3";
   const borderColor = darkMode ? "#292e42" : "#dbe0ea";
   const highlightBg = darkMode ? "#292e42" : "#e2e8f0";
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Load random example code on first render
@@ -283,7 +286,10 @@ const ModernEnigmaEditor: React.FC = () => {
                           <p className="text-tokyo-fg-dark text-xs">
                             View the examples dropdown for more code samples
                           </p>
-                          <button className="bg-[#bb9af7] hover:bg-[#a485e3] text-white py-2 px-4 rounded-md text-sm flex items-center gap-2 transition-all">
+                          <button
+                            className="bg-[#bb9af7] hover:bg-[#a485e3] text-white py-2 px-4 rounded-md text-sm flex items-center gap-2 transition-all"
+                            onClick={() => navigate("/guide")}
+                          >
                             <BookOpen size={14} />
                             View Full Documentation
                           </button>
@@ -315,7 +321,7 @@ const ModernEnigmaEditor: React.FC = () => {
           </div>
           <div className="flex items-center gap-1">
             <Coffee size={12} />
-            <span>Made with ❤️ by Enigma Team</span>
+            <span>Made with ❤️ by Utkarsh Priyadarshi</span>
           </div>
         </div>
       </motion.div>
