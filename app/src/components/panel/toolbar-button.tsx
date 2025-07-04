@@ -25,7 +25,10 @@ const EditorToolbarButton = ({
           {React.isValidElement(icon) ? React.cloneElement(icon) : icon}
         </motion.button>
       </TooltipTrigger>
-      <TooltipContent side="bottom">
+      <TooltipContent
+        side="bottom"
+        className="font-cascadia-code bg-tokyo-bg-dark text-tokyo-fg"
+      >
         <p className="text-xs font-medium">{tooltip}</p>
       </TooltipContent>
     </Tooltip>

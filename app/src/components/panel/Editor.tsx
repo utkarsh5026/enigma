@@ -25,30 +25,58 @@ import {
 import { GuideTab } from "@/components/guide";
 
 import LeftPanel from "./LeftPanel";
-import ToolBar from "./ToolBar";
+import ToolBar from "./editor-toolbar";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ScrollBar } from "../ui/scroll-area";
 
 const examples = Object.keys(sampleCodeSnippets);
 
+interface TabConfig {
+  id: string;
+  label: string;
+  icon: React.ReactElement;
+  badgeCount?: number;
+}
+
+interface AnalysisTabProps {
+  tab: TabConfig;
+  isActive: boolean;
+  onClick: (tabId: string) => void;
+}
+
+const AnalysisTab: React.FC<AnalysisTabProps> = ({
+  tab,
+  isActive,
+  onClick,
+}) => (
+  <button
+    className={`py-2 px-4 text-sm font-medium relative transition-colors border-b-2 ${
+      isActive
+        ? "border-[var(--tokyo-blue)] text-[var(--tokyo-blue)]"
+        : "border-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)]"
+    }`}
+    onClick={() => onClick(tab.id)}
+  >
+    <div className="flex items-center gap-2">
+      {tab.icon}
+      <span>{tab.label}</span>
+      {tab.badgeCount !== undefined && tab.badgeCount > 0 && (
+        <Badge className="ml-1 text-xs bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30">
+          {tab.badgeCount}
+        </Badge>
+      )}
+    </div>
+  </button>
+);
+
 const ModernEnigmaEditor: React.FC = () => {
   const [code, setCode] = useState("");
   const [tokens, setTokens] = useState<Token[]>([]);
   const [activeTab, setActiveTab] = useState("tokens");
-  const [darkMode, setDarkMode] = useState(true);
   const [selectedExample, setSelectedExample] = useState<
     keyof typeof sampleCodeSnippets | null
   >(null);
   const [showExamplesDropdown, setShowExamplesDropdown] = useState(false);
-
-  // Theme colors
-  const mainBg = darkMode ? "#1a1b26" : "#f7f8fa";
-  const sideBg = darkMode ? "#16161e" : "#ebeef5";
-  const accentColor = "#7aa2f7";
-  const textColor = darkMode ? "#c0caf5" : "#24283b";
-  const mutedTextColor = darkMode ? "#565f89" : "#9699a3";
-  const borderColor = darkMode ? "#292e42" : "#dbe0ea";
-  const highlightBg = darkMode ? "#292e42" : "#e2e8f0";
 
   useEffect(() => {
     // Load random example code on first render
@@ -85,6 +113,45 @@ const ModernEnigmaEditor: React.FC = () => {
     }
   };
 
+  const analysisTabs: TabConfig[] = [
+    {
+      id: "tokens",
+      label: "Tokens",
+      icon: <Terminal size={16} />,
+      badgeCount: tokens.length,
+    },
+    {
+      id: "ast",
+      label: "AST",
+      icon: <Braces size={16} />,
+    },
+    {
+      id: "execution",
+      label: "Execution",
+      icon: <ChevronsRight size={16} />,
+    },
+    {
+      id: "guide",
+      label: "Guide",
+      icon: <BookOpen size={16} />,
+    },
+  ];
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "tokens":
+        return <TokenDisplay tokens={tokens} />;
+      case "ast":
+        return <ASTDisplay code={code} />;
+      case "execution":
+        return <ExecutionVisualizer code={code} />;
+      case "guide":
+        return <GuideTab />;
+      default:
+        return null;
+    }
+  };
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -108,29 +175,20 @@ const ModernEnigmaEditor: React.FC = () => {
 
   return (
     <motion.div
-      className="h-full w-full overflow-hidden flex flex-col"
-      style={{ background: mainBg, color: textColor }}
+      className="h-full w-full overflow-hidden flex flex-col bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)]"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Top Toolbar */}
       <ToolBar
-        borderColor={borderColor}
-        accentColor={accentColor}
-        textColor={textColor}
-        mutedTextColor={mutedTextColor}
-        highlightBg={highlightBg}
         selectedExample={selectedExample ?? ""}
         showExamplesDropdown={showExamplesDropdown}
         setShowExamplesDropdown={setShowExamplesDropdown}
         loadExample={(example: string) =>
           loadExample(example as keyof typeof sampleCodeSnippets)
         }
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
         examples={examples}
-        sideBg={sideBg}
       />
 
       {/* Main Content */}
@@ -153,93 +211,23 @@ const ModernEnigmaEditor: React.FC = () => {
           {/* Analysis Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
             <div className="h-full flex flex-col overflow-hidden">
-              <div className="border-b" style={{ borderColor }}>
+              {/* Analysis Tabs */}
+              <div className="border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
                 <div className="flex">
-                  <button
-                    className={`py-2 px-4 text-sm font-medium relative ${
-                      activeTab === "tokens"
-                        ? `border-b-2 text-[${accentColor}]`
-                        : `text-[${mutedTextColor}] hover:text-[${textColor}]`
-                    }`}
-                    onClick={() => setActiveTab("tokens")}
-                    style={{
-                      borderColor:
-                        activeTab === "tokens" ? accentColor : "transparent",
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Terminal size={16} />
-                      <span>Tokens</span>
-                      {tokens.length > 0 && (
-                        <Badge className="ml-1 text-xs bg-[#3d59a1] text-white">
-                          {tokens.length}
-                        </Badge>
-                      )}
-                    </div>
-                  </button>
-                  <button
-                    className={`py-2 px-4 text-sm font-medium relative ${
-                      activeTab === "ast"
-                        ? `border-b-2 text-[${accentColor}]`
-                        : `text-[${mutedTextColor}] hover:text-[${textColor}]`
-                    }`}
-                    onClick={() => setActiveTab("ast")}
-                    style={{
-                      borderColor:
-                        activeTab === "ast" ? accentColor : "transparent",
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Braces size={16} />
-                      <span>AST</span>
-                    </div>
-                  </button>
-                  <button
-                    className={`py-2 px-4 text-sm font-medium relative ${
-                      activeTab === "execution"
-                        ? `border-b-2 text-[${accentColor}]`
-                        : `text-[${mutedTextColor}] hover:text-[${textColor}]`
-                    }`}
-                    onClick={() => setActiveTab("execution")}
-                    style={{
-                      borderColor:
-                        activeTab === "execution" ? accentColor : "transparent",
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <ChevronsRight size={16} />
-                      <span>Execution</span>
-                    </div>
-                  </button>
-                  <button
-                    className={`py-2 px-4 text-sm font-medium relative ${
-                      activeTab === "guide"
-                        ? `border-b-2 text-[${accentColor}]`
-                        : `text-[${mutedTextColor}] hover:text-[${textColor}]`
-                    }`}
-                    onClick={() => setActiveTab("guide")}
-                    style={{
-                      borderColor:
-                        activeTab === "guide" ? accentColor : "transparent",
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <BookOpen size={16} />
-                      <span>Guide</span>
-                    </div>
-                  </button>
+                  {analysisTabs.map((tab) => (
+                    <AnalysisTab
+                      key={tab.id}
+                      tab={tab}
+                      isActive={activeTab === tab.id}
+                      onClick={setActiveTab}
+                    />
+                  ))}
                 </div>
               </div>
-              <ScrollArea className="flex-1 overflow-auto h-full max-h-full">
-                {activeTab === "tokens" && <TokenDisplay tokens={tokens} />}
-                {activeTab === "ast" && <ASTDisplay code={code} />}
-                {activeTab === "execution" && (
-                  <ExecutionVisualizer
-                    code={code}
-                    onCodeChange={handleCodeChange}
-                  />
-                )}
-                {activeTab === "guide" && <GuideTab />}
+
+              {/* Tab Content */}
+              <ScrollArea className="flex-1 overflow-auto h-full max-h-full bg-[var(--tokyo-bg-dark)]/30">
+                <div className="p-4">{renderTabContent()}</div>
                 <ScrollBar orientation="vertical" />
               </ScrollArea>
             </div>
@@ -249,20 +237,27 @@ const ModernEnigmaEditor: React.FC = () => {
 
       {/* Status Bar */}
       <motion.div
-        className="border-t px-4 py-1 flex items-center justify-between text-xs"
-        style={{ borderColor, color: mutedTextColor }}
+        className="border-t border-[var(--tokyo-comment)]/40 px-4 py-2 flex items-center justify-between text-xs bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm"
         variants={itemVariants}
       >
-        <div className="flex items-center gap-3">
-          <span style={{ color: accentColor }}>Enigma v0.1.0</span>
-          <span>Tokens: {tokens.length}</span>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[var(--tokyo-blue)] animate-pulse"></div>
+            <span className="text-[var(--tokyo-blue)] font-medium">
+              Enigma v0.1.0
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-[var(--tokyo-fg-dark)]">
+            <Terminal size={12} />
+            <span>Tokens: {tokens.length}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-[#9ece6a] animate-pulse"></div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-[var(--tokyo-green)]">
+            <div className="w-2 h-2 rounded-full bg-[var(--tokyo-green)] animate-pulse"></div>
             <span>Ready</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2 text-[var(--tokyo-fg-dark)]">
             <Coffee size={12} />
             <span>Made with ❤️ by Utkarsh Priyadarshi</span>
           </div>
