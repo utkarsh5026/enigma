@@ -1,6 +1,4 @@
-/**
- * Utility functions for working with AST nodes
- */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * Maps node types to descriptions for better readability in the UI
@@ -35,7 +33,7 @@ export const nodeDescriptions: Record<string, string> = {
  * Returns a simplified, user-friendly representation of a node
  * focusing on the most important properties
  */
-export const getNodeSummary = (node: Node): string => {
+export const getNodeSummary = (node: any): string => {
   if (!node) return "";
 
   const nodeType = node.constructor.name;
@@ -57,7 +55,8 @@ export const getNodeSummary = (node: Node): string => {
     case "ConstStatement":
       return node.name?.value || "";
     case "FunctionLiteral": {
-      const paramNames = node.parameters?.map((p) => p.value).join(", ") || "";
+      const paramNames =
+        node.parameters?.map((p: any) => p.value).join(", ") || "";
       return `fn(${paramNames})`;
     }
     case "CallExpression": {
@@ -76,8 +75,7 @@ export const getNodeSummary = (node: Node): string => {
     case "HashLiteral":
       return `hash{${node.pairs?.size || 0}}`;
     case "IndexExpression":
-      const indexedName = node.left?.value || "value";
-      return `${indexedName}[...]`;
+      return `${node.left?.value || "value"}[...]`;
     case "AssignmentExpression":
       return `${node.name?.value || ""} =`;
     default:

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Lexer from "@/lang/lexer/lexer";
@@ -295,10 +296,10 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
                 depth={0}
                 path="root"
                 isLast={true}
-                parentExpanded={true}
-                searchTerm={searchTerm}
-                highlightedNodes={highlightedNodes}
-                forceExpanded={isExpanded}
+                // parentExpanded={true}
+                // searchTerm={searchTerm}
+                // highlightedNodes={highlightedNodes}
+                // forceExpanded={isExpanded}
               />
             </motion.div>
 

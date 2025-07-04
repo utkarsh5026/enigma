@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,7 @@ import {
 } from "./node-info";
 import { Node } from "@/lang/ast/ast";
 interface MinimalAstNodeProps {
-  node: Node;
+  node: any;
   depth: number;
   path: string;
   isLast?: boolean;
@@ -32,7 +33,7 @@ const MinimalAstNode: React.FC<MinimalAstNodeProps> = ({
   const description = getNodeDescription(nodeType);
 
   // Check if node has children
-  const hasChildren = (node: Node): boolean => {
+  const hasChildren = (node: any): boolean => {
     if (!node || typeof node !== "object") return false;
 
     for (const key in node) {
