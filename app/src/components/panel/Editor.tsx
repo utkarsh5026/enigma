@@ -13,6 +13,7 @@ import {
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import TokenDisplay from "@/components/analysis/tokens/token-display";
 import ASTDisplay from "@/components/analysis/ast/AstDisplay";
 import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
@@ -31,48 +32,9 @@ import { ScrollBar } from "../ui/scroll-area";
 
 const examples = Object.keys(sampleCodeSnippets);
 
-interface TabConfig {
-  id: string;
-  label: string;
-  icon: React.ReactElement;
-  badgeCount?: number;
-}
-
-interface AnalysisTabProps {
-  tab: TabConfig;
-  isActive: boolean;
-  onClick: (tabId: string) => void;
-}
-
-const AnalysisTab: React.FC<AnalysisTabProps> = ({
-  tab,
-  isActive,
-  onClick,
-}) => (
-  <button
-    className={`py-2 px-4 text-sm font-medium relative transition-colors border-b-2 ${
-      isActive
-        ? "border-[var(--tokyo-blue)] text-[var(--tokyo-blue)]"
-        : "border-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)]"
-    }`}
-    onClick={() => onClick(tab.id)}
-  >
-    <div className="flex items-center gap-2">
-      {tab.icon}
-      <span>{tab.label}</span>
-      {tab.badgeCount !== undefined && tab.badgeCount > 0 && (
-        <Badge className="ml-1 text-xs bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30">
-          {tab.badgeCount}
-        </Badge>
-      )}
-    </div>
-  </button>
-);
-
 const ModernEnigmaEditor: React.FC = () => {
   const [code, setCode] = useState("");
   const [tokens, setTokens] = useState<Token[]>([]);
-  const [activeTab, setActiveTab] = useState("tokens");
   const [selectedExample, setSelectedExample] = useState<
     keyof typeof sampleCodeSnippets | null
   >(null);
@@ -113,45 +75,6 @@ const ModernEnigmaEditor: React.FC = () => {
     }
   };
 
-  const analysisTabs: TabConfig[] = [
-    {
-      id: "tokens",
-      label: "Tokens",
-      icon: <Terminal size={16} />,
-      badgeCount: tokens.length,
-    },
-    {
-      id: "ast",
-      label: "AST",
-      icon: <Braces size={16} />,
-    },
-    {
-      id: "execution",
-      label: "Execution",
-      icon: <ChevronsRight size={16} />,
-    },
-    {
-      id: "guide",
-      label: "Guide",
-      icon: <BookOpen size={16} />,
-    },
-  ];
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "tokens":
-        return <TokenDisplay tokens={tokens} />;
-      case "ast":
-        return <ASTDisplay code={code} />;
-      case "execution":
-        return <ExecutionVisualizer code={code} />;
-      case "guide":
-        return <GuideTab />;
-      default:
-        return null;
-    }
-  };
-
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -175,7 +98,7 @@ const ModernEnigmaEditor: React.FC = () => {
 
   return (
     <motion.div
-      className="h-full w-full overflow-hidden flex flex-col bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)]"
+      className="h-full w-full  flex flex-col bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)]"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -192,17 +115,14 @@ const ModernEnigmaEditor: React.FC = () => {
       />
 
       {/* Main Content */}
-      <motion.div
-        className="flex-1 overflow-hidden h-full max-h-full"
-        variants={itemVariants}
-      >
+      <motion.div className="flex-1  h-full" variants={itemVariants}>
         <ResizablePanelGroup direction="horizontal">
           {/* Editor Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
             <LeftPanel
               code={code}
               onCodeChange={handleCodeChange}
-              setActiveTab={setActiveTab}
+              setActiveTab={() => {}} // Remove this prop since we don't need it anymore
             />
           </ResizablePanel>
 
@@ -210,26 +130,98 @@ const ModernEnigmaEditor: React.FC = () => {
 
           {/* Analysis Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-full flex flex-col overflow-hidden">
-              {/* Analysis Tabs */}
-              <div className="border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
-                <div className="flex">
-                  {analysisTabs.map((tab) => (
-                    <AnalysisTab
-                      key={tab.id}
-                      tab={tab}
-                      isActive={activeTab === tab.id}
-                      onClick={setActiveTab}
-                    />
-                  ))}
+            <div className="h-full flex flex-col overflow-y-auto">
+              <Tabs defaultValue="tokens" className="h-full flex flex-col">
+                {/* Analysis Tabs */}
+                <div className="border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
+                  <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
+                    <TabsTrigger
+                      value="tokens"
+                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Terminal size={16} />
+                        <span>Tokens</span>
+                        {tokens.length > 0 && (
+                          <Badge className="ml-1 text-xs bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30">
+                            {tokens.length}
+                          </Badge>
+                        )}
+                      </div>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="ast"
+                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Braces size={16} />
+                        <span>AST</span>
+                      </div>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="execution"
+                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
+                    >
+                      <div className="flex items-center gap-2">
+                        <ChevronsRight size={16} />
+                        <span>Execution</span>
+                      </div>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="guide"
+                      className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
+                    >
+                      <div className="flex items-center gap-2">
+                        <BookOpen size={16} />
+                        <span>Guide</span>
+                      </div>
+                    </TabsTrigger>
+                  </TabsList>
                 </div>
-              </div>
 
-              {/* Tab Content */}
-              <ScrollArea className="flex-1 overflow-auto h-full max-h-full bg-[var(--tokyo-bg-dark)]/30">
-                <div className="p-4">{renderTabContent()}</div>
-                <ScrollBar orientation="vertical" />
-              </ScrollArea>
+                {/* Tab Content */}
+                <TabsContent value="tokens" className="flex-1  m-0">
+                  <ScrollArea className="h-full max-h-full bg-[var(--tokyo-bg-dark)]/30">
+                    <div className="p-4">
+                      <TokenDisplay tokens={tokens} />
+                    </div>
+                    <ScrollBar orientation="vertical" />
+                  </ScrollArea>
+                </TabsContent>
+
+                <TabsContent value="ast" className="flex-1  m-0">
+                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+                    <div className="p-4">
+                      <ASTDisplay code={code} />
+                    </div>
+                    <ScrollBar orientation="vertical" />
+                  </ScrollArea>
+                </TabsContent>
+
+                <TabsContent
+                  value="execution"
+                  className="flex-1 overflow-hidden m-0"
+                >
+                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+                    <div className="p-4">
+                      <ExecutionVisualizer code={code} />
+                    </div>
+                    <ScrollBar orientation="vertical" />
+                  </ScrollArea>
+                </TabsContent>
+
+                <TabsContent
+                  value="guide"
+                  className="flex-1 overflow-hidden m-0"
+                >
+                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+                    <div className="p-4">
+                      <GuideTab />
+                    </div>
+                    <ScrollBar orientation="vertical" />
+                  </ScrollArea>
+                </TabsContent>
+              </Tabs>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
