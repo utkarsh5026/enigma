@@ -162,6 +162,39 @@ function isContinue(obj: objects.BaseObject): obj is objects.ContinueObject {
   return obj instanceof objects.ContinueObject;
 }
 
+/**
+ * 🔄 **Boolean Detector - True/False Spotter**
+ *
+ * Checks if an object is a boolean - like checking if something is true or false!
+ *
+ * **Flow Chart**:
+ * ```
+ * Object → instanceof BooleanObject? → Yes: ✅ It's a boolean!
+ *
+ *
+ */
+function isBoolean(obj: objects.BaseObject): obj is objects.BooleanObject {
+  return obj instanceof objects.BooleanObject;
+}
+
+/**
+ * 🔄 **Null Detector - Empty Spotter**
+ *
+ * Checks if an object is null - like checking if something is empty!
+ *
+ * **Flow Chart**:
+ * ```
+ * Object → instanceof NullObject? → Yes: ✅ It's null!
+ *       → No: ❌ Not null
+ * ```
+ *
+ * @param obj 📦 The object to check for null-ness
+ * @returns 🎯 True if it's a NullObject, false otherwise
+ */
+function isNull(obj: objects.BaseObject): obj is objects.NullObject {
+  return obj instanceof objects.NullObject;
+}
+
 export {
   isError,
   isArray,
@@ -172,4 +205,6 @@ export {
   isReturnValue,
   isBreak,
   isContinue,
+  isBoolean,
+  isNull,
 };

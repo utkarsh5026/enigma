@@ -1,6 +1,7 @@
 import { truthy } from "./utils";
 import * as objects from "../objects";
 import { Operator } from "@/lang/token/token";
+import type { Identifier } from "@/lang/ast/ast";
 
 export const evalAndExpression = (
   left: objects.BaseObject,
@@ -98,4 +99,27 @@ export const evalStringInfixExpression = (
   return new objects.ErrorObject(
     `Unknown operator: ${left.type()} (${operator}) ${right.type()}`
   );
+};
+
+/**
+ * Evaluates an identifier
+ *
+ * @param node - The identifier node
+ * @param env - The current environment
+ * @returns The value associated with the identifier
+ *
+ * @example
+ * // Assuming "x" is already defined in the environment with value 5
+ * const identifier = new ast.Identifier("x");
+ * const result = evaluator.evaluate(identifier, environment);
+ * console.log(result.inspect()); // Outputs: 5
+ */
+export const evalIdentifier = (
+  node: Identifier,
+  env: objects.Environment
+): objects.BaseObject => {
+  const value = env.get(node.value);
+  if (value) return value;
+
+  return new objects.ErrorObject(`Identifier not found: ${node.value}`);
 };
