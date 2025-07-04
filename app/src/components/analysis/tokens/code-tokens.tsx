@@ -8,7 +8,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { getTokenCategory, getTokenColor, getCategoryIcon } from "./tokens";
+import {
+  getTokenCategory,
+  getTokenColor,
+  getCategoryIcon,
+} from "./tokens-info";
 import { Token } from "@/lang/token/token";
 import React, { useState } from "react";
 
@@ -18,25 +22,6 @@ interface CodeTokensProps {
   activeFilter: string | null;
 }
 
-/**
- * CodeTokens component displays the tokenization of source code.
- *
- * This component takes in line numbers, a mapping of tokens by line,
- * and an active filter to show only specific token categories. It
- * renders the tokens in a user-friendly format, allowing users to
- * hover over tokens to see additional information such as type,
- * category, position, and literal value.
- *
- * @param {Object} props - The component props.
- * @param {number[]} props.lineNumbers - An array of line numbers
- *        that contain tokens.
- * @param {Record<number, Token[]>} props.tokensByLine - A mapping
- *        of line numbers to arrays of tokens.
- * @param {string | null} props.activeFilter - A filter to show
- *        specific token categories. If null, all tokens are shown.
- *
- * @returns {JSX.Element} The rendered CodeTokens component.
- */
 const CodeTokens: React.FC<CodeTokensProps> = ({
   lineNumbers,
   tokensByLine,

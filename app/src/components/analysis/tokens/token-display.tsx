@@ -11,8 +11,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getTokenCategory, getCategoryIcon } from "./tokens";
-import CodeTokens from "./CodeTokens";
+import { getTokenCategory, getCategoryIcon } from "./tokens-info";
+import CodeTokens from "./code-tokens";
 
 interface TokenDisplayProps {
   tokens: Token[];

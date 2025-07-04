@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/resizable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import TokenDisplay from "@/components/analysis/tokens/TokenDisplay";
+import TokenDisplay from "@/components/analysis/tokens/token-display";
 import ASTDisplay from "@/components/analysis/ast/AstDisplay";
 import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
 import Lexer from "@/lang/lexer/lexer";
