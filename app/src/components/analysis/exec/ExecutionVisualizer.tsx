@@ -5,13 +5,10 @@ import {
   StepwiseEvaluator,
   ExecutionState,
   EnvironmentSnapshot,
-} from "@/lang/exec/stepwise"; // Import our enhanced evaluator
-import EnhancedCallStackVisualizer from "./CallStackVisualizer"; // Import our enhanced call stack
-import ExecutionEducationalInfo from "./ExecutinEducationVisualizer";
-// import HighlightedAstViewer from "./HighLightedAstViewer";
-import { Card, CardContent } from "@/components/ui/card";
+} from "@/lang/exec/stepwise/stepwise";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Play,
   Pause,
@@ -21,50 +18,33 @@ import {
   Terminal,
   Database,
   Braces,
-  HelpCircle,
+  Eye,
+  Clock,
+  Zap,
+  ArrowRight,
+  CheckCircle,
+  AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { sampleCodeSnippets } from "./snippets";
+import { motion, AnimatePresence } from "framer-motion";
 
-interface ExecutionVisualizerProps {
+interface EnhancedExecutionVisualizerProps {
   code: string;
-  onCodeChange?: (code: string) => void;
 }
 
-/**
- * Improved ExecutionVisualizer component with enhanced call stack visualization
- */
-const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
-  code,
-  onCodeChange,
-}) => {
-  // Use our enhanced evaluator
+const EnhancedExecutionVisualizer: React.FC<
+  EnhancedExecutionVisualizerProps
+> = ({ code }) => {
   const [evaluator] = useState<StepwiseEvaluator>(new StepwiseEvaluator());
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
   );
   const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [autoRunSpeed, setAutoRunSpeed] = useState<number>(500); // ms per step
+  const [autoRunSpeed, setAutoRunSpeed] = useState<number>(1000);
   const [error, setError] = useState<string | null>(null);
   const autoRunRef = useRef<NodeJS.Timeout | null>(null);
-  const [selectedExample, setSelectedExample] = useState<string>("");
-
-  // Load a code example
-  const loadExample = (exampleKey: string) => {
-    if (exampleKey in sampleCodeSnippets) {
-      const exampleCode =
-        sampleCodeSnippets[exampleKey as keyof typeof sampleCodeSnippets];
-      if (onCodeChange) {
-        onCodeChange(exampleCode);
-      }
-      setSelectedExample(exampleKey);
-
-      // Reset execution state and prepare new example
-      stopAutoRun();
-      setExecutionState(null);
-      setError(null);
-    }
-  };
+  const [showDetailedSteps, setShowDetailedSteps] = useState<boolean>(true);
+  const [highlightChanges, setHighlightChanges] = useState<boolean>(true);
 
   // Prepare the code for execution
   const prepareExecution = useCallback(() => {
@@ -88,13 +68,8 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
 
       evaluator.prepare(program);
 
-      // Add initial console output to help users understand what's happening
-      const initialState = new ExecutionState();
-      initialState.output.push({
-        value: "Execution prepared. Use the controls to step through the code.",
-        type: "log",
-        timestamp: Date.now(),
-      });
+      // Get initial state
+      const initialState = evaluator.nextStep();
       setExecutionState(initialState);
 
       return true;
@@ -172,21 +147,24 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
     };
   }, []);
 
-  // Environment Visualizer Component
-  const EnvironmentVisualizer: React.FC<{
+  // Enhanced Environment Visualizer
+  const EnhancedEnvironmentVisualizer: React.FC<{
     environment: EnvironmentSnapshot;
     depth?: number;
   }> = ({ environment, depth = 0 }) => {
-    const [expanded, setExpanded] = useState(depth === 0); // Only expand the topmost environment by default
+    const [expanded, setExpanded] = useState(depth === 0);
 
     return (
-      <div
+      <motion.div
         className={`border rounded-md bg-[#161b22] overflow-hidden ${
-          depth > 0 ? "mt-2" : ""
+          depth > 0 ? "mt-2 ml-4" : ""
         }`}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
       >
         <div
-          className="flex items-center justify-between px-3 py-2 cursor-pointer bg-[#21262d]"
+          className="flex items-center justify-between px-3 py-2 cursor-pointer bg-[#21262d] hover:bg-[#2c3444] transition-colors"
           onClick={() => setExpanded(!expanded)}
         >
           <div className="flex items-center gap-2">
@@ -198,178 +176,325 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
               {environment.variables.length} variables
             </Badge>
           </div>
-          <svg
-            className={`h-4 w-4 transition-transform duration-200 ${
-              expanded ? "rotate-90" : ""
-            }`}
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+          <motion.div
+            animate={{ rotate: expanded ? 90 : 0 }}
+            transition={{ duration: 0.2 }}
           >
-            <path
-              fillRule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
+            <ArrowRight size={14} />
+          </motion.div>
         </div>
 
-        {expanded && (
-          <div className="p-3">
-            {environment.variables.length > 0 ? (
-              <div className="space-y-2">
-                {environment.variables.map((variable, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-sm">
-                    <span
-                      className={`font-medium ${
-                        variable.isConstant
-                          ? "text-[#ff7b72]"
-                          : "text-[#79c0ff]"
-                      }`}
-                    >
-                      {variable.isConstant ? "const" : "let"} {variable.name}:
-                    </span>
-                    <Badge variant="outline" className="font-mono text-xs">
-                      {variable.type}
-                    </Badge>
-                    <code className="bg-[#21262d] px-2 py-0.5 rounded text-xs break-all max-w-[200px] overflow-hidden text-ellipsis">
-                      {variable.value}
-                    </code>
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="p-3">
+                {environment.variables.length > 0 ? (
+                  <div className="space-y-2">
+                    {environment.variables.map((variable, idx) => (
+                      <motion.div
+                        key={`${variable.name}-${idx}`}
+                        className={cn(
+                          "flex items-center gap-2 text-sm p-2 rounded",
+                          variable.isNew && highlightChanges
+                            ? "bg-[#1a4c30] border border-[#4d9375]/30"
+                            : "bg-[#1a1b26]"
+                        )}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                      >
+                        <span
+                          className={`font-medium ${
+                            variable.isConstant
+                              ? "text-[#ff7b72]"
+                              : "text-[#79c0ff]"
+                          }`}
+                        >
+                          {variable.isConstant ? "const" : "let"}{" "}
+                          {variable.name}:
+                        </span>
+                        <Badge variant="outline" className="font-mono text-xs">
+                          {variable.type}
+                        </Badge>
+                        <code className="bg-[#21262d] px-2 py-0.5 rounded text-xs break-all max-w-[200px] overflow-hidden text-ellipsis">
+                          {variable.value}
+                        </code>
+                        {variable.isNew && (
+                          <Badge className="bg-[#4d9375] text-white text-xs">
+                            NEW
+                          </Badge>
+                        )}
+                      </motion.div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-[#8b949e] italic text-sm">
-                No variables defined
-              </div>
-            )}
+                ) : (
+                  <div className="text-[#8b949e] italic text-sm text-center py-4">
+                    No variables defined
+                  </div>
+                )}
 
-            {environment.parentEnvironment && (
-              <EnvironmentVisualizer
-                environment={environment.parentEnvironment}
-                depth={depth + 1}
-              />
-            )}
-          </div>
-        )}
-      </div>
+                {environment.parentEnvironment && (
+                  <EnhancedEnvironmentVisualizer
+                    environment={environment.parentEnvironment}
+                    depth={depth + 1}
+                  />
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     );
   };
 
-  // Output Visualizer Component
-  const OutputVisualizer: React.FC<{
+  // Enhanced Output Visualizer
+  const EnhancedOutputVisualizer: React.FC<{
     outputs: ExecutionState["output"];
   }> = ({ outputs }) => {
     const outputRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll to bottom when new output is added
     useEffect(() => {
       if (outputRef.current) {
         outputRef.current.scrollTop = outputRef.current.scrollHeight;
       }
     }, [outputs]);
 
+    const getOutputIcon = (type: string) => {
+      switch (type) {
+        case "error":
+          return <AlertCircle size={12} className="text-[#f7768e]" />;
+        case "return":
+          return <CheckCircle size={12} className="text-[#7aa2f7]" />;
+        case "assignment":
+          return <Database size={12} className="text-[#4d9375]" />;
+        case "operation":
+          return <Zap size={12} className="text-[#e0af68]" />;
+        default:
+          return <Terminal size={12} className="text-[#a9b1d6]" />;
+      }
+    };
+
     return (
       <div className="border rounded-md bg-[#161b22] p-3">
         <div className="flex items-center gap-2 mb-3">
           <Terminal size={14} className="text-[#4d9375]" />
-          <h3 className="text-sm font-medium">Console Output</h3>
+          <h3 className="text-sm font-medium">Execution Log</h3>
+          <Badge variant="outline" className="text-xs">
+            {outputs.length} entries
+          </Badge>
         </div>
 
         <div
           ref={outputRef}
-          className="font-mono text-xs bg-[#0d1117] rounded-md p-3 max-h-32 overflow-auto"
+          className="font-mono text-xs bg-[#0d1117] rounded-md p-3 max-h-48 overflow-auto space-y-1"
         >
           {outputs.length > 0 ? (
-            <div className="space-y-1">
+            <AnimatePresence>
               {outputs.map((output, idx) => (
-                <div
+                <motion.div
                   key={idx}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, delay: idx * 0.05 }}
                   className={cn(
-                    "px-1 py-0.5",
+                    "flex items-start gap-2 px-2 py-1 rounded",
                     output.type === "error"
-                      ? "text-[#f7768e]"
+                      ? "bg-[#3e1723] text-[#f7768e]"
                       : output.type === "return"
-                      ? "text-[#7aa2f7]"
-                      : "text-[#a9b1d6]"
+                      ? "bg-[#1a2741] text-[#7aa2f7]"
+                      : output.type === "assignment"
+                      ? "bg-[#1a2e1f] text-[#4d9375]"
+                      : output.type === "operation"
+                      ? "bg-[#2e2618] text-[#e0af68]"
+                      : "bg-[#1a1b26] text-[#a9b1d6]"
                   )}
                 >
-                  {output.type === "log" && "> "}
-                  {output.type === "log" && "> "}
-                  {output.type === "error" && "! "}
-                  {output.type === "return" && "← "}
-                  {output.value}
-                </div>
+                  <div className="mt-0.5">{getOutputIcon(output.type)}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 text-xs opacity-60 mb-1">
+                      <span>Step {output.stepNumber}</span>
+                      <span>•</span>
+                      <span>
+                        {new Date(output.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                    <div>{output.value}</div>
+                  </div>
+                </motion.div>
               ))}
-            </div>
+            </AnimatePresence>
           ) : (
-            <div className="text-[#8b949e] italic">No output yet</div>
+            <div className="text-[#8b949e] italic text-center py-8">
+              <Terminal size={24} className="mx-auto mb-2 opacity-50" />
+              <p>No output yet. Execute some code to see results here.</p>
+            </div>
           )}
         </div>
       </div>
     );
   };
 
-  // Error Display Component
-  const ErrorDisplay: React.FC<{
-    error: string;
-  }> = ({ error }) => {
+  // Enhanced Step Information Display
+  const StepInformationDisplay: React.FC = () => {
+    if (!executionState?.currentStep) return null;
+
+    const step = executionState.currentStep;
+
     return (
-      <div className="bg-[#331c1f] border border-[#f7768e] text-[#f7768e] p-3 rounded-md mb-4">
-        <div className="flex items-start gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="h-5 w-5 mt-0.5 flex-shrink-0"
+      <motion.div
+        className="border rounded-md bg-[#161b22] p-3"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <Eye size={14} className="text-[#bb9af7]" />
+          <h3 className="text-sm font-medium">Current Step</h3>
+          <Badge
+            className={cn(
+              "text-xs",
+              step.stepType === "before"
+                ? "bg-[#e0af68]/20 text-[#e0af68]"
+                : step.stepType === "after"
+                ? "bg-[#4d9375]/20 text-[#4d9375]"
+                : "bg-[#7aa2f7]/20 text-[#7aa2f7]"
+            )}
           >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <p>{error}</p>
+            {step.stepType}
+          </Badge>
         </div>
+
+        <div className="space-y-3">
+          {/* Step description */}
+          <div className="bg-[#0d1117] p-3 rounded-md">
+            <div className="flex items-start gap-2">
+              <Clock
+                size={14}
+                className="text-[#7aa2f7] mt-0.5 flex-shrink-0"
+              />
+              <div>
+                <div className="text-sm font-medium mb-1">
+                  What's happening:
+                </div>
+                <p className="text-sm text-[#a9b1d6]">{step.description}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Result display */}
+          {step.result && (
+            <div className="bg-[#0d1117] p-3 rounded-md">
+              <div className="flex items-start gap-2">
+                <CheckCircle
+                  size={14}
+                  className="text-[#4d9375] mt-0.5 flex-shrink-0"
+                />
+                <div>
+                  <div className="text-sm font-medium mb-1">Result:</div>
+                  <code className="text-sm bg-[#21262d] px-2 py-1 rounded text-[#7aa2f7]">
+                    {step.result.inspect()}
+                  </code>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Position information */}
+          <div className="flex items-center gap-4 text-xs text-[#8b949e]">
+            <span>Line: {step.lineNumber}</span>
+            <span>Column: {step.columnNumber}</span>
+            <span>Depth: {step.depth}</span>
+            <span>Phase: {step.executionPhase}</span>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // Progress indicator
+  const ProgressIndicator: React.FC = () => {
+    if (!executionState) return null;
+
+    const progress =
+      executionState.totalSteps > 0
+        ? (executionState.currentStepNumber / executionState.totalSteps) * 100
+        : 0;
+
+    return (
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-[#8b949e]">Progress:</span>
+        <div className="flex-1">
+          <Progress value={progress} className="h-2" />
+        </div>
+        <span className="text-xs text-[#8b949e] font-mono">
+          {executionState.currentStepNumber}/{executionState.totalSteps}
+        </span>
       </div>
     );
   };
 
   return (
-    <Card className="w-full h-full shadow-lg border-0 bg-[#0d1117] flex flex-col">
-      <CardContent className="space-y-4 flex-grow overflow-auto">
-        {/* Code sample selector */}
-        <div className="flex flex-wrap gap-2 p-3 bg-[#161b22] rounded-md">
-          <div className="text-sm text-[#8b949e] mr-2 flex items-center">
-            <HelpCircle size={14} className="mr-1" />
-            Examples:
+    <div className="w-full h-full bg-[#0d1117] text-[#a9b1d6] flex flex-col">
+      {/* Header */}
+      <div className="border-b border-[#30363d] p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Braces size={20} className="text-[#bb9af7]" />
+            <h2 className="text-lg font-bold">Step-by-Step Execution</h2>
           </div>
 
-          {Object.keys(sampleCodeSnippets).map((key) => (
-            <button
-              key={key}
-              onClick={() => loadExample(key)}
-              className={cn(
-                "text-xs py-1 px-2 rounded-md",
-                selectedExample === key
-                  ? "bg-[#4d9375] text-white"
-                  : "bg-[#21262d] text-[#8b949e] hover:bg-[#30363d] hover:text-white"
-              )}
-            >
-              {key}
-            </button>
-          ))}
+          <div className="flex items-center gap-2 text-xs">
+            <label className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={showDetailedSteps}
+                onChange={(e) => setShowDetailedSteps(e.target.checked)}
+                className="rounded"
+              />
+              <span>Detailed Steps</span>
+            </label>
+            <label className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={highlightChanges}
+                onChange={(e) => setHighlightChanges(e.target.checked)}
+                className="rounded"
+              />
+              <span>Highlight Changes</span>
+            </label>
+          </div>
         </div>
 
-        {/* Error display */}
-        {error && <ErrorDisplay error={error} />}
+        <ProgressIndicator />
+      </div>
 
-        {/* Controls section */}
-        <div className="flex items-center gap-2 p-3 bg-[#161b22] rounded-md">
+      {/* Error display */}
+      {error && (
+        <motion.div
+          className="bg-[#331c1f] border border-[#f7768e] text-[#f7768e] p-3 m-4 rounded-md"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex items-start gap-2">
+            <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+            <p>{error}</p>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Controls section */}
+      <div className="border-b border-[#30363d] p-4">
+        <div className="flex items-center gap-3 mb-4">
           <button
             onClick={prepareExecution}
-            className="bg-[#21262d] hover:bg-[#30363d] text-white p-2 rounded-md"
-            title="Reset"
+            className="bg-[#21262d] hover:bg-[#30363d] text-white p-2 rounded-md transition-colors"
+            title="Reset and Prepare"
           >
             <RotateCcw size={18} />
           </button>
@@ -377,12 +502,12 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
           <button
             onClick={executeStep}
             disabled={isRunning || executionState?.isComplete === true}
-            className={`bg-[#4d9375] hover:bg-[#3a7057] text-white p-2 rounded-md ${
-              isRunning || executionState?.isComplete === true
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-            title="Step forward"
+            className={cn(
+              "bg-[#4d9375] hover:bg-[#3a7057] text-white p-2 rounded-md transition-colors",
+              (isRunning || executionState?.isComplete === true) &&
+                "opacity-50 cursor-not-allowed"
+            )}
+            title="Step Forward"
           >
             <StepForward size={18} />
           </button>
@@ -392,16 +517,16 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
             disabled={
               isRunning ||
               !executionState ||
-              executionState.currentStep === null
+              executionState.currentStepNumber <= 1
             }
-            className={`bg-[#21262d] hover:bg-[#30363d] text-white p-2 rounded-md ${
-              isRunning ||
-              !executionState ||
-              executionState.currentStep === null
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-            title="Step back"
+            className={cn(
+              "bg-[#21262d] hover:bg-[#30363d] text-white p-2 rounded-md transition-colors",
+              (isRunning ||
+                !executionState ||
+                executionState.currentStepNumber <= 1) &&
+                "opacity-50 cursor-not-allowed"
+            )}
+            title="Step Back"
           >
             <StepBack size={18} />
           </button>
@@ -409,7 +534,7 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
           {isRunning ? (
             <button
               onClick={stopAutoRun}
-              className="bg-[#f7768e] hover:bg-[#d95673] text-white p-2 rounded-md"
+              className="bg-[#f7768e] hover:bg-[#d95673] text-white p-2 rounded-md transition-colors"
               title="Pause"
             >
               <Pause size={18} />
@@ -419,36 +544,35 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
               onClick={() => {
                 if (!executionState) {
                   if (prepareExecution()) {
-                    executeStep();
                     startAutoRun();
                   }
                 } else if (!executionState.isComplete) {
                   startAutoRun();
                 } else {
                   prepareExecution();
-                  executeStep();
                   startAutoRun();
                 }
               }}
               disabled={executionState?.isComplete === true && !code}
-              className={`bg-[#4d9375] hover:bg-[#3a7057] text-white p-2 rounded-md ${
-                executionState?.isComplete === true && !code
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
-              title="Run"
+              className={cn(
+                "bg-[#4d9375] hover:bg-[#3a7057] text-white p-2 rounded-md transition-colors",
+                executionState?.isComplete === true &&
+                  !code &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+              title="Auto Run"
             >
               <Play size={18} />
             </button>
           )}
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-3">
             <span className="text-sm text-[#8b949e]">Speed:</span>
             <Slider
               value={[autoRunSpeed]}
-              min={100}
-              max={2000}
-              step={100}
+              min={200}
+              max={3000}
+              step={200}
               onValueChange={(values) => setAutoRunSpeed(values[0])}
               disabled={isRunning}
               className="w-32"
@@ -458,132 +582,89 @@ const ImprovedExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
             </span>
           </div>
         </div>
+      </div>
 
-        {/* Execution description */}
-        {executionState?.currentStep && (
-          <div className="border rounded-md bg-[#161b22] p-3">
-            <div className="flex items-center gap-2 mb-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="h-4 w-4 text-[#4d9375]"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm8 1a1 1 0 100-2 1 1 0 000 2zm-3-1a1 1 0 110-2 1 1 0 010 2zm7-1a1 1 0 100-2 1 1 0 000 2z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <h3 className="text-sm font-medium">Current Execution Step</h3>
-
-              {executionState.currentStep && (
-                <Badge className="bg-[#7aa2f7]/20 text-[#7aa2f7] border-[#7aa2f7]/30">
-                  In function: {executionState.currentStep.result?.inspect()}
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm bg-[#0d1117] p-3 rounded-md">
-              {executionState.currentStep.description}
-
-              {executionState.currentStep.result && (
-                <span className="block mt-2 pt-2 border-t border-[#30363d]">
-                  <span className="text-xs text-[#8b949e]">Result: </span>
-                  <code className="font-mono text-[#7aa2f7]">
-                    {executionState.currentStep.result.inspect()}
-                  </code>
-                </span>
-              )}
-            </p>
-
-            {/* Educational information about the current node type */}
-            <div className="mt-3">
-              <ExecutionEducationalInfo
-                nodeType={executionState.currentStep.node.constructor.name}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* AST, Environment, and Call Stack visualizations */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Main content */}
+      <div className="flex-1 overflow-auto p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Left column */}
           <div className="space-y-4">
-            {/* AST Viewer */}
-            <div className="border rounded-md bg-[#161b22] p-3">
-              <div className="flex items-center gap-2 mb-3">
-                <Braces size={14} className="text-[#4d9375]" />
-                <h3 className="text-sm font-medium">Abstract Syntax Tree</h3>
-              </div>
-              {/* Uncomment this to enable the AST viewer */}
-              {/* <HighlightedAstViewer
-                code={code}
-                highlightedNodePath={executionState?.currentStep?.nodePath}
-              /> */}
-            </div>
+            <StepInformationDisplay />
 
-            {/* Enhanced Call Stack - this is the key improvement */}
-            {executionState && (
-              <EnhancedCallStackVisualizer
-                callStack={executionState.callStack}
-                currentStep={executionState.currentStep}
-                code={code}
-              />
-            )}
-          </div>
-
-          <div className="space-y-4">
             {/* Environment Variables */}
             {executionState?.currentStep && (
-              <EnvironmentVisualizer
+              <EnhancedEnvironmentVisualizer
                 environment={executionState.currentStep.environment}
               />
             )}
+          </div>
 
-            {/* Output visualization */}
+          {/* Right column */}
+          <div className="space-y-4">
+            {/* Execution Log */}
             {executionState && (
-              <OutputVisualizer outputs={executionState.output} />
+              <EnhancedOutputVisualizer outputs={executionState.output} />
+            )}
+
+            {/* Call Stack */}
+            {executionState && executionState.callStack.length > 0 && (
+              <div className="border rounded-md bg-[#161b22] p-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <Braces size={14} className="text-[#7aa2f7]" />
+                  <h3 className="text-sm font-medium">Call Stack</h3>
+                </div>
+
+                <div className="space-y-2">
+                  {executionState.callStack.map((frame, idx) => (
+                    <motion.div
+                      key={idx}
+                      className="bg-[#1a1b26] p-2 rounded text-sm"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                    >
+                      <div className="font-medium">{frame.functionName}</div>
+                      <div className="text-xs text-[#8b949e]">
+                        Args: ({frame.args.join(", ")})
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
+      </div>
 
-        {/* Execution status */}
-        <div className="text-xs text-[#8b949e] flex justify-between items-center">
-          <div>
-            {executionState?.isComplete
-              ? "Execution complete"
-              : executionState?.currentStep
-              ? "Execution in progress..."
-              : "Ready to execute"}
+      {/* Status footer */}
+      <div className="border-t border-[#30363d] p-4">
+        <div className="flex items-center justify-between text-xs text-[#8b949e]">
+          <div className="flex items-center gap-4">
+            <span>
+              {executionState?.isComplete
+                ? "✅ Execution complete"
+                : executionState?.currentStep
+                ? "🔄 Execution in progress..."
+                : "⏳ Ready to execute"}
+            </span>
+
+            {executionState?.currentStep && (
+              <span>
+                Current: {executionState.currentStep.node.constructor.name}
+              </span>
+            )}
           </div>
 
-          {executionState?.currentStep && (
-            <Badge
-              variant="outline"
-              className={cn(
-                "text-xs",
-                executionState.isComplete
-                  ? "bg-[#4d9375] text-white"
-                  : "bg-[#21262d]"
-              )}
-            >
-              Step {executionState.callStack.length + 1}
+          {executionState && !executionState.isComplete && (
+            <Badge variant="outline" className="text-xs">
+              Step {executionState.currentStepNumber} of{" "}
+              {executionState.totalSteps}
             </Badge>
           )}
         </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-// Export a slimmer version without a card wrapper for embedding
-export const ExecutionVisualizerCore: React.FC<ExecutionVisualizerProps> = (
-  props
-) => {
-  return (
-    <div className="h-full flex flex-col">
-      <ImprovedExecutionVisualizer {...props} />
+      </div>
     </div>
   );
 };
 
-export default ImprovedExecutionVisualizer;
+export default EnhancedExecutionVisualizer;

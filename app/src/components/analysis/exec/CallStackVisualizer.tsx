@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Layers, ArrowDown, Code } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ExecutionState, CallStackFrame } from "@/lang/exec/stepwise";
+import { ExecutionState, CallStackFrame } from "@/lang/exec/stepwise/stepwise";
 
 interface CallStackVisualizerProps {
   callStack: ExecutionState["callStack"];
