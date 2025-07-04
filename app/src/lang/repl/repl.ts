@@ -1,5 +1,5 @@
 import * as readline from "readline";
-import Evaluator from "../exec/eval";
+import Evaluator from "../exec/evaluation/eval";
 import { Environment } from "../exec/objects";
 import Lexer from "../lexer/lexer";
 import { Parser } from "../parser/parser";
