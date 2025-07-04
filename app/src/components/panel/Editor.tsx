@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Terminal, Braces, BookOpen, ChevronsRight } from "lucide-react";
+import {
+  Terminal,
+  Braces,
+  BookOpen,
+  ChevronsRight,
+  BarChart3,
+} from "lucide-react";
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import TokenDisplay from "@/components/analysis/tokens/token-display";
 import ASTDisplay from "@/components/analysis/ast/AstDisplay";
 import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
@@ -19,10 +33,11 @@ import {
 } from "@/components/analysis/exec/snippets";
 import { GuideTab } from "@/components/guide";
 
-import LeftPanel from "./LeftPanel";
+import LeftPanel from "./letft-panel";
 import ToolBar from "./editor-toolbar";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import StatusBar from "./status-bar";
+import { useMobile } from "@/hooks/use-mobile";
 
 const examples = Object.keys(sampleCodeSnippets);
 
@@ -62,6 +77,8 @@ const ModernEnigmaEditor: React.FC = () => {
     keyof typeof sampleCodeSnippets | null
   >(null);
   const [showExamplesDropdown, setShowExamplesDropdown] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { isMobile } = useMobile();
 
   useEffect(() => {
     const randomExample = getRandomSampleCode();
@@ -109,14 +126,68 @@ const ModernEnigmaEditor: React.FC = () => {
     },
   };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 24 },
-    },
-  };
+  // Analysis tabs content component
+  const AnalysisContent = () => (
+    <Tabs defaultValue="tokens" className="h-full flex flex-col">
+      {/* Analysis Tabs */}
+      <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
+        <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
+          <CustomTabTrigger
+            value="tokens"
+            icon={<Terminal size={16} />}
+            label="Tokens"
+            badge={tokens.length}
+          />
+          <CustomTabTrigger
+            value="ast"
+            icon={<Braces size={16} />}
+            label="AST"
+          />
+          <CustomTabTrigger
+            value="execution"
+            icon={<ChevronsRight size={16} />}
+            label="Execution"
+          />
+          <CustomTabTrigger
+            value="guide"
+            icon={<BookOpen size={16} />}
+            label="Guide"
+          />
+        </TabsList>
+      </div>
+
+      {/* Tab Content */}
+      <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
+        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+          <TokenDisplay tokens={tokens} />
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      </TabsContent>
+
+      <TabsContent value="ast" className="flex-1 min-h-0 m-0">
+        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+          <ASTDisplay code={code} />
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      </TabsContent>
+
+      <TabsContent value="execution" className="flex-1 min-h-0 m-0">
+        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+          <ExecutionVisualizer code={code} />
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      </TabsContent>
+
+      <TabsContent value="guide" className="flex-1 min-h-0 m-0">
+        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+          <div className="p-4">
+            <GuideTab />
+          </div>
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      </TabsContent>
+    </Tabs>
+  );
 
   return (
     <motion.div
@@ -126,97 +197,81 @@ const ModernEnigmaEditor: React.FC = () => {
       variants={containerVariants}
     >
       {/* Top Toolbar */}
-      <motion.div className="shrink-0" variants={itemVariants}>
-        <ToolBar
-          selectedExample={selectedExample ?? ""}
-          showExamplesDropdown={showExamplesDropdown}
-          setShowExamplesDropdown={setShowExamplesDropdown}
-          loadExample={(example: string) =>
-            loadExample(example as keyof typeof sampleCodeSnippets)
-          }
-          examples={examples}
-        />
-      </motion.div>
+
+      <ToolBar
+        selectedExample={selectedExample ?? ""}
+        showExamplesDropdown={showExamplesDropdown}
+        setShowExamplesDropdown={setShowExamplesDropdown}
+        loadExample={(example: string) =>
+          loadExample(example as keyof typeof sampleCodeSnippets)
+        }
+        examples={examples}
+      />
 
       {/* Main Content */}
-      <motion.div className="flex-1 min-h-0" variants={itemVariants}>
-        <ResizablePanelGroup direction="horizontal" className="h-full">
-          {/* Editor Panel */}
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <LeftPanel
-              code={code}
-              onCodeChange={handleCodeChange}
-              setActiveTab={() => {}} // Remove this prop since we don't need it anymore
-            />
-          </ResizablePanel>
-
-          <ResizableHandle withHandle />
-
-          {/* Analysis Panel */}
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-full flex flex-col">
-              <Tabs defaultValue="tokens" className="h-full flex flex-col">
-                {/* Analysis Tabs */}
-                <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
-                  <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
-                    <CustomTabTrigger
-                      value="tokens"
-                      icon={<Terminal size={16} />}
-                      label="Tokens"
-                      badge={tokens.length}
-                    />
-                    <CustomTabTrigger
-                      value="ast"
-                      icon={<Braces size={16} />}
-                      label="AST"
-                    />
-                    <CustomTabTrigger
-                      value="execution"
-                      icon={<ChevronsRight size={16} />}
-                      label="Execution"
-                    />
-                    <CustomTabTrigger
-                      value="guide"
-                      icon={<BookOpen size={16} />}
-                      label="Guide"
-                    />
-                  </TabsList>
-                </div>
-
-                {/* Tab Content */}
-                <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
-                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-                    <TokenDisplay tokens={tokens} />
-                    <ScrollBar orientation="vertical" />
-                  </ScrollArea>
-                </TabsContent>
-
-                <TabsContent value="ast" className="flex-1 min-h-0 m-0">
-                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-                    <ASTDisplay code={code} />
-                    <ScrollBar orientation="vertical" />
-                  </ScrollArea>
-                </TabsContent>
-
-                <TabsContent value="execution" className="flex-1 min-h-0 m-0">
-                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-                    <ExecutionVisualizer code={code} />
-                    <ScrollBar orientation="vertical" />
-                  </ScrollArea>
-                </TabsContent>
-
-                <TabsContent value="guide" className="flex-1 min-h-0 m-0">
-                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-                    <div className="p-4">
-                      <GuideTab />
-                    </div>
-                    <ScrollBar orientation="vertical" />
-                  </ScrollArea>
-                </TabsContent>
-              </Tabs>
+      <motion.div className="flex-1 min-h-0">
+        {isMobile ? (
+          // Mobile Layout
+          <div className="h-full flex flex-col">
+            {/* Editor takes full height on mobile */}
+            <div className="flex-1">
+              <LeftPanel
+                code={code}
+                onCodeChange={handleCodeChange}
+                setActiveTab={() => {}}
+              />
             </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+
+            {/* Mobile Analyze Button */}
+            <div className="shrink-0 p-4 border-t border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50">
+              <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+                <DrawerTrigger asChild>
+                  <Button
+                    className="w-full bg-[var(--tokyo-blue)] hover:bg-[var(--tokyo-blue)]/90 text-white"
+                    size="lg"
+                  >
+                    <BarChart3 size={20} className="mr-2" />
+                    Analyze Code
+                    {tokens.length > 0 && (
+                      <Badge className="ml-2 bg-white/20 text-white">
+                        {tokens.length}
+                      </Badge>
+                    )}
+                  </Button>
+                </DrawerTrigger>
+                <DrawerContent>
+                  <DrawerHeader>
+                    <DrawerTitle>Code Analysis</DrawerTitle>
+                  </DrawerHeader>
+                  <div className="flex-1 min-h-0">
+                    <AnalysisContent />
+                  </div>
+                </DrawerContent>
+              </Drawer>
+            </div>
+          </div>
+        ) : (
+          // Desktop Layout (unchanged)
+          <ResizablePanelGroup direction="horizontal" className="h-full">
+            {/* Editor Panel */}
+            <ResizablePanel defaultSize={50} minSize={30}>
+              <LeftPanel
+                code={code}
+                onCodeChange={handleCodeChange}
+                setActiveTab={() => {}}
+              />
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            {/* Analysis Panel */}
+            <ResizablePanel defaultSize={50} minSize={30}>
+              <div className="h-full flex flex-col">
+                <AnalysisContent />
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        )}
       </motion.div>
 
       <StatusBar tokens={tokens.length} />
