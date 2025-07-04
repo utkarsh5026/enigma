@@ -26,6 +26,8 @@ import { GuideTab } from "@/components/guide";
 
 import LeftPanel from "./LeftPanel";
 import ToolBar from "./ToolBar";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { ScrollBar } from "../ui/scroll-area";
 
 const examples = Object.keys(sampleCodeSnippets);
 
@@ -132,7 +134,10 @@ const ModernEnigmaEditor: React.FC = () => {
       />
 
       {/* Main Content */}
-      <motion.div className="flex-1 overflow-hidden" variants={itemVariants}>
+      <motion.div
+        className="flex-1 overflow-hidden h-full max-h-full"
+        variants={itemVariants}
+      >
         <ResizablePanelGroup direction="horizontal">
           {/* Editor Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
@@ -225,7 +230,7 @@ const ModernEnigmaEditor: React.FC = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex-1 overflow-auto">
+              <ScrollArea className="flex-1 overflow-auto h-full max-h-full">
                 {activeTab === "tokens" && <TokenDisplay tokens={tokens} />}
                 {activeTab === "ast" && <ASTDisplay code={code} />}
                 {activeTab === "execution" && (
@@ -235,7 +240,8 @@ const ModernEnigmaEditor: React.FC = () => {
                   />
                 )}
                 {activeTab === "guide" && <GuideTab />}
-              </div>
+                <ScrollBar orientation="vertical" />
+              </ScrollArea>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
