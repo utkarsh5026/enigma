@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MutantEditor from "./components/panel/Editor";
-import LanguageGuide from "./components/guide/language-guide";
+import { LanguageGuide } from "./components/guide";
 
 const App: React.FC = () => {
   useEffect(() => {

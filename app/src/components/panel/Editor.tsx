@@ -12,7 +12,6 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import TokenDisplay from "@/components/analysis/tokens/token-display";
 import ASTDisplay from "@/components/analysis/ast/AstDisplay";
@@ -23,7 +22,7 @@ import {
   sampleCodeSnippets,
   getRandomSampleCode,
 } from "@/components/analysis/exec/snippets";
-import { useNavigate } from "react-router-dom";
+import { GuideTab } from "@/components/guide";
 
 import LeftPanel from "./LeftPanel";
 import ToolBar from "./ToolBar";
@@ -48,8 +47,6 @@ const ModernEnigmaEditor: React.FC = () => {
   const mutedTextColor = darkMode ? "#565f89" : "#9699a3";
   const borderColor = darkMode ? "#292e42" : "#dbe0ea";
   const highlightBg = darkMode ? "#292e42" : "#e2e8f0";
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Load random example code on first render
@@ -237,67 +234,7 @@ const ModernEnigmaEditor: React.FC = () => {
                     onCodeChange={handleCodeChange}
                   />
                 )}
-                {activeTab === "guide" && (
-                  <div className="p-4">
-                    <Card className="border-[#1d2032] bg-[#1a1b26]/50 backdrop-blur-sm shadow-lg">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
-                          <BookOpen className="text-[#bb9af7]" size={18} />
-                          Enigma Language Guide
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-tokyo-fg mb-4">
-                          Enigma is a dynamically-typed language with
-                          first-class functions, closures, and a clean syntax.
-                          Here's a quick overview of the key features:
-                        </p>
-
-                        <div className="space-y-3 mb-4">
-                          <div className="bg-[#24283b] rounded-lg p-3 border border-[#1d2032] shadow-sm">
-                            <h3 className="font-medium text-tokyo-cyan mb-1">
-                              Variables & Functions
-                            </h3>
-                            <pre className="text-xs font-mono text-tokyo-fg bg-[#1a1b26] p-2 rounded">
-                              {`let x = 42;\nconst PI = 3.14;\n\nlet greet = fn(name) {\n  return "Hello, " + name;\n};`}
-                            </pre>
-                          </div>
-
-                          <div className="bg-[#24283b] rounded-lg p-3 border border-[#1d2032] shadow-sm">
-                            <h3 className="font-medium text-tokyo-cyan mb-1">
-                              Control Flow
-                            </h3>
-                            <pre className="text-xs font-mono text-tokyo-fg bg-[#1a1b26] p-2 rounded">
-                              {`if (x > 10) {\n  return "greater";\n} else {\n  return "smaller";\n}\n\nwhile (count < 5) {\n  count = count + 1;\n}`}
-                            </pre>
-                          </div>
-
-                          <div className="bg-[#24283b] rounded-lg p-3 border border-[#1d2032] shadow-sm">
-                            <h3 className="font-medium text-tokyo-cyan mb-1">
-                              Data Structures
-                            </h3>
-                            <pre className="text-xs font-mono text-tokyo-fg bg-[#1a1b26] p-2 rounded">
-                              {`let array = [1, 2, 3, 4];\nlet hash = {"name": "John", "age": 30};`}
-                            </pre>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-between items-center">
-                          <p className="text-tokyo-fg-dark text-xs">
-                            View the examples dropdown for more code samples
-                          </p>
-                          <button
-                            className="bg-[#bb9af7] hover:bg-[#a485e3] text-white py-2 px-4 rounded-md text-sm flex items-center gap-2 transition-all"
-                            onClick={() => navigate("/guide")}
-                          >
-                            <BookOpen size={14} />
-                            View Full Documentation
-                          </button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
+                {activeTab === "guide" && <GuideTab />}
               </div>
             </div>
           </ResizablePanel>
