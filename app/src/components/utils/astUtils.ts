@@ -35,7 +35,7 @@ export const nodeDescriptions: Record<string, string> = {
  * Returns a simplified, user-friendly representation of a node
  * focusing on the most important properties
  */
-export const getNodeSummary = (node: any): string => {
+export const getNodeSummary = (node: Node): string => {
   if (!node) return "";
 
   const nodeType = node.constructor.name;
@@ -56,14 +56,15 @@ export const getNodeSummary = (node: any): string => {
     case "LetStatement":
     case "ConstStatement":
       return node.name?.value || "";
-    case "FunctionLiteral":
-      const paramNames =
-        node.parameters?.map((p: any) => p.value).join(", ") || "";
+    case "FunctionLiteral": {
+      const paramNames = node.parameters?.map((p) => p.value).join(", ") || "";
       return `fn(${paramNames})`;
-    case "CallExpression":
+    }
+    case "CallExpression": {
       const funcName =
         node.func?.value || node.func?.constructor.name || "anonymous";
       return funcName;
+    }
     case "IfExpression":
       return "if/else";
     case "WhileStatement":
@@ -142,8 +143,12 @@ export const nodeExamples: Record<string, string> = {
   ReturnStatement: "return result;",
   ExpressionStatement: "someFunction();",
   BlockStatement: "{ statement1; statement2; }",
-  WhileStatement: "while (count < 10) { count = count + 1; }",
-  ForStatement: "for (let i = 0; i < 10; i = i + 1) { print(i); }",
+  WhileStatement: `while (count < 10) {
+    count = count + 1;
+  }`,
+  ForStatement: `for (let i = 0; i < 10; i = i + 1) {
+    print(i);
+  }`,
   BreakStatement: "break;",
   ContinueStatement: "continue;",
   Identifier: "variableName",

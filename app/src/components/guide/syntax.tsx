@@ -4,7 +4,7 @@ export const highlightSyntax = (code: string) => {
   const lines = code.split("\n");
 
   return (
-    <pre className="font-mono text-sm whitespace-pre overflow-x-auto">
+    <pre className="font-source-code-pro font-semibold text-sm whitespace-pre overflow-x-auto">
       {lines.map((line, lineIndex) => {
         // Process line for syntax highlighting
         const result = [];
