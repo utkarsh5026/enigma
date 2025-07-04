@@ -27,8 +27,7 @@ import { GuideTab } from "@/components/guide";
 
 import LeftPanel from "./LeftPanel";
 import ToolBar from "./editor-toolbar";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { ScrollBar } from "../ui/scroll-area";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 const examples = Object.keys(sampleCodeSnippets);
 
@@ -98,25 +97,27 @@ const ModernEnigmaEditor: React.FC = () => {
 
   return (
     <motion.div
-      className="h-full w-full  flex flex-col bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)]"
+      className="h-screen w-screen flex flex-col bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)] overflow-hidden"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
     >
       {/* Top Toolbar */}
-      <ToolBar
-        selectedExample={selectedExample ?? ""}
-        showExamplesDropdown={showExamplesDropdown}
-        setShowExamplesDropdown={setShowExamplesDropdown}
-        loadExample={(example: string) =>
-          loadExample(example as keyof typeof sampleCodeSnippets)
-        }
-        examples={examples}
-      />
+      <motion.div className="shrink-0" variants={itemVariants}>
+        <ToolBar
+          selectedExample={selectedExample ?? ""}
+          showExamplesDropdown={showExamplesDropdown}
+          setShowExamplesDropdown={setShowExamplesDropdown}
+          loadExample={(example: string) =>
+            loadExample(example as keyof typeof sampleCodeSnippets)
+          }
+          examples={examples}
+        />
+      </motion.div>
 
       {/* Main Content */}
-      <motion.div className="flex-1  h-full" variants={itemVariants}>
-        <ResizablePanelGroup direction="horizontal">
+      <motion.div className="flex-1 min-h-0" variants={itemVariants}>
+        <ResizablePanelGroup direction="horizontal" className="h-full">
           {/* Editor Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
             <LeftPanel
@@ -130,10 +131,10 @@ const ModernEnigmaEditor: React.FC = () => {
 
           {/* Analysis Panel */}
           <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="h-full flex flex-col overflow-y-auto">
+            <div className="h-full flex flex-col">
               <Tabs defaultValue="tokens" className="h-full flex flex-col">
                 {/* Analysis Tabs */}
-                <div className="border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
+                <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
                   <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
                     <TabsTrigger
                       value="tokens"
@@ -180,8 +181,8 @@ const ModernEnigmaEditor: React.FC = () => {
                 </div>
 
                 {/* Tab Content */}
-                <TabsContent value="tokens" className="flex-1  m-0">
-                  <ScrollArea className="h-full max-h-full bg-[var(--tokyo-bg-dark)]/30">
+                <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
+                  <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
                     <div className="p-4">
                       <TokenDisplay tokens={tokens} />
                     </div>
@@ -189,7 +190,7 @@ const ModernEnigmaEditor: React.FC = () => {
                   </ScrollArea>
                 </TabsContent>
 
-                <TabsContent value="ast" className="flex-1  m-0">
+                <TabsContent value="ast" className="flex-1 min-h-0 m-0">
                   <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
                     <div className="p-4">
                       <ASTDisplay code={code} />
@@ -198,10 +199,7 @@ const ModernEnigmaEditor: React.FC = () => {
                   </ScrollArea>
                 </TabsContent>
 
-                <TabsContent
-                  value="execution"
-                  className="flex-1 overflow-hidden m-0"
-                >
+                <TabsContent value="execution" className="flex-1 min-h-0 m-0">
                   <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
                     <div className="p-4">
                       <ExecutionVisualizer code={code} />
@@ -210,10 +208,7 @@ const ModernEnigmaEditor: React.FC = () => {
                   </ScrollArea>
                 </TabsContent>
 
-                <TabsContent
-                  value="guide"
-                  className="flex-1 overflow-hidden m-0"
-                >
+                <TabsContent value="guide" className="flex-1 min-h-0 m-0">
                   <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
                     <div className="p-4">
                       <GuideTab />
@@ -229,7 +224,7 @@ const ModernEnigmaEditor: React.FC = () => {
 
       {/* Status Bar */}
       <motion.div
-        className="border-t border-[var(--tokyo-comment)]/40 px-4 py-2 flex items-center justify-between text-xs bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm"
+        className="shrink-0 border-t border-[var(--tokyo-comment)]/40 px-4 py-2 flex items-center justify-between text-xs bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm"
         variants={itemVariants}
       >
         <div className="flex items-center gap-4">
