@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Code, Grid, BookOpen } from "lucide-react";
-import GettingStarted from "./getting-stared";
-import { LanguageFeatures, SyntaxReference, CodeExamples } from "./tabs";
+import {
+  LanguageFeatures,
+  SyntaxReference,
+  CodeExamples,
+  GettingStarted,
+} from "./tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type TabType = "overview" | "examples" | "reference";

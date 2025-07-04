@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Terminal } from "lucide-react";
-import { highlightSyntax } from "./syntax";
+import { highlightSyntax } from "../syntax";
 
 interface KeyPointProps {
   children: React.ReactNode;
