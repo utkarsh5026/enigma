@@ -40,6 +40,10 @@ export class FunctionObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.FUNCTION;
   }
+
+  static dumpScopeChain(env: Environment): string {
+    return dumpScopeChain(env);
+  }
 }
 
 export class ReturnValue implements BaseObject {

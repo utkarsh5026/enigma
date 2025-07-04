@@ -7,7 +7,11 @@ import {
 } from "./literals";
 import { BreakObject, ContinueObject } from "./loop";
 import { ErrorObject } from "./error";
-import { FunctionObject, ReturnValue as ReturnValueObject } from "./function";
+import {
+  FunctionObject,
+  ReturnValue as ReturnValueObject,
+  Environment,
+} from "./function";
 import { HashObject } from "./hash";
 import { ClassObject } from "./clas";
 import { InstanceObject } from "./instance";
@@ -29,4 +33,5 @@ export {
   InstanceObject,
   type BaseObject,
   ObjectType,
+  Environment,
 };
