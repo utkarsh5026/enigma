@@ -172,6 +172,9 @@
   --font-family-sans: var(--font-sans);
   --font-family-serif: var(--font-serif);
   --font-family-mono: var(--font-family-mono);
+  --font-cascadia-code: "Cascadia Code", var(--font-family-mono);
+  --font-fira-code: "Fira Code", var(--font-family-mono);
+  --font-source-code-pro: "Source Code Pro", var(--font-family-mono);
 }
 
 @layer base {
