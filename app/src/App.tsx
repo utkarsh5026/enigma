@@ -1,5 +1,7 @@
 import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MutantEditor from "./components/panel/Editor";
+import LanguageGuide from "./components/guide/LanguageGuide";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -10,7 +12,12 @@ const App: React.FC = () => {
 
   return (
     <div className="w-screen h-screen flex flex-col font-family-mono bg-tokyo-bg">
-      <MutantEditor />
+      <Router>
+        <Routes>
+          <Route path="/guide" element={<LanguageGuide />} />
+          <Route path="/" element={<MutantEditor />} />
+        </Routes>
+      </Router>
     </div>
   );
 };
