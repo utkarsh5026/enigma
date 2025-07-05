@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  sampleCodeSnippets,
-  getRandomSampleCode,
-} from "@/components/analysis/execution/components/snippets";
+import { sampleCodeSnippets, getRandomSampleCode } from "@/utils/snippets";
 import ToolBar from "./editor-toolbar";
 import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
