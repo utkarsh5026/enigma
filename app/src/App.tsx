@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MutantEditor from "./components/panel/Editor";
+import MutantEditor from "./components/panel/enigma-layout";
 import { LanguageGuide } from "./components/guide";
 
 const App: React.FC = () => {

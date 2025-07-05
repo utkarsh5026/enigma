@@ -4,23 +4,21 @@ import { FaGithub } from "react-icons/fa";
 import EditorToolbarButton from "./toolbar-button";
 import ExamplesDropdown from "./examples-dropdown";
 import { useMobile } from "../../hooks/use-mobile";
+import { useState } from "react";
 
 interface ToolBarProps {
   selectedExample: string;
-  showExamplesDropdown: boolean;
-  setShowExamplesDropdown: (show: boolean) => void;
   loadExample: (example: string) => void;
   examples: string[];
 }
 
 const ToolBar: React.FC<ToolBarProps> = ({
   selectedExample,
-  showExamplesDropdown,
-  setShowExamplesDropdown,
   loadExample,
   examples,
 }) => {
   const { isMobile, isPhone } = useMobile();
+  const [showExamplesDropdown, setShowExamplesDropdown] = useState(false);
 
   return (
     <div className="border-b border-[var(--tokyo-comment)]/40 px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
