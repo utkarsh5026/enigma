@@ -31,6 +31,7 @@ import {
   CallExpression,
   AssignmentExpression,
 } from "./expression";
+import { AstValidator } from "./validate";
 
 type ASTLiterals =
   | StringLiteral
@@ -98,4 +99,5 @@ export {
   type ASTLiterals,
   type ASTStatements,
   type ASTExpressions,
+  AstValidator,
 };
