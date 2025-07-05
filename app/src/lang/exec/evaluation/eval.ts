@@ -2,7 +2,7 @@ import * as ast from "../../ast/ast.ts";
 import * as statement from "../../ast/statement.ts";
 import * as expression from "../../ast/expression.ts";
 import * as literal from "../../ast/literal.ts";
-import * as validate from "./validate";
+import { ObjectValidator } from "./validate";
 import * as objects from "../objects/index.ts";
 import { truthy } from "./utils";
 import {
@@ -13,6 +13,8 @@ import {
   evalIdentifier,
 } from "./expression";
 import { evalLogicalNotOperator, evalNegationOperator } from "./operator";
+
+const validate = ObjectValidator;
 
 const MAX_ITERATIONS = 1000000;
 /**
