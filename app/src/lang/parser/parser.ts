@@ -6,7 +6,7 @@ import * as statements from "../ast/statement.ts";
 import { getPrecedence, Precedence } from "./precedence.ts";
 import * as expressions from "../ast/expression.ts";
 
-interface ErrorMessage {
+export interface ErrorMessage {
   message: string;
   line: number;
   column: number;

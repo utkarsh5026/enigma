@@ -11,7 +11,7 @@ import {
   getMinimalNodeStyle,
   getNodeIcon,
   getNodeDescription,
-} from "./node-info";
+} from "../node-info";
 import { Node } from "@/lang/ast/ast";
 interface MinimalAstNodeProps {
   node: any;

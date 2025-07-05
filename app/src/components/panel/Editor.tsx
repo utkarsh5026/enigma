@@ -23,7 +23,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import TokenDisplay from "@/components/analysis/tokens/token-display";
-import ASTDisplay from "@/components/analysis/ast/AstDisplay";
+import ASTDisplay from "@/components/analysis/ast/components/AstDisplay";
 import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
 import Lexer from "@/lang/lexer/lexer";
 import { Token, TokenType } from "@/lang/token/token";
