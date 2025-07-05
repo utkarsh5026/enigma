@@ -114,7 +114,7 @@ export const getNodeSummary = (node: any): string => {
       case "StringLiteral": {
         const value =
           node.value !== undefined ? node.value : getNodeValue(node);
-        return `"${value}"` || '""';
+        return `"${value}"`;
       }
 
       case "BooleanExpression": {

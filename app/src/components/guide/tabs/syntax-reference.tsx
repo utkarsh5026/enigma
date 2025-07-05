@@ -1,7 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { categories } from "../data";
-import { nodeDescriptions, nodeExamples } from "../../utils/astUtils";
+import {
+  nodeDescriptions,
+  nodeExamples,
+} from "../../analysis/ast/hooks/astUtils";
 import { highlightSyntax } from "../syntax";
 import { ScrollArea } from "@/components/ui/scroll-area";
 

@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { extractSearchableText } from "../../../utils/astUtils";
+import { extractSearchableText } from "../hooks/astUtils";
 import { useAst } from "../hooks/use-ast";
 import EmptyAst from "./empty-ast";
 import AstTree from "./ast-tree";
