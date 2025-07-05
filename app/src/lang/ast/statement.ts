@@ -4,27 +4,14 @@ import { Token } from "../token/token";
 /**
  * Represents a let statement in the AST.
  */
-export class LetStatement implements Statement {
-  token: Token;
+export class LetStatement extends Statement {
   name: Identifier;
   value: Expression;
 
   constructor(token: Token, name: Identifier, value: Expression) {
-    this.token = token;
+    super(token);
     this.name = name;
     this.value = value;
-  }
-
-  statementNode(): void {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -41,23 +28,12 @@ export class LetStatement implements Statement {
 /**
  * Represents a return statement in the AST.
  */
-export class ReturnStatement implements Statement {
-  token: Token;
+export class ReturnStatement extends Statement {
   returnValue: Expression;
 
   constructor(token: Token, returnValue: Expression) {
-    this.token = token;
+    super(token);
     this.returnValue = returnValue;
-  }
-
-  statementNode(): void {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -73,23 +49,12 @@ export class ReturnStatement implements Statement {
 /**
  * Represents an expression statement in the AST.
  */
-export class ExpressionStatement implements Statement {
-  token: Token;
+export class ExpressionStatement extends Statement {
   expression: Expression;
 
   constructor(token: Token, expression: Expression) {
-    this.token = token;
+    super(token);
     this.expression = expression;
-  }
-
-  statementNode(): void {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -104,23 +69,12 @@ export class ExpressionStatement implements Statement {
 /**
  * Represents a block statement in the AST.
  */
-export class BlockStatement implements Statement {
-  token: Token;
+export class BlockStatement extends Statement {
   statements: Statement[];
 
   constructor(token: Token, statements: Statement[]) {
-    this.token = token;
+    super(token);
     this.statements = statements;
-  }
-
-  statementNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -135,25 +89,14 @@ export class BlockStatement implements Statement {
 /**
  * Represents a while statement in the AST.
  */
-export class WhileStatement implements Statement {
-  token: Token;
+export class WhileStatement extends Statement {
   condition: Expression;
   body: BlockStatement;
 
   constructor(token: Token, condition: Expression, body: BlockStatement) {
-    this.token = token;
+    super(token);
     this.condition = condition;
     this.body = body;
-  }
-
-  statementNode(): void {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -175,17 +118,10 @@ export class WhileStatement implements Statement {
 /**
  * Represents a break statement in the AST.
  */
-export class BreakStatement implements Statement {
-  token: Token;
-
+export class BreakStatement extends Statement {
   constructor(token: Token) {
+    super(token);
     this.token = token;
-  }
-
-  statementNode() {}
-
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   toString(): string {
@@ -196,18 +132,10 @@ export class BreakStatement implements Statement {
 /**
  * Represents a continue statement in the AST.
  */
-export class ContinueStatement implements Statement {
-  token: Token;
-
+export class ContinueStatement extends Statement {
   constructor(token: Token) {
-    this.token = token;
+    super(token);
   }
-
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
-
-  statementNode() {}
 
   toString(): string {
     return "continue;";
@@ -217,8 +145,7 @@ export class ContinueStatement implements Statement {
 /**
  * Represents a for statement in the AST.
  */
-export class ForStatement implements Statement {
-  token: Token;
+export class ForStatement extends Statement {
   initializer: Statement;
   condition: Expression;
   increment: Expression;
@@ -239,17 +166,11 @@ export class ForStatement implements Statement {
     increment: Expression,
     body: BlockStatement
   ) {
-    this.token = token;
+    super(token);
     this.initializer = initializer;
     this.condition = condition;
     this.increment = increment;
     this.body = body;
-  }
-
-  statementNode(): void {}
-
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   toString(): string {
@@ -260,8 +181,7 @@ export class ForStatement implements Statement {
 /**
  * Represents a const statement in the AST.
  */
-export class ConstStatement implements Statement {
-  token: Token;
+export class ConstStatement extends Statement {
   name: Identifier;
   value: Expression;
 
@@ -272,15 +192,9 @@ export class ConstStatement implements Statement {
    * @param value The expression representing the value being assigned.
    */
   constructor(token: Token, name: Identifier, value: Expression) {
-    this.token = token;
+    super(token);
     this.name = name;
     this.value = value;
-  }
-
-  statementNode() {}
-
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   toString(): string {
@@ -291,8 +205,7 @@ export class ConstStatement implements Statement {
 /**
  * Represents a class declaration in the AST.
  */
-export class ClassDeclaration implements Statement {
-  token: Token;
+export class ClassDeclaration extends Statement {
   name: Identifier;
   constructorMethod: ConstructorDefinition | null;
   methods: MethodDefinition[];
@@ -313,17 +226,13 @@ export class ClassDeclaration implements Statement {
     methods: MethodDefinition[],
     superClass: Identifier | null = null
   ) {
-    this.token = token;
+    super(token);
     this.name = name;
     this.constructorMethod = constructorMethod;
     this.methods = methods;
     this.superClass = superClass;
   }
 
-  statementNode() {}
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
   toString(): string {
     let out = `class ${this.name.value}`;
     if (this.superClass) {
@@ -344,8 +253,7 @@ export class ClassDeclaration implements Statement {
 /**
  * Represents a method definition in the AST.
  */
-export class MethodDefinition implements Statement {
-  token: Token;
+export class MethodDefinition extends Statement {
   name: Identifier;
   parameters: Identifier[];
   body: BlockStatement;
@@ -366,17 +274,13 @@ export class MethodDefinition implements Statement {
     body: BlockStatement,
     isStatic: boolean = false
   ) {
-    this.token = token;
+    super(token);
     this.name = name;
     this.parameters = parameters;
     this.body = body;
     this.isStatic = isStatic;
   }
 
-  statementNode() {}
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
   toString(): string {
     return `${this.name.value}(${this.parameters
       .map((p) => p.toString())
@@ -399,12 +303,15 @@ export class ConstructorDefinition extends MethodDefinition {
   }
 }
 
-export class PropertyDefinition implements Statement {
-  constructor(
-    public token: Token,
-    public name: Identifier,
-    public value: Expression
-  ) {}
+export class PropertyDefinition extends Statement {
+  private name: Identifier;
+  private value: Expression;
+
+  constructor(token: Token, name: Identifier, value: Expression) {
+    super(token);
+    this.name = name;
+    this.value = value;
+  }
 
   statementNode() {}
   tokenLiteral(): string {
