@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  X,
   TreePine,
   Search,
   Maximize2,
@@ -117,33 +116,13 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
   };
 
   // Debounced search effect
-  React.useEffect(() => {
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchNodes(searchTerm);
     }, 300);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm, program]);
-
-  const renderErrorState = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center p-12 text-center"
-    >
-      <div className="relative mb-6">
-        <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl" />
-        <div className="relative bg-gradient-to-br from-red-900 to-red-800 p-6 rounded-full border border-red-700">
-          <X size={48} className="text-red-400" />
-        </div>
-      </div>
-
-      <h3 className="text-xl font-semibold text-white mb-2">Parse Error</h3>
-      <p className="text-gray-400 max-w-md leading-relaxed">
-        Failed to parse the code. Check for syntax errors and try again.
-      </p>
-    </motion.div>
-  );
 
   const nodeCount = program ? countNodes(program) : 0;
 
@@ -257,8 +236,6 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
       <div className="flex-1 overflow-auto">
         {!program ? (
           <EmptyAst />
-        ) : parserErrors.length > 0 ? (
-          renderErrorState()
         ) : (
           <AstTree
             ast={{
