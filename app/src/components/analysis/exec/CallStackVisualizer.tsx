@@ -72,9 +72,6 @@ const EnhancedCallStackVisualizer: React.FC<CallStackVisualizerProps> = ({
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   className="relative"
-                  style={{
-                    marginLeft: `${Math.min(idx * 12, 60)}px`,
-                  }}
                 >
                   {/* Call connector line */}
                   {idx > 0 && (
