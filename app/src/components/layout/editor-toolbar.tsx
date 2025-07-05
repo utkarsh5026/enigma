@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { Terminal, ExternalLink } from "lucide-react";
+import { BookOpen, Terminal } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import EditorToolbarButton from "./toolbar-button";
 import ExamplesDropdown from "./examples-dropdown";
 import { useMobile } from "../../hooks/use-mobile";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ToolBarProps {
   selectedExample: string;
@@ -19,6 +20,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
 }) => {
   const { isMobile, isPhone } = useMobile();
   const [showExamplesDropdown, setShowExamplesDropdown] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="border-b border-[var(--tokyo-comment)]/40 px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
@@ -60,10 +62,15 @@ const ToolBar: React.FC<ToolBarProps> = ({
         <div className="w-px h-4 sm:h-6 bg-[var(--tokyo-comment)]/30" />
 
         <EditorToolbarButton
+          icon={<BookOpen size={isMobile ? 14 : 16} />}
+          tooltip="View Documentation"
+          onClick={() => navigate("/guide")}
+        />
+
+        <EditorToolbarButton
           icon={
             <div className="flex items-center gap-1">
               <FaGithub size={isMobile ? 14 : 16} />
-              <ExternalLink size={isMobile ? 10 : 12} />
             </div>
           }
           tooltip="View Source on GitHub"

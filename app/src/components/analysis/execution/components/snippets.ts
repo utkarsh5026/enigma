@@ -80,6 +80,64 @@ let a = counter(); // 1
 let b = counter(); // 2
 let c = counter(); // 3
 `,
+
+  basicArithmetic: `// Basic arithmetic operations
+let a = 10;
+let b = 3;
+
+let sum = a + b;       // 13
+let difference = a - b; // 7
+let product = a * b;   // 30
+let quotient = a / b;  // 3.333...
+`,
+
+  simpleFunction: `// Simple function example
+let greet = fn(name) {
+  return "Hello, " + name + "!";
+};
+
+let message = greet("World");
+`,
+
+  stringOperations: `// String manipulation
+let firstName = "John";
+let lastName = "Doe";
+let fullName = firstName + " " + lastName;
+
+let nameLength = len(fullName);
+`,
+
+  booleanLogic: `// Boolean operations
+let isAdult = true;
+let hasLicense = false;
+
+let canDrive = isAdult && hasLicense;
+let canVote = isAdult || false;
+let isChild = !isAdult;
+`,
+
+  hashExample: `// Hash (object) example
+let person = {
+  "name": "Alice",
+  "age": 25,
+  "city": "New York"
+};
+
+let name = person["name"];
+let age = person["age"];
+`,
+
+  simpleLoop: `// Simple for-like loop
+let count = 0;
+let i = 0;
+
+while (i < 5) {
+  count = count + 1;
+  i = i + 1;
+}
+
+// count is now 5
+`,
 };
 
 export const getRandomSampleCode = (): string => {
