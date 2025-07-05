@@ -1,10 +1,9 @@
 import * as ast from "@/lang/ast/ast";
-import Evaluator from "@/lang/exec/evaluation/eval";
+import { Evaluator, ObjectValidator } from "@/lang/exec/evaluation";
 import * as objects from "@/lang/exec/objects";
 import * as statements from "@/lang/ast/statement";
 import * as expressions from "@/lang/ast/expression";
 import * as literals from "@/lang/ast/literal";
-import * as utils from "@/lang/exec/evaluation/validate";
 import { Token } from "@/lang/token/token";
 import { toBool } from "../evaluation/expression";
 import {
@@ -13,7 +12,9 @@ import {
   type EnvironmentSnapshot,
   type Variable,
   type OutputEntry,
+  type StepType,
 } from "./types";
+import { getAfterDescription, getBeforeDescription } from "./description";
 
 /**
  * Enhanced step-by-step evaluator with proper granular execution tracking
@@ -41,13 +42,8 @@ export class StepwiseEvaluator extends Evaluator {
     this.executionState = new ExecutionState();
     this.program = program;
 
-    // Reset the environment
     this.globalEnv = new objects.Environment();
 
-    // Pre-analyze the program to estimate total steps
-    this.executionState.totalSteps = this.estimateSteps(program);
-
-    // Create initial step
     this.addStep(
       program,
       this.globalEnv,
@@ -123,12 +119,10 @@ export class StepwiseEvaluator extends Evaluator {
     env: objects.Environment,
     path: string
   ): objects.BaseObject {
-    // Create a "before" step
-    this.addStep(node, env, this.getBeforeDescription(node), path, "before");
+    this.addStep(node, env, getBeforeDescription(node), path, "before");
 
     let result: objects.BaseObject;
 
-    // Handle different node types with proper step granularity
     switch (node.constructor) {
       case ast.Program:
         result = this.executeProgram(node as ast.Program, env, path);
@@ -232,11 +226,10 @@ export class StepwiseEvaluator extends Evaluator {
         break;
     }
 
-    // Create an "after" step with the result
     this.addStep(
       node,
       env,
-      this.getAfterDescription(node, result),
+      getAfterDescription(node, result),
       path,
       "after",
       result
@@ -292,7 +285,6 @@ export class StepwiseEvaluator extends Evaluator {
   ): objects.BaseObject {
     const identifier = stmt.name.value;
 
-    // Step 1: Show that we're about to evaluate the right-hand side
     this.addStep(
       stmt.value,
       env,
@@ -301,16 +293,16 @@ export class StepwiseEvaluator extends Evaluator {
       "before"
     );
 
-    // Step 2: Evaluate the value
     const value = this.executeStepByStep(stmt.value, env, `${path}.value`);
 
-    if (value instanceof objects.ErrorObject) return value;
+    if (ObjectValidator.isError(value)) return value;
 
-    // Step 3: Check if variable already exists
     if (env.has(identifier)) {
       const error = new objects.ErrorObject(
-        `Identifier ${identifier} already declared`
+        `Identifier ${identifier} already declared`,
+        stmt.position()
       );
+
       this.addStep(
         stmt,
         env,
@@ -322,8 +314,8 @@ export class StepwiseEvaluator extends Evaluator {
       return error;
     }
 
-    // Step 4: Assign the value
     env.set(identifier, value);
+
     this.addOutput(
       `Variable '${identifier}' assigned value: ${value.inspect()}`,
       "assignment"
@@ -352,12 +344,14 @@ export class StepwiseEvaluator extends Evaluator {
 
     const value = this.executeStepByStep(stmt.value, env, `${path}.value`);
 
-    if (value instanceof objects.ErrorObject) return value;
+    if (ObjectValidator.isError(value)) return value;
 
-    if (env.has(identifier)) {
+    if (env.isConstant(identifier)) {
       const error = new objects.ErrorObject(
-        `Identifier ${identifier} already declared`
+        `Identifier ${identifier} already declared`,
+        stmt.position()
       );
+
       this.addStep(
         stmt,
         env,
@@ -366,6 +360,7 @@ export class StepwiseEvaluator extends Evaluator {
         "after",
         error
       );
+
       return error;
     }
 
@@ -386,7 +381,6 @@ export class StepwiseEvaluator extends Evaluator {
     env: objects.Environment,
     path: string
   ): objects.BaseObject {
-    // Step 1: Evaluate left operand
     this.addStep(
       expr.left,
       env,
@@ -396,9 +390,8 @@ export class StepwiseEvaluator extends Evaluator {
     );
     const left = this.executeStepByStep(expr.left, env, `${path}.left`);
 
-    if (utils.isError(left)) return left;
+    if (ObjectValidator.isError(left)) return left;
 
-    // Step 2: Evaluate right operand
     this.addStep(
       expr.right,
       env,
@@ -408,9 +401,8 @@ export class StepwiseEvaluator extends Evaluator {
     );
     const right = this.executeStepByStep(expr.right, env, `${path}.right`);
 
-    if (utils.isError(right)) return right;
+    if (ObjectValidator.isError(right)) return right;
 
-    // Step 3: Apply the operator
     this.addStep(
       expr,
       env,
@@ -479,7 +471,7 @@ export class StepwiseEvaluator extends Evaluator {
       `${path}.returnValue`
     );
 
-    if (utils.isError(value)) return value;
+    if (ObjectValidator.isError(value)) return value;
 
     this.addOutput(`Returning: ${value.inspect()}`, "return");
 
@@ -508,10 +500,10 @@ export class StepwiseEvaluator extends Evaluator {
       );
 
       if (
-        result instanceof objects.ReturnValueObject ||
-        result instanceof objects.ErrorObject ||
-        result instanceof objects.BreakObject ||
-        result instanceof objects.ContinueObject
+        ObjectValidator.isReturnValue(result) ||
+        ObjectValidator.isError(result) ||
+        ObjectValidator.isBreak(result) ||
+        ObjectValidator.isContinue(result)
       ) {
         break;
       }
@@ -540,7 +532,7 @@ export class StepwiseEvaluator extends Evaluator {
     );
     const functionObj = this.executeStepByStep(call.func, env, `${path}.func`);
 
-    if (utils.isError(functionObj)) return functionObj;
+    if (ObjectValidator.isError(functionObj)) return functionObj;
 
     // Step 2: Evaluate arguments
     const args: objects.BaseObject[] = [];
@@ -557,12 +549,12 @@ export class StepwiseEvaluator extends Evaluator {
         env,
         `${path}.args[${i}]`
       );
-      if (utils.isError(arg)) return arg;
+      if (ObjectValidator.isError(arg)) return arg;
       args.push(arg);
     }
 
     // Step 3: Call the function
-    if (utils.isFunction(functionObj)) {
+    if (ObjectValidator.isFunction(functionObj)) {
       let funcName = "anonymous";
       if (call.func instanceof ast.Identifier) {
         funcName = call.func.value;
@@ -669,7 +661,7 @@ export class StepwiseEvaluator extends Evaluator {
     );
     const right = this.executeStepByStep(prefix.right, env, `${path}.right`);
 
-    if (utils.isError(right)) return right;
+    if (ObjectValidator.isError(right)) return right;
 
     this.addStep(
       prefix,
@@ -734,11 +726,13 @@ export class StepwiseEvaluator extends Evaluator {
     env: objects.Environment,
     description: string,
     path: string,
-    stepType: "before" | "after" | "during",
+    stepType: StepType,
     result?: objects.BaseObject
   ): void {
     const { line, column } = this.getNodePosition(node);
     const depth = this.executionState.callStack.length;
+
+    console.log(description, path, stepType, result, env);
 
     const step: EvaluationStep = {
       node,
@@ -847,88 +841,5 @@ export class StepwiseEvaluator extends Evaluator {
       }
     }
     return { line: 0, column: 0 };
-  }
-
-  /**
-   * Get description for "before" step
-   */
-  private getBeforeDescription(node: ast.Node): string {
-    const nodeType = node.constructor.name;
-
-    switch (nodeType) {
-      case "LetStatement":
-        return `About to declare variable '${
-          (node as statements.LetStatement).name.value
-        }'`;
-      case "ConstStatement":
-        return `About to declare constant '${
-          (node as statements.ConstStatement).name.value
-        }'`;
-      case "ReturnStatement":
-        return "About to return a value";
-      case "InfixExpression": {
-        const infix = node as expressions.InfixExpression;
-        return `About to evaluate: ${infix.left.toString()} ${
-          infix.operator
-        } ${infix.right.toString()}`;
-      }
-      case "CallExpression": {
-        const call = node as expressions.CallExpression;
-        let funcName = "anonymous function";
-        if (call.func instanceof ast.Identifier) {
-          funcName = call.func.value;
-        }
-        return `About to call function '${funcName}'`;
-      }
-      case "Identifier":
-        return `Looking up variable '${(node as ast.Identifier).value}'`;
-      default:
-        return `About to evaluate ${nodeType}`;
-    }
-  }
-
-  /**
-   * Get description for "after" step
-   */
-  private getAfterDescription(
-    node: ast.Node,
-    result: objects.BaseObject
-  ): string {
-    const nodeType = node.constructor.name;
-
-    switch (nodeType) {
-      case "LetStatement":
-        return `Variable '${
-          (node as statements.LetStatement).name.value
-        }' declared with value: ${result.inspect()}`;
-      case "ConstStatement":
-        return `Constant '${
-          (node as statements.ConstStatement).name.value
-        }' declared with value: ${result.inspect()}`;
-      case "ReturnStatement":
-        return `Returned: ${result.inspect()}`;
-      case "InfixExpression":
-        return `Expression evaluated to: ${result.inspect()}`;
-      case "CallExpression":
-        return `Function call completed, result: ${result.inspect()}`;
-      case "Identifier":
-        return `Variable value: ${result.inspect()}`;
-      default:
-        return `${nodeType} evaluated to: ${result.inspect()}`;
-    }
-  }
-
-  /**
-   * Estimate the total number of steps for progress tracking
-   */
-  private estimateSteps(node: ast.Node): number {
-    // This is a rough estimation - you can make it more accurate
-    let count = 1;
-
-    if (node instanceof ast.Program) {
-      count += node.statements.length * 3; // Rough estimate
-    }
-
-    return Math.max(count, 10); // Minimum 10 steps
   }
 }

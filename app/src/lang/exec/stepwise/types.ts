@@ -1,6 +1,8 @@
 import * as ast from "@/lang/ast/ast";
 import * as objects from "@/lang/exec/objects";
 
+export type StepType = "before" | "after" | "during";
+
 export interface EvaluationStep {
   node: ast.Node;
   description: string;
@@ -10,7 +12,7 @@ export interface EvaluationStep {
   columnNumber: number;
   depth: number;
   nodePath: string;
-  stepType: "before" | "after" | "during";
+  stepType: StepType;
   executionPhase: string; // e.g., "evaluating", "completed", "entered"
 }
 
@@ -42,7 +44,6 @@ export class ExecutionState {
   callStack: CallStackFrame[] = [];
   output: OutputEntry[] = [];
   isComplete: boolean = false;
-  totalSteps: number = 0;
   currentStepNumber: number = 0;
 }
 

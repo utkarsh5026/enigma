@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Clock, Eye } from "lucide-react";
-import { ExecutionState } from "@/lang/exec/stepwise/stepwise";
+import type { ExecutionState } from "@/lang/exec/stepwise/";
 
 interface StepInformationDisplayProps {
   executionState: ExecutionState | null;
