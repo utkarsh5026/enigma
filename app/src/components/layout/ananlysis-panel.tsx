@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import TokenDisplay from "@/components/analysis/tokens/token-display";
 import ASTDisplay from "@/components/analysis/ast/components/AstDisplay";
-import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
+import ExecutionVisualizer from "@/components/analysis/execution/components/execution-visualizer";
 import { GuideTab } from "@/components/guide";
 
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";

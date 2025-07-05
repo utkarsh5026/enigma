@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {
   sampleCodeSnippets,
   getRandomSampleCode,
-} from "@/components/analysis/exec/snippets";
+} from "@/components/analysis/execution/components/snippets";
 import ToolBar from "./editor-toolbar";
 import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
