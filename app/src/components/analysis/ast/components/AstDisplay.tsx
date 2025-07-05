@@ -13,23 +13,26 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { extractSearchableText } from "../hooks/astUtils";
-import { useAst } from "../hooks/use-ast";
 import EmptyAst from "./empty-ast";
 import AstTree from "./ast-tree";
+import { ErrorMessage } from "@/lang/parser/parser";
+import { Program } from "@/lang/ast";
 
 interface ASTDisplayProps {
-  code: string;
+  program: Program | null;
+  parserErrors: ErrorMessage[];
 }
 
-const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
+const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
+  program,
+  parserErrors,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(
     new Set()
   );
   const [forceRefresh, setForceRefresh] = useState(0);
-
-  const { ast } = useAst(code);
 
   // Count nodes recursively with better detection
   const countNodes = (node: any): number => {
@@ -61,7 +64,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
 
   // Enhanced search functionality
   const searchNodes = (searchTerm: string) => {
-    if (!searchTerm || !ast?.program) {
+    if (!searchTerm || !program) {
       setHighlightedNodes(new Set());
       return;
     }
@@ -109,7 +112,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
       }
     };
 
-    searchInNode(ast.program, "root");
+    searchInNode(program, "root");
     setHighlightedNodes(matches);
   };
 
@@ -120,7 +123,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm, ast]);
+  }, [searchTerm, program]);
 
   const renderErrorState = () => (
     <motion.div
@@ -142,7 +145,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
     </motion.div>
   );
 
-  const nodeCount = ast?.program ? countNodes(ast.program) : 0;
+  const nodeCount = program ? countNodes(program) : 0;
 
   return (
     <motion.div
@@ -174,7 +177,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
             </div>
 
             <div className="flex items-center gap-3">
-              {ast?.program && (
+              {program && (
                 <>
                   <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
                     {nodeCount} nodes
@@ -214,7 +217,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
           </div>
 
           {/* Search and Filters */}
-          {ast?.program && (
+          {program && (
             <div className="flex items-center gap-3">
               <div className="relative flex-1 max-w-md">
                 <Search
@@ -252,13 +255,16 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
 
       {/* Content Area */}
       <div className="flex-1 overflow-auto">
-        {!code || code.trim() === "" ? (
+        {!program ? (
           <EmptyAst />
-        ) : ast === null ? (
+        ) : parserErrors.length > 0 ? (
           renderErrorState()
         ) : (
           <AstTree
-            ast={ast}
+            ast={{
+              program,
+              errors: parserErrors,
+            }}
             forceRefresh={forceRefresh}
             nodeCount={nodeCount}
             highlightedNodes={highlightedNodes}

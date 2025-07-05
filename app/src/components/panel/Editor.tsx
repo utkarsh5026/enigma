@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  Terminal,
-  Braces,
-  BookOpen,
-  ChevronsRight,
-  BarChart3,
-} from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -14,7 +8,6 @@ import {
 } from "@/components/ui/resizable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Drawer,
   DrawerTrigger,
@@ -22,57 +15,23 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import TokenDisplay from "@/components/analysis/tokens/token-display";
-import ASTDisplay from "@/components/analysis/ast/components/AstDisplay";
-import ExecutionVisualizer from "@/components/analysis/exec/ExecutionVisualizer";
-import Lexer from "@/lang/lexer/lexer";
-import { Token, TokenType } from "@/lang/token/token";
 import {
   sampleCodeSnippets,
   getRandomSampleCode,
 } from "@/components/analysis/exec/snippets";
-import { GuideTab } from "@/components/guide";
 
 import LeftPanel from "./letft-panel";
 import ToolBar from "./editor-toolbar";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
+import { useProgram } from "@/hooks/use-program";
+import AnalysisContent from "./ananlysis-panel";
 
 const examples = Object.keys(sampleCodeSnippets);
 
-interface TabTriggerProps {
-  value: string;
-  icon: React.ReactNode;
-  label: string;
-  badge?: number;
-}
-
-const CustomTabTrigger: React.FC<TabTriggerProps> = ({
-  value,
-  icon,
-  label,
-  badge,
-}) => (
-  <TabsTrigger
-    value={value}
-    className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
-  >
-    <div className="flex items-center gap-2">
-      {icon}
-      <span>{label}</span>
-      {badge !== undefined && badge > 0 && (
-        <Badge className="ml-1 text-xs bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30">
-          {badge}
-        </Badge>
-      )}
-    </div>
-  </TabsTrigger>
-);
-
 const ModernEnigmaEditor: React.FC = () => {
   const [code, setCode] = useState("");
-  const [tokens, setTokens] = useState<Token[]>([]);
+  const { tokens, program, parserErrors } = useProgram(code);
   const [selectedExample, setSelectedExample] = useState<
     keyof typeof sampleCodeSnippets | null
   >(null);
@@ -87,22 +46,6 @@ const ModernEnigmaEditor: React.FC = () => {
 
   const handleCodeChange = (newCode: string) => {
     setCode(newCode);
-    try {
-      if (newCode && newCode.length > 0) {
-        const lexer = new Lexer(newCode);
-        let token = lexer.nextToken();
-        const newTokens: Token[] = [];
-        while (token.type !== TokenType.EOF) {
-          newTokens.push(token);
-          token = lexer.nextToken();
-        }
-        setTokens(newTokens);
-      } else {
-        setTokens([]);
-      }
-    } catch (error) {
-      console.error("Error tokenizing code:", error);
-    }
   };
 
   const loadExample = (exampleKey: keyof typeof sampleCodeSnippets) => {
@@ -127,67 +70,6 @@ const ModernEnigmaEditor: React.FC = () => {
   };
 
   // Analysis tabs content component
-  const AnalysisContent = () => (
-    <Tabs defaultValue="tokens" className="h-full flex flex-col">
-      {/* Analysis Tabs */}
-      <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
-        <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
-          <CustomTabTrigger
-            value="tokens"
-            icon={<Terminal size={16} />}
-            label="Tokens"
-            badge={tokens.length}
-          />
-          <CustomTabTrigger
-            value="ast"
-            icon={<Braces size={16} />}
-            label="AST"
-          />
-          <CustomTabTrigger
-            value="execution"
-            icon={<ChevronsRight size={16} />}
-            label="Execution"
-          />
-          <CustomTabTrigger
-            value="guide"
-            icon={<BookOpen size={16} />}
-            label="Guide"
-          />
-        </TabsList>
-      </div>
-
-      {/* Tab Content */}
-      <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
-        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-          <TokenDisplay tokens={tokens} />
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      </TabsContent>
-
-      <TabsContent value="ast" className="flex-1 min-h-0 m-0">
-        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-          <ASTDisplay code={code} />
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      </TabsContent>
-
-      <TabsContent value="execution" className="flex-1 min-h-0 m-0">
-        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-          <ExecutionVisualizer code={code} />
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      </TabsContent>
-
-      <TabsContent value="guide" className="flex-1 min-h-0 m-0">
-        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-          <div className="p-4">
-            <GuideTab />
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      </TabsContent>
-    </Tabs>
-  );
 
   return (
     <motion.div
@@ -244,7 +126,11 @@ const ModernEnigmaEditor: React.FC = () => {
                     <DrawerTitle>Code Analysis</DrawerTitle>
                   </DrawerHeader>
                   <div className="flex-1 min-h-0">
-                    <AnalysisContent />
+                    <AnalysisContent
+                      tokens={tokens}
+                      program={program}
+                      parserErrors={parserErrors}
+                    />
                   </div>
                 </DrawerContent>
               </Drawer>
@@ -267,7 +153,11 @@ const ModernEnigmaEditor: React.FC = () => {
             {/* Analysis Panel */}
             <ResizablePanel defaultSize={50} minSize={30}>
               <div className="h-full flex flex-col">
-                <AnalysisContent />
+                <AnalysisContent
+                  tokens={tokens}
+                  program={program}
+                  parserErrors={parserErrors}
+                />
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>

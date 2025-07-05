@@ -1,6 +1,4 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import Lexer from "@/lang/lexer/lexer";
-import { Parser } from "@/lang/parser/parser";
 import {
   StepwiseEvaluator,
   ExecutionState,
@@ -27,14 +25,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { Program } from "@/lang/ast";
+import { ErrorMessage } from "@/lang/parser/parser";
 
 interface EnhancedExecutionVisualizerProps {
-  code: string;
+  program: Program | null;
+  parserErrors: ErrorMessage[];
 }
 
 const EnhancedExecutionVisualizer: React.FC<
   EnhancedExecutionVisualizerProps
-> = ({ code }) => {
+> = ({ program, parserErrors }) => {
   const [evaluator] = useState<StepwiseEvaluator>(new StepwiseEvaluator());
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
@@ -51,16 +52,12 @@ const EnhancedExecutionVisualizer: React.FC<
     try {
       setError(null);
 
-      if (!code || code.trim() === "") {
+      if (!program) {
         setError("No code to execute. Please enter some code in the editor.");
         return false;
       }
 
-      const lexer = new Lexer(code);
-      const parser = new Parser(lexer);
-      const program = parser.parseProgram();
-
-      const errors = parser.parserErrors();
+      const errors = parserErrors;
       if (errors.length > 0) {
         setError(`Parser errors: ${errors.map((e) => e.message).join(", ")}`);
         return false;
@@ -78,7 +75,7 @@ const EnhancedExecutionVisualizer: React.FC<
       setError(`Error preparing execution: ${message}`);
       return false;
     }
-  }, [code, evaluator]);
+  }, [program, parserErrors, evaluator]);
 
   // Execute a single step
   const executeStep = useCallback(() => {
@@ -553,11 +550,11 @@ const EnhancedExecutionVisualizer: React.FC<
                   startAutoRun();
                 }
               }}
-              disabled={executionState?.isComplete === true && !code}
+              disabled={executionState?.isComplete === true && !program}
               className={cn(
                 "bg-[#4d9375] hover:bg-[#3a7057] text-white p-2 rounded-md transition-colors",
                 executionState?.isComplete === true &&
-                  !code &&
+                  !program &&
                   "opacity-50 cursor-not-allowed"
               )}
               title="Auto Run"
