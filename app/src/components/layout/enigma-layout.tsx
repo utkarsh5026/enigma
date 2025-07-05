@@ -8,7 +8,7 @@ import ToolBar from "./editor-toolbar";
 import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
 import { useProgram } from "@/hooks/use-program";
-import { DesktopLayout, MobileLayout } from "./layout";
+import { DesktopLayout, MobileLayout } from "./responsive-layouts";
 
 const examples = Object.keys(sampleCodeSnippets);
 
