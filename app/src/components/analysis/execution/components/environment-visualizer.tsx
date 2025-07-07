@@ -6,6 +6,7 @@ import {
   Package,
   Info,
   Eye,
+  Circle,
 } from "lucide-react";
 import {
   Collapsible,
@@ -31,7 +32,7 @@ export const EnvironmentVisualizer: React.FC<EnvironmentVisualizerProps> = ({
       return {
         name: "Global Scope",
         description: "Variables accessible throughout the entire program",
-        icon: <Globe size={14} className="text-[var(--tokyo-blue)]" />,
+        icon: <Globe size={16} className="text-[var(--tokyo-blue)]" />,
         color: "text-[var(--tokyo-blue)]",
       };
     } else if (isBlockScope) {
@@ -39,7 +40,7 @@ export const EnvironmentVisualizer: React.FC<EnvironmentVisualizerProps> = ({
         name: "Block Scope",
         description:
           "Variables only accessible within this code block (e.g., inside { })",
-        icon: <Package size={14} className="text-[var(--tokyo-purple)]" />,
+        icon: <Package size={16} className="text-[var(--tokyo-purple)]" />,
         color: "text-[var(--tokyo-purple)]",
       };
     } else {
@@ -47,7 +48,7 @@ export const EnvironmentVisualizer: React.FC<EnvironmentVisualizerProps> = ({
         name: "Function Scope",
         description:
           "Variables accessible within this function and its nested blocks",
-        icon: <Database size={14} className="text-[var(--tokyo-orange)]" />,
+        icon: <Database size={16} className="text-[var(--tokyo-orange)]" />,
         color: "text-[var(--tokyo-orange)]",
       };
     }
@@ -60,9 +61,9 @@ export const EnvironmentVisualizer: React.FC<EnvironmentVisualizerProps> = ({
   return (
     <motion.div
       className={cn(
-        "rounded-lg overflow-hidden",
+        "rounded-lg overflow-hidden shadow-sm",
         depth > 0
-          ? "mt-3 ml-3 border-l-2 border-[var(--tokyo-comment)]/30 pl-4"
+          ? "mt-6 ml-4 border-l-2 border-[var(--tokyo-comment)]/30 pl-6"
           : "border border-[var(--tokyo-bg-highlight)]"
       )}
       initial={{ opacity: 0, y: 8 }}
@@ -70,33 +71,33 @@ export const EnvironmentVisualizer: React.FC<EnvironmentVisualizerProps> = ({
       transition={{ duration: 0.2, delay: depth * 0.05 }}
     >
       <Collapsible defaultOpen={depth === 0}>
-        <CollapsibleTrigger className="group flex items-center justify-between w-full px-4 py-3 text-left rounded-md hover:bg-[var(--tokyo-bg-highlight)]/50 transition-colors [&[data-state=open]>div:last-child]:rotate-90">
-          <div className="flex items-center gap-3">
+        <CollapsibleTrigger className="group flex items-center justify-between w-full px-6 py-4 text-left rounded-md hover:bg-[var(--tokyo-bg-highlight)]/50 transition-colors [&[data-state=open]>div:last-child]:rotate-90">
+          <div className="flex items-center gap-4">
             {scopeInfo.icon}
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-[var(--tokyo-fg)]">
+              <div className="flex items-center gap-3 mb-1">
+                <span className="text-base font-semibold text-[var(--tokyo-fg)]">
                   {scopeInfo.name}
                 </span>
                 {depth > 0 && (
-                  <span className="text-xs text-[var(--tokyo-comment)] bg-[var(--tokyo-bg-dark)] px-2 py-0.5 rounded">
+                  <span className="text-sm text-[var(--tokyo-comment)] bg-[var(--tokyo-bg-dark)] px-2 py-1 rounded">
                     Level {depth}
                   </span>
                 )}
               </div>
-              <div className="text-xs text-[var(--tokyo-comment)] mt-0.5">
+              <div className="text-sm text-[var(--tokyo-comment)] leading-relaxed">
                 {scopeInfo.description}
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {totalVariables > 0 && (
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-[var(--tokyo-comment)] font-mono">
-                    {totalVariables} var{totalVariables !== 1 ? "s" : ""}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-[var(--tokyo-comment)] font-mono">
+                    {totalVariables} variable{totalVariables !== 1 ? "s" : ""}
                   </span>
                   {newVariables > 0 && highlightChanges && (
-                    <span className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] px-1.5 py-0.5 rounded font-mono">
+                    <span className="text-sm bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] px-2 py-1 rounded font-mono">
                       +{newVariables} new
                     </span>
                   )}
@@ -105,18 +106,18 @@ export const EnvironmentVisualizer: React.FC<EnvironmentVisualizerProps> = ({
             </div>
           </div>
           <div className="transition-transform duration-200 text-[var(--tokyo-comment)]">
-            <ChevronRight size={14} />
+            <ChevronRight size={16} />
           </div>
         </CollapsibleTrigger>
 
         <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-          <div className="px-4 pb-3">
+          <div className="px-6 pb-6">
             {environment.variables.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-4">
                 {/* Variables header */}
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[var(--tokyo-bg-highlight)]">
-                  <Eye size={12} className="text-[var(--tokyo-comment)]" />
-                  <span className="text-xs font-medium text-[var(--tokyo-comment)] uppercase tracking-wide">
+                <div className="flex items-center gap-3 mb-4 pb-3 border-b border-[var(--tokyo-bg-highlight)]">
+                  <Eye size={14} className="text-[var(--tokyo-comment)]" />
+                  <span className="text-sm font-medium text-[var(--tokyo-comment)] uppercase tracking-wide">
                     Variables in this scope
                   </span>
                 </div>
@@ -131,25 +132,25 @@ export const EnvironmentVisualizer: React.FC<EnvironmentVisualizerProps> = ({
                 ))}
               </div>
             ) : (
-              <div className="bg-[var(--tokyo-bg-dark)] rounded-md p-4 text-center">
+              <div className="bg-[var(--tokyo-bg-dark)] rounded-lg p-6 text-center">
                 <Database
-                  size={20}
-                  className="text-[var(--tokyo-comment)] mx-auto mb-2 opacity-50"
+                  size={24}
+                  className="text-[var(--tokyo-comment)] mx-auto mb-3 opacity-50"
                 />
-                <div className="text-[var(--tokyo-comment)] text-sm font-medium mb-1">
+                <div className="text-[var(--tokyo-comment)] text-base font-medium mb-2">
                   No Variables Declared
                 </div>
-                <div className="text-[var(--tokyo-comment)] text-xs">
+                <div className="text-[var(--tokyo-comment)] text-sm">
                   This scope doesn't contain any variable declarations yet
                 </div>
               </div>
             )}
 
             {environment.parentEnvironment && (
-              <div className="mt-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Info size={12} className="text-[var(--tokyo-comment)]" />
-                  <span className="text-xs text-[var(--tokyo-comment)]">
+              <div className="mt-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <Info size={14} className="text-[var(--tokyo-comment)]" />
+                  <span className="text-sm text-[var(--tokyo-comment)]">
                     Variables from outer scopes are also accessible here:
                   </span>
                 </div>
@@ -178,80 +179,85 @@ const Variable: React.FC<VariableProps> = ({
   idx,
   highlightChanges,
 }) => {
-  const getVariableTypeInfo = (type: string, isConstant: boolean) => {
+  const getVariableTypeInfo = (isConstant: boolean) => {
     const baseInfo = {
       const: {
         label: "constant",
         description: "Cannot be reassigned after declaration",
         color: "text-[var(--tokyo-red)]",
+        bgColor: "bg-[var(--tokyo-red)]/10",
       },
       let: {
         label: "variable",
         description: "Can be reassigned with new values",
         color: "text-[var(--tokyo-blue)]",
+        bgColor: "bg-[var(--tokyo-blue)]/10",
       },
     };
 
     return baseInfo[isConstant ? "const" : "let"];
   };
 
-  const typeInfo = getVariableTypeInfo(variable.type, variable.isConstant);
+  const typeInfo = getVariableTypeInfo(variable.isConstant);
 
   return (
     <motion.div
       className={cn(
-        "group relative rounded-md p-3 transition-all duration-200",
+        "group relative rounded-lg p-4 transition-all duration-200 border",
         variable.isNew && highlightChanges
-          ? "bg-[var(--tokyo-green)]/15 border border-[var(--tokyo-green)]/30 shadow-sm"
-          : "bg-[var(--tokyo-bg-dark)] hover:bg-[var(--tokyo-bg-highlight)]/50"
+          ? "bg-[var(--tokyo-green)]/10 border-[var(--tokyo-green)]/30 shadow-sm"
+          : "bg-[var(--tokyo-bg-dark)] border-[var(--tokyo-bg-highlight)] hover:bg-[var(--tokyo-bg-highlight)]/30"
       )}
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: idx * 0.03, duration: 0.2 }}
     >
       {/* Variable header */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
           <span
             className={cn(
-              "text-xs font-mono px-2 py-0.5 rounded-full",
+              "text-sm font-mono px-3 py-1 rounded-full font-medium",
               typeInfo.color,
-              "bg-current/10"
+              typeInfo.bgColor
             )}
           >
             {variable.isConstant ? "const" : "let"}
           </span>
-          <span className="text-sm font-medium text-[var(--tokyo-fg)]">
+          <span className="text-base font-semibold text-[var(--tokyo-fg)]">
             {variable.name}
           </span>
-          <span className="text-xs text-[var(--tokyo-comment)] bg-[var(--tokyo-bg)] px-1.5 py-0.5 rounded">
+          <span className="text-sm text-[var(--tokyo-comment)] bg-[var(--tokyo-bg)] px-2 py-1 rounded">
             {variable.type}
           </span>
         </div>
 
         {variable.isNew && highlightChanges && (
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-[var(--tokyo-green)] font-medium">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-[var(--tokyo-green)] font-medium">
               NEW
             </span>
-            <div className="w-2 h-2 rounded-full bg-[var(--tokyo-green)] animate-pulse" />
+            <Circle
+              size={8}
+              className="text-[var(--tokyo-green)] fill-current animate-pulse"
+            />
           </div>
         )}
       </div>
 
       {/* Variable value */}
-      <div className="space-y-2">
-        <div className="bg-[var(--tokyo-bg)] rounded p-2">
-          <div className="text-xs text-[var(--tokyo-comment)] mb-1">
+      <div className="space-y-3">
+        <div className="bg-[var(--tokyo-bg)] rounded-lg p-3">
+          <div className="text-sm text-[var(--tokyo-comment)] mb-2 font-medium">
             Current Value:
           </div>
-          <code className="text-sm text-[var(--tokyo-cyan)] font-mono break-all">
+          <code className="text-sm text-[var(--tokyo-cyan)] font-mono break-all leading-relaxed">
             {variable.value}
           </code>
         </div>
 
         {/* Variable description */}
-        <div className="text-xs text-[var(--tokyo-comment)] italic">
+        <div className="text-sm text-[var(--tokyo-comment)] italic px-1">
           {typeInfo.description}
         </div>
       </div>

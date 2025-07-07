@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { StepwiseEvaluator, ExecutionState } from "@/lang/exec/stepwise";
-import { Braces, AlertCircle } from "lucide-react";
+import { Braces, AlertCircle, Settings } from "lucide-react";
 import { motion } from "framer-motion";
 import { Program } from "@/lang/ast";
 import { ErrorMessage } from "@/lang/parser/parser";
@@ -132,31 +132,35 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   return (
     <div className="w-full h-full bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)] flex flex-col">
       {/* Header */}
-      <div className="border-b border-[var(--tokyo-bg-highlight)] p-4">
+      <div className="border-b border-[var(--tokyo-bg-highlight)] p-6">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Braces size={20} className="text-[var(--tokyo-purple)]" />
-            <h2 className="text-lg font-bold">Step-by-Step Execution</h2>
+          <div className="flex items-center gap-3">
+            <Braces size={24} className="text-[var(--tokyo-purple)]" />
+            <h2 className="text-xl font-bold">Step-by-Step Execution</h2>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
-            <label className="flex items-center gap-1">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Settings size={16} className="text-[var(--tokyo-comment)]" />
+              <span className="text-[var(--tokyo-comment)]">Options:</span>
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={showDetailedSteps}
                 onChange={(e) => setShowDetailedSteps(e.target.checked)}
                 className="rounded"
               />
-              <span>Detailed Steps</span>
+              <span className="text-sm">Detailed Steps</span>
             </label>
-            <label className="flex items-center gap-1">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={highlightChanges}
                 onChange={(e) => setHighlightChanges(e.target.checked)}
                 className="rounded"
               />
-              <span>Highlight Changes</span>
+              <span className="text-sm">Highlight Changes</span>
             </label>
           </div>
         </div>
@@ -165,13 +169,13 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       {/* Error display */}
       {error && (
         <motion.div
-          className="bg-[var(--tokyo-red)]/10 border border-[var(--tokyo-red)] text-[var(--tokyo-red)] p-3 m-4 rounded-md"
+          className="bg-[var(--tokyo-red)]/10 border border-[var(--tokyo-red)] text-[var(--tokyo-red)] p-4 m-6 rounded-lg"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="flex items-start gap-2">
-            <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
-            <p>{error}</p>
+          <div className="flex items-start gap-3">
+            <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
+            <p className="text-sm leading-relaxed">{error}</p>
           </div>
         </motion.div>
       )}
@@ -191,22 +195,23 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       />
 
       {/* Main content */}
-      <div className="flex-1 overflow-auto p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="flex-1 overflow-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left column */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             <StepInformationDisplay executionState={executionState} />
 
             {/* Environment Variables */}
             {executionState?.currentStep && (
               <EnvironmentVisualizer
                 environment={executionState.currentStep.environment}
+                highlightChanges={highlightChanges}
               />
             )}
           </div>
 
           {/* Right column */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Execution Log */}
             {executionState && (
               <OutputVisualizer outputs={executionState.output} />
@@ -214,23 +219,27 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
 
             {/* Call Stack */}
             {executionState && executionState.callStack.length > 0 && (
-              <div className="border rounded-md bg-[var(--tokyo-bg-dark)] p-3">
-                <div className="flex items-center gap-2 mb-3">
-                  <Braces size={14} className="text-[var(--tokyo-blue)]" />
-                  <h3 className="text-sm font-medium">Call Stack</h3>
+              <div className="border rounded-lg bg-[var(--tokyo-bg-dark)] shadow-sm">
+                <div className="p-4 border-b border-[var(--tokyo-bg-highlight)]">
+                  <div className="flex items-center gap-3">
+                    <Braces size={16} className="text-[var(--tokyo-blue)]" />
+                    <h3 className="text-lg font-semibold">Call Stack</h3>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="p-4 space-y-3">
                   {executionState.callStack.map((frame, idx) => (
                     <motion.div
                       key={idx}
-                      className="bg-[var(--tokyo-bg)] p-2 rounded text-sm"
+                      className="bg-[var(--tokyo-bg)] p-4 rounded-lg border border-[var(--tokyo-bg-highlight)]"
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
                     >
-                      <div className="font-medium">{frame.functionName}</div>
-                      <div className="text-xs text-[var(--tokyo-comment)]">
+                      <div className="text-base font-semibold text-[var(--tokyo-fg)] mb-2">
+                        {frame.functionName}
+                      </div>
+                      <div className="text-sm text-[var(--tokyo-comment)]">
                         Args: ({frame.args.join(", ")})
                       </div>
                     </motion.div>
@@ -243,10 +252,10 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       </div>
 
       {/* Status footer */}
-      <div className="border-t border-[var(--tokyo-bg-highlight)] p-4">
-        <div className="flex items-center justify-between text-xs text-[var(--tokyo-comment)]">
-          <div className="flex items-center gap-4">
-            <span>
+      <div className="border-t border-[var(--tokyo-bg-highlight)] p-6">
+        <div className="flex items-center justify-between text-sm text-[var(--tokyo-comment)]">
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-2">
               {executionState?.isComplete
                 ? "✅ Execution complete"
                 : executionState?.currentStep
@@ -255,8 +264,11 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
             </span>
 
             {executionState?.currentStep && (
-              <span>
-                Current: {executionState.currentStep.node.constructor.name}
+              <span className="flex items-center gap-2">
+                <span>Current:</span>
+                <code className="bg-[var(--tokyo-bg-dark)] px-2 py-1 rounded text-xs">
+                  {executionState.currentStep.node.constructor.name}
+                </code>
               </span>
             )}
           </div>

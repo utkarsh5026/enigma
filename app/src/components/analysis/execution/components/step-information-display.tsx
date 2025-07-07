@@ -24,15 +24,18 @@ const StepInformationDisplay: React.FC<StepInformationDisplayProps> = ({
   if (!executionState?.currentStep) {
     return (
       <motion.div
-        className="border rounded-md bg-[#161b22] p-4 text-center"
+        className="border rounded-lg bg-[var(--tokyo-bg-dark)] p-8 text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <PauseCircle size={32} className="text-[#8b949e] mx-auto mb-2" />
-        <h3 className="text-sm font-medium text-[#8b949e] mb-1">
+        <PauseCircle
+          size={40}
+          className="text-[var(--tokyo-comment)] mx-auto mb-4 opacity-60"
+        />
+        <h3 className="text-base font-semibold text-[var(--tokyo-comment)] mb-2">
           Ready to Execute
         </h3>
-        <p className="text-xs text-[#8b949e]">
+        <p className="text-sm text-[var(--tokyo-comment)] leading-relaxed max-w-xs mx-auto">
           Click "Step Forward" or "Auto Run" to begin stepping through your code
         </p>
       </motion.div>
@@ -49,22 +52,25 @@ const StepInformationDisplay: React.FC<StepInformationDisplayProps> = ({
         return {
           label: "Preparing to Execute",
           description: "About to execute this code element",
-          icon: <Target size={14} className="text-[#e0af68]" />,
-          color: "bg-[#e0af68]/20 text-[#e0af68]",
+          icon: <Target size={16} className="text-[var(--tokyo-yellow)]" />,
+          color: "bg-[var(--tokyo-yellow)]/20 text-[var(--tokyo-yellow)]",
+          borderColor: "border-[var(--tokyo-yellow)]",
         };
       case "after":
         return {
           label: "Just Executed",
           description: "Finished executing this code element",
-          icon: <CheckCircle size={14} className="text-[#4d9375]" />,
-          color: "bg-[#4d9375]/20 text-[#4d9375]",
+          icon: <CheckCircle size={16} className="text-[var(--tokyo-green)]" />,
+          color: "bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)]",
+          borderColor: "border-[var(--tokyo-green)]",
         };
       default:
         return {
           label: "Processing",
           description: "Currently processing this step",
-          icon: <PlayCircle size={14} className="text-[#7aa2f7]" />,
-          color: "bg-[#7aa2f7]/20 text-[#7aa2f7]",
+          icon: <PlayCircle size={16} className="text-[var(--tokyo-blue)]" />,
+          color: "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)]",
+          borderColor: "border-[var(--tokyo-blue)]",
         };
     }
   };
@@ -73,49 +79,59 @@ const StepInformationDisplay: React.FC<StepInformationDisplayProps> = ({
 
   return (
     <motion.div
-      className="border rounded-md bg-[#161b22] p-4"
+      className="border rounded-lg bg-[var(--tokyo-bg-dark)] p-6 shadow-sm"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       {/* Header with progress */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Eye size={16} className="text-[#bb9af7]" />
-          <h3 className="text-sm font-medium">Execution Step {progress}</h3>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Eye size={18} className="text-[var(--tokyo-purple)]" />
+          <h3 className="text-lg font-semibold text-[var(--tokyo-fg)]">
+            Execution Step {progress}
+          </h3>
           {isComplete && (
-            <Badge className="bg-[#4d9375]/20 text-[#4d9375] text-xs">
+            <Badge className="bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] text-sm">
               Complete
             </Badge>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {stepInfo.icon}
-          <Badge className={cn("text-xs", stepInfo.color)}>
+          <Badge className={cn("text-sm", stepInfo.color)}>
             {stepInfo.label}
           </Badge>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Current operation explanation */}
-        <div className="bg-[#0d1117] p-4 rounded-md border-l-2 border-l-[#bb9af7]">
-          <div className="flex items-start gap-3">
-            <Code size={16} className="text-[#bb9af7] mt-0.5 flex-shrink-0" />
+        <div
+          className={cn(
+            "bg-[var(--tokyo-bg)] p-5 rounded-lg border-l-4",
+            stepInfo.borderColor
+          )}
+        >
+          <div className="flex items-start gap-4">
+            <Code
+              size={18}
+              className="text-[var(--tokyo-purple)] mt-1 flex-shrink-0"
+            />
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-medium text-[#bb9af7]">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-base font-semibold text-[var(--tokyo-purple)]">
                   Currently Executing:
                 </span>
-                <code className="text-xs bg-[#21262d] px-2 py-1 rounded text-[#7aa2f7]">
+                <code className="text-sm bg-[var(--tokyo-bg-dark)] px-3 py-1 rounded text-[var(--tokyo-blue)]">
                   {step.node.constructor.name}
                 </code>
               </div>
-              <p className="text-sm text-[#a9b1d6] leading-relaxed">
+              <p className="text-sm text-[var(--tokyo-fg)] leading-relaxed mb-3">
                 {step.description}
               </p>
-              <div className="mt-2 text-xs text-[#8b949e] italic">
+              <div className="text-sm text-[var(--tokyo-comment)] italic">
                 {stepInfo.description}
               </div>
             </div>
@@ -123,41 +139,47 @@ const StepInformationDisplay: React.FC<StepInformationDisplayProps> = ({
         </div>
 
         {/* Execution context */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="bg-[#0d1117] p-3 rounded-md">
-            <div className="flex items-center gap-2 mb-2">
-              <MapPin size={14} className="text-[#e0af68]" />
-              <span className="text-sm font-medium">Source Location</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-[var(--tokyo-bg)] p-4 rounded-lg border border-[var(--tokyo-bg-highlight)]">
+            <div className="flex items-center gap-3 mb-3">
+              <MapPin size={16} className="text-[var(--tokyo-orange)]" />
+              <span className="text-sm font-semibold text-[var(--tokyo-fg)]">
+                Source Location
+              </span>
             </div>
-            <div className="space-y-1 text-xs text-[#a9b1d6]">
+            <div className="space-y-2 text-sm text-[var(--tokyo-fg)]">
               <div className="flex justify-between">
                 <span>Line:</span>
-                <span className="font-mono text-[#7aa2f7]">
+                <span className="font-mono text-[var(--tokyo-blue)]">
                   {step.lineNumber}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Column:</span>
-                <span className="font-mono text-[#7aa2f7]">
+                <span className="font-mono text-[var(--tokyo-blue)]">
                   {step.columnNumber}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-[#0d1117] p-3 rounded-md">
-            <div className="flex items-center gap-2 mb-2">
-              <Layers size={14} className="text-[#f7768e]" />
-              <span className="text-sm font-medium">Execution Context</span>
+          <div className="bg-[var(--tokyo-bg)] p-4 rounded-lg border border-[var(--tokyo-bg-highlight)]">
+            <div className="flex items-center gap-3 mb-3">
+              <Layers size={16} className="text-[var(--tokyo-red)]" />
+              <span className="text-sm font-semibold text-[var(--tokyo-fg)]">
+                Execution Context
+              </span>
             </div>
-            <div className="space-y-1 text-xs text-[#a9b1d6]">
+            <div className="space-y-2 text-sm text-[var(--tokyo-fg)]">
               <div className="flex justify-between">
                 <span>Depth:</span>
-                <span className="font-mono text-[#7aa2f7]">{step.depth}</span>
+                <span className="font-mono text-[var(--tokyo-blue)]">
+                  {step.depth}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span>Phase:</span>
-                <span className="font-mono text-[#7aa2f7]">
+                <span className="font-mono text-[var(--tokyo-blue)]">
                   {step.executionPhase}
                 </span>
               </div>
@@ -167,25 +189,25 @@ const StepInformationDisplay: React.FC<StepInformationDisplayProps> = ({
 
         {/* Result display with enhanced formatting */}
         {step.result && (
-          <div className="bg-[#0d1117] p-4 rounded-md border-l-2 border-l-[#4d9375]">
-            <div className="flex items-start gap-3">
+          <div className="bg-[var(--tokyo-bg)] p-5 rounded-lg border-l-4 border-[var(--tokyo-green)]">
+            <div className="flex items-start gap-4">
               <CheckCircle
-                size={16}
-                className="text-[#4d9375] mt-0.5 flex-shrink-0"
+                size={18}
+                className="text-[var(--tokyo-green)] mt-1 flex-shrink-0"
               />
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm font-medium text-[#4d9375]">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-base font-semibold text-[var(--tokyo-green)]">
                     Step Result:
                   </span>
-                  <Badge className="bg-[#4d9375]/20 text-[#4d9375] text-xs">
+                  <Badge className="bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] text-sm">
                     {typeof step.result.inspect()}
                   </Badge>
                 </div>
-                <code className="block text-sm bg-[#21262d] px-3 py-2 rounded text-[#7aa2f7] font-mono">
+                <code className="block text-sm bg-[var(--tokyo-bg-dark)] px-4 py-3 rounded text-[var(--tokyo-cyan)] font-mono leading-relaxed">
                   {step.result.inspect()}
                 </code>
-                <div className="mt-2 text-xs text-[#8b949e] italic">
+                <div className="mt-3 text-sm text-[var(--tokyo-comment)] italic">
                   This value will be used in subsequent operations
                 </div>
               </div>
@@ -194,11 +216,16 @@ const StepInformationDisplay: React.FC<StepInformationDisplayProps> = ({
         )}
 
         {/* Step guidance */}
-        <div className="bg-[#1a1f2e] p-3 rounded-md border border-[#30363d]">
-          <div className="flex items-start gap-2">
-            <Info size={14} className="text-[#7aa2f7] mt-0.5 flex-shrink-0" />
-            <div className="text-xs text-[#8b949e]">
-              <span className="font-medium text-[#7aa2f7]">Next: </span>
+        <div className="bg-[var(--tokyo-bg)] p-4 rounded-lg border border-[var(--tokyo-bg-highlight)]">
+          <div className="flex items-start gap-3">
+            <Info
+              size={16}
+              className="text-[var(--tokyo-blue)] mt-0.5 flex-shrink-0"
+            />
+            <div className="text-sm text-[var(--tokyo-comment)]">
+              <span className="font-semibold text-[var(--tokyo-blue)]">
+                Next:{" "}
+              </span>
               {isComplete
                 ? "Execution is complete. You can reset to run again or examine the final state."
                 : "Click 'Step Forward' to continue, or 'Auto Run' to execute all remaining steps automatically."}

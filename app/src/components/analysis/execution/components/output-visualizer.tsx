@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Clock,
   Activity,
+  Play,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -31,43 +32,48 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
     switch (type) {
       case "error":
         return {
-          icon: <AlertCircle size={14} className="text-[var(--tokyo-red)]" />,
+          icon: <AlertCircle size={16} className="text-[var(--tokyo-red)]" />,
           label: "Error",
           description: "An error occurred during execution",
           color: "text-[var(--tokyo-red)]",
           bgColor: "bg-[var(--tokyo-red)]/10",
+          borderColor: "border-l-[var(--tokyo-red)]",
         };
       case "return":
         return {
-          icon: <CheckCircle size={14} className="text-[var(--tokyo-blue)]" />,
+          icon: <CheckCircle size={16} className="text-[var(--tokyo-blue)]" />,
           label: "Return Value",
           description: "Function returned a value",
           color: "text-[var(--tokyo-blue)]",
           bgColor: "bg-[var(--tokyo-blue)]/10",
+          borderColor: "border-l-[var(--tokyo-blue)]",
         };
       case "assignment":
         return {
-          icon: <Database size={14} className="text-[var(--tokyo-green)]" />,
+          icon: <Database size={16} className="text-[var(--tokyo-green)]" />,
           label: "Variable Assignment",
           description: "A variable was assigned a new value",
           color: "text-[var(--tokyo-green)]",
           bgColor: "bg-[var(--tokyo-green)]/10",
+          borderColor: "border-l-[var(--tokyo-green)]",
         };
       case "operation":
         return {
-          icon: <Zap size={14} className="text-[var(--tokyo-yellow)]" />,
+          icon: <Zap size={16} className="text-[var(--tokyo-orange)]" />,
           label: "Operation",
           description: "An operation was performed",
-          color: "text-[var(--tokyo-yellow)]",
-          bgColor: "bg-[var(--tokyo-yellow)]/10",
+          color: "text-[var(--tokyo-orange)]",
+          bgColor: "bg-[var(--tokyo-orange)]/10",
+          borderColor: "border-l-[var(--tokyo-orange)]",
         };
       default:
         return {
-          icon: <Activity size={14} className="text-[var(--tokyo-fg)]" />,
+          icon: <Activity size={16} className="text-[var(--tokyo-fg)]" />,
           label: "Execution Step",
           description: "General execution activity",
           color: "text-[var(--tokyo-fg)]",
           bgColor: "bg-[var(--tokyo-bg-highlight)]",
+          borderColor: "border-l-[var(--tokyo-comment)]",
         };
     }
   };
@@ -90,21 +96,23 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
   }, [] as Array<{ type: string; outputs: typeof outputs }>);
 
   return (
-    <div className="border rounded-md bg-[var(--tokyo-bg-dark)]">
+    <div className="border rounded-lg bg-[var(--tokyo-bg-dark)] shadow-sm">
       {/* Header */}
-      <div className="p-4 border-b border-[var(--tokyo-bg-highlight)]">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Terminal size={16} className="text-[var(--tokyo-green)]" />
-            <h3 className="text-sm font-medium">Execution Activity Log</h3>
+      <div className="p-6 border-b border-[var(--tokyo-bg-highlight)]">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <Terminal size={18} className="text-[var(--tokyo-green)]" />
+            <h3 className="text-lg font-semibold text-[var(--tokyo-fg)]">
+              Execution Activity Log
+            </h3>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="text-sm">
               {outputs.length} events
             </Badge>
             {outputs.length > 0 && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-sm">
                 Latest:{" "}
                 {new Date(
                   outputs[outputs.length - 1].timestamp
@@ -114,7 +122,7 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
           </div>
         </div>
 
-        <p className="text-xs text-[var(--tokyo-comment)]">
+        <p className="text-sm text-[var(--tokyo-comment)] leading-relaxed">
           This log shows all the important events that happen during code
           execution, including variable assignments, function returns, and any
           errors.
@@ -122,10 +130,10 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
       </div>
 
       {/* Output content */}
-      <div className="p-4">
+      <div className="p-6">
         <div
           ref={outputRef}
-          className="bg-[var(--tokyo-bg)] rounded-md p-3 max-h-64 overflow-auto space-y-2"
+          className="bg-[var(--tokyo-bg)] rounded-lg p-4 max-h-80 overflow-auto space-y-4"
         >
           {outputs.length > 0 ? (
             <AnimatePresence>
@@ -139,26 +147,18 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2, delay: groupIdx * 0.05 }}
                     className={cn(
-                      "rounded-md p-3 border-l-2",
+                      "rounded-lg p-4 border-l-4",
                       outputInfo.bgColor,
-                      group.type === "error"
-                        ? "border-l-[var(--tokyo-red)]"
-                        : group.type === "return"
-                        ? "border-l-[var(--tokyo-blue)]"
-                        : group.type === "assignment"
-                        ? "border-l-[var(--tokyo-green)]"
-                        : group.type === "operation"
-                        ? "border-l-[var(--tokyo-yellow)]"
-                        : "border-l-[var(--tokyo-comment)]"
+                      outputInfo.borderColor
                     )}
                   >
                     {/* Group header */}
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
                         {outputInfo.icon}
                         <span
                           className={cn(
-                            "text-sm font-medium",
+                            "text-base font-semibold",
                             outputInfo.color
                           )}
                         >
@@ -167,7 +167,7 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
                         {group.outputs.length > 1 && (
                           <Badge
                             className={cn(
-                              "text-xs",
+                              "text-sm",
                               outputInfo.color,
                               outputInfo.bgColor
                             )}
@@ -177,8 +177,8 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-1 text-xs text-[var(--tokyo-comment)]">
-                        <Clock size={10} />
+                      <div className="flex items-center gap-2 text-sm text-[var(--tokyo-comment)]">
+                        <Clock size={12} />
                         <span>
                           Step{" "}
                           {group.outputs[group.outputs.length - 1].stepNumber}
@@ -187,12 +187,12 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
                     </div>
 
                     {/* Output entries */}
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {group.outputs.map((output, idx) => (
-                        <div key={idx} className="space-y-1">
+                        <div key={idx} className="space-y-2">
                           {group.outputs.length > 1 && (
-                            <div className="flex items-center gap-2 text-xs text-[var(--tokyo-comment)]">
-                              <ArrowRight size={10} />
+                            <div className="flex items-center gap-2 text-sm text-[var(--tokyo-comment)]">
+                              <ArrowRight size={12} />
                               <span>Step {output.stepNumber}</span>
                               <span>•</span>
                               <span>
@@ -203,9 +203,12 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
                             </div>
                           )}
 
-                          <div className="bg-[var(--tokyo-bg-dark)] rounded p-2 font-mono text-xs">
+                          <div className="bg-[var(--tokyo-bg-dark)] rounded-lg p-3 font-mono text-sm">
                             <div
-                              className={cn("break-words", outputInfo.color)}
+                              className={cn(
+                                "break-words leading-relaxed",
+                                outputInfo.color
+                              )}
                             >
                               {output.value}
                             </div>
@@ -215,7 +218,7 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
                     </div>
 
                     {/* Description */}
-                    <div className="mt-2 text-xs text-[var(--tokyo-comment)] italic">
+                    <div className="mt-3 text-sm text-[var(--tokyo-comment)] italic">
                       {outputInfo.description}
                     </div>
                   </motion.div>
@@ -223,16 +226,16 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({ outputs }) => {
               })}
             </AnimatePresence>
           ) : (
-            <div className="text-center py-12">
-              <Terminal
-                size={32}
-                className="mx-auto mb-3 text-[var(--tokyo-comment)] opacity-50"
+            <div className="text-center py-16">
+              <Play
+                size={40}
+                className="mx-auto mb-4 text-[var(--tokyo-comment)] opacity-50"
               />
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium text-[var(--tokyo-comment)]">
+              <div className="space-y-3">
+                <h4 className="text-base font-semibold text-[var(--tokyo-comment)]">
                   No Activity Yet
                 </h4>
-                <p className="text-xs text-[var(--tokyo-comment)] max-w-xs mx-auto leading-relaxed">
+                <p className="text-sm text-[var(--tokyo-comment)] max-w-md mx-auto leading-relaxed">
                   Start executing your code to see a detailed log of what
                   happens at each step. You'll see variable assignments,
                   function calls, return values, and any errors here.
