@@ -2,6 +2,8 @@ import { truthy } from "./utils";
 import * as objects from "../objects";
 import { Operator } from "@/lang/token/token";
 import type { Identifier } from "@/lang/ast/ast";
+import { ObjectValidator } from "./validate";
+import { evalLogicalNotOperator, evalNegationOperator } from "./operator";
 
 export const evalAndExpression = (
   left: objects.BaseObject,
@@ -28,18 +30,6 @@ export const evalOrExpression = (
   return toBool(rightVal);
 };
 
-/**
- * Evaluates an infix expression with integer operands
- *
- * @param left - The left operand (integer)
- * @param right - The right operand (integer)
- * @param operator - The operator
- * @returns The result of applying the operator to the operands
- *
- * @example
- * // This method is called internally by evalInfixExpression
- * // e.g., when evaluating 5 + 3, 10 - 7, etc.
- */
 export const evalIntegerInfixExpression = (
   left: objects.IntegerObject,
   right: objects.IntegerObject,
@@ -76,18 +66,6 @@ export const evalIntegerInfixExpression = (
   }
 };
 
-/**
- * Evaluates an infix expression with string operands
- *
- * @param left - The left operand (string)
- * @param right - The right operand (string)
- * @param operator - The operator
- * @returns The result of applying the operator to the operands
- *
- * @example
- * // This method is called internally by evalInfixExpression
- * // e.g., when evaluating "Hello" + " World"
- */
 export const evalStringInfixExpression = (
   left: objects.StringObject,
   right: objects.StringObject,
@@ -122,4 +100,58 @@ export const evalIdentifier = (
   if (value) return value;
 
   return new objects.ErrorObject(`Identifier not found: ${node.value}`);
+};
+
+export const evaluateInfix = (
+  left: objects.BaseObject,
+  right: objects.BaseObject,
+  operator: Operator
+): objects.BaseObject => {
+  if (ObjectValidator.isInteger(left) && ObjectValidator.isInteger(right)) {
+    return evalIntegerInfixExpression(left, right, operator);
+  }
+
+  if (ObjectValidator.isString(left) && ObjectValidator.isString(right)) {
+    return evalStringInfixExpression(left, right, operator);
+  }
+
+  if (operator === "==") {
+    return toBool(left === right);
+  }
+
+  if (operator === "!=") {
+    return toBool(left !== right);
+  }
+
+  if (operator === "&&") {
+    return evalAndExpression(left, right);
+  }
+
+  if (operator === "||") {
+    return evalOrExpression(left, right);
+  }
+
+  if (left.type() !== right.type()) {
+    return new objects.ErrorObject(
+      `Type mismatch: ${left.type()} ${operator} ${right.type()}`
+    );
+  }
+
+  return new objects.ErrorObject(
+    `Unknown operator: ${left.type()} ${operator} ${right.type()}`
+  );
+};
+
+export const evaluatePrefix = (
+  operator: string,
+  operand: objects.BaseObject
+): objects.BaseObject => {
+  switch (operator) {
+    case "!":
+      return evalLogicalNotOperator(operand);
+    case "-":
+      return evalNegationOperator(operand);
+    default:
+      return new objects.ErrorObject(`Unknown operator: ${operator}`);
+  }
 };

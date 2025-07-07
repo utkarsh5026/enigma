@@ -1,11 +1,11 @@
 import * as objects from "../objects";
 import { truthy } from "./utils";
-import * as validate from "./validate";
+import { ObjectValidator } from "./validate";
 
 export const evalLogicalNotOperator = (
   right: objects.BaseObject
 ): objects.BaseObject => {
-  const isBoolean = validate.isBoolean(right);
+  const isBoolean = ObjectValidator.isBoolean(right);
 
   if (isBoolean) {
     return truthy(right)
@@ -13,7 +13,7 @@ export const evalLogicalNotOperator = (
       : new objects.BooleanObject(true);
   }
 
-  if (validate.isNull(right)) return new objects.BooleanObject(true);
+  if (ObjectValidator.isNull(right)) return new objects.BooleanObject(true);
 
   return new objects.BooleanObject(false);
 };
@@ -21,7 +21,7 @@ export const evalLogicalNotOperator = (
 export const evalNegationOperator = (
   right: objects.BaseObject
 ): objects.BaseObject => {
-  if (!validate.isInteger(right))
+  if (!ObjectValidator.isInteger(right))
     return new objects.ErrorObject(
       `Unknown operator: -${right.type()}, You can only negate integers like -5, -x, etc.`
     );
