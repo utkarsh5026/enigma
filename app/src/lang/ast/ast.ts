@@ -30,11 +30,10 @@ export interface Node {
  * - for statements
  * - while statements
  */
-export class Statement extends Node {
+export class Statement implements Node {
   token: Token;
 
   constructor(token: Token) {
-    super();
     this.token = token;
   }
 
