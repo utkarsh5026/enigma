@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, test } from "@jest/globals";
-import Evaluator from "../src/lang/exec/eval";
+import { Evaluator } from "../src/lang/exec/evaluation";
 import Lexer from "../src/lang/lexer/lexer";
 import { Parser } from "../src/lang/parser/parser";
 import * as objects from "../src/lang/exec/objects";
