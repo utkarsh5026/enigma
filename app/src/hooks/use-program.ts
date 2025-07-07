@@ -39,14 +39,7 @@ export const useProgram = (code: string) => {
     getTokens();
   }, [getTokens]);
 
-  useEffect(() => {
-    if (!code || code.trim() === "") {
-      reset();
-      return;
-    }
-
-    reset();
-
+  const parse = useCallback(() => {
     try {
       const lexer = new Lexer(code);
 
@@ -63,7 +56,17 @@ export const useProgram = (code: string) => {
     } catch (error) {
       console.error("Error parsing code:", error);
     }
-  }, [code, reset]);
+  }, [code]);
+
+  useEffect(() => {
+    if (!code || code.trim() === "") {
+      reset();
+      return;
+    }
+
+    reset();
+    parse();
+  }, [code, reset, parse]);
 
   console.log(code, program, parserErrors, tokens);
   return { program, parserErrors, tokens };
