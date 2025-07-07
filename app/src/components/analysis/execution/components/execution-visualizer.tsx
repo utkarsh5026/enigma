@@ -1,8 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import {
-  StepwiseEvaluator,
-  ExecutionState,
-} from "@/lang/exec/stepwise/stepwise";
+import { StepwiseEvaluator, ExecutionState } from "@/lang/exec/stepwise";
 import { Braces, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Program } from "@/lang/ast";
@@ -19,11 +16,12 @@ interface ExecutionVisualizerProps {
   parserErrors: ErrorMessage[];
 }
 
+const evaluator = new StepwiseEvaluator();
+
 const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   program,
   parserErrors,
 }) => {
-  const [evaluator] = useState<StepwiseEvaluator>(new StepwiseEvaluator());
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
   );
@@ -63,7 +61,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       setError(`Error preparing execution: ${message}`);
       return false;
     }
-  }, [program, parserErrors, evaluator]);
+  }, [program, parserErrors]);
 
   // Execute a single step
   const executeStep = useCallback(() => {
@@ -83,7 +81,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       setIsRunning(false);
       return false;
     }
-  }, [evaluator]);
+  }, []);
 
   // Go back one step
   const goBackStep = useCallback(() => {
@@ -99,7 +97,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       setError(`Error going back: ${message}`);
       return false;
     }
-  }, [evaluator]);
+  }, []);
 
   // Start auto-running execution
   const startAutoRun = useCallback(() => {
@@ -116,7 +114,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
     }, autoRunSpeed);
   }, [executeStep, autoRunSpeed]);
 
-  // Stop auto-running execution
   const stopAutoRun = useCallback(() => {
     if (autoRunRef.current) {
       clearInterval(autoRunRef.current);
