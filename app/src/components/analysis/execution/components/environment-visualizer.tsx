@@ -6,7 +6,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
-import { type EnvironmentSnapshot } from "@/lang/exec/stepwise/stepwise";
+import { type EnvironmentSnapshot } from "@/lang/exec/stepwise";
 
 interface EnvironmentVisualizerProps {
   environment: EnvironmentSnapshot;
