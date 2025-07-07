@@ -4,8 +4,11 @@ import * as objects from "@/lang/exec/objects";
 import * as statements from "@/lang/ast/statement";
 import * as expressions from "@/lang/ast/expression";
 import * as literals from "@/lang/ast/literal";
-import { Token } from "@/lang/token/token";
-import { toBool } from "../evaluation/expression";
+import {
+  evaluateInfix,
+  evaluatePrefix,
+  toBool,
+} from "../evaluation/expression";
 import {
   type EvaluationStep,
   ExecutionState,
@@ -15,6 +18,7 @@ import {
   type StepType,
 } from "./types";
 import { getAfterDescription, getBeforeDescription } from "./description";
+import { truthy } from "../evaluation";
 
 /**
  * Enhanced step-by-step evaluator with proper granular execution tracking
@@ -163,6 +167,14 @@ export class StepwiseEvaluator extends Evaluator {
       case statements.BlockStatement:
         result = this.executeBlockStatement(
           node as statements.BlockStatement,
+          env,
+          path
+        );
+        break;
+
+      case expressions.IfExpression:
+        result = this.executeIfExpression(
+          node as expressions.IfExpression,
           env,
           path
         );
@@ -413,7 +425,7 @@ export class StepwiseEvaluator extends Evaluator {
       "during"
     );
 
-    const result = this.applyInfixOperator(left, right, expr.operator);
+    const result = evaluateInfix(left, right, expr.operator);
 
     this.addOutput(
       `${left.inspect()} ${
@@ -671,7 +683,7 @@ export class StepwiseEvaluator extends Evaluator {
       "during"
     );
 
-    const result = this.applyPrefixOperator(prefix.operator, right);
+    const result = evaluatePrefix(prefix.operator, right);
 
     this.addOutput(
       `${prefix.operator}${right.inspect()} = ${result.inspect()}`,
@@ -682,40 +694,103 @@ export class StepwiseEvaluator extends Evaluator {
   }
 
   /**
-   * Helper method to apply infix operators
+   * Execute an if expression step by step
    */
-  private applyInfixOperator(
-    left: objects.BaseObject,
-    right: objects.BaseObject,
-    operator: string
+  private executeIfExpression(
+    ifExp: expressions.IfExpression,
+    env: objects.Environment,
+    path: string
   ): objects.BaseObject {
-    return super.evaluate(
-      {
-        constructor: expressions.InfixExpression,
-        left: { toString: () => left.inspect() },
-        right: { toString: () => right.inspect() },
-        operator: operator,
-      } as unknown as expressions.InfixExpression,
-      this.globalEnv
-    );
-  }
+    const conditions = ifExp.conditions.length;
 
-  /**
-   * Helper method to apply prefix operators
-   */
-  private applyPrefixOperator(
-    operator: string,
-    operand: objects.BaseObject
-  ): objects.BaseObject {
-    // Use the parent class logic but simplified
-    return super.evaluate(
-      {
-        constructor: expressions.PrefixExpression,
-        operator: operator,
-        right: { toString: () => operand.inspect() },
-      } as unknown as expressions.PrefixExpression,
-      this.globalEnv
+    for (let i = 0; i < conditions; i++) {
+      const ifCond = ifExp.conditions[i];
+
+      this.addStep(
+        ifCond,
+        env,
+        `Evaluating condition ${i + 1} of ${conditions}`,
+        `${path}.conditions[${i}]`,
+        "before"
+      );
+
+      const condition = this.executeStepByStep(
+        ifCond,
+        env,
+        `${path}.conditions[${i}]`
+      );
+
+      if (ObjectValidator.isError(condition)) return condition;
+
+      const isTruthy = truthy(condition);
+
+      this.addStep(
+        ifCond,
+        env,
+        `Condition ${i + 1} evaluated to: ${condition.inspect()} (${
+          isTruthy ? "truthy" : "falsy"
+        })`,
+        `${path}.conditions[${i}]`,
+        "after",
+        condition
+      );
+
+      this.addOutput(
+        `If condition ${i + 1}: ${condition.inspect()} is ${
+          isTruthy ? "true" : "false"
+        }`,
+        "operation"
+      );
+
+      if (isTruthy) {
+        this.addStep(
+          ifExp.consequences[i],
+          env,
+          `Executing consequence ${i + 1} (condition was true)`,
+          `${path}.consequences[${i}]`,
+          "before"
+        );
+
+        const result = this.executeStepByStep(
+          ifExp.consequences[i],
+          env,
+          `${path}.consequences[${i}]`
+        );
+
+        this.addOutput(
+          `If branch ${i + 1} executed, result: ${result.inspect()}`,
+          "log"
+        );
+
+        return result;
+      }
+    }
+
+    if (ifExp.alternative !== null) {
+      this.addStep(
+        ifExp.alternative,
+        env,
+        "All conditions were false, executing else block",
+        `${path}.alternative`,
+        "before"
+      );
+
+      const result = this.executeStepByStep(
+        ifExp.alternative,
+        env,
+        `${path}.alternative`
+      );
+
+      this.addOutput(`Else block executed, result: ${result.inspect()}`, "log");
+
+      return result;
+    }
+
+    this.addOutput(
+      "All conditions were false and no else block provided",
+      "log"
     );
+    return new objects.NullObject();
   }
 
   /**
@@ -729,7 +804,7 @@ export class StepwiseEvaluator extends Evaluator {
     stepType: StepType,
     result?: objects.BaseObject
   ): void {
-    const { line, column } = this.getNodePosition(node);
+    const { line, column } = node.position();
     const depth = this.executionState.callStack.length;
 
     console.log(description, path, stepType, result, env);
@@ -776,7 +851,7 @@ export class StepwiseEvaluator extends Evaluator {
     args: objects.BaseObject[],
     node: ast.Node
   ): void {
-    const { line, column } = this.getNodePosition(node);
+    const { line, column } = node.position();
 
     this.executionState.callStack.push({
       functionName,
@@ -825,21 +900,5 @@ export class StepwiseEvaluator extends Evaluator {
     }
 
     return snapshot;
-  }
-
-  /**
-   * Get position information from a node
-   */
-  private getNodePosition(node: ast.Node): { line: number; column: number } {
-    if ("token" in node) {
-      const token = node.token as Token;
-      if (token?.position) {
-        return {
-          line: token.position.line,
-          column: token.position.column,
-        };
-      }
-    }
-    return { line: 0, column: 0 };
   }
 }
