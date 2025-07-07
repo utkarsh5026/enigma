@@ -5,13 +5,7 @@ import * as literal from "../../ast/literal.ts";
 import { ObjectValidator } from "./validate";
 import * as objects from "../objects/index.ts";
 import { truthy } from "./utils";
-import {
-  evalAndExpression,
-  evalOrExpression,
-  evalIntegerInfixExpression,
-  evalStringInfixExpression,
-  evalIdentifier,
-} from "./expression";
+import { evalIdentifier, evaluateInfix } from "./expression";
 import { evalLogicalNotOperator, evalNegationOperator } from "./operator";
 
 const validate = ObjectValidator;
@@ -288,35 +282,7 @@ export default class Evaluator {
     const right = this.evaluate(node.right, env);
     if (validate.isError(right)) return right;
 
-    switch (true) {
-      case validate.isInteger(left) && validate.isInteger(right):
-        return evalIntegerInfixExpression(left, right, node.operator);
-
-      case validate.isString(left) && validate.isString(right):
-        return evalStringInfixExpression(left, right, node.operator);
-
-      case node.operator === "==":
-        return this.toBool(left === right);
-
-      case node.operator === "!=":
-        return this.toBool(left !== right);
-
-      case node.operator === "&&":
-        return evalAndExpression(left, right);
-
-      case node.operator === "||":
-        return evalOrExpression(left, right);
-
-      default:
-        if (left.type() !== right.type()) {
-          return new objects.ErrorObject(
-            `Type mismatch: ${left.type()} ${node.operator} ${right.type()}`
-          );
-        }
-        return new objects.ErrorObject(
-          `Unknown operator: ${left.type()} ${node.operator} ${right.type()}`
-        );
-    }
+    return evaluateInfix(left, right, node.operator);
   }
 
   /**
@@ -422,28 +388,6 @@ export default class Evaluator {
     return value;
   }
 
-  /**
-   * Evaluates a while statement
-   *
-   * This method executes a while loop, repeatedly evaluating the condition
-   * and executing the body until the condition becomes falsy or a return/break
-   * statement is encountered. It also includes a safety check to prevent infinite loops.
-   *
-   * @param ws - The while statement node
-   * @param env - The current environment
-   * @returns The result of the last executed statement in the loop body,
-   *          or NULL if the loop never executed
-   *
-   * @example
-   * const whileStmt = new statement.WhileStatement(
-   *   new BooleanExpression(true),
-   *   new statement.BlockStatement([
-   *     new statement.ExpressionStatement(new literal.IntegerLiteral(1))
-   *   ])
-   * );
-   * const result = evaluator.evaluateWhileStatement(whileStmt, environment);
-   * console.log(result.inspect()); // Outputs: 1 (assuming MAX_ITERATIONS is not reached)
-   */
   private evaluateWhileStatement(
     ws: statement.WhileStatement,
     env: objects.Environment
@@ -478,29 +422,6 @@ export default class Evaluator {
     return this.processLoopResult(result);
   }
 
-  /**
-   * Evaluates a for statement
-   *
-   * This method handles the execution of a for loop, including its initialization,
-   * condition checking, body execution, and increment operations.
-   *
-   * @param forLoop - The for statement node
-   * @param env - The current environment
-   * @returns The result of the last executed statement in the loop body,
-   *          or NULL if the loop never executed
-   *
-   * @example
-   * const forStmt = new statement.ForStatement(
-   *   new statement.LetStatement(new ast.Identifier("i"), new literal.IntegerLiteral(0)),
-   *   new expression.InfixExpression(new ast.Identifier("i"), "<", new literal.IntegerLiteral(5)),
-   *   new expression.AssignmentExpression(new ast.Identifier("i"), new expression.InfixExpression(new ast.Identifier("i"), "+", new literal.IntegerLiteral(1))),
-   *   new statement.BlockStatement([
-   *     new statement.ExpressionStatement(new ast.Identifier("i"))
-   *   ])
-   * );
-   * const result = evaluator.evalForStatement(forStmt, environment);
-   * console.log(result.inspect()); // Outputs: 4 (assuming MAX_ITERATIONS is not reached)
-   */
   private evalForStatement(
     forLoop: statement.ForStatement,
     env: objects.Environment
@@ -546,23 +467,6 @@ export default class Evaluator {
     return this.processLoopResult(result);
   }
 
-  /**
-   * Evaluates a function literal
-   *
-   * @param node - The function literal node
-   * @param env - The current environment
-   * @returns A FunctionObject representing the function
-   *
-   * @example
-   * const fnLiteral = new literal.FunctionLiteral(
-   *   [new ast.Identifier("x")],
-   *   new statement.BlockStatement([
-   *     new statement.ReturnStatement(new ast.Identifier("x"))
-   *   ])
-   * );
-   * const result = evaluator.evaluate(fnLiteral, environment);
-   * console.log(result.type()); // Outputs: FUNCTION
-   */
   private evalFunctionLiteral(
     node: literal.FunctionLiteral,
     env: objects.Environment
@@ -573,22 +477,6 @@ export default class Evaluator {
     return new objects.FunctionObject(params, body, env);
   }
 
-  /**
-   * Evaluates an array literal
-   *
-   * @param node - The array literal node
-   * @param env - The current environment
-   * @returns An ArrayObject containing the evaluated elements
-   *
-   * @example
-   * const arrayLiteral = new literal.ArrayLiteral([
-   *   new literal.IntegerLiteral(1),
-   *   new literal.IntegerLiteral(2),
-   *   new literal.IntegerLiteral(3)
-   * ]);
-   * const result = evaluator.evaluate(arrayLiteral, environment);
-   * console.log(result.inspect()); // Outputs: [1, 2, 3]
-   */
   private evalArrayLiteral(
     node: literal.ArrayLiteral,
     env: objects.Environment
@@ -600,22 +488,6 @@ export default class Evaluator {
     return new objects.ArrayObject(elements);
   }
 
-  /**
-   * Evaluates a call expression
-   *
-   * @param ce - The call expression node
-   * @param env - The current environment
-   * @returns The result of calling the function
-   *
-   * @example
-   * // Assuming we have a function "add(x, y)" defined in the environment
-   * const callExpr = new expression.CallExpression(
-   *   new ast.Identifier("add"),
-   *   [new literal.IntegerLiteral(5), new literal.IntegerLiteral(3)]
-   * );
-   * const result = evaluator.evaluate(callExpr, environment);
-   * console.log(result.inspect()); // Outputs: 8
-   */
   private evalCallExpression(
     ce: expression.CallExpression,
     env: objects.Environment
@@ -629,22 +501,6 @@ export default class Evaluator {
     return this.applyFunction(functionObj, args);
   }
 
-  /**
-   * Evaluates an index expression
-   *
-   * @param node - The index expression node
-   * @param env - The current environment
-   * @returns The value at the specified index
-   *
-   * @example
-   * // Assuming we have an array "arr" defined as [1, 2, 3] in the environment
-   * const indexExpr = new expression.IndexExpression(
-   *   new ast.Identifier("arr"),
-   *   new literal.IntegerLiteral(1)
-   * );
-   * const result = evaluator.evaluate(indexExpr, environment);
-   * console.log(result.inspect()); // Outputs: 2
-   */
   private evalIndexExpression(
     node: expression.IndexExpression,
     env: objects.Environment
