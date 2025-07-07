@@ -15,6 +15,12 @@ export interface Node {
    * @returns {string} The string representation.
    */
   toString(): string;
+
+  /**
+   * Returns the position of the node in the source code.
+   * @returns {Position} The position of the node.
+   */
+  position(): Position;
 }
 
 /**
@@ -59,11 +65,22 @@ export class Statement implements Node {
  * - array literals
  *
  */
-export interface Expression extends Node {
-  /**
-   * Marker method to identify this node as an expression.
-   */
-  expressionNode(): void;
+export class Expression implements Node {
+  token: Token;
+
+  constructor(token: Token) {
+    this.token = token;
+  }
+
+  expressionNode(): void {}
+
+  tokenLiteral(): string {
+    return this.token.literal;
+  }
+
+  position(): Position {
+    return this.token.position;
+  }
 }
 
 /**
@@ -93,6 +110,10 @@ export class Program implements Node {
    */
   toString(): string {
     return this.statements.map((s) => s.toString()).join("\n");
+  }
+
+  position(): Position {
+    return this.statements[0].position();
   }
 }
 
@@ -139,5 +160,9 @@ export class Identifier implements Expression {
    */
   toString(): string {
     return this.value;
+  }
+
+  position(): Position {
+    return this.token.position;
   }
 }

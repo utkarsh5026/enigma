@@ -5,23 +5,12 @@ import { Token } from "../token/token";
 /**
  * Represents a string literal in the AST.
  */
-export class StringLiteral implements Expression {
-  token: Token;
+export class StringLiteral extends Expression {
   value: string;
 
   constructor(token: Token, value: string) {
-    this.token = token;
+    super(token);
     this.value = value;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -36,29 +25,14 @@ export class StringLiteral implements Expression {
 /**
  * Represents an array literal in the AST.
  */
-export class ArrayLiteral implements Expression {
-  token: Token;
+export class ArrayLiteral extends Expression {
   elements: Expression[];
 
   constructor(token: Token, elements: Expression[]) {
-    this.token = token;
+    super(token);
     this.elements = elements;
   }
 
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
-
-  /**
-   * Returns a string representation of the ArrayLiteral.
-   * @returns A string representation of the array, with elements separated by commas.
-   */
   toString(): string {
     const elements = this.elements.map((e) => e.toString()).join(", ");
     return `[${elements}]`;
@@ -68,23 +42,12 @@ export class ArrayLiteral implements Expression {
 /**
  * Represents a hash literal (key-value pairs) in the AST.
  */
-export class HashLiteral implements Expression {
-  token: Token;
+export class HashLiteral extends Expression {
   pairs: Map<Expression, Expression>;
 
   constructor(token: Token, pairs: Map<Expression, Expression>) {
-    this.token = token;
+    super(token);
     this.pairs = pairs;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -106,8 +69,7 @@ export class HashLiteral implements Expression {
 /**
  * Represents an integer literal in the AST.
  */
-export class IntegerLiteral implements Expression {
-  token: Token;
+export class IntegerLiteral extends Expression {
   value: number;
 
   /**
@@ -116,18 +78,8 @@ export class IntegerLiteral implements Expression {
    * @param value The numeric value of the integer.
    */
   constructor(token: Token, value: number) {
-    this.token = token;
+    super(token);
     this.value = value;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -142,8 +94,7 @@ export class IntegerLiteral implements Expression {
 /**
  * Represents a function literal in the AST.
  */
-export class FunctionLiteral implements Expression {
-  token: Token;
+export class FunctionLiteral extends Expression {
   parameters: Identifier[];
   body: BlockStatement;
 
@@ -154,19 +105,9 @@ export class FunctionLiteral implements Expression {
    * @param body The BlockStatement representing the function body.
    */
   constructor(token: Token, parameters: Identifier[], body: BlockStatement) {
-    this.token = token;
+    super(token);
     this.parameters = parameters;
     this.body = body;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -179,19 +120,14 @@ export class FunctionLiteral implements Expression {
   }
 }
 
-export class FStringLiteral implements Expression {
-  token: Token;
+export class FStringLiteral extends Expression {
   value: string;
 
   constructor(token: Token, value: string) {
-    this.token = token;
+    super(token);
     this.value = value;
   }
 
-  expressionNode() {}
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
   toString(): string {
     return this.token.literal;
   }

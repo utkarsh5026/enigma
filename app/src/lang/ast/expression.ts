@@ -5,8 +5,7 @@ import { BlockStatement } from "./statement.ts";
 /**
  * Represents a prefix expression in the AST.
  */
-export class PrefixExpression implements Expression {
-  token: Token;
+export class PrefixExpression extends Expression {
   operator: string;
   right: Expression;
 
@@ -17,19 +16,9 @@ export class PrefixExpression implements Expression {
    * @param right The expression to the right of the operator.
    */
   constructor(token: Token, operator: string, right: Expression) {
-    this.token = token;
+    super(token);
     this.operator = operator;
     this.right = right;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -44,8 +33,7 @@ export class PrefixExpression implements Expression {
 /**
  * Represents an infix expression in the AST.
  */
-export class InfixExpression implements Expression {
-  token: Token;
+export class InfixExpression extends Expression {
   left: Expression;
   operator: Operator;
   right: Expression;
@@ -63,20 +51,10 @@ export class InfixExpression implements Expression {
     operator: Operator,
     right: Expression
   ) {
-    this.token = token;
+    super(token);
     this.left = left;
     this.operator = operator;
     this.right = right;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -93,8 +71,7 @@ export class InfixExpression implements Expression {
 /**
  * Represents a boolean expression in the AST.
  */
-export class BooleanExpression implements Expression {
-  token: Token;
+export class BooleanExpression extends Expression {
   value: boolean;
 
   /**
@@ -103,18 +80,8 @@ export class BooleanExpression implements Expression {
    * @param value The boolean value of the expression.
    */
   constructor(token: Token, value: boolean) {
-    this.token = token;
+    super(token);
     this.value = value;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -129,8 +96,7 @@ export class BooleanExpression implements Expression {
 /**
  * Represents an if-else expression in the AST.
  */
-export class IfExpression implements Expression {
-  token: Token;
+export class IfExpression extends Expression {
   conditions: Expression[];
   consequences: BlockStatement[];
   alternative: BlockStatement | null;
@@ -148,20 +114,10 @@ export class IfExpression implements Expression {
     consequences: BlockStatement[],
     alternative: BlockStatement | null
   ) {
-    this.token = token;
+    super(token);
     this.conditions = conditions;
     this.consequences = consequences;
     this.alternative = alternative;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -186,8 +142,7 @@ export class IfExpression implements Expression {
  * Represents an index expression in the AST.
  * This is used for accessing elements in arrays or other indexable structures.
  */
-export class IndexExpression implements Expression {
-  token: Token;
+export class IndexExpression extends Expression {
   left: Expression;
   index: Expression;
 
@@ -198,19 +153,9 @@ export class IndexExpression implements Expression {
    * @param index The expression representing the index.
    */
   constructor(token: Token, left: Expression, index: Expression) {
-    this.token = token;
+    super(token);
     this.left = left;
     this.index = index;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -225,8 +170,7 @@ export class IndexExpression implements Expression {
 /**
  * Represents a function call expression in the AST.
  */
-export class CallExpression implements Expression {
-  token: Token;
+export class CallExpression extends Expression {
   func: Expression;
   args: Expression[];
 
@@ -237,19 +181,9 @@ export class CallExpression implements Expression {
    * @param args An array of expressions representing the arguments to the function.
    */
   constructor(token: Token, func: Expression, args: Expression[]) {
-    this.token = token;
+    super(token);
     this.func = func;
     this.args = args;
-  }
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
   }
 
   /**
@@ -265,27 +199,15 @@ export class CallExpression implements Expression {
 /**
  * Represents an assignment expression in the AST.
  */
-export class AssignmentExpression implements Expression {
+export class AssignmentExpression extends Expression {
   /**
    * Creates a new AssignmentExpression instance.
    * @param token The token associated with this expression.
    * @param name The identifier being assigned to.
    * @param value The expression representing the value being assigned.
    */
-  constructor(
-    public token: Token,
-    public name: Identifier,
-    public value: Expression
-  ) {}
-
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token.
-   * @returns The literal value of the token.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
+  constructor(token: Token, public name: Identifier, public value: Expression) {
+    super(token);
   }
 
   /**
