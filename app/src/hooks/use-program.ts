@@ -15,15 +15,24 @@ export const useProgram = (code: string) => {
   const [parserErrors, setParserErrors] = useState<ErrorMessage[]>([]);
   const [tokens, setTokens] = useState<Token[]>([]);
 
+  const reset = useCallback(() => {
+    setProgram(null);
+    setParserErrors([]);
+  }, []);
+
   const getTokens = useCallback(() => {
-    const lexer = new Lexer(code);
-    const newTokens: Token[] = [];
-    let token = lexer.nextToken();
-    while (token.type !== TokenType.EOF) {
-      newTokens.push(token);
-      token = lexer.nextToken();
+    try {
+      const lexer = new Lexer(code);
+      const newTokens: Token[] = [];
+      let token = lexer.nextToken();
+      while (token.type !== TokenType.EOF) {
+        newTokens.push(token);
+        token = lexer.nextToken();
+      }
+      setTokens(newTokens);
+    } catch (error) {
+      console.error("Error getting tokens:", error);
     }
-    setTokens(newTokens);
   }, [code]);
 
   useEffect(() => {
@@ -32,9 +41,11 @@ export const useProgram = (code: string) => {
 
   useEffect(() => {
     if (!code || code.trim() === "") {
-      setProgram(null);
+      reset();
       return;
     }
+
+    reset();
 
     try {
       const lexer = new Lexer(code);
@@ -42,6 +53,7 @@ export const useProgram = (code: string) => {
       const parser = new Parser(lexer);
       const program = parser.parseProgram();
       setProgram(program);
+      console.log(program, parser.parserErrors());
 
       if (parser.parserErrors().length > 0) {
         setParserErrors(parser.parserErrors());
@@ -50,9 +62,9 @@ export const useProgram = (code: string) => {
       setProgram(program);
     } catch (error) {
       console.error("Error parsing code:", error);
-      setProgram(null);
     }
-  }, [code]);
+  }, [code, reset]);
 
+  console.log(code, program, parserErrors, tokens);
   return { program, parserErrors, tokens };
 };
