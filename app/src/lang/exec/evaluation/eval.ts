@@ -26,9 +26,9 @@ const MAX_ITERATIONS = 1000000;
  * - Manages variable assignments and scoping
  */
 export default class Evaluator {
-  private readonly TRUE = new objects.BooleanObject(true);
+  protected readonly TRUE = new objects.BooleanObject(true);
   private readonly FALSE = new objects.BooleanObject(false);
-  private readonly NULL = new objects.NullObject();
+  protected readonly NULL = new objects.NullObject();
   private readonly BREAK = new objects.BreakObject();
   private readonly CONTINUE = new objects.ContinueObject();
   private loopDepth: number = 0;
@@ -145,22 +145,6 @@ export default class Evaluator {
     }
   }
 
-  /**
-   * Evaluates a program (the root of the AST)
-   *
-   * @param program - The program node
-   * @param env - The current environment
-   * @returns The result of the last statement in the program
-   *
-   * @example
-   * const programNode = new ast.Program([
-   *   new statement.LetStatement(new ast.Identifier("x"),
-   *   new literal.IntegerLiteral(5)),
-   *   new statement.ReturnStatement(new ast.Identifier("x"))
-   * ]);
-   * const result = evaluator.evaluate(programNode, environment);
-   * console.log(result.inspect()); // Outputs: 5
-   */
   private evalProgram(
     program: ast.Program,
     env: objects.Environment
@@ -177,22 +161,6 @@ export default class Evaluator {
     return result;
   }
 
-  /**
-   * Evaluates a block statement
-   *
-   * @param block - The block statement node
-   * @param env - The current environment
-   * @returns The result of the last statement in the block
-   *
-   * @example
-   * const blockNode = new statement.BlockStatement([
-   *   new statement.LetStatement(new ast.Identifier("y"),
-   *   new literal.IntegerLiteral(10)),
-   *   new statement.ReturnStatement(new ast.Identifier("y"))
-   * ]);
-   * const result = evaluator.evaluate(blockNode, environment);
-   * console.log(result.inspect()); // Outputs: 10
-   */
   private evalBlockStatement(
     block: statement.BlockStatement,
     env: objects.Environment
@@ -204,10 +172,10 @@ export default class Evaluator {
       result = this.evaluate(statement, blockEnv);
 
       if (
-        result instanceof objects.ReturnValueObject ||
-        result instanceof objects.ErrorObject ||
-        result instanceof objects.BreakObject ||
-        result instanceof objects.ContinueObject
+        ObjectValidator.isReturnValue(result) ||
+        ObjectValidator.isError(result) ||
+        ObjectValidator.isBreak(result) ||
+        ObjectValidator.isContinue(result)
       )
         return result;
     }
@@ -216,25 +184,6 @@ export default class Evaluator {
     return result;
   }
 
-  /**
-   * Evaluates a prefix expression
-   *
-   * @param node - The prefix expression node
-   * @param env - The current environment
-   * @returns The result of applying the prefix operator
-   *
-   * @example
-   * // Evaluate !true
-   * const notTrue = new expression.PrefixExpression("!",
-   * new literal.BooleanLiteral(true));
-   * const result1 = evaluator.evaluate(notTrue, environment);
-   * console.log(result1.inspect()); // Outputs: false
-   *
-   * // Evaluate -5
-   * const negFive = new expression.PrefixExpression("-", new literal.IntegerLiteral(5));
-   * const result2 = evaluator.evaluate(negFive, environment);
-   * console.log(result2.inspect()); // Outputs: -5
-   */
   private evalPrefixExpression(
     node: expression.PrefixExpression,
     env: objects.Environment
@@ -255,23 +204,6 @@ export default class Evaluator {
     }
   }
 
-  /**
-   * Evaluates an infix expression
-   *
-   * @param node - The infix expression node
-   * @param env - The current environment
-   * @returns The result of applying the infix operator
-   *
-   * @example
-   * // Evaluate 5 + 3
-   * const addExpr = new expression.InfixExpression(
-   *   new literal.IntegerLiteral(5),
-   *   "+",
-   *   new literal.IntegerLiteral(3)
-   * );
-   * const result = evaluator.evaluate(addExpr, environment);
-   * console.log(result.inspect()); // Outputs: 8
-   */
   private evalInfixExpression(
     node: expression.InfixExpression,
     env: objects.Environment
@@ -285,22 +217,6 @@ export default class Evaluator {
     return evaluateInfix(left, right, node.operator);
   }
 
-  /**
-   * Evaluates an if-else expression
-   *
-   * @param ifExp - The if-else expression node
-   * @param env - The current environment
-   * @returns The result of evaluating the appropriate branch
-   *
-   * @example
-   * const ifExpr = new expression.IfExpression(
-   *   new literal.BooleanLiteral(true),
-   *   new statement.BlockStatement([new statement.ReturnStatement(new literal.IntegerLiteral(1))]),
-   *   new statement.BlockStatement([new statement.ReturnStatement(new literal.IntegerLiteral(2))])
-   * );
-   * const result = evaluator.evaluate(ifExpr, environment);
-   * console.log(result.inspect()); // Outputs: 1
-   */
   private evalIfExpression(
     ifExp: expression.IfExpression,
     env: objects.Environment
@@ -308,7 +224,7 @@ export default class Evaluator {
     const conditions = ifExp.conditions.length;
     for (let i = 0; i < conditions; i++) {
       const condition = this.evaluate(ifExp.conditions[i], env);
-      if (condition instanceof objects.ErrorObject) return condition;
+      if (ObjectValidator.isError(condition)) return condition;
 
       const isTruthy = truthy(condition);
       if (isTruthy) return this.evaluate(ifExp.consequences[i], env);
@@ -320,18 +236,6 @@ export default class Evaluator {
     return this.NULL;
   }
 
-  /**
-   * Evaluates a return statement
-   *
-   * @param rs - The return statement node
-   * @param env - The current environment
-   * @returns The return value wrapped in a ReturnValue object
-   *
-   * @example
-   * const returnStmt = new statement.ReturnStatement(new literal.IntegerLiteral(42));
-   * const result = evaluator.evaluate(returnStmt, environment);
-   * console.log(result.inspect()); // Outputs: 42
-   */
   private evalReturnStatement(
     rs: statement.ReturnStatement,
     env: objects.Environment
@@ -342,22 +246,6 @@ export default class Evaluator {
     return new objects.ReturnValueObject(value);
   }
 
-  /**
-   * Evaluates a let statement
-   *
-   * @param ls - The let statement node
-   * @param env - The current environment
-   * @returns The value assigned to the variable
-   *
-   * @example
-   * const letStmt = new statement.LetStatement(
-   *   new ast.Identifier("z"),
-   *   new literal.IntegerLiteral(100)
-   * );
-   * const result = evaluator.evaluate(letStmt, environment);
-   * console.log(result.inspect()); // Outputs: 100
-   * console.log(environment.get("z").inspect()); // Outputs: 100
-   */
   private evalLetStatement(
     ls: statement.LetStatement,
     env: objects.Environment
@@ -642,19 +530,6 @@ export default class Evaluator {
     return definingScope.set(name, value);
   }
 
-  /**
-   * Applies a function to its arguments
-   *
-   * @param fn - The function object
-   * @param args - The evaluated arguments
-   * @returns The result of applying the function to its arguments
-   *
-   * @example
-   * // This method is used internally when evaluating function calls
-   * const fnObject = new objects.FunctionObject();
-   * const args = [new objects.IntegerObject(5), new objects.IntegerObject(3)];
-   * const result = evaluator.applyFunction(fnObject, args);
-   */
   protected applyFunction(
     fn: objects.BaseObject,
     args: objects.BaseObject[]
@@ -679,48 +554,16 @@ export default class Evaluator {
     return this.unWrapReturnValue(evaluated);
   }
 
-  /**
-   * Unwraps a return value
-   *
-   * @param obj - The object to unwrap
-   * @returns The unwrapped value if it's a ReturnValue, otherwise the original object
-   *
-   * @example
-   * // This method is used internally to handle return statements in functions
-   * const returnValue = new objects.ReturnValue(new objects.IntegerObject(42));
-   * const unwrapped = evaluator.unWrapReturnValue(returnValue);
-   * console.log(unwrapped.inspect()); // Outputs: 42
-   */
   private unWrapReturnValue(obj: objects.BaseObject): objects.BaseObject {
     if (validate.isReturnValue(obj))
       return (obj as objects.ReturnValueObject).value;
     return obj;
   }
 
-  /**
-   * Converts a boolean value to a BooleanObject
-   *
-   * @param res - The boolean value to convert
-   * @returns The corresponding BooleanObject (TRUE or FALSE)
-   *
-   * @example
-   * console.log(evaluator.toBool(true).inspect()); // Outputs: true
-   * console.log(evaluator.toBool(false).inspect()); // Outputs: false
-   */
   private toBool(res: boolean): objects.BooleanObject {
     return res ? this.TRUE : this.FALSE;
   }
 
-  /**
-   * Processes the result of a loop execution
-   *
-   * This method handles the final result of a loop, converting break and continue
-   * statements to null values, and passing through all other results unchanged.
-   *
-   * @param result - The result object from the loop execution
-   * @returns The processed result, either NULL for break/continue
-   *  or the original result
-   */
   private processLoopResult(result: objects.BaseObject): objects.BaseObject {
     if (validate.isBreak(result)) return this.NULL;
     if (validate.isContinue(result)) return this.NULL;
