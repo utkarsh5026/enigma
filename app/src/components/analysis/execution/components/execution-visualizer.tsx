@@ -17,6 +17,7 @@ import { Environment } from "@/lang/exec/objects";
 import ExecutionControls from "./execution-controls";
 import VariablesDeclared from "./variables-declared";
 import OutputVisualizer from "./output-visualizer";
+import { parseDescriptionWithBadges } from "./utils";
 
 interface ExecutionVisualizerProps {
   program: Program | null;
@@ -293,8 +294,11 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                         )}
                       </div>
                       <p className="text-[var(--tokyo-fg-dark)]">
-                        {executionState.currentStep?.description ||
-                          "Click Step or Run to begin execution"}
+                        {executionState.currentStep?.description
+                          ? parseDescriptionWithBadges(
+                              executionState.currentStep.description
+                            )
+                          : "Click Step or Run to begin execution"}
                       </p>
                     </div>
                   </div>

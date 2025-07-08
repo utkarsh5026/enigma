@@ -35,16 +35,16 @@ export const getAfterDescription = (
 export const getBeforeDescription = (node: ast.Node): string => {
   switch (true) {
     case AstValidator.isLetStatement(node):
-      return `About to declare variable '${node.name.value}'`;
+      return `About to declare variable "${node.name.value}"`;
     case AstValidator.isConstStatement(node):
-      return `About to declare constant '${node.name.value}'`;
+      return `About to declare constant "${node.name.value}"`;
     case AstValidator.isReturnStatement(node):
       return "About to return a value";
     case AstValidator.isInfixExpression(node): {
       const infix = node;
-      return `About to evaluate: ${infix.left.toString()} ${
+      return `About to evaluate: "${infix.left.toString()}" ${
         infix.operator
-      } ${infix.right.toString()}`;
+      } "${infix.right.toString()}"`;
     }
     case AstValidator.isCallExpression(node): {
       const call = node;
@@ -52,11 +52,11 @@ export const getBeforeDescription = (node: ast.Node): string => {
       if (call.func instanceof ast.Identifier) {
         funcName = call.func.value;
       }
-      return `About to call function '${funcName}'`;
+      return `About to call function "${funcName}"`;
     }
     case AstValidator.isIdentifier(node):
-      return `Looking up variable '${node.value}'`;
+      return `Looking up variable "${node.value}"`;
     default:
-      return `About to evaluate ${node.constructor.name}`;
+      return `About to evaluate "${node.constructor.name}"`;
   }
 };
