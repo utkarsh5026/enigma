@@ -16,6 +16,7 @@ import { HashObject } from "./hash";
 import { ClassObject } from "./clas";
 import { InstanceObject } from "./instance";
 import { BaseObject, ObjectType } from "./base";
+import { BuiltinObject } from "./builtin";
 
 export {
   ArrayObject,
@@ -28,6 +29,7 @@ export {
   HashObject,
   IntegerObject,
   NullObject,
+  BuiltinObject,
   StringObject,
   ClassObject,
   InstanceObject,
