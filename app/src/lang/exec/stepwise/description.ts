@@ -72,14 +72,19 @@ export const getBeforeDescription = (node: ast.Node): string => {
 
     case AstValidator.isIntegerLiteral(node):
       return `About to evaluate integer with value "${node.value}"`;
+
     case AstValidator.isStringLiteral(node):
       return `About to evaluate string with value "${node.value}"`;
+
     case AstValidator.isFunctionLiteral(node):
-      return `About to evaluate function literal`;
+      return `About to evaluate function "${node.functionSignature()}"`;
+
     case AstValidator.isArrayLiteral(node):
       return `About to evaluate array literal`;
+
     case AstValidator.isHashLiteral(node):
       return `About to evaluate hash literal "${node.pairs}"`;
+
     default:
       return `About to evaluate "${node.constructor.name}"`;
   }

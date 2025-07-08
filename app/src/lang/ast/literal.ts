@@ -118,6 +118,11 @@ export class FunctionLiteral extends Expression {
     const params = this.parameters.map((p) => p.toString()).join(", ");
     return `${this.tokenLiteral()}(${params}) ${this.body.toString()}`;
   }
+
+  functionSignature(): string {
+    const params = this.parameters.map((p) => p.toString()).join(", ");
+    return `${this.tokenLiteral()}(${params})`;
+  }
 }
 
 export class FStringLiteral extends Expression {
