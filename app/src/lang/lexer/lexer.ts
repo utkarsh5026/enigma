@@ -431,10 +431,9 @@ export default class Lexer {
 
     if (this.currCh in escapeMap) {
       const char = escapeMap[this.currCh as keyof typeof escapeMap];
-      this.readCurrChar();
       return char;
     }
 
-    return "\\" + this.currCh;
+    return this.currCh;
   }
 }
