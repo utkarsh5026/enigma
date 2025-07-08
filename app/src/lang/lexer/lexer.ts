@@ -1,4 +1,4 @@
-import { lookupIdentifier, Token, TokenType } from "../token/token.ts";
+import { lookupIdentifier, Token, TokenType } from "../token/token";
 
 /**
  * Lexer class for tokenizing input strings.

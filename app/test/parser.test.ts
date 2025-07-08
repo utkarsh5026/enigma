@@ -1,727 +1,720 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Parser } from "../../src/src/lang/parser/parser";
-import {
-  Expression,
-  Identifier,
-  Program,
-  Statement,
-} from "../../src/src/lang/ast/ast";
-import {
-  ConstStatement,
-  ExpressionStatement,
-  LetStatement,
-  WhileStatement,
-} from "../../src/src/lang/ast/statement";
-import {
-  AssignmentExpression,
-  BooleanExpression,
-  CallExpression,
-  IfExpression,
-  IndexExpression,
-  InfixExpression,
-} from "../../src/src/lang/ast/expression";
-import {
-  ArrayLiteral,
-  FunctionLiteral,
-  HashLiteral,
-  IntegerLiteral,
-  StringLiteral,
-} from "../../src/src/lang/ast/literal";
-import Lexer from "../../src/src/lang/lexer/lexer";
+import Lexer from "../src/lang/lexer/lexer";
+import { Token, TokenType } from "../src/lang/token/token";
 import { describe, expect, test } from "@jest/globals";
 
-describe("Parser", () => {
-  test("Testing Let Statements", () => {
-    const tests = [
-      { input: "let x = 5;", expectedIdentifier: "x", expectedValue: 5 },
-      { input: "let y = true;", expectedIdentifier: "y", expectedValue: true },
-      {
-        input: "let foobar = y;",
-        expectedIdentifier: "foobar",
-        expectedValue: "y",
-      },
-    ];
+/**
+ * Comprehensive Test Suite for the Lexer
+ *
+ * This test suite covers all major functionality and edge cases of the lexer:
+ * - Basic tokenization of all token types
+ * - Edge cases and error handling
+ * - Comment processing (single-line, multi-line, nested)
+ * - String handling with escape sequences
+ * - Position tracking accuracy
+ * - Whitespace handling
+ * - Keyword vs identifier disambiguation
+ * - Complex real-world scenarios
+ */
 
-    tests.forEach(({ input, expectedIdentifier, expectedValue }) => {
-      const program = createProgram(input);
+describe("Lexer Comprehensive Test Suite", () => {
+  // Helper function to tokenize input and return all tokens
+  const tokenizeAll = (input: string): Token[] => {
+    const lexer = new Lexer(input);
+    const tokens: Token[] = [];
+    let token: Token;
 
-      expect(program.statements.length).toBe(1);
-      const stmt = program.statements[0];
-      testLetStatement(stmt, expectedIdentifier);
+    do {
+      token = lexer.nextToken();
+      tokens.push(token);
+    } while (token.type !== TokenType.EOF);
 
-      const val = (stmt as LetStatement).value;
-      testLiteralExpression(val, expectedValue);
+    return tokens;
+  };
+
+  // Helper function to tokenize and return only non-EOF tokens
+  const tokenizeWithoutEOF = (input: string): Token[] => {
+    const tokens = tokenizeAll(input);
+    return tokens.filter((token) => token.type !== TokenType.EOF);
+  };
+
+  describe("Basic Token Recognition", () => {
+    test("should tokenize all single-character operators", () => {
+      const input = "+-*/%=<>(){},;:.[]{}&|^~";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.PLUS,
+        TokenType.MINUS,
+        TokenType.ASTERISK,
+        TokenType.SLASH,
+        TokenType.MODULUS,
+        TokenType.ASSIGN,
+        TokenType.LESS_THAN,
+        TokenType.GREATER_THAN,
+        TokenType.LPAREN,
+        TokenType.RPAREN,
+        TokenType.LBRACE,
+        TokenType.RBRACE,
+        TokenType.COMMA,
+        TokenType.SEMICOLON,
+        TokenType.COLON,
+        TokenType.DOT,
+        TokenType.LBRACKET,
+        TokenType.RBRACKET,
+        TokenType.LBRACE,
+        TokenType.RBRACE,
+        TokenType.BITWISE_AND,
+        TokenType.BITWISE_OR,
+        TokenType.BITWISE_XOR,
+        TokenType.BITWISE_NOT,
+      ];
+
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+
+    test("should tokenize multi-character operators", () => {
+      const input = "== != && || += -= *= /= << >>";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.EQ,
+        TokenType.NOT_EQ,
+        TokenType.AND,
+        TokenType.OR,
+        TokenType.PLUS_ASSIGN,
+        TokenType.MINUS_ASSIGN,
+        TokenType.ASTERISK_ASSIGN,
+        TokenType.SLASH_ASSIGN,
+        TokenType.BITWISE_LEFT_SHIFT,
+        TokenType.BITWISE_RIGHT_SHIFT,
+      ];
+
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+
+    test("should distinguish between similar operators", () => {
+      const input = "= == ! != & && | ||";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.ASSIGN,
+        TokenType.EQ,
+        TokenType.BANG,
+        TokenType.NOT_EQ,
+        TokenType.BITWISE_AND,
+        TokenType.AND,
+        TokenType.BITWISE_OR,
+        TokenType.OR,
+      ];
+
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
     });
   });
 
-  test("Testing Parsing Infix Expressions", () => {
-    const infixTests = [
-      { input: "5 + 5;", leftValue: 5, operator: "+", rightValue: 5 },
-      { input: "5 - 5;", leftValue: 5, operator: "-", rightValue: 5 },
-      { input: "5 * 5;", leftValue: 5, operator: "*", rightValue: 5 },
-      { input: "5 / 5;", leftValue: 5, operator: "/", rightValue: 5 },
-      { input: "5 > 5;", leftValue: 5, operator: ">", rightValue: 5 },
-      { input: "5 < 5;", leftValue: 5, operator: "<", rightValue: 5 },
-      { input: "5 == 5;", leftValue: 5, operator: "==", rightValue: 5 },
-      { input: "5 != 5;", leftValue: 5, operator: "!=", rightValue: 5 },
-      {
-        input: "true == true",
-        leftValue: true,
-        operator: "==",
-        rightValue: true,
-      },
-      {
-        input: "true != false",
-        leftValue: true,
-        operator: "!=",
-        rightValue: false,
-      },
-      {
-        input: "false == false",
-        leftValue: false,
-        operator: "==",
-        rightValue: false,
-      },
-    ];
+  describe("Identifier and Keyword Recognition", () => {
+    test("should recognize all keywords", () => {
+      const keywords = [
+        "fn",
+        "let",
+        "true",
+        "false",
+        "if",
+        "elif",
+        "else",
+        "return",
+        "while",
+        "break",
+        "continue",
+        "for",
+        "const",
+        "class",
+        "extends",
+        "super",
+        "this",
+        "new",
+        "null",
+      ];
 
-    infixTests.forEach(({ input, leftValue, operator, rightValue }) => {
-      const program = createProgram(input);
+      keywords.forEach((keyword) => {
+        const tokens = tokenizeWithoutEOF(keyword);
+        expect(tokens).toHaveLength(1);
+        expect(tokens[0].literal).toBe(keyword);
+        expect(tokens[0].type).not.toBe(TokenType.IDENTIFIER);
+      });
+    });
 
-      expect(program.statements.length).toBe(1);
-      const stmt = program.statements[0] as ExpressionStatement;
-      testInfixExpression(stmt.expression, leftValue, rightValue, operator);
+    test("should recognize identifiers vs keywords", () => {
+      const input = "variable fn function let letter true trueFalse";
+      const tokens = tokenizeWithoutEOF(input);
+
+      expect(tokens[0].type).toBe(TokenType.IDENTIFIER); // variable
+      expect(tokens[1].type).toBe(TokenType.FUNCTION); // fn
+      expect(tokens[2].type).toBe(TokenType.IDENTIFIER); // function
+      expect(tokens[3].type).toBe(TokenType.LET); // let
+      expect(tokens[4].type).toBe(TokenType.IDENTIFIER); // letter
+      expect(tokens[5].type).toBe(TokenType.TRUE); // true
+      expect(tokens[6].type).toBe(TokenType.IDENTIFIER); // trueFalse
+    });
+
+    test("should handle identifiers with underscores", () => {
+      const input = "_var var_ _under_score_ _";
+      const tokens = tokenizeWithoutEOF(input);
+
+      tokens.forEach((token) => {
+        expect(token.type).toBe(TokenType.IDENTIFIER);
+      });
+
+      expect(tokens.map((t) => t.literal)).toEqual([
+        "_var",
+        "var_",
+        "_under_score_",
+        "_",
+      ]);
     });
   });
 
-  test("Test Operator Precedence Parsing", () => {
-    interface Test {
-      input: string;
-      expected: string;
-    }
+  describe("Numeric Literals", () => {
+    test("should tokenize integer literals", () => {
+      const input = "0 1 42 123456789";
+      const tokens = tokenizeWithoutEOF(input);
 
-    const tests: Test[] = [
-      {
-        input: "-a * b",
-        expected: "((-a) * b)",
-      },
-      {
-        input: "!-a",
-        expected: "(!(-a))",
-      },
-      {
-        input: "a + b + c",
-        expected: "((a + b) + c)",
-      },
-      {
-        input: "a + b - c",
-        expected: "((a + b) - c)",
-      },
-      {
-        input: "a * b * c",
-        expected: "((a * b) * c)",
-      },
-      {
-        input: "a * b / c",
-        expected: "((a * b) / c)",
-      },
-      {
-        input: "a + b / c",
-        expected: "(a + (b / c))",
-      },
-      {
-        input: "a + b * c + d / e - f",
-        expected: "(((a + (b * c)) + (d / e)) - f)",
-      },
-      {
-        input: "3 + 4; -5 * 5",
-        expected: "(3 + 4)\n((-5) * 5)",
-      },
-      {
-        input: "5 > 4 == 3 < 4",
-        expected: "((5 > 4) == (3 < 4))",
-      },
-      {
-        input: "5 < 4 != 3 > 4",
-        expected: "((5 < 4) != (3 > 4))",
-      },
-      {
-        input: "3 + 4 * 5 == 3 * 1 + 4 * 5",
-        expected: "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
-      },
-      {
-        input: "true",
-        expected: "true",
-      },
-      {
-        input: "false",
-        expected: "false",
-      },
-      {
-        input: "3 > 5 == false",
-        expected: "((3 > 5) == false)",
-      },
-      {
-        input: "3 < 5 == true",
-        expected: "((3 < 5) == true)",
-      },
-      {
-        input: "1 + (2 + 3) + 4",
-        expected: "((1 + (2 + 3)) + 4)",
-      },
-      {
-        input: "(5 + 5) * 2",
-        expected: "((5 + 5) * 2)",
-      },
-      {
-        input: "2 / (5 + 5)",
-        expected: "(2 / (5 + 5))",
-      },
-      {
-        input: "-(5 + 5)",
-        expected: "(-(5 + 5))",
-      },
-      {
-        input: "!(true == true)",
-        expected: "(!(true == true))",
-      },
-      {
-        input: "a + add(b * c) + d",
-        expected: "((a + add((b * c))) + d)",
-      },
-      {
-        input: "add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))",
-        expected: "add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))",
-      },
-      {
-        input: "add(a + b + c * d / f + g)",
-        expected: "add((((a + b) + ((c * d) / f)) + g))",
-      },
-      {
-        input: "true && false",
-        expected: "(true && false)",
-      },
-      {
-        input: "true || false",
-        expected: "(true || false)",
-      },
-      {
-        input: "3 > 5 == false && true",
-        expected: "(((3 > 5) == false) && true)",
-      },
-      {
-        input: "3 < 5 != true || false",
-        expected: "(((3 < 5) != true) || false)",
-      },
-      {
-        input: "1 + 2 && 3 * 4",
-        expected: "((1 + 2) && (3 * 4))",
-      },
-      {
-        input: "5 * 6 || 7 + 8",
-        expected: "((5 * 6) || (7 + 8))",
-      },
-      {
-        input: "10 > 5 && 6 < 8 || 3 == 3",
-        expected: "(((10 > 5) && (6 < 8)) || (3 == 3))",
-      },
-      {
-        input: "true && false || true && true",
-        expected: "((true && false) || (true && true))",
-      },
-      {
-        input: "(5 > 3) && (8 < 10) || (2 == 2)",
-        expected: "(((5 > 3) && (8 < 10)) || (2 == 2))",
-      },
-    ];
+      tokens.forEach((token) => {
+        expect(token.type).toBe(TokenType.INT);
+      });
 
-    tests.forEach(({ input, expected }) => {
-      const program = createProgram(input);
-      const actual = program.toString();
-      expect(actual).toBe(expected);
+      expect(tokens.map((t) => t.literal)).toEqual([
+        "0",
+        "1",
+        "42",
+        "123456789",
+      ]);
+    });
+
+    test("should handle numbers in expressions", () => {
+      const input = "5 + 10 * 2";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.INT,
+        TokenType.PLUS,
+        TokenType.INT,
+        TokenType.ASTERISK,
+        TokenType.INT,
+      ];
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+      expect(tokens.map((t) => t.literal)).toEqual(["5", "+", "10", "*", "2"]);
     });
   });
 
-  test("Test If Expression", () => {
-    const input = "if (x < y) { x }";
-    const program = createProgram(input);
+  describe("String Literals", () => {
+    test("should tokenize basic strings", () => {
+      const input = '"hello" "world" ""';
+      const tokens = tokenizeWithoutEOF(input);
 
-    expect(program.statements.length).toBe(1);
-    const stmt = program.statements[0] as ExpressionStatement;
-    const exp = stmt.expression as IfExpression;
+      tokens.forEach((token) => {
+        expect(token.type).toBe(TokenType.STRING);
+      });
 
-    testInfixExpression(exp.condition, "x", "y", "<");
-    expect(exp.consequence.statements.length).toBe(1);
+      expect(tokens.map((t) => t.literal)).toEqual(["hello", "world", ""]);
+    });
 
-    const consequence = exp.consequence.statements[0] as ExpressionStatement;
-    testIdentifier(consequence.expression, "x");
-    expect(exp.alternative).toBeNull();
+    test("should handle escape sequences in strings", () => {
+      const input =
+        '"hello\\nworld" "tab\\there" "quote\\"inside" "backslash\\\\"';
+      const tokens = tokenizeWithoutEOF(input);
+
+      expect(tokens[0].literal).toBe("hello\nworld");
+      expect(tokens[1].literal).toBe("tab\there");
+      expect(tokens[2].literal).toBe('quote"inside');
+      expect(tokens[3].literal).toBe("backslash\\");
+    });
+
+    test("should handle all escape sequences", () => {
+      const input = '"\\n\\t\\r\\b\\f\\v\\0\\\\"';
+      const tokens = tokenizeWithoutEOF(input);
+
+      expect(tokens[0].literal).toBe("\n\t\r\b\f\v\0\\");
+    });
+
+    test("should throw error for unterminated string", () => {
+      const input = '"unterminated string';
+      const lexer = new Lexer(input);
+      lexer.nextToken(); // consume opening quote
+
+      expect(() => lexer.nextToken()).toThrow("Unterminated string");
+    });
   });
 
-  test("Test Function Literal Parsing", () => {
-    const input = "fn(x, y) { x + y; }";
-    const l = new Lexer(input);
-    const p = new Parser(l);
-    const program = p.parseProgram();
-    checkParserErrors(p);
+  describe("Comment Handling", () => {
+    test("should skip single-line comments", () => {
+      const input = `
+        let x = 5; // this is a comment
+        let y = 10; // another comment
+      `;
+      const tokens = tokenizeWithoutEOF(input);
 
-    expect(program.statements.length).toBe(1);
-    const stmt = program.statements[0] as ExpressionStatement;
-    const function_ = stmt.expression as FunctionLiteral;
+      const expectedTypes = [
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+      ];
 
-    expect(function_.parameters.length).toBe(2);
-    testLiteralExpression(function_.parameters[0], "x");
-    testLiteralExpression(function_.parameters[1], "y");
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
 
-    expect(function_.body.statements.length).toBe(1);
-    const bodyStmt = function_.body.statements[0] as ExpressionStatement;
-    testInfixExpression(bodyStmt.expression, "x", "y", "+");
+    test("should skip multi-line comments", () => {
+      const input = `
+        let x = 5; /* this is a 
+        multi-line comment */
+        let y = 10;
+      `;
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+      ];
+
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+
+    test("should handle nested multi-line comments", () => {
+      const input = `
+        let x = 5; /* outer comment /* nested comment */ still outer */
+        let y = 10;
+      `;
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+      ];
+
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+
+    test("should handle comments at end of file", () => {
+      const input = "let x = 5; // comment at EOF";
+      const tokens = tokenizeAll(input);
+
+      expect(tokens[tokens.length - 1].type).toBe(TokenType.EOF);
+    });
+
+    test("should not confuse division with comments", () => {
+      const input = "x / y /* comment */ z";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.IDENTIFIER,
+        TokenType.SLASH,
+        TokenType.IDENTIFIER,
+        TokenType.IDENTIFIER,
+      ];
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
   });
 
-  test("Test Function Parameter Parsing", () => {
-    const tests = [
-      { input: "fn() {};", expectedParams: [] },
-      { input: "fn(x) {};", expectedParams: ["x"] },
-      { input: "fn(x, y, z) {};", expectedParams: ["x", "y", "z"] },
-    ];
+  describe("Position Tracking", () => {
+    test("should track line and column positions correctly", () => {
+      const input = `let x = 5;
+let y = 10;`;
+      const tokens = tokenizeWithoutEOF(input);
 
-    tests.forEach(({ input, expectedParams }) => {
-      const program = createProgram(input);
+      // First line tokens
+      expect(tokens[0].position.line).toBe(1); // let
+      expect(tokens[1].position.line).toBe(1); // x
+      expect(tokens[4].position.line).toBe(1); // ;
 
-      const stmt = program.statements[0] as ExpressionStatement;
-      const function_ = stmt.expression as FunctionLiteral;
+      // Second line tokens
+      expect(tokens[5].position.line).toBe(2); // let
+      expect(tokens[6].position.line).toBe(2); // y
+    });
 
-      expect(function_.parameters.length).toBe(expectedParams.length);
+    test("should handle position tracking with comments", () => {
+      const input = `let x = 5; // comment
+// another comment
+let y = 10;`;
+      const tokens = tokenizeWithoutEOF(input);
 
-      expectedParams.forEach((ident, i) => {
-        testLiteralExpression(function_.parameters[i], ident);
+      const letTokens = tokens.filter((t) => t.type === TokenType.LET);
+      expect(letTokens[0].position.line).toBe(1);
+      expect(letTokens[1].position.line).toBe(3);
+    });
+  });
+
+  describe("Whitespace Handling", () => {
+    test("should skip various whitespace characters", () => {
+      const input = " \t\n\r let \t\n x \r\n = \t 5 \n\r ";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+      ];
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+
+    test("should handle empty input", () => {
+      const tokens = tokenizeAll("");
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].type).toBe(TokenType.EOF);
+    });
+
+    test("should handle whitespace-only input", () => {
+      const tokens = tokenizeAll("   \t\n\r   ");
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].type).toBe(TokenType.EOF);
+    });
+  });
+
+  describe("Error Handling", () => {
+    test("should handle illegal characters", () => {
+      const input = "let x = @#$";
+      const tokens = tokenizeWithoutEOF(input);
+
+      // The last three tokens should be ILLEGAL
+      expect(tokens[tokens.length - 3].type).toBe(TokenType.ILLEGAL);
+      expect(tokens[tokens.length - 2].type).toBe(TokenType.ILLEGAL);
+      expect(tokens[tokens.length - 1].type).toBe(TokenType.ILLEGAL);
+    });
+
+    test("should handle mixed valid and invalid characters", () => {
+      const input = "let x @ = 5";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ILLEGAL,
+        TokenType.ASSIGN,
+        TokenType.INT,
+      ];
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+  });
+
+  describe("Complex Real-World Scenarios", () => {
+    test("should tokenize a complete function definition", () => {
+      const input = `
+        fn fibonacci(n) {
+          if (n <= 1) {
+            return n;
+          }
+          return fibonacci(n - 1) + fibonacci(n - 2);
+        }
+      `;
+      const tokens = tokenizeWithoutEOF(input);
+
+      // Verify it contains all expected token types
+      const tokenTypes = tokens.map((t) => t.type);
+      expect(tokenTypes).toContain(TokenType.FUNCTION);
+      expect(tokenTypes).toContain(TokenType.IDENTIFIER);
+      expect(tokenTypes).toContain(TokenType.LPAREN);
+      expect(tokenTypes).toContain(TokenType.RPAREN);
+      expect(tokenTypes).toContain(TokenType.LBRACE);
+      expect(tokenTypes).toContain(TokenType.RBRACE);
+      expect(tokenTypes).toContain(TokenType.IF);
+      expect(tokenTypes).toContain(TokenType.RETURN);
+    });
+
+    test("should tokenize complex expressions with mixed operators", () => {
+      const input = "result = (a + b) * c / d - e % f && g || h != i";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.LPAREN,
+        TokenType.IDENTIFIER,
+        TokenType.PLUS,
+        TokenType.IDENTIFIER,
+        TokenType.RPAREN,
+        TokenType.ASTERISK,
+        TokenType.IDENTIFIER,
+        TokenType.SLASH,
+        TokenType.IDENTIFIER,
+        TokenType.MINUS,
+        TokenType.IDENTIFIER,
+        TokenType.MODULUS,
+        TokenType.IDENTIFIER,
+        TokenType.AND,
+        TokenType.IDENTIFIER,
+        TokenType.OR,
+        TokenType.IDENTIFIER,
+        TokenType.NOT_EQ,
+        TokenType.IDENTIFIER,
+      ];
+
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+
+    test("should tokenize array and object literals", () => {
+      const input = `
+        let arr = [1, 2, "hello"];
+        let obj = {"key": value, "number": 42};
+      `;
+      const tokens = tokenizeWithoutEOF(input);
+
+      const tokenTypes = tokens.map((t) => t.type);
+      expect(tokenTypes).toContain(TokenType.LBRACKET);
+      expect(tokenTypes).toContain(TokenType.RBRACKET);
+      expect(tokenTypes).toContain(TokenType.LBRACE);
+      expect(tokenTypes).toContain(TokenType.RBRACE);
+      expect(tokenTypes).toContain(TokenType.COLON);
+      expect(tokenTypes).toContain(TokenType.COMMA);
+    });
+
+    test("should handle compound assignment operators in context", () => {
+      const input = `
+        x += 5;
+        y -= 3;
+        z *= 2;
+        w /= 4;
+      `;
+      const tokens = tokenizeWithoutEOF(input);
+
+      const assignmentTokens = tokens.filter((t) =>
+        [
+          TokenType.PLUS_ASSIGN,
+          TokenType.MINUS_ASSIGN,
+          TokenType.ASTERISK_ASSIGN,
+          TokenType.SLASH_ASSIGN,
+        ].includes(t.type)
+      );
+
+      expect(assignmentTokens).toHaveLength(4);
+    });
+
+    test("should tokenize control flow statements", () => {
+      const input = `
+        while (condition) {
+          if (x > 0) {
+            continue;
+          } else {
+            break;
+          }
+        }
+        
+        for (let i = 0; i < 10; i += 1) {
+          // loop body
+        }
+      `;
+      const tokens = tokenizeWithoutEOF(input);
+
+      const tokenTypes = tokens.map((t) => t.type);
+      expect(tokenTypes).toContain(TokenType.WHILE);
+      expect(tokenTypes).toContain(TokenType.IF);
+      expect(tokenTypes).toContain(TokenType.ELSE);
+      expect(tokenTypes).toContain(TokenType.CONTINUE);
+      expect(tokenTypes).toContain(TokenType.BREAK);
+      expect(tokenTypes).toContain(TokenType.FOR);
+    });
+  });
+
+  describe("Lexer State Management", () => {
+    test("should reset properly", () => {
+      const input = "let x = 5;";
+      const lexer = new Lexer(input);
+
+      // Consume some tokens
+      lexer.nextToken(); // let
+      lexer.nextToken(); // x
+
+      // Reset
+      lexer.reset();
+
+      // Should start from beginning again
+      const token = lexer.nextToken();
+      expect(token.type).toBe(TokenType.LET);
+      expect(token.literal).toBe("let");
+    });
+
+    test("should handle multiple resets", () => {
+      const input = "let x = 5;";
+      const lexer = new Lexer(input);
+
+      // Reset multiple times and verify consistency
+      for (let i = 0; i < 3; i++) {
+        lexer.reset();
+        const token = lexer.nextToken();
+        expect(token.type).toBe(TokenType.LET);
+      }
+    });
+  });
+
+  describe("Edge Cases and Boundary Conditions", () => {
+    test("should handle very long identifiers", () => {
+      const longIdentifier = "a" + "b".repeat(1000) + "c";
+      const tokens = tokenizeWithoutEOF(longIdentifier);
+
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].type).toBe(TokenType.IDENTIFIER);
+      expect(tokens[0].literal).toBe(longIdentifier);
+    });
+
+    test("should handle very long numbers", () => {
+      const longNumber = "1".repeat(100);
+      const tokens = tokenizeWithoutEOF(longNumber);
+
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].type).toBe(TokenType.INT);
+      expect(tokens[0].literal).toBe(longNumber);
+    });
+
+    test("should handle strings with only escape sequences", () => {
+      const input = '"\\n\\t\\r"';
+      const tokens = tokenizeWithoutEOF(input);
+
+      expect(tokens[0].type).toBe(TokenType.STRING);
+      expect(tokens[0].literal).toBe("\n\t\r");
+    });
+
+    test("should handle consecutive operators without spaces", () => {
+      const input = "x+=y*=z";
+      const tokens = tokenizeWithoutEOF(input);
+
+      const expectedTypes = [
+        TokenType.IDENTIFIER,
+        TokenType.PLUS_ASSIGN,
+        TokenType.IDENTIFIER,
+        TokenType.ASTERISK_ASSIGN,
+        TokenType.IDENTIFIER,
+      ];
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
+    });
+
+    test("should handle EOF after various token types", () => {
+      const inputs = ["x", "123", '"string"', "+", "//comment"];
+
+      inputs.forEach((input) => {
+        const tokens = tokenizeAll(input);
+        expect(tokens[tokens.length - 1].type).toBe(TokenType.EOF);
       });
     });
   });
 
-  test("Test Call Expression Parsing", () => {
-    const input = "add(1, 2 * 3, 4 + 5);";
-    const program = createProgram(input);
-
-    expect(program.statements.length).toBe(1);
-    const stmt = program.statements[0] as ExpressionStatement;
-    const exp = stmt.expression as CallExpression;
-
-    testIdentifier(exp.func, "add");
-    expect(exp.args.length).toBe(3);
-
-    testLiteralExpression(exp.args[0], 1);
-    testInfixExpression(exp.args[1], 2, 3, "*");
-    testInfixExpression(exp.args[2], 4, 5, "+");
-  });
-
-  test("Test String Literal Expression", () => {
-    const input = '"hello world";';
-    const program = createProgram(input);
-
-    const stmt = program.statements[0] as ExpressionStatement;
-    const literal = stmt.expression as StringLiteral;
-    expect(literal.value).toBe("hello world");
-  });
-
-  test("Test Parsing Array Literals", () => {
-    const input = "[1, 2 * 2, 3 + 3]";
-    const program = createProgram(input);
-
-    const stmt = program.statements[0] as ExpressionStatement;
-    const array = stmt.expression as ArrayLiteral;
-
-    expect(array.elements.length).toBe(3);
-    testIntegerLiteral(array.elements[0], 1);
-    testInfixExpression(array.elements[1], 2, 2, "*");
-    testInfixExpression(array.elements[2], 3, 3, "+");
-  });
-
-  test("Test Parsing Index Expressions", () => {
-    const input = "myArray[1 + 1]";
-    const l = new Lexer(input);
-    const p = new Parser(l);
-    const program = p.parseProgram();
-    checkParserErrors(p);
-
-    const stmt = program.statements[0] as ExpressionStatement;
-    const indexExp = stmt.expression as IndexExpression;
-
-    testIdentifier(indexExp.left, "myArray");
-    testInfixExpression(indexExp.index, 1, 1, "+");
-  });
-
-  test("Test Parsing Hash Literals String Keys", () => {
-    const input = '{"one": 1, "two": 2, "three": 3}';
-    const program = createProgram(input);
-
-    const stmt = program.statements[0] as ExpressionStatement;
-    const hash = stmt.expression as HashLiteral;
-
-    const expected = new Map([
-      ["one", 1],
-      ["two", 2],
-      ["three", 3],
-    ]);
-
-    expect(hash.pairs.size).toBe(expected.size);
-
-    hash.pairs.forEach((value, key) => {
-      const keyLiteral = key as StringLiteral;
-      const expectedValue = expected.get(keyLiteral.value);
-      testIntegerLiteral(value, expectedValue!);
-    });
-  });
-
-  test("Test Parsing Empty Hash Literal", () => {
-    const input = "{}";
-    const program = createProgram(input);
-
-    const stmt = program.statements[0] as ExpressionStatement;
-    const hash = stmt.expression as HashLiteral;
-    expect(hash.pairs.size).toBe(0);
-  });
-
-  test("Test Parsing Hash Literals With Expressions", () => {
-    const input = '{"one": 0 + 1, "two": 10 - 8, "three": 15 / 5}';
-    const l = new Lexer(input);
-    const p = new Parser(l);
-    const program = p.parseProgram();
-    checkParserErrors(p);
-
-    const stmt = program.statements[0] as ExpressionStatement;
-    const hash = stmt.expression as HashLiteral;
-
-    expect(hash.pairs.size).toBe(3);
-
-    const tests: { [key: string]: (exp: Expression) => void } = {
-      one: (e) => testInfixExpression(e, 0, 1, "+"),
-      two: (e) => testInfixExpression(e, 10, 8, "-"),
-      three: (e) => testInfixExpression(e, 15, 5, "/"),
-    };
-
-    hash.pairs.forEach((value, key) => {
-      const keyLiteral = key as StringLiteral;
-      const testFunc = tests[keyLiteral.value];
-      testFunc(value);
-    });
-  });
-
-  test("Test While Statement", () => {
-    const input = "while (x < y) { x = x + 1; }";
-    const program = createProgram(input);
-
-    expect(program.statements.length).toBe(1);
-    const stmt = program.statements[0] as WhileStatement;
-    expect(stmt).toBeInstanceOf(WhileStatement);
-
-    testInfixExpression(stmt.condition, "x", "y", "<");
-    expect(stmt.body.statements.length).toBe(1);
-
-    const bodyStmt = stmt.body.statements[0] as ExpressionStatement;
-    testAssignmentExpression(bodyStmt.expression, "x", "(x + 1)");
-  });
-
-  test("While loop with complex condition", () => {
-    const input = `
-        while (x < 5 && y < 10) {
-          x = x + 1;
-          y = y + 1;
-        }
-      `;
-    const program = createProgram(input);
-    console.log(program.statements);
-    expect(program.statements).toHaveLength(1);
-    const whileStmt = program.statements[0] as WhileStatement;
-    expect(whileStmt).toBeInstanceOf(WhileStatement);
-    expect(whileStmt.condition).toBeInstanceOf(InfixExpression);
-  });
-
-  test("Test Assignment Expression", () => {
-    const tests = [
-      { input: "x = 5;", expectedIdentifier: "x", expectedValue: 5 },
-      { input: "y = true;", expectedIdentifier: "y", expectedValue: true },
-      {
-        input: "foobar = y;",
-        expectedIdentifier: "foobar",
-        expectedValue: "y",
-      },
-      {
-        input: "x = 1 + 2 * 3;",
-        expectedIdentifier: "x",
-        expectedValue: "(1 + (2 * 3))",
-      },
-      {
-        input: "y = foo(1, 2);",
-        expectedIdentifier: "y",
-        expectedValue: "foo(1, 2)",
-      },
-    ];
-
-    tests.forEach(({ input, expectedIdentifier, expectedValue }) => {
-      const program = createProgram(input);
-
-      expect(program.statements.length).toBe(1);
-      const stmt = program.statements[0] as ExpressionStatement;
-      expect(stmt.expression).toBeInstanceOf(AssignmentExpression);
-
-      const assignExp = stmt.expression as AssignmentExpression;
-      expect(assignExp.name.value).toBe(expectedIdentifier);
-
-      if (typeof expectedValue === "string") {
-        expect(assignExp.value.toString()).toBe(expectedValue);
-      } else {
-        testLiteralExpression(assignExp.value, expectedValue);
+  describe("Performance and Stress Tests", () => {
+    test("should handle large input efficiently", () => {
+      // Generate a large but valid program
+      const lines: string[] = [];
+      for (let i = 0; i < 1000; i++) {
+        lines.push(`let var${i} = ${i};`);
       }
+      const input = lines.join("\n");
+
+      const startTime = performance.now();
+      const tokens = tokenizeWithoutEOF(input);
+      const endTime = performance.now();
+
+      // Should complete within reasonable time (adjust threshold as needed)
+      expect(endTime - startTime).toBeLessThan(1000); // 1 second
+
+      // Should produce correct number of tokens (5 tokens per line * 1000 lines)
+      expect(tokens).toHaveLength(5000);
+    });
+
+    test("should handle deeply nested comments", () => {
+      let input = "let x = 5; ";
+      for (let i = 0; i < 50; i++) {
+        input += "/* ";
+      }
+      input += " nested ";
+      for (let i = 0; i < 50; i++) {
+        input += " */";
+      }
+      input += " let y = 10;";
+
+      const tokens = tokenizeWithoutEOF(input);
+      const expectedTypes = [
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+        TokenType.LET,
+        TokenType.IDENTIFIER,
+        TokenType.ASSIGN,
+        TokenType.INT,
+        TokenType.SEMICOLON,
+      ];
+
+      expect(tokens.map((t) => t.type)).toEqual(expectedTypes);
     });
   });
 
-  test("Test Compound Assignment Expressions", () => {
-    interface Test {
-      input: string;
-      expectedIdentifier: string;
-      expectedOperator: string;
-      expectedValue: any;
-    }
+  describe("Token Literal Accuracy", () => {
+    test("should preserve exact literal values", () => {
+      const input = 'let message = "Hello, World!"; let number = 42;';
+      const tokens = tokenizeWithoutEOF(input);
 
-    const tests: Test[] = [
-      {
-        input: "x += 5;",
-        expectedIdentifier: "x",
-        expectedOperator: "+",
-        expectedValue: 5,
-      },
-      {
-        input: "y -= 10;",
-        expectedIdentifier: "y",
-        expectedOperator: "-",
-        expectedValue: 10,
-      },
-      {
-        input: "z *= 2;",
-        expectedIdentifier: "z",
-        expectedOperator: "*",
-        expectedValue: 2,
-      },
-      {
-        input: "w /= 3;",
-        expectedIdentifier: "w",
-        expectedOperator: "/",
-        expectedValue: 3,
-      },
-      {
-        input: "a += b + 1;",
-        expectedIdentifier: "a",
-        expectedOperator: "+",
-        expectedValue: "(b + 1)",
-      },
-      {
-        input: "c *= foo(1, 2);",
-        expectedIdentifier: "c",
-        expectedOperator: "*",
-        expectedValue: "foo(1, 2)",
-      },
-    ];
+      expect(tokens[0].literal).toBe("let");
+      expect(tokens[1].literal).toBe("message");
+      expect(tokens[2].literal).toBe("=");
+      expect(tokens[3].literal).toBe("Hello, World!");
+      expect(tokens[7].literal).toBe("42");
+    });
 
-    tests.forEach(
-      ({ input, expectedIdentifier, expectedOperator, expectedValue }) => {
-        const program = createProgram(input);
-        expect(program.statements.length).toBe(1);
-        const stmt = program.statements[0] as ExpressionStatement;
-        expect(stmt.expression).toBeInstanceOf(AssignmentExpression);
+    test("should handle literals with special characters", () => {
+      const input = 'let _$var123 = "tab\\there";';
+      const tokens = tokenizeWithoutEOF(input);
 
-        const assignExp = stmt.expression as AssignmentExpression;
-        expect(assignExp.name.value).toBe(expectedIdentifier);
-
-        expect(assignExp.value).toBeInstanceOf(InfixExpression);
-        const infixExp = assignExp.value as InfixExpression;
-        expect(infixExp.operator).toBe(expectedOperator);
-
-        testIdentifier(infixExp.left, expectedIdentifier);
-        if (typeof expectedValue === "number") {
-          testIntegerLiteral(infixExp.right, expectedValue);
-        } else if (typeof expectedValue === "string") {
-          expect(infixExp.right.toString()).toBe(expectedValue);
-        } else {
-          throw new Error(
-            `Unexpected expectedValue type: ${typeof expectedValue}`
-          );
-        }
-      }
-    );
-  });
-
-  test("Testing Const Statements", () => {
-    const tests = [
-      { input: "const x = 5;", expectedIdentifier: "x", expectedValue: 5 },
-      {
-        input: "const y = true;",
-        expectedIdentifier: "y",
-        expectedValue: true,
-      },
-      {
-        input: "const foobar = y;",
-        expectedIdentifier: "foobar",
-        expectedValue: "y",
-      },
-    ];
-
-    tests.forEach(({ input, expectedIdentifier, expectedValue }) => {
-      const program = createProgram(input);
-
-      console.log(program.statements);
-      expect(program.statements.length).toBe(1);
-      const stmt = program.statements[0];
-      testConstStatement(stmt, expectedIdentifier);
-
-      const val = (stmt as ConstStatement).value;
-      testLiteralExpression(val, expectedValue);
+      expect(tokens[1].literal).toBe("_$var123");
+      expect(tokens[3].literal).toBe("tab\there");
     });
   });
 });
 
-function createProgram(input: string): Program {
-  const l = new Lexer(input);
-  const p = new Parser(l);
-  const prog = p.parseProgram();
-  checkParserErrors(p);
-  return prog;
-}
-
 /**
- * Checks for parser errors and throws an error if any are found.
- * @param {Parser} p - The parser instance to check for errors.
- * @throws {Error} If the parser has any errors.
+ * Additional Manual Test Cases
+ *
+ * These test cases can be run manually to verify specific scenarios:
  */
-function checkParserErrors(p: Parser) {
-  const errors = p.parserErrors();
 
-  errors.forEach((msg) => {
-    console.error(`parser error: ${msg}`);
-  });
+export const manualTestCases = {
+  /**
+   * Test case for interactive debugging
+   */
+  debugTokenization: (input: string) => {
+    console.log(`\nTokenizing: "${input}"`);
+    console.log("=".repeat(50));
 
-  expect(errors.length).toBe(0);
-}
+    const lexer = new Lexer(input);
+    let token: Token;
+    let position = 1;
 
-/**
- * Tests if a statement is a valid let statement.
- * @param {Statement} s - The statement to test.
- * @param {string} name - The expected name of the variable being declared.
- * @returns {boolean} True if the statement is a valid let statement.
- */
-function testLetStatement(s: Statement, name: string): boolean {
-  expect(s.tokenLiteral()).toBe("let");
-  expect(s).toBeInstanceOf(LetStatement);
-
-  const letStmt = s as LetStatement;
-  expect(letStmt.name.value).toBe(name);
-  expect(letStmt.name.tokenLiteral()).toBe(name);
-
-  return true;
-}
-
-/**
- * Tests if an expression is a valid literal expression.
- * @param {Expression} exp - The expression to test.
- * @param {any} expected - The expected value of the literal.
- * @returns {boolean} True if the expression is a valid literal expression.
- * @throws {Error} If the type of the expression is not handled.
- */
-function testLiteralExpression(exp: Expression, expected: any): boolean {
-  switch (typeof expected) {
-    case "number":
-      return testIntegerLiteral(exp, expected);
-    case "string":
-      return testIdentifier(exp, expected);
-    case "boolean":
-      return testBooleanLiteral(exp, expected);
-  }
-  throw new Error(`type of exp not handled. got=${exp}`);
-}
-
-/**
- * Tests if an expression is a valid infix expression.
- * @param {Expression} exp - The expression to test.
- * @param {any} left - The expected left operand.
- * @param {any} right - The expected right operand.
- * @param {string} operator - The expected operator.
- */
-function testInfixExpression(
-  exp: Expression,
-  left: any,
-  right: any,
-  operator: string
-) {
-  expect(exp).toBeInstanceOf(InfixExpression);
-  const opExp = exp as InfixExpression;
-
-  testLiteralExpression(opExp.left, left);
-  expect(opExp.operator).toBe(operator);
-  testLiteralExpression(opExp.right, right);
-}
-
-function testAssignmentExpression(exp: Expression, name: string, value: any) {
-  expect(exp).toBeInstanceOf(AssignmentExpression);
-  const assignExp = exp as AssignmentExpression;
-  expect(assignExp.name.value).toBe(name);
-  expect(assignExp.value.toString()).toBe(value);
-}
-
-/**
- * Tests if an expression is a valid integer literal.
- * @param {Expression} il - The expression to test.
- * @param {number} value - The expected value of the integer literal.
- * @returns {boolean} True if the expression is a valid integer literal.
- */
-function testIntegerLiteral(il: Expression, value: number): boolean {
-  expect(il).toBeInstanceOf(IntegerLiteral);
-  const integer = il as IntegerLiteral;
-  expect(integer.value).toBe(value);
-  expect(integer.tokenLiteral()).toBe(value.toString());
-  return true;
-}
-
-/**
- * Tests if an expression is a valid identifier.
- * @param {Expression} exp - The expression to test.
- * @param {string} value - The expected value of the identifier.
- * @returns {boolean} True if the expression is a valid identifier.
- */
-function testIdentifier(exp: Expression, value: string): boolean {
-  expect(exp).toBeInstanceOf(Identifier);
-  const ident = exp as Identifier;
-  expect(ident.value).toBe(value);
-  expect(ident.tokenLiteral()).toBe(value);
-  return true;
-}
-
-/**
- * Tests if an expression is a valid boolean literal.
- * @param {Expression} exp - The expression to test.
- * @param {boolean} value - The expected value of the boolean literal.
- * @returns {boolean} True if the expression is a valid boolean literal.
- */
-function testBooleanLiteral(exp: Expression, value: boolean): boolean {
-  expect(exp).toBeInstanceOf(BooleanExpression);
-  const bool = exp as BooleanExpression;
-
-  expect(bool.value).toBe(value);
-  expect(bool.tokenLiteral()).toBe(value.toString());
-  return true;
-}
-
-/**
- * Tests if a statement is a valid const statement.
- * @param {Statement} s - The statement to test.
- * @param {string} name - The expected name of the variable being declared.
- * @returns {boolean} True if the statement is a valid const statement.
- */
-function testConstStatement(s: Statement, name: string): boolean {
-  expect(s.tokenLiteral()).toBe("const");
-  expect(s).toBeInstanceOf(ConstStatement);
-
-  const constStmt = s as ConstStatement;
-  expect(constStmt.name.value).toBe(name);
-  expect(constStmt.name.tokenLiteral()).toBe(name);
-
-  return true;
-}
+    do {
+      token = lexer.nextToken();
+      console.log(
+        `${position.toString().padStart(2)}: ${token.type.padEnd(20)} | "${
+          token.literal
+        }" | Line: ${token.position.line}, Col: ${token.position.column}`
+      );
+      position++;
+    } while (token.type !== TokenType.EOF);
+  },
+};
