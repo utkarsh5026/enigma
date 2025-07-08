@@ -22,6 +22,13 @@ import {
   CallExpression,
   AssignmentExpression,
 } from "./expression";
+import {
+  IntegerLiteral,
+  StringLiteral,
+  FunctionLiteral,
+  ArrayLiteral,
+  HashLiteral,
+} from "./literal";
 
 export class AstValidator {
   static isLetStatement(node: Node): node is LetStatement {
@@ -102,5 +109,25 @@ export class AstValidator {
 
   static isAssignmentExpression(node: Node): node is AssignmentExpression {
     return node instanceof AssignmentExpression;
+  }
+
+  static isIntegerLiteral(node: Node): node is IntegerLiteral {
+    return node instanceof IntegerLiteral;
+  }
+
+  static isStringLiteral(node: Node): node is StringLiteral {
+    return node instanceof StringLiteral;
+  }
+
+  static isFunctionLiteral(node: Node): node is FunctionLiteral {
+    return node instanceof FunctionLiteral;
+  }
+
+  static isArrayLiteral(node: Node): node is ArrayLiteral {
+    return node instanceof ArrayLiteral;
+  }
+
+  static isHashLiteral(node: Node): node is HashLiteral {
+    return node instanceof HashLiteral;
   }
 }
