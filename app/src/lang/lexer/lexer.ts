@@ -312,7 +312,7 @@ export default class Lexer {
    */
   private readIdentifier(): string {
     const position = this.position;
-    while (Lexer.isLetter(this.currCh)) {
+    while (Lexer.isLetter(this.currCh) || Lexer.isDigit(this.currCh)) {
       this.readCurrChar();
     }
 
