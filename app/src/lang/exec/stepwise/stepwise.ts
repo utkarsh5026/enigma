@@ -534,7 +534,6 @@ export class StepwiseEvaluator extends Evaluator {
     env: objects.Environment,
     path: string
   ): objects.BaseObject {
-    // Step 1: Evaluate the function
     this.addStep(
       call.func,
       env,
@@ -546,7 +545,6 @@ export class StepwiseEvaluator extends Evaluator {
 
     if (ObjectValidator.isError(functionObj)) return functionObj;
 
-    // Step 2: Evaluate arguments
     const args: objects.BaseObject[] = [];
     for (let i = 0; i < call.args.length; i++) {
       this.addStep(
