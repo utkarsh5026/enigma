@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import { StepwiseEvaluator, ExecutionState } from "@/lang/exec/stepwise";
+import React, { useState } from "react";
 import {
   AlertCircle,
   Terminal,
@@ -12,162 +11,38 @@ import {
 import { motion } from "framer-motion";
 import { Program } from "@/lang/ast";
 import { ErrorMessage } from "@/lang/parser/parser";
-import Evaluator from "@/lang/exec/evaluation/eval";
-import { Environment } from "@/lang/exec/objects";
 import ExecutionControls from "./execution-controls";
 import VariablesDeclared from "./variables-declared";
 import OutputVisualizer from "./output-visualizer";
 import { parseDescriptionWithBadges } from "./utils";
+import { useExecutionControls } from "../hooks/use-execution";
 
 interface ExecutionVisualizerProps {
   program: Program | null;
   parserErrors: ErrorMessage[];
 }
 
-const evaluator = new StepwiseEvaluator();
-
 const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   program,
   parserErrors,
 }) => {
-  const [executionState, setExecutionState] = useState<ExecutionState | null>(
-    null
-  );
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [autoRunSpeed, setAutoRunSpeed] = useState<number>(1000);
-  const autoRunRef = useRef<NodeJS.Timeout | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    executionState,
+    isRunning,
+    autoRunSpeed,
+    error,
+    prepareExecution,
+    executeStep,
+    goBackStep,
+    startAutoRun,
+    stopAutoRun,
+    setAutoRunSpeed,
+    setError,
+  } = useExecutionControls(program, parserErrors);
+
   const [highlightedVariable, setHighlightedVariable] = useState<string | null>(
     null
   );
-
-  const prepareExecution = useCallback(() => {
-    try {
-      setError(null);
-
-      if (!program) {
-        setError("No code to execute. Please enter some code in the editor.");
-        return false;
-      }
-
-      const errors = parserErrors;
-      if (errors.length > 0) {
-        setError(`Parser errors: ${errors.map((e) => e.message).join(", ")}`);
-        return false;
-      }
-
-      console.log(new Evaluator().evaluate(program, new Environment()));
-
-      evaluator.prepare(program);
-
-      // Get initial state
-      const initialState = evaluator.nextStep();
-      setExecutionState(initialState);
-
-      return true;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setError(`Error preparing execution: ${message}`);
-      return false;
-    }
-  }, [program, parserErrors]);
-
-  // Execute a single step
-  const executeStep = useCallback(() => {
-    try {
-      const newState = evaluator.nextStep();
-      setExecutionState({ ...newState });
-
-      if (newState.isComplete) {
-        setIsRunning(false);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setError(`Execution error: ${message}`);
-      setIsRunning(false);
-      return false;
-    }
-  }, []);
-
-  // Go back one step
-  const goBackStep = useCallback(() => {
-    try {
-      const prevState = evaluator.previousStep();
-      if (prevState) {
-        setExecutionState({ ...prevState });
-        return true;
-      }
-      return false;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setError(`Error going back: ${message}`);
-      return false;
-    }
-  }, []);
-
-  // Start auto-running execution
-  const startAutoRun = useCallback(() => {
-    if (autoRunRef.current) clearInterval(autoRunRef.current);
-    setIsRunning(true);
-
-    autoRunRef.current = setInterval(() => {
-      const hasMoreSteps = executeStep();
-      if (!hasMoreSteps && autoRunRef.current) {
-        clearInterval(autoRunRef.current);
-        autoRunRef.current = null;
-        setIsRunning(false);
-      }
-    }, autoRunSpeed);
-  }, [executeStep, autoRunSpeed]);
-
-  const stopAutoRun = useCallback(() => {
-    if (autoRunRef.current) {
-      clearInterval(autoRunRef.current);
-      autoRunRef.current = null;
-    }
-    setIsRunning(false);
-  }, []);
-
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      if (autoRunRef.current) clearInterval(autoRunRef.current);
-    };
-  }, []);
-
-  const getStepTypeInfo = (stepType: string) => {
-    switch (stepType) {
-      case "before":
-        return {
-          label: "About to Execute",
-          icon: <Eye size={16} style={{ color: "var(--tokyo-yellow)" }} />,
-          color: "text-[var(--tokyo-yellow)]",
-          bgColor: "bg-[var(--tokyo-yellow)]/10",
-          borderColor: "border-[var(--tokyo-yellow)]/20",
-        };
-      case "after":
-        return {
-          label: "Just Completed",
-          icon: (
-            <CheckCircle size={16} style={{ color: "var(--tokyo-green)" }} />
-          ),
-          color: "text-[var(--tokyo-green)]",
-          bgColor: "bg-[var(--tokyo-green)]/10",
-          borderColor: "border-[var(--tokyo-green)]/20",
-        };
-      default:
-        return {
-          label: "Processing",
-          icon: <Activity size={16} style={{ color: "var(--tokyo-blue)" }} />,
-          color: "text-[var(--tokyo-blue)]",
-          bgColor: "bg-[var(--tokyo-blue)]/10",
-          borderColor: "border-[var(--tokyo-blue)]/20",
-        };
-    }
-  };
 
   const stepInfo = executionState?.currentStep
     ? getStepTypeInfo(executionState.currentStep.stepType)
@@ -386,6 +261,35 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       )}
     </div>
   );
+};
+
+const getStepTypeInfo = (stepType: string) => {
+  switch (stepType) {
+    case "before":
+      return {
+        label: "About to Execute",
+        icon: <Eye size={16} style={{ color: "var(--tokyo-yellow)" }} />,
+        color: "text-[var(--tokyo-yellow)]",
+        bgColor: "bg-[var(--tokyo-yellow)]/10",
+        borderColor: "border-[var(--tokyo-yellow)]/20",
+      };
+    case "after":
+      return {
+        label: "Just Completed",
+        icon: <CheckCircle size={16} style={{ color: "var(--tokyo-green)" }} />,
+        color: "text-[var(--tokyo-green)]",
+        bgColor: "bg-[var(--tokyo-green)]/10",
+        borderColor: "border-[var(--tokyo-green)]/20",
+      };
+    default:
+      return {
+        label: "Processing",
+        icon: <Activity size={16} style={{ color: "var(--tokyo-blue)" }} />,
+        color: "text-[var(--tokyo-blue)]",
+        bgColor: "bg-[var(--tokyo-blue)]/10",
+        borderColor: "border-[var(--tokyo-blue)]/20",
+      };
+  }
 };
 
 export default ExecutionVisualizer;
