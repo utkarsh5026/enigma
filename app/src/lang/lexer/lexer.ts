@@ -170,6 +170,10 @@ export default class Lexer {
         token = this.createTok(TokenType.COLON, this.currCh);
         break;
 
+      case ".":
+        token = this.createTok(TokenType.DOT, this.currCh);
+        break;
+
       case '"':
         token = this.createTok(TokenType.STRING, this.readString());
         break;
