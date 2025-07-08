@@ -131,108 +131,136 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full h-full overflow-hidden flex flex-col bg-[#0d1117]"
+      className="w-full h-full overflow-hidden flex flex-col"
+      style={{ backgroundColor: "var(--tokyo-bg)" }}
     >
-      {/* Enhanced Header */}
-      <div className="shrink-0 border-b border-gray-800 bg-gradient-to-r from-gray-900/50 to-gray-800/50 backdrop-blur-sm">
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-blue-500/20 rounded-lg blur-sm" />
-                <div className="relative bg-gradient-to-br from-blue-600 to-blue-700 p-2 rounded-lg">
-                  <TreePine size={20} className="text-white" />
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-xl font-bold text-white">
-                  Abstract Syntax Tree
-                </h2>
-                <p className="text-sm text-gray-400">
-                  Visual representation of parsed code structure
-                </p>
-              </div>
+      {/* Header */}
+      <div
+        className="shrink-0 border-b p-4"
+        style={{
+          borderColor: "var(--tokyo-comment)",
+          backgroundColor: "var(--tokyo-bg-dark)",
+        }}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div
+              className="p-2 rounded"
+              style={{ backgroundColor: "var(--tokyo-blue)" }}
+            >
+              <TreePine size={18} className="text-white" />
             </div>
-
-            <div className="flex items-center gap-3">
-              {program && (
-                <>
-                  <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
-                    {nodeCount} nodes
-                  </Badge>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setForceRefresh((prev) => prev + 1)}
-                    className="border-gray-600 hover:border-gray-500"
-                    title="Refresh AST"
-                  >
-                    <RefreshCw size={16} />
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="border-gray-600 hover:border-gray-500"
-                  >
-                    {isExpanded ? (
-                      <>
-                        <Minimize2 size={16} className="mr-2" />
-                        Collapse All
-                      </>
-                    ) : (
-                      <>
-                        <Maximize2 size={16} className="mr-2" />
-                        Expand All
-                      </>
-                    )}
-                  </Button>
-                </>
-              )}
+            <div>
+              <h2
+                className="text-lg font-semibold"
+                style={{ color: "var(--tokyo-fg)" }}
+              >
+                AST
+              </h2>
+              <p className="text-sm" style={{ color: "var(--tokyo-comment)" }}>
+                Abstract Syntax Tree
+              </p>
             </div>
           </div>
 
-          {/* Search and Filters */}
           {program && (
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1 max-w-md">
-                <Search
-                  size={16}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                />
-                <Input
-                  placeholder="Search nodes by type, value, or content..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-gray-800/50 border-gray-600 focus:border-blue-500"
-                />
-              </div>
+            <div className="flex items-center gap-2">
+              <Badge
+                className="text-xs px-2 py-1"
+                style={{
+                  backgroundColor: "var(--tokyo-cyan)",
+                  color: "var(--tokyo-bg)",
+                }}
+              >
+                {nodeCount} nodes
+              </Badge>
 
-              {highlightedNodes.size > 0 && (
-                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
-                  {highlightedNodes.size} matches
-                </Badge>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setForceRefresh((prev) => prev + 1)}
+                className="h-8 w-8 p-0"
+                style={{
+                  borderColor: "var(--tokyo-comment)",
+                  color: "var(--tokyo-fg)",
+                  backgroundColor: "transparent",
+                }}
+                title="Refresh"
+              >
+                <RefreshCw size={14} />
+              </Button>
 
-              {searchTerm && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSearchTerm("")}
-                  className="border-gray-600 hover:border-gray-500"
-                >
-                  Clear
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="h-8 px-2"
+                style={{
+                  borderColor: "var(--tokyo-comment)",
+                  color: "var(--tokyo-fg)",
+                  backgroundColor: "transparent",
+                }}
+              >
+                {isExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              </Button>
             </div>
           )}
         </div>
+
+        {/* Search */}
+        {program && (
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2"
+                style={{ color: "var(--tokyo-comment)" }}
+              />
+              <Input
+                placeholder="Search nodes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 h-8 text-sm"
+                style={{
+                  backgroundColor: "var(--tokyo-bg-highlight)",
+                  borderColor: "var(--tokyo-comment)",
+                  color: "var(--tokyo-fg)",
+                }}
+              />
+            </div>
+
+            {highlightedNodes.size > 0 && (
+              <Badge
+                className="text-xs px-2 py-1"
+                style={{
+                  backgroundColor: "var(--tokyo-yellow)",
+                  color: "var(--tokyo-bg)",
+                }}
+              >
+                {highlightedNodes.size} matches
+              </Badge>
+            )}
+
+            {searchTerm && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSearchTerm("")}
+                className="h-8 px-2 text-xs"
+                style={{
+                  borderColor: "var(--tokyo-comment)",
+                  color: "var(--tokyo-fg)",
+                  backgroundColor: "transparent",
+                }}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Content Area */}
+      {/* Content */}
       <div className="flex-1 overflow-auto">
         {!program ? (
           <EmptyAst />
