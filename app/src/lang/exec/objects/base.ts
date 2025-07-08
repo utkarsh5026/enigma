@@ -12,6 +12,7 @@ export enum ObjectType {
   CONTINUE = "CONTINUE",
   CLASS = "CLASS",
   INSTANCE = "INSTANCE",
+  BUILTIN = "BUILTIN",
 }
 
 /**
