@@ -353,38 +353,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                 </div>
               )}
             </motion.div>
-
-            {/* Progress Indicator */}
-            <motion.div
-              className="bg-[var(--tokyo-bg)]/30 rounded-lg p-4 border border-[var(--tokyo-comment)]/30"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-[var(--tokyo-fg-dark)]">
-                  {executionState.isComplete
-                    ? "✅ Execution Complete"
-                    : "🔄 Execution in Progress"}
-                </span>
-                <span className="text-[var(--tokyo-comment)]">
-                  Step {executionState.currentStepNumber}
-                </span>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="mt-3 bg-[var(--tokyo-bg-highlight)] rounded-full h-2 overflow-hidden">
-                <motion.div
-                  className="h-full"
-                  style={{ backgroundColor: "var(--tokyo-blue)" }}
-                  initial={{ width: 0 }}
-                  animate={{
-                    width: `${(executionState.currentStepNumber / 10) * 100}%`,
-                  }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-            </motion.div>
           </div>
         </div>
       )}

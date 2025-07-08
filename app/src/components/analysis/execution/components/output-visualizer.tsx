@@ -14,6 +14,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { parseDescriptionWithBadges } from "./utils";
 
 interface OutputVisualizerProps {
   executionState: ExecutionState;
@@ -77,7 +78,7 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({
                     {getOutputIcon(entry.type)}
                     <div className="flex-1">
                       <div className="text-sm text-[var(--tokyo-fg-dark)] font-mono">
-                        {entry.value}
+                        {parseDescriptionWithBadges(entry.value)}
                       </div>
                       <div className="text-xs text-[var(--tokyo-comment)] mt-1">
                         Step {entry.stepNumber} •{" "}
