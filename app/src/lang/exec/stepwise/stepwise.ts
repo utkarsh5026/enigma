@@ -301,7 +301,7 @@ export class StepwiseEvaluator extends Evaluator {
     this.addStep(
       stmt.value,
       env,
-      `Evaluating expression for variable '${identifier}'`,
+      `Evaluating expression for variable "${identifier}"`,
       `${path}.value`,
       "before"
     );
@@ -319,7 +319,7 @@ export class StepwiseEvaluator extends Evaluator {
       this.addStep(
         stmt,
         env,
-        `Error: Variable '${identifier}' already exists`,
+        `Error: Variable "${identifier}" already exists`,
         path,
         "after",
         error
@@ -330,7 +330,7 @@ export class StepwiseEvaluator extends Evaluator {
     env.set(identifier, value);
 
     this.addOutput(
-      `Variable '${identifier}' assigned value: ${value.inspect()}`,
+      `Variable "${identifier}" assigned value: "${value.inspect()}"`,
       "assignment"
     );
 
@@ -350,7 +350,7 @@ export class StepwiseEvaluator extends Evaluator {
     this.addStep(
       stmt.value,
       env,
-      `Evaluating expression for constant '${identifier}'`,
+      `Evaluating expression for constant "${identifier}"`,
       `${path}.value`,
       "before"
     );
@@ -361,14 +361,14 @@ export class StepwiseEvaluator extends Evaluator {
 
     if (env.isConstant(identifier)) {
       const error = new objects.ErrorObject(
-        `Identifier ${identifier} already declared`,
+        `Identifier "${identifier}" already declared`,
         stmt.position()
       );
 
       this.addStep(
         stmt,
         env,
-        `Error: Constant '${identifier}' already exists`,
+        `Error: Constant "${identifier}" already exists`,
         path,
         "after",
         error
@@ -379,7 +379,7 @@ export class StepwiseEvaluator extends Evaluator {
 
     env.setConst(identifier, value);
     this.addOutput(
-      `Constant '${identifier}' assigned value: ${value.inspect()}`,
+      `Constant "${identifier}" assigned value: "${value.inspect()}"`,
       "assignment"
     );
 
@@ -397,7 +397,7 @@ export class StepwiseEvaluator extends Evaluator {
     this.addStep(
       expr.left,
       env,
-      `Evaluating left operand: ${expr.left.toString()}`,
+      `Evaluating left operand: "${expr.left.toString()}"`,
       `${path}.left`,
       "before"
     );
@@ -408,7 +408,7 @@ export class StepwiseEvaluator extends Evaluator {
     this.addStep(
       expr.right,
       env,
-      `Evaluating right operand: ${expr.right.toString()}`,
+      `Evaluating right operand: "${expr.right.toString()}"`,
       `${path}.right`,
       "before"
     );
@@ -419,9 +419,9 @@ export class StepwiseEvaluator extends Evaluator {
     this.addStep(
       expr,
       env,
-      `Applying operator '${
+      `Applying operator "${
         expr.operator
-      }' to ${left.inspect()} and ${right.inspect()}`,
+      }" to "${left.inspect()}" and "${right.inspect()}"`,
       path,
       "during"
     );
@@ -429,9 +429,9 @@ export class StepwiseEvaluator extends Evaluator {
     const result = evaluateInfix(left, right, expr.operator);
 
     this.addOutput(
-      `${left.inspect()} ${
+      `"${left.inspect()}" ${
         expr.operator
-      } ${right.inspect()} = ${result.inspect()}`,
+      } "${right.inspect()}" = "${result.inspect()}"`,
       "operation"
     );
 

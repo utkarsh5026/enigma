@@ -10,25 +10,38 @@ export const getAfterDescription = (
 
   switch (true) {
     case AstValidator.isLetStatement(node):
-      return `Variable '${node.name.value}' declared with value: ${resultString}`;
+      return `Variable "${node.name.value}" declared with value: '${resultString}'`;
 
     case AstValidator.isConstStatement(node):
-      return `Constant '${node.name.value}' declared with value: ${resultString}`;
+      return `Constant "${node.name.value}" declared with value: '${resultString}'`;
 
     case AstValidator.isReturnStatement(node):
-      return `Returned: ${resultString}`;
+      return `Returned: '${resultString}'`;
 
     case AstValidator.isInfixExpression(node):
-      return `Expression evaluated to: ${resultString}`;
+      return `Expression evaluated to: '${resultString}'`;
 
     case AstValidator.isCallExpression(node):
-      return `Function call completed, result: ${resultString}`;
+      return `Function call completed, result: '${resultString}'`;
 
     case AstValidator.isIdentifier(node):
-      return `Variable value: ${resultString}`;
+      return `Variable value: '${resultString}'`;
 
+    case AstValidator.isIntegerLiteral(node):
+      return `Integer value: '${resultString}'`;
+
+    case AstValidator.isStringLiteral(node):
+      return `String value: '${resultString}'`;
+
+    case AstValidator.isFunctionLiteral(node):
+      return `Function value: '${resultString}'`;
+
+    case AstValidator.isArrayLiteral(node):
+      return `Array value: '${resultString}'`;
+
+    case AstValidator.isHashLiteral(node):
     default:
-      return `${node.constructor.name} evaluated to: ${resultString}`;
+      return `${node.constructor.name} evaluated to: '${resultString}'`;
   }
 };
 
@@ -56,6 +69,17 @@ export const getBeforeDescription = (node: ast.Node): string => {
     }
     case AstValidator.isIdentifier(node):
       return `Looking up variable "${node.value}"`;
+
+    case AstValidator.isIntegerLiteral(node):
+      return `About to evaluate integer with value "${node.value}"`;
+    case AstValidator.isStringLiteral(node):
+      return `About to evaluate string with value "${node.value}"`;
+    case AstValidator.isFunctionLiteral(node):
+      return `About to evaluate function literal`;
+    case AstValidator.isArrayLiteral(node):
+      return `About to evaluate array literal`;
+    case AstValidator.isHashLiteral(node):
+      return `About to evaluate hash literal "${node.pairs}"`;
     default:
       return `About to evaluate "${node.constructor.name}"`;
   }
