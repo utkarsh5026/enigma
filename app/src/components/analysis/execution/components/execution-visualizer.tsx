@@ -4,12 +4,7 @@ import {
   AlertCircle,
   Database,
   Terminal,
-  SkipForward,
-  SkipBack,
-  Pause,
-  Play,
   RotateCcw,
-  Clock,
   ChevronRight,
   Zap,
   Activity,
@@ -22,6 +17,7 @@ import { ErrorMessage } from "@/lang/parser/parser";
 import Evaluator from "@/lang/exec/evaluation/eval";
 import { Environment } from "@/lang/exec/objects";
 import { AnimatePresence } from "framer-motion";
+import ExecutionControls from "./execution-controls";
 
 interface ExecutionVisualizerProps {
   program: Program | null;
@@ -161,7 +157,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       case "before":
         return {
           label: "About to Execute",
-          icon: <Eye size={16} style={{ color: 'var(--tokyo-yellow)' }} />,
+          icon: <Eye size={16} style={{ color: "var(--tokyo-yellow)" }} />,
           color: "text-[var(--tokyo-yellow)]",
           bgColor: "bg-[var(--tokyo-yellow)]/10",
           borderColor: "border-[var(--tokyo-yellow)]/20",
@@ -169,7 +165,9 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       case "after":
         return {
           label: "Just Completed",
-          icon: <CheckCircle size={16} style={{ color: 'var(--tokyo-green)' }} />,
+          icon: (
+            <CheckCircle size={16} style={{ color: "var(--tokyo-green)" }} />
+          ),
           color: "text-[var(--tokyo-green)]",
           bgColor: "bg-[var(--tokyo-green)]/10",
           borderColor: "border-[var(--tokyo-green)]/20",
@@ -177,7 +175,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       default:
         return {
           label: "Processing",
-          icon: <Activity size={16} style={{ color: 'var(--tokyo-blue)' }} />,
+          icon: <Activity size={16} style={{ color: "var(--tokyo-blue)" }} />,
           color: "text-[var(--tokyo-blue)]",
           bgColor: "bg-[var(--tokyo-blue)]/10",
           borderColor: "border-[var(--tokyo-blue)]/20",
@@ -215,7 +213,9 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
             <div className="flex items-center gap-2">
               {executionState && (
                 <>
-                  <span className="text-sm text-[var(--tokyo-fg-dark)]">Step</span>
+                  <span className="text-sm text-[var(--tokyo-fg-dark)]">
+                    Step
+                  </span>
                   <span className="bg-[var(--tokyo-bg-highlight)] px-3 py-1 rounded text-sm font-mono">
                     {executionState.currentStepNumber}
                   </span>
@@ -232,14 +232,16 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
               animate={{ opacity: 1, y: 0 }}
             >
               <div className="flex items-start gap-3">
-                <AlertCircle size={20} style={{ color: 'var(--tokyo-red)' }} className="mt-0.5 flex-shrink-0" />
+                <AlertCircle
+                  size={20}
+                  style={{ color: "var(--tokyo-red)" }}
+                  className="mt-0.5 flex-shrink-0"
+                />
                 <div>
                   <h3 className="font-medium text-[var(--tokyo-red)] mb-1">
                     Execution Error
                   </h3>
-                  <p className="text-sm text-[var(--tokyo-fg-dark)]">
-                    {error}
-                  </p>
+                  <p className="text-sm text-[var(--tokyo-fg-dark)]">{error}</p>
                 </div>
                 <motion.button
                   onClick={() => setError(null)}
@@ -253,71 +255,17 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
             </motion.div>
           )}
 
-          {/* Control Buttons */}
-          <div className="flex items-center gap-3">
-            <motion.button
-              onClick={prepareExecution}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-[var(--tokyo-bg-highlight)] hover:bg-[var(--tokyo-comment)] text-[var(--tokyo-fg)] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-            >
-              <RotateCcw size={16} />
-              Reset
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-[var(--tokyo-bg-highlight)] hover:bg-[var(--tokyo-comment)] text-[var(--tokyo-fg)] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              onClick={goBackStep}
-              disabled={!executionState}
-            >
-              <SkipBack size={16} />
-              Back
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-[var(--tokyo-green)] hover:bg-[var(--tokyo-green)]/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              onClick={executeStep}
-              disabled={!executionState || executionState.isComplete}
-            >
-              <SkipForward size={16} />
-              Step
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="bg-[var(--tokyo-blue)] hover:bg-[var(--tokyo-blue)]/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              onClick={isRunning ? stopAutoRun : startAutoRun}
-              disabled={!executionState || executionState.isComplete}
-            >
-              {isRunning ? <Pause size={16} /> : <Play size={16} />}
-              {isRunning ? "Pause" : "Run"}
-            </motion.button>
-
-            {/* Speed Control */}
-            <div className="flex items-center gap-3 ml-4 bg-[var(--tokyo-bg-highlight)] rounded-lg px-3 py-2">
-              <Clock size={14} style={{ color: 'var(--tokyo-fg-dark)' }} />
-              <span className="text-sm text-[var(--tokyo-fg-dark)]">Speed:</span>
-              <input
-                title="Auto Run Speed"
-                type="range"
-                min="200"
-                max="3000"
-                step="200"
-                value={autoRunSpeed}
-                onChange={(e) => setAutoRunSpeed(Number(e.target.value))}
-                className="w-20"
-                style={{ accentColor: 'var(--tokyo-blue)' }}
-              />
-              <span className="text-xs text-[var(--tokyo-fg-dark)] min-w-[60px]">
-                {autoRunSpeed}ms
-              </span>
-            </div>
-          </div>
+          <ExecutionControls
+            prepareExecution={prepareExecution}
+            executeStep={executeStep}
+            goBackStep={goBackStep}
+            isRunning={isRunning}
+            executionState={executionState}
+            stopAutoRun={stopAutoRun}
+            startAutoRun={startAutoRun}
+            autoRunSpeed={autoRunSpeed}
+            setAutoRunSpeed={setAutoRunSpeed}
+          />
         </div>
       </div>
 
@@ -391,7 +339,10 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                       transition={{ delay: 0.2 }}
                     >
                       <div className="flex items-center gap-3 mb-3">
-                        <Zap size={16} style={{ color: 'var(--tokyo-green)' }} />
+                        <Zap
+                          size={16}
+                          style={{ color: "var(--tokyo-green)" }}
+                        />
                         <span className="text-sm font-medium text-[var(--tokyo-green)]">
                           Result
                         </span>
@@ -547,28 +498,30 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                                     return (
                                       <Database
                                         size={14}
-                                        style={{ color: 'var(--tokyo-green)' }}
+                                        style={{ color: "var(--tokyo-green)" }}
                                       />
                                     );
                                   case "operation":
                                     return (
                                       <Zap
                                         size={14}
-                                        style={{ color: 'var(--tokyo-blue)' }}
+                                        style={{ color: "var(--tokyo-blue)" }}
                                       />
                                     );
                                   case "error":
                                     return (
                                       <AlertCircle
                                         size={14}
-                                        style={{ color: 'var(--tokyo-red)' }}
+                                        style={{ color: "var(--tokyo-red)" }}
                                       />
                                     );
                                   default:
                                     return (
                                       <Activity
                                         size={14}
-                                        style={{ color: 'var(--tokyo-fg-dark)' }}
+                                        style={{
+                                          color: "var(--tokyo-fg-dark)",
+                                        }}
                                       />
                                     );
                                 }
@@ -629,7 +582,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
               <div className="mt-3 bg-[var(--tokyo-bg-highlight)] rounded-full h-2 overflow-hidden">
                 <motion.div
                   className="h-full"
-                  style={{ backgroundColor: 'var(--tokyo-blue)' }}
+                  style={{ backgroundColor: "var(--tokyo-blue)" }}
                   initial={{ width: 0 }}
                   animate={{
                     width: `${(executionState.currentStepNumber / 10) * 100}%`,
@@ -646,7 +599,11 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
       {error && !executionState && (
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="text-center max-w-md">
-            <AlertCircle size={48} style={{ color: 'var(--tokyo-red)' }} className="mx-auto mb-4" />
+            <AlertCircle
+              size={48}
+              style={{ color: "var(--tokyo-red)" }}
+              className="mx-auto mb-4"
+            />
             <h2 className="text-xl font-semibold text-[var(--tokyo-fg)] mb-2">
               Cannot Execute Code
             </h2>
