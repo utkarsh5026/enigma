@@ -4,6 +4,7 @@ import { Operator } from "@/lang/token/token";
 import type { Identifier } from "@/lang/ast/ast";
 import { ObjectValidator } from "./validate";
 import { evalLogicalNotOperator, evalNegationOperator } from "./operator";
+import { getBuiltin, isBuiltin } from "../builtins";
 
 export const evalAndExpression = (
   left: objects.BaseObject,
@@ -96,6 +97,11 @@ export const evalIdentifier = (
   node: Identifier,
   env: objects.Environment
 ): objects.BaseObject => {
+  console.log(node.value);
+  if (isBuiltin(node.value)) {
+    const builtin = getBuiltin(node.value);
+    if (builtin) return builtin;
+  }
   const value = env.get(node.value);
   if (value) return value;
 

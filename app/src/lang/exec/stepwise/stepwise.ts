@@ -5,6 +5,7 @@ import * as statements from "@/lang/ast/statement";
 import * as expressions from "@/lang/ast/expression";
 import * as literals from "@/lang/ast/literal";
 import {
+  evalIdentifier,
   evaluateInfix,
   evaluatePrefix,
   toBool,
@@ -444,7 +445,7 @@ export class StepwiseEvaluator extends Evaluator {
     identifier: ast.Identifier,
     env: objects.Environment
   ): objects.BaseObject {
-    const value = env.get(identifier.value);
+    const value = evalIdentifier(identifier, env);
 
     if (value) {
       this.addOutput(
@@ -564,7 +565,10 @@ export class StepwiseEvaluator extends Evaluator {
     }
 
     // Step 3: Call the function
-    if (ObjectValidator.isFunction(functionObj)) {
+    if (
+      ObjectValidator.isFunction(functionObj) ||
+      ObjectValidator.isBuiltin(functionObj)
+    ) {
       let funcName = "anonymous";
       if (call.func instanceof ast.Identifier) {
         funcName = call.func.value;
@@ -580,6 +584,7 @@ export class StepwiseEvaluator extends Evaluator {
       );
 
       const result = this.applyFunction(functionObj, args);
+      console.log(result);
 
       this.removeCallStackFrame();
       this.addOutput(
@@ -587,6 +592,7 @@ export class StepwiseEvaluator extends Evaluator {
         "return"
       );
 
+      console.log(result);
       return result;
     }
 
@@ -804,8 +810,6 @@ export class StepwiseEvaluator extends Evaluator {
   ): void {
     const { line, column } = node.position();
     const depth = this.executionState.callStack.length;
-
-    console.log(description, path, stepType, result, env);
 
     const step: EvaluationStep = {
       node,

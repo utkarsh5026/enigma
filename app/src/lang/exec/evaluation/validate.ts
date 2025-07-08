@@ -195,4 +195,8 @@ export class ObjectValidator {
   static isNull(obj: objects.BaseObject): obj is objects.NullObject {
     return obj instanceof objects.NullObject;
   }
+
+  static isBuiltin(obj: objects.BaseObject): obj is objects.BuiltinObject {
+    return obj instanceof objects.BuiltinObject;
+  }
 }

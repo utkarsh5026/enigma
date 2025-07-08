@@ -33,21 +33,6 @@ export default class Evaluator {
   private readonly CONTINUE = new objects.ContinueObject();
   private loopDepth: number = 0;
 
-  /**
-   * Evaluates an AST node
-   *
-   * This is the primary method that evaluates any AST node. It uses a switch
-   * statement to determine the type of node and calls the appropriate evaluation method.
-   *
-   * @param node - The AST node to evaluate
-   * @param env - The current environment (scope)
-   * @returns The result of the evaluation as a BaseObject
-   *
-   * @example
-   * const evaluator = new Evaluator();
-   * const result = evaluator.evaluate(astNode, environment);
-   * console.log(result.inspect()); // Outputs the result
-   */
   public evaluate(
     node: ast.Node,
     env: objects.Environment
@@ -491,27 +476,6 @@ export default class Evaluator {
     return result;
   }
 
-  /**
-   * Evaluates an assignment expression
-   *
-   * This method evaluates the right-hand side of an assignment expression,
-   * then sets the value in the current environment using the identifier
-   * on the left-hand side.
-   *
-   * @param node - The assignment expression node
-   * @param env - The current environment
-   * @returns The evaluated value that was assigned
-   *
-   * @example
-   * // Assuming 'x' is already defined in the environment
-   * const assignExpr = new expression.AssignmentExpression(
-   *   new ast.Identifier("x"),
-   *   new literal.IntegerLiteral(10)
-   * );
-   * const result = evaluator.evalAssignmentExpression(assignExpr, environment);
-   * console.log(result.inspect()); // Outputs: 10
-   * console.log(environment.get("x").inspect()); // Outputs: 10
-   */
   private evalAssignmentExpression(
     node: expression.AssignmentExpression,
     env: objects.Environment
@@ -534,8 +498,15 @@ export default class Evaluator {
     fn: objects.BaseObject,
     args: objects.BaseObject[]
   ): objects.BaseObject {
-    if (!validate.isFunction(fn))
+    if (validate.isBuiltin(fn)) {
+      console.log(fn.fn(args));
+      return fn.fn(args);
+    }
+
+    if (!validate.isFunction(fn)) {
+      console.log(fn.type());
       return new objects.ErrorObject(`Not a function: ${fn.type()}`);
+    }
 
     const extendFunctionEnv = () => {
       const env = new objects.Environment(fn.env);

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { StepwiseEvaluator, ExecutionState } from "@/lang/exec/stepwise";
-import { Braces, AlertCircle, Settings } from "lucide-react";
+import { Braces, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Program } from "@/lang/ast";
 import { ErrorMessage } from "@/lang/parser/parser";
@@ -29,8 +29,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   const [autoRunSpeed, setAutoRunSpeed] = useState<number>(1000);
   const [error, setError] = useState<string | null>(null);
   const autoRunRef = useRef<NodeJS.Timeout | null>(null);
-  const [showDetailedSteps, setShowDetailedSteps] = useState<boolean>(true);
-  const [highlightChanges, setHighlightChanges] = useState<boolean>(true);
 
   const prepareExecution = useCallback(() => {
     try {
@@ -131,41 +129,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
 
   return (
     <div className="w-full h-full bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)] flex flex-col">
-      {/* Header */}
-      <div className="border-b border-[var(--tokyo-bg-highlight)] p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Braces size={24} className="text-[var(--tokyo-purple)]" />
-            <h2 className="text-xl font-bold">Step-by-Step Execution</h2>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm">
-              <Settings size={16} className="text-[var(--tokyo-comment)]" />
-              <span className="text-[var(--tokyo-comment)]">Options:</span>
-            </div>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showDetailedSteps}
-                onChange={(e) => setShowDetailedSteps(e.target.checked)}
-                className="rounded"
-              />
-              <span className="text-sm">Detailed Steps</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={highlightChanges}
-                onChange={(e) => setHighlightChanges(e.target.checked)}
-                className="rounded"
-              />
-              <span className="text-sm">Highlight Changes</span>
-            </label>
-          </div>
-        </div>
-      </div>
-
       {/* Error display */}
       {error && (
         <motion.div
@@ -205,7 +168,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
             {executionState?.currentStep && (
               <EnvironmentVisualizer
                 environment={executionState.currentStep.environment}
-                highlightChanges={highlightChanges}
               />
             )}
           </div>
