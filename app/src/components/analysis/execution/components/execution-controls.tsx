@@ -59,7 +59,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="bg-[var(--tokyo-green)] hover:bg-[var(--tokyo-green)]/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+        className="bg-[var(--tokyo-green)]/80 hover:bg-[var(--tokyo-green)]/10 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors cursor-pointer hover:text-[var(--tokyo-green)] hover:shadow-sm hover:shadow-[var(--tokyo-green)]/20"
         onClick={executeStep}
         disabled={!executionState || executionState.isComplete}
       >
@@ -70,7 +70,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="bg-[var(--tokyo-blue)] hover:bg-[var(--tokyo-blue)]/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+        className="bg-[var(--tokyo-blue)]/80 hover:bg-[var(--tokyo-blue)]/10 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors cursor-pointer hover:text-[var(--tokyo-blue)] hover:shadow-sm hover:shadow-[var(--tokyo-blue)]/20"
         onClick={isRunning ? stopAutoRun : startAutoRun}
         disabled={!executionState || executionState.isComplete}
       >

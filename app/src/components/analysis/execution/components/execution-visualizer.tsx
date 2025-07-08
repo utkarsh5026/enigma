@@ -2,10 +2,8 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { StepwiseEvaluator, ExecutionState } from "@/lang/exec/stepwise";
 import {
   AlertCircle,
-  Database,
   Terminal,
   RotateCcw,
-  ChevronRight,
   Zap,
   Activity,
   Eye,
@@ -16,8 +14,9 @@ import { Program } from "@/lang/ast";
 import { ErrorMessage } from "@/lang/parser/parser";
 import Evaluator from "@/lang/exec/evaluation/eval";
 import { Environment } from "@/lang/exec/objects";
-import { AnimatePresence } from "framer-motion";
 import ExecutionControls from "./execution-controls";
+import VariablesDeclared from "./variables-declared";
+import OutputVisualizer from "./output-visualizer";
 
 interface ExecutionVisualizerProps {
   program: Program | null;
@@ -37,23 +36,9 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   const [autoRunSpeed, setAutoRunSpeed] = useState<number>(1000);
   const autoRunRef = useRef<NodeJS.Timeout | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["current-step"])
-  );
   const [highlightedVariable, setHighlightedVariable] = useState<string | null>(
     null
   );
-
-  const toggleSection = (section: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(section)) {
-      newExpanded.delete(section);
-    } else {
-      newExpanded.add(section);
-    }
-    setExpandedSections(newExpanded);
-  };
 
   const prepareExecution = useCallback(() => {
     try {
@@ -354,208 +339,13 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                   )}
 
                   {/* Variables Section */}
-                  <div className="space-y-3">
-                    <button
-                      onClick={() => toggleSection("variables")}
-                      className="flex items-center gap-2 text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] transition-colors"
-                    >
-                      <motion.div
-                        animate={{
-                          rotate: expandedSections.has("variables") ? 90 : 0,
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ChevronRight size={16} />
-                      </motion.div>
-                      <Database size={16} />
-                      <span className="font-medium">
-                        Variables (
-                        {
-                          executionState.currentStep.environment.variables
-                            .length
-                        }
-                        )
-                      </span>
-                      {executionState.currentStep.environment.variables.some(
-                        (v) => v.isNew
-                      ) && (
-                        <motion.span
-                          className="bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] text-xs px-2 py-1 rounded"
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                        >
-                          New Changes
-                        </motion.span>
-                      )}
-                    </button>
+                  <VariablesDeclared
+                    executionState={executionState}
+                    highlightedVariable={highlightedVariable}
+                    setHighlightedVariable={setHighlightedVariable}
+                  />
 
-                    <AnimatePresence>
-                      {expandedSections.has("variables") && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="space-y-3 overflow-hidden"
-                        >
-                          {executionState.currentStep.environment.variables.map(
-                            (variable, index) => (
-                              <motion.div
-                                key={variable.name}
-                                className={`bg-[var(--tokyo-bg-highlight)]/30 rounded-lg p-4 border transition-all duration-200 ${
-                                  variable.isNew
-                                    ? "border-[var(--tokyo-green)]/30 bg-[var(--tokyo-green)]/5"
-                                    : "border-[var(--tokyo-comment)]/30"
-                                } ${
-                                  highlightedVariable === variable.name
-                                    ? "border-[var(--tokyo-blue)]/50 bg-[var(--tokyo-blue)]/5"
-                                    : ""
-                                }`}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                                onMouseEnter={() =>
-                                  setHighlightedVariable(variable.name)
-                                }
-                                onMouseLeave={() =>
-                                  setHighlightedVariable(null)
-                                }
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <div className="flex items-center gap-3">
-                                    <span
-                                      className={`text-xs px-2 py-1 rounded font-mono ${
-                                        variable.isConstant
-                                          ? "bg-[var(--tokyo-red)]/20 text-[var(--tokyo-red)]"
-                                          : "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)]"
-                                      }`}
-                                    >
-                                      {variable.isConstant ? "const" : "let"}
-                                    </span>
-                                    <span className="font-mono font-medium text-[var(--tokyo-fg)]">
-                                      {variable.name}
-                                    </span>
-                                    <span className="text-xs text-[var(--tokyo-comment)]">
-                                      {variable.type}
-                                    </span>
-                                  </div>
-                                  {variable.isNew && (
-                                    <motion.span
-                                      className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] px-2 py-1 rounded"
-                                      initial={{ scale: 0 }}
-                                      animate={{ scale: 1 }}
-                                    >
-                                      NEW
-                                    </motion.span>
-                                  )}
-                                </div>
-                                <div className="bg-[var(--tokyo-bg)]/50 rounded p-3">
-                                  <code className="text-[var(--tokyo-fg-dark)] font-mono">
-                                    {variable.value}
-                                  </code>
-                                </div>
-                              </motion.div>
-                            )
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Output Section */}
-                  <div className="space-y-3">
-                    <button
-                      onClick={() => toggleSection("output")}
-                      className="flex items-center gap-2 text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] transition-colors"
-                    >
-                      <motion.div
-                        animate={{
-                          rotate: expandedSections.has("output") ? 90 : 0,
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ChevronRight size={16} />
-                      </motion.div>
-                      <Terminal size={16} />
-                      <span className="font-medium">
-                        Execution Log ({executionState.output.length})
-                      </span>
-                    </button>
-
-                    <AnimatePresence>
-                      {expandedSections.has("output") && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="space-y-2 overflow-hidden max-h-60 overflow-y-auto"
-                        >
-                          {executionState.output
-                            .slice(-5)
-                            .map((entry, index) => {
-                              const getOutputIcon = (type: string) => {
-                                switch (type) {
-                                  case "assignment":
-                                    return (
-                                      <Database
-                                        size={14}
-                                        style={{ color: "var(--tokyo-green)" }}
-                                      />
-                                    );
-                                  case "operation":
-                                    return (
-                                      <Zap
-                                        size={14}
-                                        style={{ color: "var(--tokyo-blue)" }}
-                                      />
-                                    );
-                                  case "error":
-                                    return (
-                                      <AlertCircle
-                                        size={14}
-                                        style={{ color: "var(--tokyo-red)" }}
-                                      />
-                                    );
-                                  default:
-                                    return (
-                                      <Activity
-                                        size={14}
-                                        style={{
-                                          color: "var(--tokyo-fg-dark)",
-                                        }}
-                                      />
-                                    );
-                                }
-                              };
-
-                              return (
-                                <motion.div
-                                  key={`${entry.stepNumber}-${index}`}
-                                  className="bg-[var(--tokyo-bg-highlight)]/30 rounded p-3 border border-[var(--tokyo-comment)]/20"
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: index * 0.05 }}
-                                >
-                                  <div className="flex items-start gap-3">
-                                    {getOutputIcon(entry.type)}
-                                    <div className="flex-1">
-                                      <div className="text-sm text-[var(--tokyo-fg-dark)] font-mono">
-                                        {entry.value}
-                                      </div>
-                                      <div className="text-xs text-[var(--tokyo-comment)] mt-1">
-                                        Step {entry.stepNumber} •{" "}
-                                        {new Date(
-                                          entry.timestamp
-                                        ).toLocaleTimeString()}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </motion.div>
-                              );
-                            })}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                  <OutputVisualizer executionState={executionState} />
                 </div>
               )}
             </motion.div>
