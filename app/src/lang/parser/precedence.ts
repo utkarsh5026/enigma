@@ -19,6 +19,8 @@ const precedences: { [key in TokenType]?: Precedence } = {
   [TokenType.NOT_EQ]: Precedence.EQUALS,
   [TokenType.LESS_THAN]: Precedence.LESS_GREATER,
   [TokenType.GREATER_THAN]: Precedence.LESS_GREATER,
+  [TokenType.LESS_THAN_OR_EQUAL]: Precedence.LESS_GREATER,
+  [TokenType.GREATER_THAN_OR_EQUAL]: Precedence.LESS_GREATER,
   [TokenType.AND]: Precedence.LOGICAL_AND,
   [TokenType.OR]: Precedence.LOGICAL_OR,
   [TokenType.PLUS]: Precedence.SUM,

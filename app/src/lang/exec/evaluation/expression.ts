@@ -55,6 +55,10 @@ export const evalIntegerInfixExpression = (
       return toBool(leftVal < rightVal);
     case ">":
       return toBool(leftVal > rightVal);
+    case "<=":
+      return toBool(leftVal <= rightVal);
+    case ">=":
+      return toBool(leftVal >= rightVal);
     case "==":
       return toBool(leftVal === rightVal);
     case "!=":

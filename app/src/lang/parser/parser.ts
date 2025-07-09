@@ -909,6 +909,8 @@ export class Parser {
       [TokenType.NOT_EQ]: this.parseInfixExpression,
       [TokenType.LESS_THAN]: this.parseInfixExpression,
       [TokenType.GREATER_THAN]: this.parseInfixExpression,
+      [TokenType.LESS_THAN_OR_EQUAL]: this.parseInfixExpression,
+      [TokenType.GREATER_THAN_OR_EQUAL]: this.parseInfixExpression,
       [TokenType.LPAREN]: this.parseCallExpression,
       [TokenType.LBRACKET]: this.parseIndexExpression,
       [TokenType.ASSIGN]: this.parseAssignmentExpression,
