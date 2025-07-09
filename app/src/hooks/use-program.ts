@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import Lexer from "@/lang/lexer/lexer";
-import { Parser } from "@/lang/parser/parser";
+import { EnigmaParser } from "@/lang/parser/parser";
 import { Program } from "@/lang/ast";
-import { ErrorMessage } from "@/lang/parser/parser";
+import { ParseError } from "@/lang/parser/core";
 import { Token, TokenType } from "@/lang/token/token";
 
 export type Ast = {
   program: Program;
-  errors: ErrorMessage[];
+  errors: ParseError[];
 };
 
 export const useProgram = (code: string) => {
   const [program, setProgram] = useState<Program | null>(null);
-  const [parserErrors, setParserErrors] = useState<ErrorMessage[]>([]);
+  const [parserErrors, setParserErrors] = useState<ParseError[]>([]);
   const [tokens, setTokens] = useState<Token[]>([]);
 
   const reset = useCallback(() => {
@@ -43,12 +43,12 @@ export const useProgram = (code: string) => {
     try {
       const lexer = new Lexer(code);
 
-      const parser = new Parser(lexer);
+      const parser = new EnigmaParser(lexer);
       const program = parser.parseProgram();
       setProgram(program);
 
-      if (parser.parserErrors().length > 0) {
-        setParserErrors(parser.parserErrors());
+      if (parser.getErrors().length > 0) {
+        setParserErrors(parser.getErrors());
       }
 
       setProgram(program);
