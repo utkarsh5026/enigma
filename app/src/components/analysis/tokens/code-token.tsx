@@ -31,7 +31,7 @@ const CodeToken: React.FC<CodeTokenProps> = ({
   return (
     <pre
       key={`line-${lineNum}`}
-      className="text-sm whitespace-pre-wrap overflow-x-auto p-2 border-l-2 border-l-tokyo-bg-highlight mb-1 font-family-mono bg-tokyo-bg-dark rounded-r"
+      className="text-sm whitespace-pre-wrap overflow-x-auto p-2 border-l-2 border-l-tokyo-bg-highlight mb-1 font-source-code-pro bg-tokyo-bg-dark rounded-r"
     >
       <span className="mr-4 select-none text-tokyo-fg-dark w-8 inline-block text-right">
         {lineNum}
