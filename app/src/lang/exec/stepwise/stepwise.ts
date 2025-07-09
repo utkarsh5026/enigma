@@ -31,7 +31,6 @@ export class StepwiseEvaluator extends Evaluator {
   private executionState: ExecutionState = new ExecutionState();
   private program: ast.Program | null = null;
   private stepCounter: number = 0;
-
   constructor() {
     super();
     this.globalEnv = new objects.Environment();
@@ -168,6 +167,22 @@ export class StepwiseEvaluator extends Evaluator {
       case statements.BlockStatement:
         result = this.executeBlockStatement(
           node as statements.BlockStatement,
+          env,
+          path
+        );
+        break;
+
+      case statements.ForStatement:
+        result = this.executeForStatement(
+          node as statements.ForStatement,
+          env,
+          path
+        );
+        break;
+
+      case statements.WhileStatement:
+        result = this.executeWhileStatement(
+          node as statements.WhileStatement,
           env,
           path
         );
@@ -335,6 +350,488 @@ export class StepwiseEvaluator extends Evaluator {
     );
 
     return value;
+  }
+
+  /**
+   * Execute a for statement step by step
+   *
+   * For Loop Execution Phases:
+   * 1. Environment Setup - Create loop-scoped environment
+   * 2. Initialization - Execute the initializer statement once
+   * 3. Condition Evaluation - Check if loop should continue
+   * 4. Body Execution - Execute loop body if condition is true
+   * 5. Increment Execution - Execute increment after body (critical for continue)
+   * 6. Control Flow Handling - Process break/continue statements
+   * 7. Iteration Management - Track iterations and prevent infinite loops
+   * 8. Loop Completion - Clean up and return final result
+   */
+  private executeForStatement(
+    stmt: statements.ForStatement,
+    env: objects.Environment,
+    path: string
+  ): objects.BaseObject {
+    // Phase 1: Environment Setup
+    this.addStep(
+      stmt,
+      env,
+      `Setting up for loop environment (depth: ${this.loopDepth + 1})`,
+      path,
+      "before"
+    );
+
+    const loopEnv = new objects.Environment(env);
+    this.loopDepth++;
+    let iterationCount = 0;
+
+    this.addOutput(`For loop started at depth ${this.loopDepth}`, "log");
+
+    try {
+      // Phase 2: Initialization
+      this.addStep(
+        stmt.initializer,
+        loopEnv,
+        "Executing for loop initializer",
+        `${path}.initializer`,
+        "before"
+      );
+
+      const initResult = this.executeStepByStep(
+        stmt.initializer,
+        loopEnv,
+        `${path}.initializer`
+      );
+
+      if (ObjectValidator.isError(initResult)) {
+        this.addOutput(
+          `For loop error in initializer: ${initResult.inspect()}`,
+          "error"
+        );
+        return initResult;
+      }
+
+      this.addStep(
+        stmt.initializer,
+        loopEnv,
+        `For loop initializer completed: ${initResult.inspect()}`,
+        `${path}.initializer`,
+        "after",
+        initResult
+      );
+
+      this.addOutput(
+        `For loop initialized: ${initResult.inspect()}`,
+        "assignment"
+      );
+
+      let result: objects.BaseObject = new objects.NullObject();
+
+      while (true) {
+        iterationCount++;
+
+        // Phase 3: Condition Evaluation
+        this.addStep(
+          stmt.condition,
+          loopEnv,
+          `Evaluating for loop condition (iteration ${iterationCount})`,
+          `${path}.condition[${iterationCount}]`,
+          "before"
+        );
+
+        const condition = this.executeStepByStep(
+          stmt.condition,
+          loopEnv,
+          `${path}.condition[${iterationCount}]`
+        );
+
+        if (ObjectValidator.isError(condition)) {
+          this.addOutput(
+            `For loop error in condition: ${condition.inspect()}`,
+            "error"
+          );
+          return condition;
+        }
+
+        const conditionValue = truthy(condition);
+
+        this.addStep(
+          stmt.condition,
+          loopEnv,
+          `Condition evaluated to: ${condition.inspect()} (${
+            conditionValue ? "continue" : "exit"
+          })`,
+          `${path}.condition[${iterationCount}]`,
+          "after",
+          condition
+        );
+
+        this.addOutput(
+          `For condition (iteration ${iterationCount}): ${condition.inspect()} → ${
+            conditionValue ? "continue" : "exit"
+          }`,
+          "operation"
+        );
+
+        // Exit loop if condition is false
+        if (!conditionValue) {
+          this.addStep(
+            stmt,
+            loopEnv,
+            `For loop condition is false, exiting after ${
+              iterationCount - 1
+            } iterations`,
+            path,
+            "after"
+          );
+          break;
+        }
+
+        // Phase 4: Body Execution
+        this.addStep(
+          stmt.body,
+          loopEnv,
+          `Executing for loop body (iteration ${iterationCount})`,
+          `${path}.body[${iterationCount}]`,
+          "before"
+        );
+
+        result = this.executeStepByStep(
+          stmt.body,
+          loopEnv,
+          `${path}.body[${iterationCount}]`
+        );
+
+        this.addStep(
+          stmt.body,
+          loopEnv,
+          `For loop body completed (iteration ${iterationCount})`,
+          `${path}.body[${iterationCount}]`,
+          "after",
+          result
+        );
+
+        // Handle errors and return values first
+        if (
+          ObjectValidator.isError(result) ||
+          ObjectValidator.isReturnValue(result)
+        ) {
+          if (ObjectValidator.isError(result)) {
+            this.addOutput(
+              `For loop error in body: ${result.inspect()}`,
+              "error"
+            );
+          } else {
+            this.addOutput(`For loop terminated by return statement`, "log");
+          }
+          return result;
+        }
+
+        // Phase 5: Increment Execution (CRITICAL: Execute BEFORE continue check)
+        this.addStep(
+          stmt.increment,
+          loopEnv,
+          `Executing for loop increment (iteration ${iterationCount})`,
+          `${path}.increment[${iterationCount}]`,
+          "before"
+        );
+
+        const incrementResult = this.executeStepByStep(
+          stmt.increment,
+          loopEnv,
+          `${path}.increment[${iterationCount}]`
+        );
+
+        if (ObjectValidator.isError(incrementResult)) {
+          this.addOutput(
+            `For loop error in increment: ${incrementResult.inspect()}`,
+            "error"
+          );
+          return incrementResult;
+        }
+
+        this.addStep(
+          stmt.increment,
+          loopEnv,
+          `For loop increment completed: ${incrementResult.inspect()}`,
+          `${path}.increment[${iterationCount}]`,
+          "after",
+          incrementResult
+        );
+
+        this.addOutput(
+          `For loop increment (iteration ${iterationCount}): ${incrementResult.inspect()}`,
+          "operation"
+        );
+
+        // Phase 6: Control Flow Handling (AFTER increment execution)
+        if (ObjectValidator.isBreak(result)) {
+          this.addStep(
+            stmt,
+            loopEnv,
+            `Break statement encountered, exiting for loop after ${iterationCount} iterations`,
+            path,
+            "after"
+          );
+          this.addOutput(
+            `For loop terminated by break after ${iterationCount} iterations`,
+            "log"
+          );
+          break;
+        }
+
+        if (ObjectValidator.isContinue(result)) {
+          this.addStep(
+            stmt,
+            loopEnv,
+            `Continue statement encountered, increment executed, continuing to next iteration`,
+            `${path}.continue[${iterationCount}]`,
+            "during"
+          );
+          this.addOutput(
+            `For loop iteration ${iterationCount} continued (increment executed)`,
+            "log"
+          );
+          continue;
+        }
+
+        // Phase 7: Iteration Management
+        if (iterationCount > this.MAX_ITERATIONS) {
+          const error = new objects.ErrorObject(
+            `For loop exceeded maximum iterations (${this.MAX_ITERATIONS})`
+          );
+          this.addOutput(`For loop terminated: too many iterations`, "error");
+          return error;
+        }
+
+        this.addOutput(
+          `For loop iteration ${iterationCount} completed successfully`,
+          "log"
+        );
+      }
+
+      // Phase 8: Loop Completion
+      this.addStep(
+        stmt,
+        loopEnv,
+        `For loop completed after ${iterationCount - 1} iterations`,
+        path,
+        "after",
+        this.processLoopResult(result)
+      );
+
+      this.addOutput(
+        `For loop finished: ${iterationCount - 1} iterations executed`,
+        "log"
+      );
+
+      return this.processLoopResult(result);
+    } finally {
+      this.loopDepth--;
+      this.addOutput(`For loop cleanup: depth now ${this.loopDepth}`, "log");
+    }
+  }
+
+  /**
+   * Execute a while statement step by step
+   *
+   * While Loop Execution Phases:
+   * 1. Loop Setup - Initialize loop tracking and environment
+   * 2. Condition Evaluation - Check if loop should continue
+   * 3. Body Execution - Execute loop body if condition is true
+   * 4. Control Flow Handling - Process break/continue statements
+   * 5. Iteration Management - Track iterations and prevent infinite loops
+   * 6. Loop Completion - Clean up and return final result
+   */
+  private executeWhileStatement(
+    stmt: statements.WhileStatement,
+    env: objects.Environment,
+    path: string
+  ): objects.BaseObject {
+    // Phase 1: Loop Setup
+    this.addStep(
+      stmt,
+      env,
+      `Setting up while loop (depth: ${this.loopDepth + 1})`,
+      path,
+      "before"
+    );
+
+    this.loopDepth++;
+    let result: objects.BaseObject = new objects.NullObject();
+    let iterationCount = 0;
+
+    this.addOutput(`While loop started at depth ${this.loopDepth}`, "log");
+
+    try {
+      while (true) {
+        iterationCount++;
+
+        // Phase 2: Condition Evaluation
+        this.addStep(
+          stmt.condition,
+          env,
+          `Evaluating while condition (iteration ${iterationCount})`,
+          `${path}.condition[${iterationCount}]`,
+          "before"
+        );
+
+        const condition = this.executeStepByStep(
+          stmt.condition,
+          env,
+          `${path}.condition[${iterationCount}]`
+        );
+
+        if (ObjectValidator.isError(condition)) {
+          this.addOutput(
+            `While loop error in condition: ${condition.inspect()}`,
+            "error"
+          );
+          return condition;
+        }
+
+        const conditionValue = truthy(condition);
+
+        this.addStep(
+          stmt.condition,
+          env,
+          `Condition evaluated to: ${condition.inspect()} (${
+            conditionValue ? "continue" : "exit"
+          })`,
+          `${path}.condition[${iterationCount}]`,
+          "after",
+          condition
+        );
+
+        this.addOutput(
+          `While condition (iteration ${iterationCount}): ${condition.inspect()} → ${
+            conditionValue ? "continue" : "exit"
+          }`,
+          "operation"
+        );
+
+        // Exit loop if condition is false
+        if (!conditionValue) {
+          this.addStep(
+            stmt,
+            env,
+            `While loop condition is false, exiting after ${
+              iterationCount - 1
+            } iterations`,
+            path,
+            "after"
+          );
+          break;
+        }
+
+        // Phase 3: Body Execution
+        this.addStep(
+          stmt.body,
+          env,
+          `Executing while loop body (iteration ${iterationCount})`,
+          `${path}.body[${iterationCount}]`,
+          "before"
+        );
+
+        result = this.executeStepByStep(
+          stmt.body,
+          env,
+          `${path}.body[${iterationCount}]`
+        );
+
+        this.addStep(
+          stmt.body,
+          env,
+          `While loop body completed (iteration ${iterationCount})`,
+          `${path}.body[${iterationCount}]`,
+          "after",
+          result
+        );
+
+        // Phase 4: Control Flow Handling
+        if (ObjectValidator.isError(result)) {
+          this.addOutput(
+            `While loop error in body: ${result.inspect()}`,
+            "error"
+          );
+          return result;
+        }
+
+        if (ObjectValidator.isReturnValue(result)) {
+          this.addStep(
+            stmt,
+            env,
+            `Return statement encountered in while loop, exiting`,
+            path,
+            "after"
+          );
+          this.addOutput(`While loop terminated by return statement`, "log");
+          return result;
+        }
+
+        if (ObjectValidator.isBreak(result)) {
+          this.addStep(
+            stmt,
+            env,
+            `Break statement encountered, exiting while loop after ${iterationCount} iterations`,
+            path,
+            "after"
+          );
+          this.addOutput(
+            `While loop terminated by break after ${iterationCount} iterations`,
+            "log"
+          );
+          break;
+        }
+
+        if (ObjectValidator.isContinue(result)) {
+          this.addStep(
+            stmt,
+            env,
+            `Continue statement encountered, skipping to next iteration`,
+            `${path}.continue[${iterationCount}]`,
+            "during"
+          );
+          this.addOutput(
+            `While loop iteration ${iterationCount} skipped by continue`,
+            "log"
+          );
+          continue;
+        }
+
+        // Phase 5: Iteration Management
+        if (iterationCount > this.MAX_ITERATIONS) {
+          const error = new objects.ErrorObject(
+            `While loop exceeded maximum iterations (${this.MAX_ITERATIONS})`
+          );
+          this.addOutput(`While loop terminated: too many iterations`, "error");
+          return error;
+        }
+
+        this.addOutput(
+          `While loop iteration ${iterationCount} completed successfully`,
+          "log"
+        );
+      }
+
+      // Phase 6: Loop Completion
+      this.addStep(
+        stmt,
+        env,
+        `While loop completed after ${iterationCount - 1} iterations`,
+        path,
+        "after",
+        this.processLoopResult(result)
+      );
+
+      this.addOutput(
+        `While loop finished: ${iterationCount - 1} iterations executed`,
+        "log"
+      );
+
+      return this.processLoopResult(result);
+    } finally {
+      this.loopDepth--;
+      this.addOutput(`While loop cleanup: depth now ${this.loopDepth}`, "log");
+    }
   }
 
   /**

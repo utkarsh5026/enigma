@@ -10,7 +10,6 @@ import { evalLogicalNotOperator, evalNegationOperator } from "./operator";
 
 const validate = ObjectValidator;
 
-const MAX_ITERATIONS = 1000000;
 /**
  * Evaluator class
  *
@@ -31,7 +30,9 @@ export default class Evaluator {
   protected readonly NULL = new objects.NullObject();
   private readonly BREAK = new objects.BreakObject();
   private readonly CONTINUE = new objects.ContinueObject();
-  private loopDepth: number = 0;
+  protected loopDepth: number = 0;
+
+  protected readonly MAX_ITERATIONS: number = 1000000;
 
   public evaluate(
     node: ast.Node,
@@ -371,7 +372,7 @@ export default class Evaluator {
         if (validate.isContinue(result)) continue;
 
         loopCount++;
-        if (loopCount > MAX_ITERATIONS) {
+        if (loopCount > this.MAX_ITERATIONS) {
           return new objects.ErrorObject("Loop limit exceeded");
         }
       }
@@ -421,7 +422,7 @@ export default class Evaluator {
         if (validate.isContinue(result)) continue;
 
         loopCount++;
-        if (loopCount > MAX_ITERATIONS) {
+        if (loopCount > this.MAX_ITERATIONS) {
           return new objects.ErrorObject("Loop limit exceeded");
         }
       }
@@ -628,7 +629,7 @@ export default class Evaluator {
     return res ? this.TRUE : this.FALSE;
   }
 
-  private processLoopResult(result: objects.BaseObject): objects.BaseObject {
+  protected processLoopResult(result: objects.BaseObject): objects.BaseObject {
     if (validate.isBreak(result)) return this.NULL;
     if (validate.isContinue(result)) return this.NULL;
     return result;
