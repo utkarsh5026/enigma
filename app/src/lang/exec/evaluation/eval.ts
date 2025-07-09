@@ -252,14 +252,93 @@ export default class Evaluator {
   ): objects.BaseObject {
     const identifier = node.name.value;
     if (env.has(identifier))
-      return err(`Identifier ${identifier} already declared`);
+      return err(`Identifier "${identifier}" already declared`);
 
     const value = this.evaluate(node.value, env);
-    if (value instanceof objects.ErrorObject) return value;
+    if (validate.isError(value)) return value;
 
     env.setConst(identifier, value);
     return value;
   }
+
+  // private evaluateWhileStatement(
+  //   ws: statement.WhileStatement,
+  //   env: objects.Environment
+  // ): objects.BaseObject {
+  //   let result: objects.BaseObject = this.NULL;
+  //   let loopCount = 0;
+  //   this.loopDepth++;
+
+  //   while (true) {
+  //     const condition = this.evaluate(ws.condition, env);
+  //     if (validate.isError(condition)) return condition;
+
+  //     if (!truthy(condition)) break;
+
+  //     result = this.evalBlockStatement(ws.body, env);
+  //     if (validate.isError(result)) return result;
+
+  //     if (validate.isBreak(result)) break;
+  //     else if (validate.isContinue(result)) continue;
+
+  //     if (validate.isReturnValue(result)) {
+  //       this.loopDepth--;
+  //       return result;
+  //     }
+
+  //     loopCount++;
+  //     if (loopCount > MAX_ITERATIONS)
+  //       return new objects.ErrorObject("Loop limit exceeded");
+  //   }
+
+  //   this.loopDepth--;
+  //   return this.processLoopResult(result);
+  // }
+
+  // private evalForStatement(
+  //   forLoop: statement.ForStatement,
+  //   env: objects.Environment
+  // ): objects.BaseObject {
+  //   const loopEnv = new objects.Environment(env);
+  //   const initResult = this.evaluate(forLoop.initializer, loopEnv);
+  //   if (validate.isError(initResult)) return initResult;
+
+  //   let result: objects.BaseObject = this.NULL;
+  //   let loopCount = 0;
+  //   this.loopDepth++;
+
+  //   while (true) {
+  //     const condition = this.evaluate(forLoop.condition, loopEnv);
+  //     if (validate.isError(condition)) {
+  //       this.loopDepth--;
+  //       return condition;
+  //     }
+
+  //     if (!truthy(condition)) break;
+
+  //     result = this.evaluate(forLoop.body, loopEnv);
+  //     if (validate.isReturnValue(result) || validate.isError(result)) {
+  //       this.loopDepth--;
+  //       return result;
+  //     }
+
+  //     if (validate.isBreak(result)) break;
+  //     if (validate.isContinue(result)) continue;
+
+  //     const incrementResult = this.evaluate(forLoop.increment, loopEnv);
+  //     if (validate.isError(incrementResult)) {
+  //       this.loopDepth--;
+  //       return incrementResult;
+  //     }
+
+  //     loopCount++;
+  //     if (loopCount > MAX_ITERATIONS)
+  //       return new objects.ErrorObject("Loop limit exceeded");
+  //   }
+
+  //   this.loopDepth--;
+  //   return this.processLoopResult(result);
+  // }
 
   private evaluateWhileStatement(
     ws: statement.WhileStatement,
@@ -269,29 +348,37 @@ export default class Evaluator {
     let loopCount = 0;
     this.loopDepth++;
 
-    while (true) {
-      const condition = this.evaluate(ws.condition, env);
-      if (validate.isError(condition)) return condition;
+    try {
+      while (true) {
+        const condition = this.evaluate(ws.condition, env);
+        if (validate.isError(condition)) {
+          return condition;
+        }
 
-      if (!truthy(condition)) break;
+        if (!truthy(condition)) break;
 
-      result = this.evalBlockStatement(ws.body, env);
-      if (validate.isError(result)) return result;
+        result = this.evalBlockStatement(ws.body, env);
 
-      if (validate.isBreak(result)) break;
-      else if (validate.isContinue(result)) continue;
+        if (validate.isError(result)) {
+          return result;
+        }
 
-      if (validate.isReturnValue(result)) {
-        this.loopDepth--;
-        return result;
+        if (validate.isReturnValue(result)) {
+          return result;
+        }
+
+        if (validate.isBreak(result)) break;
+        if (validate.isContinue(result)) continue;
+
+        loopCount++;
+        if (loopCount > MAX_ITERATIONS) {
+          return new objects.ErrorObject("Loop limit exceeded");
+        }
       }
-
-      loopCount++;
-      if (loopCount > MAX_ITERATIONS)
-        return new objects.ErrorObject("Loop limit exceeded");
+    } finally {
+      this.loopDepth--;
     }
 
-    this.loopDepth--;
     return this.processLoopResult(result);
   }
 
@@ -307,36 +394,42 @@ export default class Evaluator {
     let loopCount = 0;
     this.loopDepth++;
 
-    while (true) {
-      const condition = this.evaluate(forLoop.condition, loopEnv);
-      if (validate.isError(condition)) {
-        this.loopDepth--;
-        return condition;
+    try {
+      while (true) {
+        const condition = this.evaluate(forLoop.condition, loopEnv);
+        if (validate.isError(condition)) {
+          return condition;
+        }
+
+        if (!truthy(condition)) break;
+
+        result = this.evaluate(forLoop.body, loopEnv);
+
+        if (validate.isReturnValue(result) || validate.isError(result)) {
+          return result;
+        }
+
+        if (validate.isBreak(result)) break;
+
+        // 🔧 CRITICAL FIX: Execute increment BEFORE continue check
+        const incrementResult = this.evaluate(forLoop.increment, loopEnv);
+        if (validate.isError(incrementResult)) {
+          return incrementResult;
+        }
+
+        // Now handle continue (after increment has executed)
+        if (validate.isContinue(result)) continue;
+
+        loopCount++;
+        if (loopCount > MAX_ITERATIONS) {
+          return new objects.ErrorObject("Loop limit exceeded");
+        }
       }
-
-      if (!truthy(condition)) break;
-
-      result = this.evaluate(forLoop.body, loopEnv);
-      if (validate.isReturnValue(result) || validate.isError(result)) {
-        this.loopDepth--;
-        return result;
-      }
-
-      if (validate.isBreak(result)) break;
-      if (validate.isContinue(result)) continue;
-
-      const incrementResult = this.evaluate(forLoop.increment, loopEnv);
-      if (validate.isError(incrementResult)) {
-        this.loopDepth--;
-        return incrementResult;
-      }
-
-      loopCount++;
-      if (loopCount > MAX_ITERATIONS)
-        return new objects.ErrorObject("Loop limit exceeded");
+    } finally {
+      // 🔧 FIX: Always cleanup loop depth
+      this.loopDepth--;
     }
 
-    this.loopDepth--;
     return this.processLoopResult(result);
   }
 

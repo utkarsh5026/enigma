@@ -120,9 +120,6 @@ export class Parser {
       case TokenType.LBRACE:
         return this.parseBlockStatement();
 
-      // case TokenType.CLASS:
-      //   return this.parseClassDeclaration();
-
       default:
         return this.parseExpressionStatement();
     }
@@ -329,38 +326,38 @@ export class Parser {
     return new statements.ExpressionStatement(startToken, assignExpr);
   }
 
-  private parseForLoopStatement(): statements.ForStatement | null {
-    const forToken = this.currentToken;
+  // private parseForLoopStatement(): statements.ForStatement | null {
+  //   const forToken = this.currentToken;
 
-    if (!this.consume(TokenType.LPAREN)) return null;
+  //   if (!this.consume(TokenType.LPAREN)) return null;
 
-    this.forward(); // Move past '('
-    const init = this.parseStatement();
-    if (init === null) {
-      this.error("Expected initialization statement");
-      return null;
-    }
+  //   this.forward(); // Move past '('
+  //   const init = this.parseStatement();
+  //   if (init === null) {
+  //     this.error("Expected initialization statement");
+  //     return null;
+  //   }
 
-    const condition = this.parseExpression(Precedence.LOWEST);
-    if (condition === null) {
-      this.error("Expected condition expression");
-      return null;
-    }
+  //   const condition = this.parseExpression(Precedence.LOWEST);
+  //   if (condition === null) {
+  //     this.error("Expected condition expression");
+  //     return null;
+  //   }
 
-    const update = this.parseExpression(Precedence.LOWEST);
-    if (update === null) {
-      this.error("Expected update expression");
-      return null;
-    }
+  //   const update = this.parseExpression(Precedence.LOWEST);
+  //   if (update === null) {
+  //     this.error("Expected update expression");
+  //     return null;
+  //   }
 
-    const body = this.parseBlockStatement();
-    if (body === null) {
-      this.error("Expected body statement");
-      return null;
-    }
+  //   const body = this.parseBlockStatement();
+  //   if (body === null) {
+  //     this.error("Expected body statement");
+  //     return null;
+  //   }
 
-    return new statements.ForStatement(forToken, init, condition, update, body);
-  }
+  //   return new statements.ForStatement(forToken, init, condition, update, body);
+  // }
 
   /**
    * Advances the parser to the next token.
@@ -764,6 +761,67 @@ export class Parser {
 
     const consequence = this.parseBlockStatement();
     return [condition, consequence];
+  }
+
+  private parseForLoopStatement(): statements.ForStatement | null {
+    const forToken = this.currentToken;
+
+    // Expect opening parenthesis
+    if (!this.consume(TokenType.LPAREN)) {
+      this.error("Expected '(' after 'for'");
+      return null;
+    }
+
+    // Parse initialization statement
+    this.forward(); // Move past '('
+    const init = this.parseStatement();
+    if (init === null) {
+      this.error("Expected initialization statement in for loop");
+      return null;
+    }
+
+    // The initialization statement should have consumed its own semicolon
+    // Now parse the condition expression
+    const condition = this.parseExpression(Precedence.LOWEST);
+    if (condition === null) {
+      this.error("Expected condition expression in for loop");
+      return null;
+    }
+
+    // Expect semicolon after condition
+    if (!this.consume(TokenType.SEMICOLON)) {
+      this.error("Expected ';' after for loop condition");
+      return null;
+    }
+
+    // Parse increment expression
+    this.forward(); // Move past ';'
+    const update = this.parseExpression(Precedence.LOWEST);
+    if (update === null) {
+      this.error("Expected increment expression in for loop");
+      return null;
+    }
+
+    // Expect closing parenthesis
+    if (!this.consume(TokenType.RPAREN)) {
+      this.error("Expected ')' after for loop clauses");
+      return null;
+    }
+
+    // Expect opening brace for body
+    if (!this.consume(TokenType.LBRACE)) {
+      this.error("Expected '{' for for loop body");
+      return null;
+    }
+
+    // Parse the loop body
+    const body = this.parseBlockStatement();
+    if (body === null) {
+      this.error("Expected for loop body");
+      return null;
+    }
+
+    return new statements.ForStatement(forToken, init, condition, update, body);
   }
 
   /**
