@@ -37,10 +37,6 @@ export class Parser {
   private prefixParseFunctions: Record<TokenType, PrefixParseFunction>;
   private infixParseFunctions: Record<TokenType, InfixParseFunction>;
 
-  /**
-   * Creates a new Parser instance.
-   * @param {Lexer} lexer The lexer to use for tokenization.
-   */
   constructor(lexer: Lexer) {
     this.lexer = lexer;
     this.prefixParseFunctions = {} as Record<TokenType, PrefixParseFunction>;
@@ -52,15 +48,6 @@ export class Parser {
     this.forward();
   }
 
-  /**
-   * Parses the entire program and returns the AST.
-   * @returns {ast.Program} The parsed program as an AST.
-   *
-   * @example
-   * const program = parser.parseProgram();
-   * console.log(program.toString());
-   * // Output: let x = (5 + 3);
-   */
   public parseProgram(): ast.Program {
     const program = new ast.Program();
     while (this.currentToken.type !== TokenType.EOF) {
@@ -75,7 +62,7 @@ export class Parser {
         }
         this.synchronize();
       }
-      this.forward();
+      this.consume(TokenType.SEMICOLON, true);
     }
 
     return program;
@@ -95,49 +82,58 @@ export class Parser {
    * @private
    */
   private parseStatement(): ast.Statement | null {
+    let statement: ast.Statement | null;
     switch (this.currentToken.type) {
-      case TokenType.LET:
-        return this.parseLetStatement();
+      case TokenType.LET: {
+        statement = this.parseLetStatement();
+        break;
+      }
 
-      case TokenType.CONST:
-        return this.parseConstStatement();
+      case TokenType.CONST: {
+        statement = this.parseConstStatement();
+        break;
+      }
 
-      case TokenType.RETURN:
-        return this.parseReturnStatement();
+      case TokenType.RETURN: {
+        statement = this.parseReturnStatement();
+        break;
+      }
 
-      case TokenType.WHILE:
-        return this.parseWhileStatement();
+      case TokenType.WHILE: {
+        statement = this.parseWhileStatement();
+        break;
+      }
 
-      case TokenType.BREAK:
-        return this.parseBreakStatement();
+      case TokenType.BREAK: {
+        statement = this.parseBreakStatement();
+        break;
+      }
 
-      case TokenType.FOR:
-        return this.parseForLoopStatement();
+      case TokenType.FOR: {
+        statement = this.parseForLoopStatement();
+        break;
+      }
 
-      case TokenType.CONTINUE:
-        return this.parseContinueStatement();
+      case TokenType.CONTINUE: {
+        statement = this.parseContinueStatement();
+        break;
+      }
 
-      case TokenType.LBRACE:
-        return this.parseBlockStatement();
+      case TokenType.LBRACE: {
+        statement = this.parseBlockStatement();
+        break;
+      }
 
-      default:
-        return this.parseExpressionStatement();
+      default: {
+        statement = this.parseExpressionStatement();
+        break;
+      }
     }
+
+    this.forward();
+    return statement;
   }
 
-  /**
-   * Parses a let statement.
-   * @returns {statements.LetStatement | null} The parsed let statement or null if parsing fails.
-   * @private
-   *
-   * @example
-   * // Assuming the current token is 'let'
-   * const letStatement = parser.parseLetStatement();
-   * if (letStatement) {
-   *     console.log(letStatement.toString());
-   *     // Output: let x = 5;
-   * }
-   */
   private parseLetStatement(): statements.LetStatement | null {
     const letToken = this.currentToken;
     if (!this.consume(TokenType.IDENTIFIER)) return null;
@@ -152,24 +148,13 @@ export class Parser {
     const value = this.parseExpression(Precedence.LOWEST);
     if (value === null) return null;
 
+    console.log("value", value, this.currentToken);
     if (!this.consume(TokenType.SEMICOLON)) return null;
 
+    console.log("let", name, value, this.currentToken);
     return new statements.LetStatement(letToken, name, value);
   }
 
-  /**
-   * Parses a return statement.
-   * @returns {statements.ReturnStatement | null} The parsed return statement or null if parsing fails.
-   * @private
-   *
-   * @example
-   * // Assuming the current token is 'return'
-   * const returnStatement = parser.parseReturnStatement();
-   * if (returnStatement) {
-   *     console.log(returnStatement.toString());
-   *     // Output: return 42;
-   * }
-   */
   private parseReturnStatement(): statements.ReturnStatement | null {
     const returnToken = this.currentToken;
     this.forward();
@@ -182,11 +167,6 @@ export class Parser {
     return new statements.ReturnStatement(returnToken, returnValue);
   }
 
-  /**
-   * Parses a while statement.
-   * @returns {WhileStatement | null} The parsed while statement or null if parsing fails.
-   * @private
-   */
   private parseWhileStatement(): statements.WhileStatement | null {
     const whileToken = this.currentToken;
 
@@ -225,11 +205,6 @@ export class Parser {
     return new statements.ConstStatement(constToken, name, value);
   }
 
-  /**
-   * Parses a break statement.
-   * @returns {BreakStatement | null} The parsed break statement or null if parsing fails.
-   * @private
-   */
   private parseBreakStatement(): statements.BreakStatement | null {
     if (this.loopDepth === 0) {
       this.error(`Break statement must be inside a loop.`);
@@ -242,11 +217,6 @@ export class Parser {
     return new statements.BreakStatement(breakToken);
   }
 
-  /**
-   * Parses a continue statement.
-   * @returns {ContinueStatement | null} The parsed continue statement or null if parsing fails.
-   * @private
-   */
   private parseContinueStatement(): statements.ContinueStatement | null {
     if (this.loopDepth === 0) {
       this.error("Continue statement must be inside a loop.");
@@ -259,13 +229,9 @@ export class Parser {
     return new statements.ContinueStatement(continueToken);
   }
 
-  /**
-   * Parses an expression statement.
-   * @returns {ExpressionStatement | null} The parsed expression statement or null if parsing fails.
-   * @private
-   */
   private parseExpressionStatement(): statements.ExpressionStatement | null {
     const token = this.currentToken;
+    console.log("parseExpressionStatement", token, this.currentToken);
 
     if (
       this.isCurrentToken(TokenType.IDENTIFIER) &&
@@ -286,14 +252,6 @@ export class Parser {
     return new statements.ExpressionStatement(token, expression);
   }
 
-  /**
-   * Parses a compound assignment statement (e.g., +=, -=, *=, /=).
-   * This method handles the parsing of statements like "x += 5" or "y *= 2".
-   *
-   * @returns {ExpressionStatement | null} The parsed compound assignment statement as an ExpressionStatement,
-   *                                       or null if parsing fails.
-   * @private
-   */
   private parseCompoundStatement(): statements.ExpressionStatement | null {
     const startToken = this.currentToken;
     const left = new ast.Identifier(startToken, startToken.literal);
@@ -326,92 +284,33 @@ export class Parser {
     return new statements.ExpressionStatement(startToken, assignExpr);
   }
 
-  // private parseForLoopStatement(): statements.ForStatement | null {
-  //   const forToken = this.currentToken;
-
-  //   if (!this.consume(TokenType.LPAREN)) return null;
-
-  //   this.forward(); // Move past '('
-  //   const init = this.parseStatement();
-  //   if (init === null) {
-  //     this.error("Expected initialization statement");
-  //     return null;
-  //   }
-
-  //   const condition = this.parseExpression(Precedence.LOWEST);
-  //   if (condition === null) {
-  //     this.error("Expected condition expression");
-  //     return null;
-  //   }
-
-  //   const update = this.parseExpression(Precedence.LOWEST);
-  //   if (update === null) {
-  //     this.error("Expected update expression");
-  //     return null;
-  //   }
-
-  //   const body = this.parseBlockStatement();
-  //   if (body === null) {
-  //     this.error("Expected body statement");
-  //     return null;
-  //   }
-
-  //   return new statements.ForStatement(forToken, init, condition, update, body);
-  // }
-
-  /**
-   * Advances the parser to the next token.
-   * @private
-   */
   private forward(): void {
     this.currentToken = this.peekToken;
     this.peekToken = this.lexer.nextToken();
   }
 
-  /**
-   * Checks if the peek token is of the specified type.
-   * @param {TokenType} type The token type to check for.
-   * @returns {boolean} True if the peek token matches the specified type, false otherwise.
-   * @private
-   */
   private isPeekTokenOfType(type: TokenType): boolean {
     return this.peekToken.type === type;
   }
 
-  /**
-   * Expects the peek token to be of the specified type and advances if it is.
-   * @param {TokenType} type The expected token type.
-   * @returns {boolean} True if the peek token matches and the parser advanced, false otherwise.
-   * @private
-   */
-  private consume(type: TokenType): boolean {
+  private consume(type: TokenType, skipError?: boolean): boolean {
     if (this.isPeekTokenOfType(type)) {
       this.forward();
       return true;
     } else {
-      this.addTokenTypeError(type);
+      if (!skipError) this.addTokenTypeError(type);
       return false;
     }
   }
 
-  /**
-   * Adds a token type error to the error list.
-   * @param {TokenType} type The expected token type.
-   * @private
-   */
   private addTokenTypeError(type: TokenType): void {
     const peek = this.peekToken;
     const message = `Expected next token to be ${type}, got ${peek.type} instead`;
     this.error(message, peek);
   }
 
-  /**
-   * Parses an expression with the given precedence.
-   * @param {Precedence} precedence The precedence level to parse at.
-   * @returns {Expression | null} The parsed expression or null if parsing fails.
-   * @private
-   */
   private parseExpression(precedence: Precedence): ast.Expression | null {
+    console.log("parseExpression", precedence, this.currentToken);
     const prefixFn = this.prefixParseFunctions[this.currentToken.type];
 
     if (!prefixFn) {
@@ -439,20 +338,10 @@ export class Parser {
     return leftExpression;
   }
 
-  /**
-   * Parses an identifier.
-   * @returns {Expression} The parsed identifier expression.
-   * @private
-   */
   private parseIdentifier(): ast.Expression {
     return new ast.Identifier(this.currentToken, this.currentToken.literal);
   }
 
-  /**
-   * Parses a boolean expression.
-   * @returns {Expression} The parsed boolean expression.
-   * @private
-   */
   private parseBoolean(): ast.Expression {
     return new expressions.BooleanExpression(
       this.currentToken,
@@ -460,11 +349,6 @@ export class Parser {
     );
   }
 
-  /**
-   * Parses a string literal.
-   * @returns {Expression} The parsed string literal expression.
-   * @private
-   */
   private parseStringLiteral(): ast.Expression {
     return new literals.StringLiteral(
       this.currentToken,
@@ -472,11 +356,6 @@ export class Parser {
     );
   }
 
-  /**
-   * Parses an integer literal.
-   * @returns {Expression | null} The parsed integer literal expression or null if parsing fails.
-   * @private
-   */
   private parseIntegerLiteral(): ast.Expression | null {
     const tok = this.currentToken;
     const value = parseInt(tok.literal, 10);
@@ -512,11 +391,6 @@ export class Parser {
     return new literals.FunctionLiteral(token, parameters, body);
   }
 
-  /**
-   * Parses function parameters.
-   * @returns {Identifier[]} An array of parsed parameter identifiers.
-   * @private
-   */
   private parseFunctionParameters(): ast.Identifier[] | null {
     const identifiers: ast.Identifier[] = [];
 
@@ -549,23 +423,12 @@ export class Parser {
     return identifiers;
   }
 
-  /**
-   * Parses an array literal.
-   * @returns {Expression | null} The parsed array literal expression or null if parsing fails.
-   * @private
-   */
   private parseArrayLiteral(): ast.Expression | null {
     const token = this.currentToken;
     const elements = this.parseExpressionList(TokenType.RBRACKET);
     return new literals.ArrayLiteral(token, elements);
   }
 
-  /**
-   * Parses a list of expressions.
-   * @param {TokenType} end The token type that marks the end of the list.
-   * @returns {Expression[]} An array of parsed expressions.
-   * @private
-   */
   private parseExpressionList(end: TokenType): ast.Expression[] {
     const list: ast.Expression[] = [];
 
@@ -590,11 +453,6 @@ export class Parser {
     return list;
   }
 
-  /**
-   * Parses a hash literal.
-   * @returns {Expression | null} The parsed hash literal expression or null if parsing fails.
-   * @private
-   */
   private parseHashLiteral(): ast.Expression | null {
     const token = this.currentToken;
     const pairs = new Map<ast.Expression, ast.Expression>();
@@ -626,12 +484,6 @@ export class Parser {
     return new literals.HashLiteral(token, pairs);
   }
 
-  /**
-   * Parses an index expression.
-   * @param {Expression} left The left-hand side expression.
-   * @returns {Expression | null} The parsed index expression or null if parsing fails.
-   * @private
-   */
   private parseIndexExpression(left: ast.Expression): ast.Expression | null {
     const token = this.currentToken;
     this.forward();
@@ -642,11 +494,6 @@ export class Parser {
     return new expressions.IndexExpression(token, left, index);
   }
 
-  /**
-   * Parses a prefix expression.
-   * @returns {Expression | null} The parsed prefix expression or null if parsing fails.
-   * @private
-   */
   private parsePrefixExpression(): ast.Expression | null {
     const token = this.currentToken;
     const operator = token.literal;
@@ -659,12 +506,6 @@ export class Parser {
     return new expressions.PrefixExpression(token, operator, right);
   }
 
-  /**
-   * Parses an infix expression.
-   * @param {Expression} left The left-hand side expression.
-   * @returns {Expression | null} The parsed infix expression or null if parsing fails.
-   * @private
-   */
   private parseInfixExpression(left: ast.Expression): ast.Expression | null {
     const token = this.currentToken;
     const operator = token.literal as Operator;
@@ -682,11 +523,6 @@ export class Parser {
     return new expressions.InfixExpression(token, left, operator, right);
   }
 
-  /**
-   * Parses a grouped expression.
-   * @returns {Expression | null} The parsed grouped expression or null if parsing fails.
-   * @private
-   */
   private parseGroupedExpression(): ast.Expression | null {
     this.forward();
     const expression = this.parseExpression(Precedence.LOWEST);
@@ -695,11 +531,6 @@ export class Parser {
     return expression;
   }
 
-  /**
-   * Parses an if expression.
-   * @returns {Expression | null} The parsed if expression or null if parsing fails.
-   * @private
-   */
   private parseIfExpression(): ast.Expression | null {
     const token = this.currentToken;
     const conditions: ast.Expression[] = [];
@@ -737,15 +568,6 @@ export class Parser {
     );
   }
 
-  /**
-   * Parses a single if-part (condition and consequence) of an if-expression.
-   * This method handles the parsing of the condition in parentheses and the
-   * consequence block in braces.
-   *
-   * @returns {[ast.Expression, statements.BlockStatement] | null} A tuple containing
-   * the parsed condition expression and consequence block statement, or null if parsing fails.
-   * @private
-   */
   private parseIfPart(): [ast.Expression, statements.BlockStatement] | null {
     if (!this.consume(TokenType.LPAREN)) return null;
     this.forward();
@@ -775,6 +597,8 @@ export class Parser {
     // Parse initialization statement
     this.forward(); // Move past '('
     const init = this.parseStatement();
+
+    console.log("init", init, this.currentToken);
     if (init === null) {
       this.error("Expected initialization statement in for loop");
       return null;
@@ -820,6 +644,9 @@ export class Parser {
       this.error("Expected for loop body");
       return null;
     }
+
+    this.forward();
+    console.log("forloop", this.currentToken);
 
     return new statements.ForStatement(forToken, init, condition, update, body);
   }

@@ -46,7 +46,6 @@ export const useProgram = (code: string) => {
       const parser = new Parser(lexer);
       const program = parser.parseProgram();
       setProgram(program);
-      console.log(program, parser.parserErrors());
 
       if (parser.parserErrors().length > 0) {
         setParserErrors(parser.parserErrors());
@@ -68,6 +67,5 @@ export const useProgram = (code: string) => {
     parse();
   }, [code, reset, parse]);
 
-  console.log(code, program, parserErrors, tokens);
   return { program, parserErrors, tokens };
 };
