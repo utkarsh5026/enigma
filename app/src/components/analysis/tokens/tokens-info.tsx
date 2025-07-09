@@ -52,6 +52,8 @@ export const tokenCategories = {
     TokenType.BITWISE_NOT,
     TokenType.BITWISE_LEFT_SHIFT,
     TokenType.BITWISE_RIGHT_SHIFT,
+    TokenType.LESS_THAN_OR_EQUAL,
+    TokenType.GREATER_THAN_OR_EQUAL,
   ],
   Punctuation: [
     TokenType.COMMA,
@@ -70,100 +72,140 @@ export const tokenCategories = {
 
 export const getTokenColor = (type: TokenType): string => {
   const colorMap: Partial<Record<TokenType, string>> = {
-    // Keywords - subtle purple
+    // Keywords - Tokyo purple
     [TokenType.FUNCTION]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.LET]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.CONST]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.IF]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.ELSE]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.RETURN]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.WHILE]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.FOR]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.BREAK]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.CONTINUE]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.ELIF]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
     [TokenType.CLASS]:
-      "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
+    [TokenType.EXTENDS]:
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
+    [TokenType.SUPER]:
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
+    [TokenType.THIS]:
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
+    [TokenType.NEW]:
+      "bg-purple-100 text-purple-800 dark:bg-[var(--color-tokyo-purple)]/20 dark:text-[var(--color-tokyo-purple)]",
 
-    // Identifiers - subtle blue
+    // Identifiers - Tokyo blue
     [TokenType.IDENTIFIER]:
-      "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
+      "bg-blue-100 text-blue-800 dark:bg-[var(--color-tokyo-blue)]/20 dark:text-[var(--color-tokyo-blue)]",
 
-    // Literals - subtle variations
+    // Literals - Tokyo theme colors
     [TokenType.INT]:
-      "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
+      "bg-amber-100 text-amber-800 dark:bg-[var(--color-tokyo-orange)]/20 dark:text-[var(--color-tokyo-orange)]",
     [TokenType.STRING]:
-      "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+      "bg-green-100 text-green-800 dark:bg-[var(--color-tokyo-green)]/20 dark:text-[var(--color-tokyo-green)]",
     [TokenType.TRUE]:
-      "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+      "bg-red-100 text-red-800 dark:bg-[var(--color-tokyo-red)]/20 dark:text-[var(--color-tokyo-red)]",
     [TokenType.FALSE]:
-      "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+      "bg-red-100 text-red-800 dark:bg-[var(--color-tokyo-red)]/20 dark:text-[var(--color-tokyo-red)]",
     [TokenType.NULL]:
-      "bg-gray-100 text-gray-800 dark:bg-gray-900/40 dark:text-gray-300",
+      "bg-gray-100 text-gray-800 dark:bg-[var(--color-tokyo-comment)]/20 dark:text-[var(--color-tokyo-comment)]",
 
-    // Operators - subtle cyan
+    // Operators - Tokyo cyan
     [TokenType.ASSIGN]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.PLUS]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.MINUS]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.BANG]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.ASTERISK]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.SLASH]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.MODULUS]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.EQ]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.NOT_EQ]:
-      "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.LESS_THAN]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.GREATER_THAN]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.PLUS_ASSIGN]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.MINUS_ASSIGN]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.ASTERISK_ASSIGN]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.SLASH_ASSIGN]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.AND]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.OR]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.BITWISE_AND]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.BITWISE_OR]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.BITWISE_XOR]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.BITWISE_NOT]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.BITWISE_LEFT_SHIFT]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.BITWISE_RIGHT_SHIFT]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.LESS_THAN_OR_EQUAL]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
+    [TokenType.GREATER_THAN_OR_EQUAL]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
 
-    // Punctuation - very subtle gray
+    // Punctuation - Tokyo comment color (subtle)
     [TokenType.COMMA]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.SEMICOLON]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.COLON]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.DOT]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.LPAREN]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.RPAREN]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.LBRACE]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.RBRACE]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.LBRACKET]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.RBRACKET]:
-      "bg-gray-100 text-gray-700 dark:bg-gray-800/30 dark:text-gray-400",
+      "bg-gray-100 text-gray-700 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]",
 
     // Special cases
     [TokenType.EOF]:
-      "bg-gray-100 text-gray-500 dark:bg-gray-800/30 dark:text-gray-500",
+      "bg-gray-100 text-gray-500 dark:bg-[var(--color-tokyo-comment)]/10 dark:text-[var(--color-tokyo-comment)]",
     [TokenType.ILLEGAL]:
-      "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+      "bg-red-100 text-red-800 dark:bg-[var(--color-tokyo-red)]/20 dark:text-[var(--color-tokyo-red)]",
   };
 
   return (
     colorMap[type] ||
-    "bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-400"
+    "bg-gray-100 text-gray-800 dark:bg-[var(--color-tokyo-comment)]/15 dark:text-[var(--color-tokyo-comment)]"
   );
 };
 

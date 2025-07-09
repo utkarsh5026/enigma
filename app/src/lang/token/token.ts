@@ -18,6 +18,8 @@ export enum TokenType {
 
   LESS_THAN = "<",
   GREATER_THAN = ">",
+  LESS_THAN_OR_EQUAL = "<=",
+  GREATER_THAN_OR_EQUAL = ">=",
 
   COMMA = ",",
   SEMICOLON = ";",
@@ -136,6 +138,6 @@ export const getKeywords = (): string[] => {
 };
 
 export type IntegerOperator = "+" | "-" | "*" | "/" | "%";
-export type BooleanOperator = "<" | ">" | "==" | "!=";
+export type BooleanOperator = "<" | ">" | "<=" | ">=" | "==" | "!=";
 export type LogicalOperator = "&&" | "||";
 export type Operator = IntegerOperator | BooleanOperator | LogicalOperator;

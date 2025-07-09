@@ -143,11 +143,17 @@ export default class Lexer {
         break;
 
       case "<":
-        token = this.createTok(TokenType.LESS_THAN, this.currCh);
+        token = this.handleDoubleLiteral(
+          TokenType.LESS_THAN_OR_EQUAL,
+          TokenType.LESS_THAN
+        );
         break;
 
       case ">":
-        token = this.createTok(TokenType.GREATER_THAN, this.currCh);
+        token = this.handleDoubleLiteral(
+          TokenType.GREATER_THAN_OR_EQUAL,
+          TokenType.GREATER_THAN
+        );
         break;
 
       case "{":

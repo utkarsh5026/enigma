@@ -115,8 +115,8 @@ export class FunctionLiteral extends Expression {
    * @returns A string representation of the function, including parameters and body.
    */
   toString(): string {
-    const params = this.parameters.map((p) => p.toString()).join(", ");
-    return `${this.tokenLiteral()}(${params}) ${this.body.toString()}`;
+    const statements = this.body.statements.map((s) => s.toString()).join("\n");
+    return `${this.functionSignature()} { \n${statements}\n}`;
   }
 
   functionSignature(): string {
