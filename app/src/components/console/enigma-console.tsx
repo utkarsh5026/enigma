@@ -1,4 +1,4 @@
-// app/src/components/console/console.tsx
+// app/src/components/console/integrated-console.tsx
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -6,9 +6,9 @@ import {
   Terminal,
   Trash2,
   Copy,
-  Download,
   ChevronUp,
   ChevronDown,
+  X,
   Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,45 +16,39 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { consoleStore, type ConsoleEntry } from "@/stores/console-stores";
 
-interface ConsoleProps {
-  className?: string;
-  maxHeight?: string;
-  isCollapsible?: boolean;
+interface IntegratedConsoleProps {
+  isVisible: boolean;
+  onClose: () => void;
+  onToggleSize?: () => void;
+  isMinimized?: boolean;
 }
 
 /**
- * Console Component - Displays output from print statements
- *
- * This component subscribes to the console store and displays all
- * output from print, println, and error functions in a terminal-like interface.
+ * Integrated Console Component - VS Code style console for the bottom panel
  */
-const Console: React.FC<ConsoleProps> = ({
-  className = "",
-  maxHeight = "300px",
-  isCollapsible = true,
+const IntegratedConsole: React.FC<IntegratedConsoleProps> = ({
+  isVisible,
+  onClose,
+  onToggleSize,
+  isMinimized = false,
 }) => {
   const [entries, setEntries] = useState<ConsoleEntry[]>([]);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // Subscribe to console store
   useEffect(() => {
     const unsubscribe = consoleStore.subscribe(setEntries);
-
-    // Get initial entries
     setEntries(consoleStore.getEntries());
-
     return unsubscribe;
   }, []);
 
   // Auto-scroll to bottom when new entries are added
   useEffect(() => {
-    if (autoScroll && bottomRef.current) {
+    if (autoScroll && bottomRef.current && isVisible && !isMinimized) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [entries, autoScroll]);
+  }, [entries, autoScroll, isVisible, isMinimized]);
 
   const handleClear = () => {
     consoleStore.clear();
@@ -70,47 +64,19 @@ const Console: React.FC<ConsoleProps> = ({
 
     try {
       await navigator.clipboard.writeText(text);
-      // You could add a toast notification here
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
     }
   };
 
-  const handleDownload = () => {
-    const text = entries
-      .map(
-        (entry) =>
-          `[${new Date(
-            entry.timestamp
-          ).toLocaleTimeString()}] [${entry.type.toUpperCase()}] ${
-            entry.content
-          }`
-      )
-      .join("\n");
-
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `console-output-${new Date().toISOString().slice(0, 10)}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   const getEntryStyle = (type: ConsoleEntry["type"]) => {
     switch (type) {
-      case "print":
-        return "text-tokyo-fg";
-      case "println":
-        return "text-tokyo-fg";
       case "error":
-        return "text-tokyo-red";
+        return "text-[var(--tokyo-red)]";
       case "info":
-        return "text-tokyo-blue";
+        return "text-[var(--tokyo-blue)]";
       default:
-        return "text-tokyo-fg";
+        return "text-[var(--tokyo-fg)]";
     }
   };
 
@@ -125,122 +91,120 @@ const Console: React.FC<ConsoleProps> = ({
     }
   };
 
+  if (!isVisible) return null;
+
   return (
     <motion.div
-      className={`bg-tokyo-bg border border-tokyo-comment rounded-lg overflow-hidden ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      className="bg-[var(--tokyo-bg-dark)] border-t border-[var(--tokyo-comment)]/40 flex flex-col"
+      initial={{ height: 0 }}
+      animate={{ height: isMinimized ? 40 : 250 }}
+      exit={{ height: 0 }}
       transition={{ duration: 0.3 }}
     >
       {/* Console Header */}
-      <div className="bg-tokyo-bg-dark border-b border-tokyo-comment p-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-tokyo-green p-1.5 rounded">
-              <Terminal size={16} className="text-white" />
-            </div>
-            <div>
-              <h3 className="font-medium text-tokyo-fg">Console Output</h3>
-              <p className="text-xs text-tokyo-comment">
-                Output from print statements
-              </p>
-            </div>
+      <div className="bg-[var(--tokyo-bg-dark)] border-b border-[var(--tokyo-comment)]/30 px-4 py-2 flex items-center justify-between min-h-[40px]">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Terminal size={14} className="text-[var(--tokyo-green)]" />
+            <span className="font-medium text-[var(--tokyo-fg)] text-sm">
+              Console
+            </span>
+          </div>
+
+          {entries.length > 0 && (
             <Badge
               variant="secondary"
-              className="bg-tokyo-bg-highlight text-tokyo-fg"
+              className="bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg)] text-xs"
             >
-              {entries.length} {entries.length === 1 ? "entry" : "entries"}
+              {entries.length}
             </Badge>
-          </div>
+          )}
+        </div>
 
-          <div className="flex items-center gap-2">
-            {/* Auto-scroll toggle */}
+        <div className="flex items-center gap-1">
+          {/* Auto-scroll toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setAutoScroll(!autoScroll)}
+            className={`h-7 w-7 p-0 ${
+              autoScroll
+                ? "text-[var(--tokyo-green)]"
+                : "text-[var(--tokyo-comment)]"
+            }`}
+            title={`Auto-scroll: ${autoScroll ? "On" : "Off"}`}
+          >
+            <Settings size={12} />
+          </Button>
+
+          {/* Copy button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleCopy}
+            className="h-7 w-7 p-0 text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)]"
+            title="Copy all output"
+            disabled={entries.length === 0}
+          >
+            <Copy size={12} />
+          </Button>
+
+          {/* Clear button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClear}
+            className="h-7 w-7 p-0 text-[var(--tokyo-comment)] hover:text-[var(--tokyo-red)]"
+            title="Clear console"
+            disabled={entries.length === 0}
+          >
+            <Trash2 size={12} />
+          </Button>
+
+          {/* Minimize/Maximize toggle */}
+          {onToggleSize && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setAutoScroll(!autoScroll)}
-              className={`h-8 w-8 p-0 ${
-                autoScroll ? "text-tokyo-green" : "text-tokyo-comment"
-              }`}
-              title={`Auto-scroll: ${autoScroll ? "On" : "Off"}`}
+              onClick={onToggleSize}
+              className="h-7 w-7 p-0 text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)]"
+              title={isMinimized ? "Maximize console" : "Minimize console"}
             >
-              <Settings size={14} />
+              {isMinimized ? (
+                <ChevronUp size={12} />
+              ) : (
+                <ChevronDown size={12} />
+              )}
             </Button>
+          )}
 
-            {/* Copy button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCopy}
-              className="h-8 w-8 p-0 text-tokyo-comment hover:text-tokyo-fg"
-              title="Copy all output"
-              disabled={entries.length === 0}
-            >
-              <Copy size={14} />
-            </Button>
-
-            {/* Download button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDownload}
-              className="h-8 w-8 p-0 text-tokyo-comment hover:text-tokyo-fg"
-              title="Download as file"
-              disabled={entries.length === 0}
-            >
-              <Download size={14} />
-            </Button>
-
-            {/* Clear button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClear}
-              className="h-8 w-8 p-0 text-tokyo-comment hover:text-tokyo-red"
-              title="Clear console"
-              disabled={entries.length === 0}
-            >
-              <Trash2 size={14} />
-            </Button>
-
-            {/* Collapse toggle */}
-            {isCollapsible && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="h-8 w-8 p-0 text-tokyo-comment hover:text-tokyo-fg"
-                title={isCollapsed ? "Expand console" : "Collapse console"}
-              >
-                {isCollapsed ? (
-                  <ChevronUp size={14} />
-                ) : (
-                  <ChevronDown size={14} />
-                )}
-              </Button>
-            )}
-          </div>
+          {/* Close button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="h-7 w-7 p-0 text-[var(--tokyo-comment)] hover:text-[var(--tokyo-red)]"
+            title="Close console"
+          >
+            <X size={12} />
+          </Button>
         </div>
       </div>
 
       {/* Console Content */}
       <AnimatePresence>
-        {!isCollapsed && (
+        {!isMinimized && (
           <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-            exit={{ height: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden"
+            className="flex-1 overflow-hidden"
           >
-            <ScrollArea
-              className="font-mono text-sm"
-              style={{ height: maxHeight }}
-              ref={scrollAreaRef}
-            >
-              <div className="p-4 space-y-1">
+            <ScrollArea className="h-full font-mono text-xs">
+              <div className="p-3 space-y-1">
                 {entries.length === 0 ? (
-                  <div className="text-tokyo-comment italic text-center py-8">
+                  <div className="text-[var(--tokyo-comment)] italic text-center py-4 text-xs">
                     Console is empty. Run code with print statements to see
                     output here.
                   </div>
@@ -253,14 +217,14 @@ const Console: React.FC<ConsoleProps> = ({
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 10 }}
                         transition={{ duration: 0.2 }}
-                        className={`flex items-start gap-2 py-1 ${getEntryStyle(
+                        className={`flex items-start gap-2 py-0.5 ${getEntryStyle(
                           entry.type
                         )}`}
                       >
-                        <span className="text-tokyo-comment select-none w-2">
+                        <span className="text-[var(--tokyo-comment)] select-none w-3 text-xs">
                           {getEntryIcon(entry.type)}
                         </span>
-                        <span className="text-xs text-tokyo-comment select-none min-w-[60px]">
+                        <span className="text-xs text-[var(--tokyo-comment)] select-none min-w-[50px]">
                           {new Date(entry.timestamp).toLocaleTimeString()}
                         </span>
                         <span className="flex-1 break-words whitespace-pre-wrap">
@@ -271,7 +235,6 @@ const Console: React.FC<ConsoleProps> = ({
                   </AnimatePresence>
                 )}
 
-                {/* Invisible element for auto-scrolling */}
                 <div ref={bottomRef} />
               </div>
             </ScrollArea>
@@ -282,4 +245,4 @@ const Console: React.FC<ConsoleProps> = ({
   );
 };
 
-export default Console;
+export default IntegratedConsole;

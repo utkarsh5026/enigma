@@ -11,15 +11,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { extractSearchableText } from "../hooks/astUtils";
+import { extractSearchableText } from "../hooks/ast-utils";
 import EmptyAst from "./empty-ast";
 import AstTree from "./ast-tree";
-import { ErrorMessage } from "@/lang/parser/parser";
+import { ParseError } from "@/lang/parser";
 import { Program } from "@/lang/ast";
 
 interface ASTDisplayProps {
   program: Program | null;
-  parserErrors: ErrorMessage[];
+  parserErrors: ParseError[];
 }
 
 const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({

@@ -1,14 +1,14 @@
 import { ExecutionState } from "@/lang/exec/stepwise/types";
 import { Program } from "@/lang/ast/ast";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ErrorMessage } from "@/lang/parser/parser";
+import { ParseError } from "@/lang/parser";
 import { StepwiseEvaluator } from "@/lang/exec/stepwise";
 
 const evaluator = new StepwiseEvaluator();
 
 export const useExecutionControls = (
   program: Program | null,
-  parserErrors: ErrorMessage[]
+  parserErrors: ParseError[]
 ) => {
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null

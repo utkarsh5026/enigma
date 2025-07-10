@@ -2,7 +2,7 @@ import * as readline from "readline";
 import Evaluator from "../exec/evaluation/eval";
 import { Environment } from "../exec/objects";
 import Lexer from "../lexer/lexer";
-import { Parser } from "../parser/parser";
+import { EnigmaParser } from "../parser";
 
 /**
  * Represents a Read-Eval-Print Loop (REPL) for the ENIGMA language.
@@ -63,10 +63,10 @@ class Repl {
    */
   private parseProgram(line: string) {
     const lexer = new Lexer(line);
-    const parser = new Parser(lexer);
+    const parser = new EnigmaParser(lexer);
 
     const program = parser.parseProgram();
-    const errors = parser.parserErrors();
+    const errors = parser.getErrors();
 
     if (errors.length > 0) {
       this.printParserErrors(errors.map((error) => error.message));

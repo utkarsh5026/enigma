@@ -4,7 +4,7 @@ import { categories } from "../data";
 import {
   nodeDescriptions,
   nodeExamples,
-} from "../../analysis/ast/hooks/astUtils";
+} from "../../analysis/ast/hooks/ast-utils";
 import { highlightSyntax } from "../syntax";
 import { ScrollArea } from "@/components/ui/scroll-area";
 

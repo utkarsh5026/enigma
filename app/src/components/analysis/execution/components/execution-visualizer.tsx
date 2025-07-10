@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Program } from "@/lang/ast";
-import { ErrorMessage } from "@/lang/parser/parser";
+import { ParseError } from "@/lang/parser";
 import ExecutionControls from "./execution-controls";
 import VariablesDeclared from "./variables-declared";
 import OutputVisualizer from "./output-visualizer";
@@ -19,7 +19,7 @@ import { useExecutionControls } from "../hooks/use-execution";
 
 interface ExecutionVisualizerProps {
   program: Program | null;
-  parserErrors: ErrorMessage[];
+  parserErrors: ParseError[];
 }
 
 const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import Lexer from "@/lang/lexer/lexer";
-import { Parser } from "@/lang/parser/parser";
+import { EnigmaParser } from "@/lang/parser";
 import { Program } from "@/lang/ast";
-import { ErrorMessage } from "@/lang/parser/parser";
+import { ParseError } from "@/lang/parser";
 
 export type Ast = {
   program: Program;
-  errors: ErrorMessage[];
+  errors: ParseError[];
 };
 
 export const useAst = (code: string) => {
@@ -20,11 +20,11 @@ export const useAst = (code: string) => {
 
     try {
       const lexer = new Lexer(code);
-      const parser = new Parser(lexer);
+      const parser = new EnigmaParser(lexer);
       const program = parser.parseProgram();
 
-      if (parser.parserErrors().length > 0) {
-        setAst({ program, errors: parser.parserErrors() });
+      if (parser.getErrors().length > 0) {
+        setAst({ program, errors: parser.getErrors() });
       }
 
       setAst({ program, errors: [] });
