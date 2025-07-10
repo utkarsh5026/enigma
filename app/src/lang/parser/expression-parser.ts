@@ -426,13 +426,24 @@ export class ExpressionParser {
 
   private parseHashLiteral(context: ParsingContext): ast.Expression | null {
     const token = context.tokens.getCurrentToken();
-    const pairs = new Map<ast.Expression, ast.Expression>();
+    const pairs = new Map<string, ast.Expression>();
 
     while (!context.tokens.isPeekToken(TokenType.RBRACE)) {
       context.tokens.advance();
 
       const key = this.parseExpression(context, Precedence.LOWEST);
       if (!key) return null;
+
+      if (
+        !AstValidator.isStringLiteral(key) &&
+        !AstValidator.isIntegerLiteral(key)
+      ) {
+        context.errors.addError(
+          "Hash key must be a string or an integer literal",
+          context.tokens.getCurrentToken()
+        );
+        return null;
+      }
 
       if (!context.tokens.expect(TokenType.COLON)) {
         context.errors.addTokenError(
@@ -447,7 +458,7 @@ export class ExpressionParser {
       const value = this.parseExpression(context, Precedence.LOWEST);
       if (!value) return null;
 
-      pairs.set(key, value);
+      pairs.set(key.toString(), value);
 
       if (
         !context.tokens.isPeekToken(TokenType.RBRACE) &&
@@ -469,10 +480,10 @@ export class ExpressionParser {
       return null;
     }
 
+    console.log("HashLiteral", pairs);
     return new literals.HashLiteral(token, pairs);
   }
 
-  // Infix Parsers
   private parseInfixExpression(
     context: ParsingContext,
     left: ast.Expression

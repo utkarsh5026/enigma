@@ -124,6 +124,7 @@ export default class Evaluator {
 
       case literal.StringLiteral:
         return new objects.StringObject((node as literal.StringLiteral).value);
+
       default:
         return new objects.ErrorObject(
           `Unknown node type: ${node.constructor.name}`
@@ -262,85 +263,6 @@ export default class Evaluator {
     return value;
   }
 
-  // private evaluateWhileStatement(
-  //   ws: statement.WhileStatement,
-  //   env: objects.Environment
-  // ): objects.BaseObject {
-  //   let result: objects.BaseObject = this.NULL;
-  //   let loopCount = 0;
-  //   this.loopDepth++;
-
-  //   while (true) {
-  //     const condition = this.evaluate(ws.condition, env);
-  //     if (validate.isError(condition)) return condition;
-
-  //     if (!truthy(condition)) break;
-
-  //     result = this.evalBlockStatement(ws.body, env);
-  //     if (validate.isError(result)) return result;
-
-  //     if (validate.isBreak(result)) break;
-  //     else if (validate.isContinue(result)) continue;
-
-  //     if (validate.isReturnValue(result)) {
-  //       this.loopDepth--;
-  //       return result;
-  //     }
-
-  //     loopCount++;
-  //     if (loopCount > MAX_ITERATIONS)
-  //       return new objects.ErrorObject("Loop limit exceeded");
-  //   }
-
-  //   this.loopDepth--;
-  //   return this.processLoopResult(result);
-  // }
-
-  // private evalForStatement(
-  //   forLoop: statement.ForStatement,
-  //   env: objects.Environment
-  // ): objects.BaseObject {
-  //   const loopEnv = new objects.Environment(env);
-  //   const initResult = this.evaluate(forLoop.initializer, loopEnv);
-  //   if (validate.isError(initResult)) return initResult;
-
-  //   let result: objects.BaseObject = this.NULL;
-  //   let loopCount = 0;
-  //   this.loopDepth++;
-
-  //   while (true) {
-  //     const condition = this.evaluate(forLoop.condition, loopEnv);
-  //     if (validate.isError(condition)) {
-  //       this.loopDepth--;
-  //       return condition;
-  //     }
-
-  //     if (!truthy(condition)) break;
-
-  //     result = this.evaluate(forLoop.body, loopEnv);
-  //     if (validate.isReturnValue(result) || validate.isError(result)) {
-  //       this.loopDepth--;
-  //       return result;
-  //     }
-
-  //     if (validate.isBreak(result)) break;
-  //     if (validate.isContinue(result)) continue;
-
-  //     const incrementResult = this.evaluate(forLoop.increment, loopEnv);
-  //     if (validate.isError(incrementResult)) {
-  //       this.loopDepth--;
-  //       return incrementResult;
-  //     }
-
-  //     loopCount++;
-  //     if (loopCount > MAX_ITERATIONS)
-  //       return new objects.ErrorObject("Loop limit exceeded");
-  //   }
-
-  //   this.loopDepth--;
-  //   return this.processLoopResult(result);
-  // }
-
   private evaluateWhileStatement(
     ws: statement.WhileStatement,
     env: objects.Environment
@@ -478,6 +400,9 @@ export default class Evaluator {
     const index = this.evaluate(node.index, env);
     if (validate.isError(index)) return index;
 
+    console.log("left", left);
+    console.log("index", index);
+
     if (validate.isArray(left))
       return this.evalArrayIndexExpression(left, index);
     else if (validate.isHash(left))
@@ -532,6 +457,8 @@ export default class Evaluator {
       return new objects.ErrorObject("Index must be a string or an integer");
 
     const value = hash.pairs.get(index.inspect());
+
+    console.log("value", value);
     if (!value) return this.NULL;
 
     return value;

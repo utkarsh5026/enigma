@@ -43,9 +43,9 @@ export class ArrayLiteral extends Expression {
  * Represents a hash literal (key-value pairs) in the AST.
  */
 export class HashLiteral extends Expression {
-  pairs: Map<Expression, Expression>;
+  pairs: Map<string, Expression>;
 
-  constructor(token: Token, pairs: Map<Expression, Expression>) {
+  constructor(token: Token, pairs: Map<string, Expression>) {
     super(token);
     this.pairs = pairs;
   }
