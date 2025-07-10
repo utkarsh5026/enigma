@@ -1,7 +1,4 @@
-// COMPREHENSIVE BUILT-IN FUNCTIONS LIBRARY
-// =========================================
-// Complete implementation of essential built-in functions for a programming language
-
+import { consolePrint, consolePrintln } from "@/stores/console-stores";
 import * as objects from "../objects";
 import { BuiltinObject, BuiltinFunction } from "../objects/builtin";
 
@@ -921,7 +918,7 @@ const printFunction: BuiltinFunction = (
   args: objects.BaseObject[]
 ): objects.BaseObject => {
   const values = args.map((arg) => arg.inspect()).join(" ");
-  console.log(values);
+  consolePrint(values);
   return new objects.NullObject();
 };
 
@@ -932,7 +929,7 @@ const printlnFunction: BuiltinFunction = (
   args: objects.BaseObject[]
 ): objects.BaseObject => {
   const values = args.map((arg) => arg.inspect()).join(" ");
-  console.log(values + "\n");
+  consolePrintln(values);
   return new objects.NullObject();
 };
 

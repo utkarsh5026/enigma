@@ -11,7 +11,7 @@ import {
 import { GuideTab } from "@/components/guide";
 
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { ErrorMessage } from "@/lang/parser/parser";
+import { ParseError } from "@/lang/parser";
 import { Token } from "@/lang/token/token";
 import { Program } from "@/lang/ast";
 
@@ -47,7 +47,7 @@ const CustomTabTrigger: React.FC<TabTriggerProps> = ({
 interface AnalysisContentProps {
   tokens: Token[];
   program: Program | null;
-  parserErrors: ErrorMessage[];
+  parserErrors: ParseError[];
 }
 
 const AnalysisContent: React.FC<AnalysisContentProps> = ({

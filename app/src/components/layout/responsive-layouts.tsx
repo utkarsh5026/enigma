@@ -18,14 +18,14 @@ import LeftPanel from "./letft-panel";
 import AnalysisContent from "./ananlysis-panel";
 import { Token } from "@/lang/token/token";
 import { Program } from "@/lang/ast";
-import { ErrorMessage } from "@/lang/parser/parser";
+import { ParseError } from "@/lang/parser";
 
 interface DesktopLayoutProps {
   code: string;
   handleCodeChange: (newCode: string) => void;
   tokens: Token[];
   program: Program | null;
-  parserErrors: ErrorMessage[];
+  parserErrors: ParseError[];
 }
 export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   code,
@@ -66,7 +66,7 @@ interface MobileLayoutProps {
   handleCodeChange: (newCode: string) => void;
   tokens: Token[];
   program: Program | null;
-  parserErrors: ErrorMessage[];
+  parserErrors: ParseError[];
 }
 export const MobileLayout: React.FC<MobileLayoutProps> = ({
   code,

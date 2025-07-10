@@ -9,23 +9,6 @@ interface LeftPanelProps {
   setActiveTab: (tab: string) => void;
 }
 
-/**
- * LeftPanel Component
- *
- * This component serves as the left panel of the application, displaying the current
- * code file and providing functionality to run, copy, or download the code.
- *
- * Props:
- * - code: string - The current code being edited.
- * - onCodeChange: (code: string) => void - Callback function to handle changes to the code.
- * - setActiveTab: (tab: string) => void - Function to set the active tab in the application.
- *
- * Features:
- * - Displays the name of the current code file (main.enigma).
- * - Provides buttons to run the code, copy it to the clipboard, or download it as a text file.
- * - Integrates with the EnigmaEditor component to allow for code editing.
- * - Responsive design that adapts to mobile devices.
- */
 const LeftPanel: React.FC<LeftPanelProps> = ({
   code,
   onCodeChange,
