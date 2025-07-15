@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import Lexer from "@/lang/lexer/lexer";
-import { EnigmaParser } from "@/lang/parser/parser";
+import { LanguageParser } from "@/lang/parser/parser";
 import { Program } from "@/lang/ast";
 import { ParseError } from "@/lang/parser/core";
 import { Token, TokenType } from "@/lang/token/token";
@@ -43,11 +43,11 @@ export const useProgram = (code: string) => {
     try {
       const lexer = new Lexer(code);
 
-      const parser = new EnigmaParser(lexer);
+      const parser = new LanguageParser(lexer);
       const program = parser.parseProgram();
       setProgram(program);
 
-      if (parser.getErrors().length > 0) {
+      if (parser.hasErrors()) {
         setParserErrors(parser.getErrors());
       }
 
