@@ -6,6 +6,7 @@ import { PrefixOperatorParser } from "./prefix-operator";
 import { ArrayLiteralParser } from "./array-literal";
 import { GroupedExpressionParser } from "./grouped-expression";
 import { IdentifierExpressionParser } from "./identifier-expression";
+import { FunctionalLiteralParser } from "./function-literal";
 
 export {
   BooleanLiteralParser,
@@ -16,4 +17,5 @@ export {
   ArrayLiteralParser,
   GroupedExpressionParser,
   IdentifierExpressionParser,
+  FunctionalLiteralParser,
 };
