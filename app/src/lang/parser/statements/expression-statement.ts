@@ -1,104 +1,98 @@
-import { Parser, ParsingContext, Precedence } from "../core";
-import * as statements from "@/lang/ast/statement";
-import * as ast from "@/lang/ast/ast";
-import { ExpressionParser } from "../expression-parser";
-import * as expressions from "@/lang/ast/expression";
-import { TokenType, Operator } from "@/lang/token/token";
+import {
+  type Parser,
+  ParsingContext,
+  Precedence,
+  type ExpressionParser,
+  ParserException,
+} from "../core";
+import { Token, TokenType, type Operator } from "@/lang/token/token";
+import { ExpressionStatement } from "@/lang/ast/statement";
+import { Identifier } from "@/lang/ast/ast";
+import { AssignmentExpression, InfixExpression } from "@/lang/ast/expression";
 
-export class ExpressionStatementParser
-  implements Parser<statements.ExpressionStatement>
-{
+export class ExpressionStatementParser implements Parser<ExpressionStatement> {
   canParse(context: ParsingContext): boolean {
     return (
-      context.tokens.isCurrentToken(TokenType.IDENTIFIER) ||
-      context.tokens.isCurrentToken(TokenType.LPAREN)
+      context.isCurrentToken(TokenType.IDENTIFIER) ||
+      context.isCurrentToken(TokenType.LPAREN)
     );
   }
 
-  constructor(
-    private parseStatement: (context: ParsingContext) => ast.Statement | null
-  ) {}
+  constructor(private expressionParser: ExpressionParser) {}
 
-  parse(context: ParsingContext): statements.ExpressionStatement | null {
-    const token = context.tokens.getCurrentToken();
+  /**
+   * 🎯 Parse an expression statement
+   *
+   * Parses a statement of the form:
+   * identifier = expression;
+   *
+   * @param context The parsing context
+   * @return The parsed expression statement
+   */
+  parse(context: ParsingContext): ExpressionStatement {
+    const token = context.getCurrentToken();
 
-    // Handle compound assignment operators
     if (
-      context.tokens.isCurrentToken(TokenType.IDENTIFIER) &&
-      this.isCompoundAssignmentOperator(context.tokens.getPeekToken().type)
+      context.isCurrentToken(TokenType.IDENTIFIER) &&
+      this.isCompoundAssignmentOperator(context.getPeekToken().type)
     ) {
       return this.parseCompoundStatement(context);
     }
 
-    const expressionParser = new ExpressionParser(
-      this.parseStatement.bind(this)
-    );
-    const expression = expressionParser.parseExpression(
+    const expression = this.expressionParser.parseExpression(
       context,
       Precedence.LOWEST
     );
 
-    if (!expression) {
-      context.errors.addError(
-        "Expected expression",
-        context.tokens.getCurrentToken()
-      );
-      return null;
+    if (context.isCurrentToken(TokenType.SEMICOLON)) {
+      context.consumeCurrentToken(TokenType.SEMICOLON);
     }
 
-    if (context.tokens.isPeekToken(TokenType.SEMICOLON)) {
-      context.tokens.advance();
-    }
-
-    return new statements.ExpressionStatement(token, expression);
+    return new ExpressionStatement(token, expression);
   }
 
-  private parseCompoundStatement(
-    context: ParsingContext
-  ): statements.ExpressionStatement | null {
-    const startToken = context.tokens.getCurrentToken();
-    const left = new ast.Identifier(startToken, startToken.literal);
-    context.tokens.advance();
-
-    const operatorToken = context.tokens.getCurrentToken();
-    const operator = this.getBaseOperator(operatorToken.type);
-    context.tokens.advance();
-
-    const expressionParser = new ExpressionParser(
-      this.parseStatement.bind(this)
+  /**
+   * 🎯 Parse a compound statement
+   *
+   * Parses a statement of the form:
+   * identifier += expression or identifier -= expression
+   *
+   * @param context The parsing context
+   * @return The parsed compound statement
+   */
+  private parseCompoundStatement(context: ParsingContext): ExpressionStatement {
+    const startToken = context.consumeCurrentToken(
+      TokenType.IDENTIFIER,
+      "Expected identifier at start of compound statement"
     );
-    const right = expressionParser.parseExpression(context, Precedence.LOWEST);
-    if (!right) {
-      context.errors.addError(
-        "Expected expression",
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
+    const left = new Identifier(startToken, startToken.literal);
 
-    if (!context.tokens.expect(TokenType.SEMICOLON)) {
-      context.errors.addTokenError(
-        TokenType.SEMICOLON,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
+    const operatorToken = context.getCurrentToken();
+    const operator = this.getBaseOperator(operatorToken);
+    context.consumeCurrentToken(operatorToken.type);
 
-    const infixExpr = new expressions.InfixExpression(
-      operatorToken,
-      left,
-      operator,
-      right
-    );
-    const assignExpr = new expressions.AssignmentExpression(
-      operatorToken,
-      left,
-      infixExpr
+    const right = this.expressionParser.parseExpression(
+      context,
+      Precedence.LOWEST
     );
 
-    return new statements.ExpressionStatement(startToken, assignExpr);
+    context.consumeCurrentToken(
+      TokenType.SEMICOLON,
+      "Expected ';' after compound statement"
+    );
+
+    const infixExpr = new InfixExpression(operatorToken, left, operator, right);
+    const assignExpr = new AssignmentExpression(operatorToken, left, infixExpr);
+
+    return new ExpressionStatement(startToken, assignExpr);
   }
 
+  /**
+   * 🎯 Check if a token is a compound assignment operator
+   *
+   * @param tokenType The token type to check
+   * @return True if the token is a compound assignment operator, false otherwise
+   */
   private isCompoundAssignmentOperator(tokenType: TokenType): boolean {
     return (
       tokenType === TokenType.PLUS_ASSIGN ||
@@ -108,8 +102,14 @@ export class ExpressionStatementParser
     );
   }
 
-  private getBaseOperator(tokenType: TokenType): Operator {
-    switch (tokenType) {
+  /**
+   * 🎯 Get the base operator for a compound assignment operator
+   *
+   * @param token The token to get the base operator for
+   * @return The base operator
+   */
+  private getBaseOperator(token: Token): Operator {
+    switch (token.type) {
       case TokenType.PLUS_ASSIGN:
         return "+";
       case TokenType.MINUS_ASSIGN:
@@ -118,8 +118,13 @@ export class ExpressionStatementParser
         return "*";
       case TokenType.SLASH_ASSIGN:
         return "/";
+      case TokenType.MODULUS_ASSIGN:
+        return "%";
       default:
-        throw new Error(`Invalid base operator for token type: ${tokenType}`);
+        throw new ParserException(
+          `Invalid base operator for token type: ${token.type}`,
+          token
+        );
     }
   }
 }
