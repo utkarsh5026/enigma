@@ -5,6 +5,8 @@ import { BaseObject, ObjectType } from "./base";
  * This object is used to signal a break in a loop or switch statement.
  */
 export class BreakObject implements BaseObject {
+  public static readonly INSTANCE = new BreakObject();
+
   inspect(): string {
     return "break";
   }
@@ -23,6 +25,8 @@ export class BreakObject implements BaseObject {
  * This object is used to signal the continuation to the next iteration in a loop.
  */
 export class ContinueObject implements BaseObject {
+  public static readonly INSTANCE = new ContinueObject();
+
   inspect(): string {
     return "continue";
   }

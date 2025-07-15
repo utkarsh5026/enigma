@@ -52,6 +52,8 @@ export class BooleanObject implements BaseObject {
  * Represents a null object in the Mutant programming language.
  */
 export class NullObject implements BaseObject {
+  static readonly INSTANCE = new NullObject();
+
   inspect(): string {
     return "null";
   }
