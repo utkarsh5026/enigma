@@ -29,7 +29,10 @@ export class WhileStatementParser implements Parser<WhileStatement> {
    * @return The parsed while loop statement
    */
   parse(context: ParsingContext): WhileStatement {
-    const whileToken = context.consumeCurrentToken(TokenType.WHILE);
+    const whileToken = context.consumeCurrentToken(
+      TokenType.WHILE,
+      "Expected 'while' at start of while loop"
+    );
     context.consumeCurrentToken(TokenType.LPAREN, "Expected '(' after 'while'");
 
     const condition = this.expressionParser.parseExpression(

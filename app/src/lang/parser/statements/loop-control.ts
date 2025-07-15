@@ -24,8 +24,14 @@ export class BreakStatementParser implements Parser<BreakStatement> {
       );
     }
 
-    const breakToken = context.consumeCurrentToken(TokenType.BREAK);
-    context.consumeCurrentToken(TokenType.SEMICOLON);
+    const breakToken = context.consumeCurrentToken(
+      TokenType.BREAK,
+      "Expected 'break' at start of break statement"
+    );
+    context.consumeCurrentToken(
+      TokenType.SEMICOLON,
+      "Expected ';' after break statement"
+    );
 
     return new BreakStatement(breakToken);
   }
@@ -56,8 +62,14 @@ export class ContinueStatementParser implements Parser<ContinueStatement> {
       );
     }
 
-    const continueToken = context.consumeCurrentToken(TokenType.CONTINUE);
-    context.consumeCurrentToken(TokenType.SEMICOLON);
+    const continueToken = context.consumeCurrentToken(
+      TokenType.CONTINUE,
+      "Expected 'continue' at start of continue statement"
+    );
+    context.consumeCurrentToken(
+      TokenType.SEMICOLON,
+      "Expected ';' after continue statement"
+    );
     return new ContinueStatement(continueToken);
   }
 }

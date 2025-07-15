@@ -25,7 +25,10 @@ export class ReturnStatementParser implements Parser<ReturnStatement> {
    * @return The parsed return statement
    */
   parse(context: ParsingContext): ReturnStatement {
-    const returnToken = context.consumeCurrentToken(TokenType.RETURN);
+    const returnToken = context.consumeCurrentToken(
+      TokenType.RETURN,
+      "Expected 'return' at start of return statement"
+    );
 
     if (context.isCurrentToken(TokenType.SEMICOLON)) {
       context.consumeCurrentToken(TokenType.SEMICOLON);
@@ -37,7 +40,10 @@ export class ReturnStatementParser implements Parser<ReturnStatement> {
       Precedence.LOWEST
     );
 
-    context.consumeCurrentToken(TokenType.SEMICOLON);
+    context.consumeCurrentToken(
+      TokenType.SEMICOLON,
+      "Expected ';' after return value"
+    );
     return new ReturnStatement(returnToken, returnValue);
   }
 }
