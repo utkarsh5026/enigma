@@ -54,4 +54,16 @@ export class ParsingContext {
       throw new ParserException(`${messageOnError}: ${error}`, token);
     }
   }
+
+  public isCurrentToken(type: TokenType): boolean {
+    return this.tokens.isCurrentToken(type);
+  }
+
+  public getCurrentToken(): Token {
+    return this.tokens.getCurrentToken();
+  }
+
+  public isAtEnd(): boolean {
+    return this.isCurrentToken(TokenType.EOF);
+  }
 }
