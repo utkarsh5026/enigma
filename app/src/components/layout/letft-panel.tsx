@@ -13,7 +13,7 @@ import IntegratedConsole from "@/components/console/enigma-console";
 import { useMobile } from "@/hooks/use-mobile";
 import { consoleStore } from "@/stores/console-stores";
 import Lexer from "@/lang/lexer/lexer";
-import { EnigmaParser } from "@/lang/parser";
+import { LanguageParser } from "@/lang/parser";
 import { Evaluator } from "@/lang/exec/evaluation";
 import { Environment } from "@/lang/exec/objects";
 
@@ -41,7 +41,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   const handleRunCode = () => {
     consoleStore.clear();
     const lexer = new Lexer(code);
-    const parser = new EnigmaParser(lexer);
+    const parser = new LanguageParser(lexer);
     const ast = parser.parseProgram();
 
     if (parser.getErrors().length > 0) {
