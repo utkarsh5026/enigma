@@ -1,59 +1,28 @@
-import { TokenType } from "@/lang/token/token";
-import { Parser, ParsingContext, Precedence } from "../core";
-import * as statements from "@/lang/ast/statement";
-import * as ast from "@/lang/ast/ast";
-import { ExpressionParser } from "../expression-parser";
+import { Token, TokenType } from "@/lang/token/token";
+import { type Parser, ParsingContext, type ExpressionParser } from "../core";
+import { AssignmentStatementParser } from "./assignment-parser";
+import { ConstStatement } from "@/lang/ast/statement";
+import { Expression, Identifier } from "@/lang/ast/ast";
 
-export class ConstStatementParser implements Parser<statements.ConstStatement> {
-  canParse(context: ParsingContext): boolean {
-    return context.tokens.isCurrentToken(TokenType.CONST);
+export class ConstStatementParser implements Parser<ConstStatement> {
+  private delegate: AssignmentStatementParser<ConstStatement>;
+
+  constructor(expressionParser: ExpressionParser) {
+    this.delegate = new AssignmentStatementParser(
+      TokenType.CONST,
+      {
+        create: (token: Token, name: Identifier, value: Expression) =>
+          new ConstStatement(token, name, value),
+      },
+      expressionParser
+    );
   }
 
-  constructor(
-    private parseStatement: (context: ParsingContext) => ast.Statement | null
-  ) {}
+  canParse(context: ParsingContext): boolean {
+    return this.delegate.canParse(context);
+  }
 
-  parse(context: ParsingContext): statements.ConstStatement | null {
-    const constToken = context.tokens.getCurrentToken();
-
-    if (!context.tokens.expect(TokenType.IDENTIFIER)) {
-      context.addTokenError(
-        TokenType.IDENTIFIER,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    const name = new ast.Identifier(
-      context.tokens.getCurrentToken(),
-      context.tokens.getCurrentToken().literal
-    );
-
-    if (!context.tokens.expect(TokenType.ASSIGN)) {
-      context.errors.addTokenError(
-        TokenType.ASSIGN,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    context.tokens.advance();
-
-    const expressionParser = new ExpressionParser(
-      this.parseStatement.bind(this)
-    );
-    const value = expressionParser.parseExpression(context, Precedence.LOWEST);
-
-    if (!value) return null;
-
-    if (!context.tokens.expect(TokenType.SEMICOLON)) {
-      context.errors.addTokenError(
-        TokenType.SEMICOLON,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    return new statements.ConstStatement(constToken, name, value);
+  parse(context: ParsingContext): ConstStatement {
+    return this.delegate.parse(context);
   }
 }
