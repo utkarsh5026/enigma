@@ -1,66 +1,56 @@
 import { TokenType } from "@/lang/token/token";
-import { Parser, ParsingContext, Precedence } from "../core";
-import * as statements from "@/lang/ast/statement";
-import { ExpressionParser } from "../expression-parser";
+import {
+  type Parser,
+  ParsingContext,
+  Precedence,
+  type StatementParse,
+  type ExpressionParser,
+} from "../core";
 import { BlockStatementParser } from "./block-statement";
-import * as ast from "@/lang/ast/ast";
+import { BlockStatement, WhileStatement } from "@/lang/ast/statement";
 
-export class WhileStatementParser implements Parser<statements.WhileStatement> {
+export class WhileStatementParser implements Parser<WhileStatement> {
   constructor(
-    private parseStatement: (context: ParsingContext) => ast.Statement | null
+    private parseStatement: StatementParse,
+    private expressionParser: ExpressionParser
   ) {}
 
   canParse(context: ParsingContext): boolean {
-    return context.tokens.isCurrentToken(TokenType.WHILE);
+    return context.isCurrentToken(TokenType.WHILE);
   }
 
-  parse(context: ParsingContext): statements.WhileStatement | null {
-    const whileToken = context.tokens.getCurrentToken();
+  /**
+   * 🎯 Parse a while loop statement
+   *
+   * Parses a statement of the form:
+   * while (condition) { statement* }
+   *
+   * @param context The parsing context
+   * @return The parsed while loop statement
+   */
+  parse(context: ParsingContext): WhileStatement {
+    const whileToken = context.consumeCurrentToken(TokenType.WHILE);
+    context.consumeCurrentToken(TokenType.LPAREN, "Expected '(' after 'while'");
 
-    if (!context.tokens.expect(TokenType.LPAREN)) {
-      context.errors.addTokenError(
-        TokenType.LPAREN,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    context.tokens.advance();
-    const expressionParser = new ExpressionParser(
-      this.parseStatement.bind(this)
-    );
-    const condition = expressionParser.parseExpression(
+    const condition = this.expressionParser.parseExpression(
       context,
       Precedence.LOWEST
     );
 
-    if (!condition) return null;
-
-    if (!context.tokens.expect(TokenType.RPAREN)) {
-      context.errors.addTokenError(
-        TokenType.RPAREN,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    if (!context.tokens.expect(TokenType.LBRACE)) {
-      context.errors.addTokenError(
-        TokenType.LBRACE,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    context.enterLoop();
-    const blockParser = new BlockStatementParser(
-      this.parseStatement.bind(this)
+    context.consumeCurrentToken(
+      TokenType.RPAREN,
+      "Expected ')' after condition"
     );
+
+    const body = this.parseLoopBody(context);
+    return new WhileStatement(whileToken, condition, body);
+  }
+
+  private parseLoopBody(context: ParsingContext): BlockStatement {
+    context.enterLoop();
+    const blockParser = new BlockStatementParser(this.parseStatement);
     const body = blockParser.parse(context);
     context.exitLoop();
-
-    if (!body) return null;
-
-    return new statements.WhileStatement(whileToken, condition, body);
+    return body;
   }
 }
