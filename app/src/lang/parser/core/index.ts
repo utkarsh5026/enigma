@@ -6,7 +6,13 @@ import {
   ParserException,
   type ParseError,
 } from "./parser-error";
-import { Parser, StatementParse } from "./parser";
+import {
+  Parser,
+  StatementParse,
+  ExpressionParser,
+  InfixExpressionParser,
+  PrefixExpressionParser,
+} from "./parser";
 
 export {
   Precedence,
@@ -18,4 +24,7 @@ export {
   type ParseError,
   type Parser,
   type StatementParse,
+  type ExpressionParser,
+  type InfixExpressionParser,
+  type PrefixExpressionParser,
 };
