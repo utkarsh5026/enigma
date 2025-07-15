@@ -14,4 +14,8 @@ export class ClassObject implements BaseObject {
   inspect() {
     return `class ${this.name}`;
   }
+
+  isTruthy(): boolean {
+    return true;
+  }
 }

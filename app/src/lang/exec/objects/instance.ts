@@ -15,4 +15,8 @@ export class InstanceObject implements BaseObject {
   inspect() {
     return `instance of ${this.classObject.name}`;
   }
+
+  isTruthy(): boolean {
+    return true;
+  }
 }

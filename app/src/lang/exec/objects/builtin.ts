@@ -29,6 +29,10 @@ export class BuiltinObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.BUILTIN;
   }
+
+  isTruthy(): boolean {
+    return true;
+  }
 }
 
 /**

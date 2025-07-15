@@ -14,6 +14,10 @@ export class BreakObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.BREAK;
   }
+
+  isTruthy(): boolean {
+    return true;
+  }
 }
 
 /**
@@ -33,5 +37,9 @@ export class ContinueObject implements BaseObject {
 
   type(): ObjectType {
     return ObjectType.CONTINUE;
+  }
+
+  isTruthy(): boolean {
+    return true;
   }
 }

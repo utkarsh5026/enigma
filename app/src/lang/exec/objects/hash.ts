@@ -24,4 +24,8 @@ export class HashObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.HASH;
   }
+
+  isTruthy(): boolean {
+    return this.pairs.size > 0;
+  }
 }

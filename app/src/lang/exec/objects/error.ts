@@ -30,4 +30,8 @@ export class ErrorObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.ERROR;
   }
+
+  isTruthy(): boolean {
+    return false;
+  }
 }

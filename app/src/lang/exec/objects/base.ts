@@ -27,4 +27,10 @@ export interface BaseObject {
    * @returns {string} A string representation of the object.
    */
   inspect(): string;
+
+  /**
+   * Returns true if the object is truthy.
+   * @returns {boolean} True if the object is truthy.
+   */
+  isTruthy(): boolean;
 }

@@ -22,6 +22,10 @@ export class IntegerObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.INTEGER;
   }
+
+  isTruthy(): boolean {
+    return this.value !== 0;
+  }
 }
 
 /**
@@ -46,6 +50,10 @@ export class BooleanObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.BOOLEAN;
   }
+
+  isTruthy(): boolean {
+    return this.value;
+  }
 }
 
 /**
@@ -60,6 +68,10 @@ export class NullObject implements BaseObject {
 
   type(): ObjectType {
     return ObjectType.NULL;
+  }
+
+  isTruthy(): boolean {
+    return false;
   }
 }
 
@@ -83,5 +95,9 @@ export class StringObject implements BaseObject {
 
   type(): ObjectType {
     return ObjectType.STRING;
+  }
+
+  isTruthy(): boolean {
+    return this.value.length > 0;
   }
 }

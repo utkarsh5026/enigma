@@ -41,6 +41,10 @@ export class FunctionObject implements BaseObject {
     return ObjectType.FUNCTION;
   }
 
+  isTruthy(): boolean {
+    return true;
+  }
+
   static dumpScopeChain(env: Environment): string {
     return dumpScopeChain(env);
   }
@@ -64,6 +68,10 @@ export class ReturnValue implements BaseObject {
 
   type(): ObjectType {
     return this.value.type();
+  }
+
+  isTruthy(): boolean {
+    return true;
   }
 }
 

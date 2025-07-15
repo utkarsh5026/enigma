@@ -21,4 +21,8 @@ export class ArrayObject implements BaseObject {
   type(): ObjectType {
     return ObjectType.ARRAY;
   }
+
+  isTruthy(): boolean {
+    return this.elements.length > 0;
+  }
 }
