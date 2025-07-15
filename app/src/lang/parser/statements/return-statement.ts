@@ -15,10 +15,19 @@ export class ReturnStatementParser implements Parser<ReturnStatement> {
     return context.tokens.isCurrentToken(TokenType.RETURN);
   }
 
+  /**
+   * 🎯 Parse a return statement
+   *
+   * Parses a statement of the form:
+   * return expression;
+   *
+   * @param context The parsing context
+   * @return The parsed return statement
+   */
   parse(context: ParsingContext): ReturnStatement {
     const returnToken = context.consumeCurrentToken(TokenType.RETURN);
 
-    if (context.tokens.isCurrentToken(TokenType.SEMICOLON)) {
+    if (context.isCurrentToken(TokenType.SEMICOLON)) {
       context.consumeCurrentToken(TokenType.SEMICOLON);
       return new ReturnStatement(returnToken, new NullLiteral(returnToken));
     }
