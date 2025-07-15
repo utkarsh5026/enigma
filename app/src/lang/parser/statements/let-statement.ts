@@ -21,6 +21,15 @@ export class LetStatementParser implements Parser<LetStatement> {
     return this.delegate.canParse(context);
   }
 
+  /**
+   * 🎯 Parse a let statement
+   *
+   * Parses a statement of the form:
+   * let identifier = expression;
+   *
+   * @param context The parsing context
+   * @return The parsed let statement
+   */
   parse(context: ParsingContext): LetStatement {
     return this.delegate.parse(context);
   }

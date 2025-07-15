@@ -22,6 +22,15 @@ export class ConstStatementParser implements Parser<ConstStatement> {
     return this.delegate.canParse(context);
   }
 
+  /**
+   * 🎯 Parse a const statement
+   *
+   * Parses a statement of the form:
+   * const identifier = expression;
+   *
+   * @param context The parsing context
+   * @return The parsed const statement
+   */
   parse(context: ParsingContext): ConstStatement {
     return this.delegate.parse(context);
   }
