@@ -1,5 +1,6 @@
 import {
   ExpressionParser,
+  ParseError,
   Parser,
   ParserException,
   ParsingContext,
@@ -127,6 +128,13 @@ export class LanguageParser {
       this.context,
       Precedence.LOWEST
     );
+  }
+
+  /**
+   * Gets all parsing errors.
+   */
+  public getErrors(): ParseError[] {
+    return this.context.errors.getErrors();
   }
 
   /**
