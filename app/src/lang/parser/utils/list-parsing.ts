@@ -8,6 +8,54 @@ import {
 import { Expression } from "@/lang/ast/ast";
 
 /**
+ * 🗃️ Parses a comma-separated list with custom parsing logic
+ *
+ * This is a more flexible version that allows custom parsing functions
+ * for cases like hash key-value pairs where we need special parsing logic.
+ *
+ * @param context          The parsing context
+ * @param parser           Function that parses a single item and returns
+ *                         whether to continue
+ * @param closingDelimiter The token that ends the list
+ * @param contextName      Description for error messages
+ * @param <T>              The type of items being parsed
+ * @return List of parsed items
+ */
+export const parseCustomList = <T>(
+  context: ParsingContext,
+  parser: (context: ParsingContext) => T,
+  closingDelimiter: TokenType,
+  contextName: string
+) => {
+  const items: T[] = [];
+  if (context.isCurrentToken(closingDelimiter)) {
+    return items;
+  }
+
+  while (!context.isCurrentToken(closingDelimiter)) {
+    const item = parser(context);
+    items.push(item);
+
+    if (
+      !context.isCurrentToken(TokenType.COMMA) &&
+      !context.isCurrentToken(closingDelimiter)
+    ) {
+      const expectedDelimiter = getDelimiterName(closingDelimiter);
+      throw new ParserException(
+        `Expected ',' or '${expectedDelimiter}' after ${contextName}`,
+        context.getCurrentToken()
+      );
+    }
+
+    if (context.isCurrentToken(TokenType.COMMA)) {
+      context.consumeCurrentToken(TokenType.COMMA);
+    }
+  }
+
+  return items;
+};
+
+/**
  * 📝 Parses a comma-separated list of expressions
  *
  * @param context          The parsing context
