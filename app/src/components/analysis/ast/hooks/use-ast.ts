@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Lexer from "@/lang/lexer/lexer";
-import { EnigmaParser } from "@/lang/parser";
+import { LanguageParser } from "@/lang/parser";
 import { Program } from "@/lang/ast";
 import { ParseError } from "@/lang/parser";
 
@@ -20,7 +20,7 @@ export const useAst = (code: string) => {
 
     try {
       const lexer = new Lexer(code);
-      const parser = new EnigmaParser(lexer);
+      const parser = new LanguageParser(lexer);
       const program = parser.parseProgram();
 
       if (parser.getErrors().length > 0) {
