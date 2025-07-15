@@ -1,4 +1,4 @@
-import { EnigmaParser } from "./parser";
+import { LanguageParser } from "./parser";
 import {
   ParseError,
   ParsingContext,
@@ -8,7 +8,7 @@ import {
 } from "./core";
 
 export {
-  EnigmaParser,
+  LanguageParser,
   type ParseError,
   type ParsingContext,
   type Precedence,
