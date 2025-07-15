@@ -8,6 +8,7 @@ import { GroupedExpressionParser } from "./grouped-expression";
 import { IdentifierExpressionParser } from "./identifier-expression";
 import { FunctionalLiteralParser } from "./function-literal";
 import { HashLiteralParser } from "./hash-literal";
+import { IfExpressionParser } from "./if-expression";
 
 export {
   BooleanLiteralParser,
@@ -20,4 +21,5 @@ export {
   IdentifierExpressionParser,
   FunctionalLiteralParser,
   HashLiteralParser,
+  IfExpressionParser,
 };
