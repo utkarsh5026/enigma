@@ -6,6 +6,7 @@ import {
   IntegerLiteral,
   FunctionLiteral,
   FStringLiteral,
+  NullLiteral,
 } from "./literal";
 import {
   LetStatement,
@@ -75,6 +76,7 @@ export {
   IntegerLiteral,
   FunctionLiteral,
   FStringLiteral,
+  NullLiteral,
   LetStatement,
   ReturnStatement,
   ExpressionStatement,

@@ -137,3 +137,13 @@ export class FStringLiteral extends Expression {
     return this.token.literal;
   }
 }
+
+export class NullLiteral extends Expression {
+  constructor(token: Token) {
+    super(token);
+  }
+
+  toString(): string {
+    return "null";
+  }
+}
