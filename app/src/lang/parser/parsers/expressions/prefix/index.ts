@@ -3,6 +3,7 @@ import { StringLiteralParser } from "./string-literal";
 import { NullLiteralParser } from "./null-literal";
 import { IntegerLiteralParser } from "./integer-literal";
 import { PrefixOperatorParser } from "./prefix-operator";
+import { ArrayLiteralParser } from "./array-literal";
 
 export {
   BooleanLiteralParser,
@@ -10,4 +11,5 @@ export {
   NullLiteralParser,
   IntegerLiteralParser,
   PrefixOperatorParser,
+  ArrayLiteralParser,
 };
