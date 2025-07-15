@@ -1,32 +1,42 @@
 import { TokenType } from "@/lang/token/token";
-import { Parser, ParsingContext } from "../core";
-import * as statements from "@/lang/ast/statement";
-import * as ast from "@/lang/ast/ast";
+import { Parser, ParsingContext, StatementParse } from "../core";
+import { BlockStatement } from "@/lang/ast/statement";
+import { Statement } from "@/lang/ast/ast";
 
-export class BlockStatementParser implements Parser<statements.BlockStatement> {
+export class BlockStatementParser implements Parser<BlockStatement> {
+  constructor(private parseStatement: StatementParse) {}
+
   canParse(context: ParsingContext): boolean {
     return context.tokens.isCurrentToken(TokenType.LBRACE);
   }
 
-  constructor(
-    private parseStatement: (context: ParsingContext) => ast.Statement | null
-  ) {}
+  /**
+   * 🎯 Parse a block statement
+   *
+   * Parses a statement of the form:
+   * { statement* }
+   *
+   * @param context The parsing context
+   * @return The parsed block statement
+   */
+  parse(context: ParsingContext): BlockStatement {
+    const lBraceToken = context.consumeCurrentToken(
+      TokenType.LBRACE,
+      "Expected '{' at start of block"
+    );
+    const stmts: Statement[] = [];
 
-  parse(context: ParsingContext): statements.BlockStatement | null {
-    const token = context.tokens.getCurrentToken();
-    const stmts: ast.Statement[] = [];
-
-    context.tokens.advance();
-
-    while (
-      !context.tokens.isCurrentToken(TokenType.RBRACE) &&
-      !context.tokens.isCurrentToken(TokenType.EOF)
-    ) {
-      const statement = this.parseStatement(context);
-      if (statement) stmts.push(statement);
-      context.tokens.advance();
+    while (!context.isCurrentToken(TokenType.RBRACE) && !context.isAtEnd()) {
+      const statement = this.parseStatement.parseStatement(context);
+      if (statement) {
+        stmts.push(statement);
+      }
     }
 
-    return new statements.BlockStatement(token, stmts);
+    context.consumeCurrentToken(
+      TokenType.RBRACE,
+      "Expected '}' at end of block"
+    );
+    return new BlockStatement(lBraceToken, stmts);
   }
 }
