@@ -66,4 +66,8 @@ export class ParsingContext {
   public isAtEnd(): boolean {
     return this.isCurrentToken(TokenType.EOF);
   }
+
+  public getPeekToken(): Token {
+    return this.tokens.getPeekToken();
+  }
 }
