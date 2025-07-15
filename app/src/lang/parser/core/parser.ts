@@ -1,5 +1,6 @@
 import { ParsingContext } from "./parsing-context";
-import { Statement, Node } from "@/lang/ast/ast";
+import { Statement, Node, Expression } from "@/lang/ast/ast";
+import { Precedence } from "./precedence";
 /**
  * Interface for statement parsers.
  *
@@ -34,4 +35,21 @@ export interface Parser<T extends Node> {
    * @return True if the parser can parse the current position, false otherwise
    */
   canParse(context: ParsingContext): boolean;
+}
+
+/**
+ * Interface for expression parsers.
+ */
+export interface ExpressionParser {
+  /**
+   * Parses an expression from the current position.
+   *
+   * @param context The parsing context containing the current state
+   * @param minPrecedence The minimum precedence to parse
+   * @return The parsed expression
+   */
+  parseExpression(
+    context: ParsingContext,
+    minPrecedence: Precedence
+  ): Expression;
 }
