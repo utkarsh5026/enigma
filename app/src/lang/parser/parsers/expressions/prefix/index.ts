@@ -4,6 +4,7 @@ import { NullLiteralParser } from "./null-literal";
 import { IntegerLiteralParser } from "./integer-literal";
 import { PrefixOperatorParser } from "./prefix-operator";
 import { ArrayLiteralParser } from "./array-literal";
+import { GroupedExpressionParser } from "./grouped-expression";
 
 export {
   BooleanLiteralParser,
@@ -12,4 +13,5 @@ export {
   IntegerLiteralParser,
   PrefixOperatorParser,
   ArrayLiteralParser,
+  GroupedExpressionParser,
 };
