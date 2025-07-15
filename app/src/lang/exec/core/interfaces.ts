@@ -16,7 +16,7 @@ import { BaseObject, Environment } from "../objects";
  * - The result is always a BaseObject (our universal value container)
  */
 export interface NodeEvaluator<T extends Node> {
-  evaluate(node: T, env: Environment): BaseObject;
+  evaluate(node: T, env: Environment, context: EvaluationContext): BaseObject;
 }
 
 /**
