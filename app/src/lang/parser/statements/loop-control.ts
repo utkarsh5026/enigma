@@ -1,64 +1,63 @@
 import { TokenType } from "@/lang/token/token";
-import { Parser, ParsingContext } from "../core";
-import * as statements from "@/lang/ast/statement";
+import { Parser, ParserException, ParsingContext } from "../core";
+import { BreakStatement, ContinueStatement } from "@/lang/ast/statement";
 
-export class BreakStatementParser implements Parser<statements.BreakStatement> {
+export class BreakStatementParser implements Parser<BreakStatement> {
   canParse(context: ParsingContext): boolean {
-    return context.tokens.isCurrentToken(TokenType.BREAK);
+    return context.isCurrentToken(TokenType.BREAK);
   }
 
-  parse(context: ParsingContext): statements.BreakStatement | null {
+  /**
+   * 🎯 Parse a break statement
+   *
+   * Parses a statement of the form:
+   * break;
+   *
+   * @param context The parsing context
+   * @return The parsed break statement
+   */
+  parse(context: ParsingContext): BreakStatement {
     if (!context.isInLoop()) {
-      context.errors.addError(
+      throw new ParserException(
         "Break statement must be inside a loop",
-        context.tokens.getCurrentToken()
+        context.getCurrentToken()
       );
-      return null;
     }
 
-    const breakToken = context.tokens.getCurrentToken();
+    const breakToken = context.consumeCurrentToken(TokenType.BREAK);
+    context.consumeCurrentToken(TokenType.SEMICOLON);
 
-    if (!context.tokens.expect(TokenType.SEMICOLON)) {
-      context.errors.addTokenError(
-        TokenType.SEMICOLON,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    return new statements.BreakStatement(breakToken);
+    return new BreakStatement(breakToken);
   }
 }
 
 /**
  * ContinueStatementParser - Parses continue statements
  */
-export class ContinueStatementParser
-  implements Parser<statements.ContinueStatement>
-{
+export class ContinueStatementParser implements Parser<ContinueStatement> {
   canParse(context: ParsingContext): boolean {
-    return context.tokens.isCurrentToken(TokenType.CONTINUE);
+    return context.isCurrentToken(TokenType.CONTINUE);
   }
 
-  parse(context: ParsingContext): statements.ContinueStatement | null {
+  /**
+   * 🎯 Parse a continue statement
+   *
+   * Parses a statement of the form:
+   * continue;
+   *
+   * @param context The parsing context
+   * @return The parsed continue statement
+   */
+  parse(context: ParsingContext): ContinueStatement {
     if (!context.isInLoop()) {
-      context.errors.addError(
+      throw new ParserException(
         "Continue statement must be inside a loop",
-        context.tokens.getCurrentToken()
+        context.getCurrentToken()
       );
-      return null;
     }
 
-    const continueToken = context.tokens.getCurrentToken();
-
-    if (!context.tokens.expect(TokenType.SEMICOLON)) {
-      context.errors.addTokenError(
-        TokenType.SEMICOLON,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    return new statements.ContinueStatement(continueToken);
+    const continueToken = context.consumeCurrentToken(TokenType.CONTINUE);
+    context.consumeCurrentToken(TokenType.SEMICOLON);
+    return new ContinueStatement(continueToken);
   }
 }
