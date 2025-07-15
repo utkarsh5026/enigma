@@ -59,6 +59,7 @@ export enum TokenType {
   MINUS_ASSIGN = "-=",
   ASTERISK_ASSIGN = "*=",
   SLASH_ASSIGN = "/=",
+  MODULUS_ASSIGN = "%=",
 
   AND = "&&",
   OR = "||",
