@@ -90,7 +90,11 @@ export class Program implements Node {
   /**
    * The list of statements in the program.
    */
-  statements: Statement[] = [];
+  constructor(private readonly statements: Statement[]) {
+    if (statements.length === 0) {
+      throw new Error("Program must have at least one statement");
+    }
+  }
 
   /**
    * Returns the literal value of the first token in the program.
@@ -114,6 +118,10 @@ export class Program implements Node {
 
   position(): Position {
     return this.statements[0].position();
+  }
+
+  getStatements(): Statement[] {
+    return this.statements;
   }
 }
 
