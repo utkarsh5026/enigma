@@ -16,11 +16,14 @@ import {
   StatementParse,
 } from "../core";
 import { Statement } from "@/lang/ast/ast";
+import { LanguageExpressionParser } from "../parsers/laguage-expression";
 
 export class StatementParserRegistry implements StatementParse {
   private parsers: Parser<Statement>[] = [];
+  private expressionParser: ExpressionParser;
 
-  constructor(private expressionParser: ExpressionParser) {
+  constructor() {
+    this.expressionParser = new LanguageExpressionParser(this);
     this.registerDefaultParsers();
   }
 
