@@ -1,6 +1,7 @@
-import { Expression, Identifier } from "./ast.ts";
+import { Expression } from "./ast.ts";
 import { Operator, Token } from "../token/token.ts";
 import { BlockStatement } from "./statement.ts";
+import { AstValidator } from "./validate.ts";
 
 /**
  * Represents a prefix expression in the AST.
@@ -206,7 +207,7 @@ export class AssignmentExpression extends Expression {
    * @param name The identifier being assigned to.
    * @param value The expression representing the value being assigned.
    */
-  constructor(token: Token, public name: Identifier, public value: Expression) {
+  constructor(token: Token, public name: Expression, public value: Expression) {
     super(token);
   }
 
@@ -216,5 +217,20 @@ export class AssignmentExpression extends Expression {
    */
   toString(): string {
     return `${this.name.toString()} = ${this.value.toString()}`;
+  }
+
+  /**
+   * Checks if this assignment targets a simple identifier
+   */
+  public isIdentifierAssignment(): boolean {
+    return AstValidator.isIdentifier(this.name);
+  }
+
+  /**
+   * Checks if this assignment targets an index expression (array[i] or
+   * hash["key"])
+   */
+  public isIndexAssignment(): boolean {
+    return AstValidator.isIndexExpression(this.name);
   }
 }
