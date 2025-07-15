@@ -1,42 +1,34 @@
 import { TokenType } from "@/lang/token/token";
-import { Parser, ParsingContext, Precedence } from "../core";
-import * as statements from "@/lang/ast/statement";
-import { ExpressionParser } from "../expression-parser";
-import * as ast from "@/lang/ast/ast";
+import {
+  type Parser,
+  ParsingContext,
+  Precedence,
+  type ExpressionParser,
+} from "../core";
+import { ReturnStatement } from "@/lang/ast/statement";
+import { NullLiteral } from "@/lang/ast/literal";
 
-export class ReturnStatementParser
-  implements Parser<statements.ReturnStatement>
-{
-  constructor(
-    private parseStatement: (context: ParsingContext) => ast.Statement | null
-  ) {}
+export class ReturnStatementParser implements Parser<ReturnStatement> {
+  constructor(private expressionParser: ExpressionParser) {}
 
   canParse(context: ParsingContext): boolean {
     return context.tokens.isCurrentToken(TokenType.RETURN);
   }
 
-  parse(context: ParsingContext): statements.ReturnStatement | null {
-    const returnToken = context.tokens.getCurrentToken();
-    context.tokens.advance();
+  parse(context: ParsingContext): ReturnStatement {
+    const returnToken = context.consumeCurrentToken(TokenType.RETURN);
 
-    const expressionParser = new ExpressionParser(
-      this.parseStatement.bind(this)
-    );
-    const returnValue = expressionParser.parseExpression(
+    if (context.tokens.isCurrentToken(TokenType.SEMICOLON)) {
+      context.consumeCurrentToken(TokenType.SEMICOLON);
+      return new ReturnStatement(returnToken, new NullLiteral(returnToken));
+    }
+
+    const returnValue = this.expressionParser.parseExpression(
       context,
       Precedence.LOWEST
     );
 
-    if (!returnValue) return null;
-
-    if (!context.tokens.expect(TokenType.SEMICOLON)) {
-      context.errors.addTokenError(
-        TokenType.SEMICOLON,
-        context.tokens.getCurrentToken()
-      );
-      return null;
-    }
-
-    return new statements.ReturnStatement(returnToken, returnValue);
+    context.consumeCurrentToken(TokenType.SEMICOLON);
+    return new ReturnStatement(returnToken, returnValue);
   }
 }
