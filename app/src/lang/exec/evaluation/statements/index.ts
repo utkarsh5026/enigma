@@ -5,6 +5,10 @@ import {
   BreakStatementEvaluator,
   ContinueStatementEvaluator,
 } from "./loop-control-evaluator";
+import { ExpressionEvaluator } from "./expression-evaluator";
+import { ReturnStatementEvaluator } from "./return-evaluator";
+import { WhileStatementEvaluator } from "./while-evaluator";
+import { ForStatementEvaluator } from "./for-evaluator";
 
 export {
   LetEvaluator,
@@ -12,4 +16,8 @@ export {
   BlockEvaluator,
   BreakStatementEvaluator,
   ContinueStatementEvaluator,
+  ExpressionEvaluator,
+  ReturnStatementEvaluator,
+  WhileStatementEvaluator,
+  ForStatementEvaluator,
 };
