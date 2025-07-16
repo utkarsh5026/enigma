@@ -15,12 +15,26 @@ export class ReturnStatementEvaluator
     env: Environment,
     context: EvaluationContext
   ): BaseObject {
+    context.addBeforeStep(node, env, `Evaluating return statement`);
     const value = context.evaluate(node.returnValue, env);
 
     if (ObjectValidator.isError(value)) {
+      context.addAfterStep(
+        node,
+        env,
+        value,
+        `Error evaluating return statement: ${value.message}`
+      );
       return value;
     }
 
-    return new ReturnValueObject(value);
+    const returnValueObject = new ReturnValueObject(value);
+    context.addAfterStep(
+      node,
+      env,
+      returnValueObject,
+      `Return statement evaluated: ${returnValueObject.inspect()}`
+    );
+    return returnValueObject;
   }
 }

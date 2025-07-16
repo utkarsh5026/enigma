@@ -22,21 +22,44 @@ export class LetEvaluator implements NodeEvaluator<LetStatement> {
   ): BaseObject {
     const varName = node.name.value;
 
+    context.addBeforeStep(node, env, `Declaring variable "${varName}"`);
+
     if (env.has(varName)) {
-      return new ErrorObject(
+      const error = new ErrorObject(
         `variable '${varName}' already declared in this scope`
       );
+      context.addAfterStep(
+        node,
+        env,
+        error,
+        `Error: Variable "${varName}" already exists`
+      );
+      return error;
     }
 
     const value = context.evaluate(node.value, env);
 
     if (ObjectValidator.isError(value)) {
+      context.addAfterStep(
+        node,
+        env,
+        value,
+        `Error evaluating expression for variable "${varName}": ${value.message}`
+      );
+
       return new ErrorObject(
         `error evaluating expression for variable '${varName}': ${value.message}`
       );
     }
 
     env.set(varName, value);
+
+    context.addAfterStep(
+      node,
+      env,
+      value,
+      `Variable "${varName}" declared with value: ${value.inspect()}`
+    );
     return value;
   }
 }
