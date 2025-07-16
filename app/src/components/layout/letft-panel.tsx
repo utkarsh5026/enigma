@@ -14,7 +14,7 @@ import { useMobile } from "@/hooks/use-mobile";
 import { consoleStore } from "@/stores/console-stores";
 import Lexer from "@/lang/lexer/lexer";
 import { LanguageParser } from "@/lang/parser";
-import { Evaluator } from "@/lang/exec/evaluation";
+import { LanguageEvaluator } from "@/lang/exec/evaluation/evaluator";
 import { Environment } from "@/lang/exec/objects";
 
 interface LeftPanelProps {
@@ -50,8 +50,8 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
       consoleStore.addEntry("Code executed successfully", "info");
     }
 
-    const evaluator = new Evaluator();
-    const result = evaluator.evaluate(ast, new Environment());
+    const evaluator = new LanguageEvaluator();
+    const result = evaluator.evaluateProgram(ast, new Environment());
 
     consoleStore.addEntry(result.toString(), "info");
 
