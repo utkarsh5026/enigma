@@ -1,6 +1,11 @@
-import { NodeEvaluator } from "@/lang/exec/core";
+import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
 import { BreakStatement, ContinueStatement } from "@/lang/ast";
-import { BaseObject, BreakObject, ContinueObject } from "@/lang/exec/objects";
+import {
+  BaseObject,
+  BreakObject,
+  ContinueObject,
+  Environment,
+} from "@/lang/exec/objects";
 
 /**
  * 📦 BreakStatementEvaluator - The Break Statement Expert 📦
@@ -9,7 +14,17 @@ import { BaseObject, BreakObject, ContinueObject } from "@/lang/exec/objects";
  * It's like a conductor who leads a symphony!
  */
 export class BreakStatementEvaluator implements NodeEvaluator<BreakStatement> {
-  public evaluate(): BaseObject {
+  public evaluate(
+    node: BreakStatement,
+    env: Environment,
+    context: EvaluationContext
+  ): BaseObject {
+    context.addAfterStep(
+      node,
+      env,
+      BreakObject.INSTANCE,
+      `Break statement evaluated`
+    );
     return BreakObject.INSTANCE;
   }
 }
@@ -23,7 +38,17 @@ export class BreakStatementEvaluator implements NodeEvaluator<BreakStatement> {
 export class ContinueStatementEvaluator
   implements NodeEvaluator<ContinueStatement>
 {
-  evaluate(): BaseObject {
+  evaluate(
+    node: ContinueStatement,
+    env: Environment,
+    context: EvaluationContext
+  ): BaseObject {
+    context.addAfterStep(
+      node,
+      env,
+      ContinueObject.INSTANCE,
+      `Continue statement evaluated`
+    );
     return ContinueObject.INSTANCE;
   }
 }
