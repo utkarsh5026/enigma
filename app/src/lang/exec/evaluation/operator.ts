@@ -1,6 +1,5 @@
 import * as objects from "../objects";
-import { truthy } from "./utils";
-import { ObjectValidator } from "./validate";
+import { ObjectValidator } from "../core/validate";
 
 export const evalLogicalNotOperator = (
   right: objects.BaseObject
@@ -8,7 +7,7 @@ export const evalLogicalNotOperator = (
   const isBoolean = ObjectValidator.isBoolean(right);
 
   if (isBoolean) {
-    return truthy(right)
+    return ObjectValidator.isTruthy(right)
       ? new objects.BooleanObject(false)
       : new objects.BooleanObject(true);
   }

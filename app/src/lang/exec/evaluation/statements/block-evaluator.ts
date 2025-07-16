@@ -1,7 +1,7 @@
 import { NodeEvaluator, EvaluationContext } from "../../core/interfaces";
 import { BlockStatement } from "@/lang/ast";
 import { Environment, BaseObject, NullObject } from "../../objects";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 /**
  * 📦 BlockEvaluator - The Block Statement Expert 📦

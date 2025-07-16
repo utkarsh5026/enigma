@@ -8,7 +8,7 @@ import {
   NullObject,
 } from "@/lang/exec/objects";
 import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 import { Expression } from "@/lang/ast/ast";
 
 export class IndexExpressionEvaluator

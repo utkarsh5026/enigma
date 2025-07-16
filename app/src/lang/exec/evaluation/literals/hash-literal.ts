@@ -1,7 +1,7 @@
 import { HashLiteral } from "@/lang/ast";
 import { Environment, BaseObject, HashObject } from "@/lang/exec/objects";
 import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 export class HashLiteralEvaluator implements NodeEvaluator<HashLiteral> {
   public evaluate(

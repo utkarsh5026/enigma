@@ -7,7 +7,7 @@ import {
   ErrorObject,
 } from "@/lang/exec/objects";
 import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 export class WhileStatementEvaluator implements NodeEvaluator<WhileStatement> {
   constructor(private readonly loopContext: LoopContext) {}

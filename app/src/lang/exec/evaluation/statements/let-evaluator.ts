@@ -1,7 +1,7 @@
 import { BaseObject, Environment, ErrorObject } from "../../objects";
 import { LetStatement } from "@/lang/ast/statement";
 import { EvaluationContext, NodeEvaluator } from "../../core/interfaces";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 /**
  * 📦 LetEvaluator - The Variable Declaration Expert 📦

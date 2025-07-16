@@ -2,7 +2,7 @@ import * as ast from "../../ast/ast.ts";
 import * as statement from "../../ast/statement.ts";
 import * as expression from "../../ast/expression.ts";
 import * as literal from "../../ast/literal.ts";
-import { ObjectValidator } from "./validate";
+import { ObjectValidator } from "../core/validate.ts";
 import * as objects from "../objects/index.ts";
 import { truthy } from "./utils";
 import { evalIdentifier, evaluateInfix } from "./expression";

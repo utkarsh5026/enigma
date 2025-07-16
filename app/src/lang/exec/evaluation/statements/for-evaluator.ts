@@ -6,7 +6,7 @@ import {
   ErrorObject,
 } from "../../objects";
 import { LoopContext, NodeEvaluator, EvaluationContext } from "../../core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 export class ForStatementEvaluator implements NodeEvaluator<ForStatement> {
   constructor(private readonly loopContext: LoopContext) {}

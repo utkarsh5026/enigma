@@ -1,7 +1,7 @@
 import { ArrayLiteral } from "@/lang/ast";
 import { Environment, BaseObject, ArrayObject } from "@/lang/exec/objects";
 import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 export class ArrayLiteralEvaluator implements NodeEvaluator<ArrayLiteral> {
   public evaluate(

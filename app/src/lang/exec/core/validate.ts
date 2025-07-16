@@ -196,6 +196,20 @@ export class ObjectValidator {
     return obj instanceof objects.NullObject;
   }
 
+  /**
+   * 🔄 **Builtin Detector - Built-in Spotter**
+   *
+   * Checks if an object is a builtin - like checking if something is a built-in function!
+   *
+   * **Flow Chart**:
+   * ```
+   * Object → instanceof BuiltinObject? → Yes: ✅ It's a builtin!
+   *       → No: ❌ Not a builtin
+   * ```
+   *
+   * @param obj 📦 The object to check for builtin-ness
+   * @returns 🎯 True if it's a BuiltinObject, false otherwise
+   */
   static isBuiltin(obj: objects.BaseObject): obj is objects.BuiltinObject {
     return obj instanceof objects.BuiltinObject;
   }

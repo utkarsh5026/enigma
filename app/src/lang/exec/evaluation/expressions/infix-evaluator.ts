@@ -9,7 +9,7 @@ import {
   IntegerObject,
 } from "@/lang/exec/objects";
 import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 /**
  * 🧮 InfixExpressionEvaluator - Binary Operation Specialist 🧮

@@ -5,7 +5,7 @@ import {
   ReturnValueObject,
 } from "@/lang/exec/objects";
 import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 export class ReturnStatementEvaluator
   implements NodeEvaluator<ReturnStatement>

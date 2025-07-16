@@ -8,7 +8,7 @@ import {
   ArrayObject,
 } from "@/lang/exec/objects";
 import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 /**
  * 📝 AssignmentExpressionEvaluator - Universal Assignment Specialist 📝

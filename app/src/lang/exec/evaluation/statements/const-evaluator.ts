@@ -1,7 +1,7 @@
 import { NodeEvaluator, EvaluationContext } from "../../core/interfaces";
 import { ConstStatement } from "@/lang/ast";
 import { Environment, BaseObject, ErrorObject } from "../../objects";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 export class ConstEvaluator implements NodeEvaluator<ConstStatement> {
   evaluate(

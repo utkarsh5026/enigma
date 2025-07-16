@@ -2,7 +2,7 @@ import { NodeEvaluator } from "@/lang/exec/core";
 import { CallExpression } from "@/lang/ast";
 import { Environment, BaseObject, ErrorObject } from "@/lang/exec/objects";
 import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../validate";
+import { ObjectValidator } from "../../core/validate";
 
 export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
   public evaluate(

@@ -2,7 +2,7 @@ import { truthy } from "./utils";
 import * as objects from "../objects";
 import { Operator } from "@/lang/token/token";
 import type { Identifier } from "@/lang/ast/ast";
-import { ObjectValidator } from "./validate";
+import { ObjectValidator } from "../core/validate";
 import { evalLogicalNotOperator, evalNegationOperator } from "./operator";
 import { getBuiltin, isBuiltin } from "../builtins";
 

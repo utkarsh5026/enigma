@@ -1,5 +1,4 @@
-import { ObjectValidator } from "./validate";
+import { ObjectValidator } from "../core/validate";
 import Evaluator from "./eval";
-import { truthy } from "./utils";
 
-export { ObjectValidator, Evaluator, truthy };
+export { ObjectValidator, Evaluator };
