@@ -21,34 +21,37 @@ export class LanguageEvaluator implements EvaluationContext {
   private loopContext: LoopContext;
   private evaluationStack: string[] = [];
   private evaluationDepth: number = 0;
-  private stepStorage?: StepStorage;
+  private readonly stepStorage?: StepStorage;
 
   // Individual evaluator instances
-  private letEvaluator = new statements.LetEvaluator();
-  private constEvaluator = new statements.ConstEvaluator();
-  private returnEvaluator = new statements.ReturnStatementEvaluator();
-  private blockEvaluator = new statements.BlockEvaluator();
-  private whileEvaluator: statements.WhileStatementEvaluator;
-  private forEvaluator: statements.ForStatementEvaluator;
-  private breakEvaluator = new statements.BreakStatementEvaluator();
-  private continueEvaluator = new statements.ContinueStatementEvaluator();
+  private readonly letEvaluator = new statements.LetEvaluator();
+  private readonly constEvaluator = new statements.ConstEvaluator();
+  private readonly returnEvaluator = new statements.ReturnStatementEvaluator();
+  private readonly blockEvaluator = new statements.BlockEvaluator();
+  private readonly whileEvaluator: statements.WhileStatementEvaluator;
+  private readonly forEvaluator: statements.ForStatementEvaluator;
+  private readonly breakEvaluator = new statements.BreakStatementEvaluator();
+  private readonly continueEvaluator =
+    new statements.ContinueStatementEvaluator();
 
-  private callEvaluator = new expressions.CallExpressionEvaluator();
-  private ifEvaluator = new expressions.IfExpressionEvaluator();
-  private expressionEvaluator = new statements.ExpressionEvaluator();
-  private prefixEvaluator = new expressions.PrefixExpressionEvaluator();
-  private infixEvaluator = new expressions.InfixExpressionEvaluator();
-  private identifierEvaluator = new expressions.IndentifierEvaluator();
-  private assignmentEvaluator = new expressions.AssignmentExpressionEvaluator();
-  private indexEvaluator = new expressions.IndexExpressionEvaluator();
+  private readonly callEvaluator = new expressions.CallExpressionEvaluator();
+  private readonly ifEvaluator = new expressions.IfExpressionEvaluator();
+  private readonly expressionEvaluator = new statements.ExpressionEvaluator();
+  private readonly prefixEvaluator =
+    new expressions.PrefixExpressionEvaluator();
+  private readonly infixEvaluator = new expressions.InfixExpressionEvaluator();
+  private readonly identifierEvaluator = new expressions.IndentifierEvaluator();
+  private readonly assignmentEvaluator =
+    new expressions.AssignmentExpressionEvaluator();
+  private readonly indexEvaluator = new expressions.IndexExpressionEvaluator();
 
-  private stringEvaluator = new literals.StringLiteralEvaluator();
-  private integerEvaluator = new literals.IntegerLiteralEvaluator();
-  private booleanEvaluator = new literals.BooleanLiteralEvaluator();
-  private arrayEvaluator = new literals.ArrayLiteralEvaluator();
-  private hashEvaluator = new literals.HashLiteralEvaluator();
-  private functionEvaluator = new literals.FunctionLiteralEvaluator();
-  private nullEvaluator = new literals.NullLiteralEvaluator();
+  private readonly stringEvaluator = new literals.StringLiteralEvaluator();
+  private readonly integerEvaluator = new literals.IntegerLiteralEvaluator();
+  private readonly booleanEvaluator = new literals.BooleanLiteralEvaluator();
+  private readonly arrayEvaluator = new literals.ArrayLiteralEvaluator();
+  private readonly hashEvaluator = new literals.HashLiteralEvaluator();
+  private readonly functionEvaluator = new literals.FunctionLiteralEvaluator();
+  private readonly nullEvaluator = new literals.NullLiteralEvaluator();
 
   constructor(stepStorage?: StepStorage) {
     this.loopContext = new LoopContext(0);
@@ -139,10 +142,18 @@ export class LanguageEvaluator implements EvaluationContext {
         );
 
       case statement.BreakStatement:
-        return this.breakEvaluator.evaluate();
+        return this.breakEvaluator.evaluate(
+          node as statement.BreakStatement,
+          env,
+          this
+        );
 
       case statement.ContinueStatement:
-        return this.continueEvaluator.evaluate();
+        return this.continueEvaluator.evaluate(
+          node as statement.ContinueStatement,
+          env,
+          this
+        );
 
       case statement.ExpressionStatement:
         return this.expressionEvaluator.evaluate(
@@ -233,7 +244,8 @@ export class LanguageEvaluator implements EvaluationContext {
       case literal.FunctionLiteral:
         return this.functionEvaluator.evaluate(
           node as literal.FunctionLiteral,
-          env
+          env,
+          this
         );
 
       case literal.NullLiteral:
@@ -245,7 +257,11 @@ export class LanguageEvaluator implements EvaluationContext {
 
       // Special case for Identifier (from ast.ts)
       case ast.Identifier:
-        return this.identifierEvaluator.evaluate(node as ast.Identifier, env);
+        return this.identifierEvaluator.evaluate(
+          node as ast.Identifier,
+          env,
+          this
+        );
 
       default:
         return new ErrorObject(
