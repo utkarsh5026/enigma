@@ -4,6 +4,7 @@ import { CallExpressionEvaluator } from "./call-expression-evaluator";
 import { AssignmentExpressionEvaluator } from "./assignment-expression-evaluator";
 import { InfixExpressionEvaluator } from "./infix-evaluator";
 import { IndexExpressionEvaluator } from "./index-evaluator";
+import { IfExpressionEvaluator } from "./if-expression-evaluator";
 
 export {
   IndentifierEvaluator,
@@ -12,4 +13,5 @@ export {
   AssignmentExpressionEvaluator,
   InfixExpressionEvaluator,
   IndexExpressionEvaluator,
+  IfExpressionEvaluator,
 };
