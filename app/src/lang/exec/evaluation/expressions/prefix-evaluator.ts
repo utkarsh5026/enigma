@@ -25,12 +25,29 @@ export class PrefixExpressionEvaluator
     env: Environment,
     context: EvaluationContext
   ): BaseObject {
+    context.addBeforeStep(
+      node,
+      env,
+      `Evaluating prefix expression evaluation: ${node.toString()}`
+    );
     const right = context.evaluate(node.right, env);
     if (ObjectValidator.isError(right)) {
+      context.addAfterStep(
+        node,
+        env,
+        right,
+        `Error evaluating prefix expression: ${right.message}`
+      );
       return right;
     }
-
-    return this.evalPrefixExpression(node.operator, right);
+    const result = this.evalPrefixExpression(node.operator, right);
+    context.addAfterStep(
+      node,
+      env,
+      result,
+      `Prefix expression evaluated: ${result.inspect()}`
+    );
+    return result;
   }
 
   /**
