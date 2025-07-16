@@ -1,5 +1,6 @@
 import { Node } from "@/lang/ast/ast";
 import { BaseObject, Environment } from "../objects";
+import type { StepType } from "../steps/step-info";
 
 /**
  * 🎯 NodeEvaluator - The Universal Evaluation Contract 🎯
@@ -47,4 +48,51 @@ export interface EvaluationContext {
    * Creates a new scope for block statements, functions, etc.
    */
   newScope(parent: Environment, isBlockScope: boolean): Environment;
+
+  /**
+   * Adds a step to the evaluation context
+   */
+  addStep(
+    node: Node,
+    env: Environment,
+    description: string,
+    stepType: StepType,
+    result?: BaseObject,
+    customData?: unknown
+  ): void;
+
+  /**
+   * Adds a before step to the evaluation context
+   */
+  addBeforeStep(node: Node, env: Environment, description: string): void;
+
+  /**
+   * Adds an after step to the evaluation context
+   */
+  addAfterStep(
+    node: Node,
+    env: Environment,
+    result: BaseObject,
+    description?: string
+  ): void;
+
+  /**
+   * Adds a during step to the evaluation context
+   */
+  addDuringStep(
+    node: Node,
+    env: Environment,
+    description: string,
+    data?: unknown
+  ): void;
+
+  /**
+   * Gets the current evaluation path
+   */
+  getCurrentEvaluationPath(): string;
+
+  /**
+   * Gets the evaluation depth
+   */
+  getEvaluationDepth(): number;
 }
