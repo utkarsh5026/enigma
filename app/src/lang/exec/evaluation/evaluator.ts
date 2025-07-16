@@ -13,10 +13,15 @@ import {
   NullObject,
   ReturnValueObject,
 } from "../objects";
-import { ObjectValidator } from "./validate";
+import { ObjectValidator } from "../core/validate";
+import { StepStorage, StepType } from "../steps/step-info";
+import { DefaultStepStorage } from "../steps/step-storage";
 
 export class LanguageEvaluator implements EvaluationContext {
   private loopContext: LoopContext;
+  private evaluationStack: string[] = [];
+  private evaluationDepth: number = 0;
+  private stepStorage?: StepStorage;
 
   // Individual evaluator instances
   private letEvaluator = new statements.LetEvaluator();
@@ -45,13 +50,13 @@ export class LanguageEvaluator implements EvaluationContext {
   private functionEvaluator = new literals.FunctionLiteralEvaluator();
   private nullEvaluator = new literals.NullLiteralEvaluator();
 
-  constructor() {
+  constructor(stepStorage?: StepStorage) {
     this.loopContext = new LoopContext(0);
-    // Initialize loop-dependent evaluators
     this.whileEvaluator = new statements.WhileStatementEvaluator(
       this.loopContext
     );
     this.forEvaluator = new statements.ForStatementEvaluator(this.loopContext);
+    this.stepStorage = stepStorage || new DefaultStepStorage();
   }
 
   /**
@@ -191,15 +196,25 @@ export class LanguageEvaluator implements EvaluationContext {
 
       case expression.BooleanExpression:
         return this.booleanEvaluator.evaluate(
-          node as expression.BooleanExpression
+          node as expression.BooleanExpression,
+          env,
+          this
         );
 
       // Literals
       case literal.StringLiteral:
-        return this.stringEvaluator.evaluate(node as literal.StringLiteral);
+        return this.stringEvaluator.evaluate(
+          node as literal.StringLiteral,
+          env,
+          this
+        );
 
       case literal.IntegerLiteral:
-        return this.integerEvaluator.evaluate(node as literal.IntegerLiteral);
+        return this.integerEvaluator.evaluate(
+          node as literal.IntegerLiteral,
+          env,
+          this
+        );
 
       case literal.ArrayLiteral:
         return this.arrayEvaluator.evaluate(
@@ -222,7 +237,11 @@ export class LanguageEvaluator implements EvaluationContext {
         );
 
       case literal.NullLiteral:
-        return this.nullEvaluator.evaluate();
+        return this.nullEvaluator.evaluate(
+          node as literal.NullLiteral,
+          env,
+          this
+        );
 
       // Special case for Identifier (from ast.ts)
       case ast.Identifier:
@@ -253,5 +272,90 @@ export class LanguageEvaluator implements EvaluationContext {
     }
 
     return result;
+  }
+
+  /**
+   * 🔄 **Before Step - Before Spotter**
+   *
+   * Adds a before step to the evaluation context
+   *
+   */
+  addBeforeStep(node: ast.Node, env: Environment, description: string): void {
+    this.addStep(node, env, description, "Before");
+  }
+
+  /**
+   * 🔄 **After Step - After Spotter**
+   *
+   * Adds an after step to the evaluation context
+   *
+   */
+  addAfterStep(
+    node: ast.Node,
+    env: Environment,
+    result: BaseObject,
+    description?: string
+  ): void {
+    this.addStep(
+      node,
+      env,
+      description || `Completed: ${result.inspect()}`,
+      "After",
+      result
+    );
+  }
+
+  /**
+   * 🔄 **During Step - During Spotter**
+   *
+   * Adds a during step to the evaluation context
+   *
+   */
+  addDuringStep(
+    node: ast.Node,
+    env: Environment,
+    description: string,
+    data?: unknown
+  ): void {
+    this.addStep(node, env, description, "During", undefined, data);
+  }
+
+  /**
+   * 🔄 **Step - Step Spotter**
+   *
+   * Adds a step to the evaluation context
+   *
+   */
+  addStep(
+    node: ast.Node,
+    env: Environment,
+    description: string,
+    stepType: StepType,
+    result?: BaseObject,
+    customData?: unknown
+  ): void {
+    if (!this.stepStorage) return; // No-op if step storage not provided
+
+    const enrichedStep = {
+      node,
+      env,
+      description,
+      stepType,
+      result,
+      customData,
+      timestamp: Date.now(),
+      evaluationPath: this.getCurrentEvaluationPath(),
+      evaluationDepth: this.getEvaluationDepth(),
+    };
+
+    this.stepStorage.addStep(enrichedStep);
+  }
+
+  getCurrentEvaluationPath(): string {
+    return this.evaluationStack.join(" → ");
+  }
+
+  getEvaluationDepth(): number {
+    return this.evaluationDepth;
   }
 }
