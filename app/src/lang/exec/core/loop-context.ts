@@ -29,4 +29,8 @@ export class LoopContext {
   public isMaxIterationsReached(): boolean {
     return this.loopDepth >= MAX_ITERATIONS;
   }
+
+  public static getMaxIterations(): number {
+    return MAX_ITERATIONS;
+  }
 }
