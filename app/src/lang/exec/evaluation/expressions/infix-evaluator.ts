@@ -1,5 +1,5 @@
 import { InfixExpression } from "@/lang/ast/expression";
-import { NodeEvaluator } from "@/lang/exec/core";
+import { NodeEvaluator, ObjectValidator } from "@/lang/exec/core";
 import {
   Environment,
   BaseObject,
@@ -9,7 +9,6 @@ import {
   IntegerObject,
 } from "@/lang/exec/objects";
 import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
 
 /**
  * 🧮 InfixExpressionEvaluator - Binary Operation Specialist 🧮
@@ -26,13 +25,47 @@ export class InfixExpressionEvaluator
     env: Environment,
     context: EvaluationContext
   ) {
+    context.addBeforeStep(
+      node,
+      env,
+      `Evaluating the left side of the infix expression`
+    );
     const left = context.evaluate(node.left, env);
-    if (ObjectValidator.isError(left)) return left;
+    if (ObjectValidator.isError(left)) {
+      context.addAfterStep(
+        node,
+        env,
+        left,
+        `Error evaluating the left side of the infix expression: ${left.message}`
+      );
+      return left;
+    }
 
+    context.addBeforeStep(
+      node,
+      env,
+      `Evaluating the right side of the infix expression`
+    );
     const right = context.evaluate(node.right, env);
-    if (ObjectValidator.isError(right)) return right;
+    if (ObjectValidator.isError(right)) {
+      context.addAfterStep(
+        node,
+        env,
+        right,
+        `Error evaluating the right side of the infix expression: ${right.message}`
+      );
+      return right;
+    }
 
-    return this.evalInfixExpression(node.operator, left, right);
+    context.addBeforeStep(node, env, `Evaluating the infix expression`);
+    const result = this.evalInfixExpression(node.operator, left, right);
+    context.addAfterStep(
+      node,
+      env,
+      result,
+      `Infix expression evaluated: ${result.inspect()}`
+    );
+    return result;
   }
 
   private evalStringInfixExpression(

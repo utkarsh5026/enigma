@@ -1,4 +1,4 @@
-import { NodeEvaluator } from "@/lang/exec/core";
+import { NodeEvaluator, ObjectValidator } from "@/lang/exec/core";
 import { PrefixExpression } from "@/lang/ast";
 import {
   Environment,
@@ -8,7 +8,6 @@ import {
   IntegerObject,
 } from "@/lang/exec/objects";
 import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
 
 export class PrefixExpressionEvaluator
   implements NodeEvaluator<PrefixExpression>
