@@ -138,7 +138,7 @@ export default class Evaluator {
   ): objects.BaseObject {
     let result: objects.BaseObject = this.NULL;
 
-    for (const statement of program.statements) {
+    for (const statement of program.getStatements()) {
       result = this.evaluate(statement, env);
 
       if (result instanceof objects.ReturnValueObject) return result.value;
@@ -501,7 +501,7 @@ export default class Evaluator {
     node: expression.AssignmentExpression,
     env: objects.Environment
   ): objects.BaseObject {
-    const name = node.name.value;
+    const name = (node.name as ast.Identifier).value;
     const definingScope = env.getDefiningScope(name);
 
     if (!definingScope)
@@ -525,7 +525,6 @@ export default class Evaluator {
     }
 
     if (!validate.isFunction(fn)) {
-      console.log(fn.type());
       return new objects.ErrorObject(`Not a function: ${fn.type()}`);
     }
 
