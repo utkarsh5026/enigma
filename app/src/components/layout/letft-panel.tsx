@@ -1,5 +1,3 @@
-// app/src/components/layout/left-panel.tsx
-
 import React, { useState } from "react";
 import { FileCode, Play, Copy, Download } from "lucide-react";
 import {
@@ -16,6 +14,7 @@ import Lexer from "@/lang/lexer/lexer";
 import { LanguageParser } from "@/lang/parser";
 import { LanguageEvaluator } from "@/lang/exec/evaluation/evaluator";
 import { Environment } from "@/lang/exec/objects";
+import { Button } from "../ui/button";
 
 interface LeftPanelProps {
   code: string;
@@ -53,7 +52,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     const evaluator = new LanguageEvaluator();
     const result = evaluator.evaluateProgram(ast, new Environment());
 
-    consoleStore.addEntry(result.toString(), "info");
+    consoleStore.addEntry(result.inspect(), "info");
 
     setShowConsole(true);
     setIsConsoleMinimized(false);
@@ -89,12 +88,23 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
         {/* Toolbar buttons */}
         <div className="flex items-center justify-center sm:justify-end sm:ml-auto px-3 pb-2 sm:px-2 sm:pb-0">
           <div className="flex items-center gap-1 sm:gap-0">
-            <EditorToolbarButton
-              icon={<Play className="h-4 w-4 sm:h-5 sm:w-5" />}
-              tooltip="Run Code"
+            <Button
               onClick={handleRunCode}
-              className="min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]"
-            />
+              className="
+                min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]
+                bg-[var(--tokyo-green)] hover:bg-[var(--tokyo-green)]/80
+                text-[var(--tokyo-bg)] hover:text-[var(--tokyo-bg)]
+                rounded-lg transition-all duration-200
+                flex items-center justify-center
+                shadow-lg hover:shadow-xl
+                border border-[var(--tokyo-green)]/20
+                active:scale-95
+                group cursor-pointer
+              "
+              title="Run Code"
+            >
+              <Play className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform duration-200" />
+            </Button>
             <EditorToolbarButton
               icon={<Copy className="h-4 w-4 sm:h-5 sm:w-5" />}
               tooltip="Copy Code"
