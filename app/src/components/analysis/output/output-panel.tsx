@@ -75,6 +75,8 @@ const TerminalEntry: React.FC<TerminalEntryProps> = ({ entry }) => {
         return "[ERROR]";
       case "info":
         return "[INFO]";
+      case "success":
+        return "[SUCCESS]";
       case "print":
       case "println":
         return ">";
@@ -92,6 +94,8 @@ const TerminalEntry: React.FC<TerminalEntryProps> = ({ entry }) => {
       case "print":
       case "println":
         return "text-[var(--tokyo-fg)]";
+      case "success":
+        return "text-[var(--tokyo-green)]";
       default:
         return "text-[var(--tokyo-fg)]";
     }
