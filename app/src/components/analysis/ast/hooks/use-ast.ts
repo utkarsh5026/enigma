@@ -1,38 +1,33 @@
-import { useEffect, useState } from "react";
-import Lexer from "@/lang/lexer/lexer";
-import { LanguageParser } from "@/lang/parser";
-import { Program } from "@/lang/ast";
-import { ParseError } from "@/lang/parser";
-
-export type Ast = {
-  program: Program;
-  errors: ParseError[];
-};
+import { useProgram } from "@/hooks/use-program";
+import { useState, useCallback } from "react";
 
 export const useAst = (code: string) => {
-  const [ast, setAst] = useState<Ast | null>(null);
+  const { program, parserErrors, parse } = useProgram(code);
+  const [isParsing, setIsParsing] = useState(false);
+  const [hasBeenParsed, setHasBeenParsed] = useState(false);
 
-  useEffect(() => {
-    if (!code || code.trim() === "") {
-      setAst(null);
+  const parseWithState = useCallback(async () => {
+    if (!code?.trim()) {
       return;
     }
 
+    setIsParsing(true);
     try {
-      const lexer = new Lexer(code);
-      const parser = new LanguageParser(lexer);
-      const program = parser.parseProgram();
-
-      if (parser.getErrors().length > 0) {
-        setAst({ program, errors: parser.getErrors() });
-      }
-
-      setAst({ program, errors: [] });
-    } catch (error) {
-      console.error("Error parsing code:", error);
-      setAst(null);
+      // Add small delay to show loading state for better UX
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      parse();
+      setHasBeenParsed(true);
+    } finally {
+      setIsParsing(false);
     }
-  }, [code]);
+  }, [code, parse]);
 
-  return { ast };
+  return {
+    program,
+    parserErrors,
+    parse: parseWithState,
+    isParsing,
+    hasBeenParsed,
+    canParse: !!code?.trim(),
+  };
 };

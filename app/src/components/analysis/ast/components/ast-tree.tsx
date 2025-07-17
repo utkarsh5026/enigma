@@ -1,18 +1,21 @@
 import { AnimatePresence, motion } from "framer-motion";
 import ParserErrors from "./parser-errors";
-import AstNode from "./AstNode";
+import AstNode from "./ast-node";
 import { Info } from "lucide-react";
-import { Ast } from "../hooks/use-ast";
+import { ParseError } from "@/lang/parser/core";
+import { Program } from "@/lang/ast/ast";
 
 interface AstTreeProps {
-  ast: Ast;
+  program: Program;
+  parserErrors: ParseError[];
   forceRefresh: number;
   nodeCount: number;
   highlightedNodes: Set<string>;
 }
 
 const AstTree: React.FC<AstTreeProps> = ({
-  ast,
+  program,
+  parserErrors,
   forceRefresh,
   nodeCount,
   highlightedNodes,
@@ -21,14 +24,14 @@ const AstTree: React.FC<AstTreeProps> = ({
     <div className="p-6">
       {/* Parser Errors */}
       <AnimatePresence>
-        {ast.errors && ast.errors.length > 0 && (
+        {parserErrors && parserErrors.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className="mb-6"
           >
-            <ParserErrors errors={ast.errors} />
+            <ParserErrors errors={parserErrors} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -45,7 +48,7 @@ const AstTree: React.FC<AstTreeProps> = ({
         <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-tokyo-comment/30 to-transparent" />
 
         {/* Root node */}
-        <AstNode node={ast.program} depth={0} path="root" isLast={true} />
+        <AstNode node={program} depth={0} path="root" isLast={true} />
       </motion.div>
 
       {/* Legend and Statistics */}
@@ -72,7 +75,7 @@ const AstTree: React.FC<AstTreeProps> = ({
             <div className="flex flex-col">
               <span className="text-tokyo-comment">Statements</span>
               <span className="text-tokyo-green font-mono">
-                {ast.program.getStatements().length || 0}
+                {program.getStatements().length || 0}
               </span>
             </div>
             <div className="flex flex-col">
@@ -84,7 +87,7 @@ const AstTree: React.FC<AstTreeProps> = ({
             <div className="flex flex-col">
               <span className="text-tokyo-comment">Parser Errors</span>
               <span className="text-tokyo-red font-mono">
-                {ast.errors?.length || 0}
+                {parserErrors?.length || 0}
               </span>
             </div>
           </div>

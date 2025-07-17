@@ -1,35 +1,125 @@
 import { motion } from "framer-motion";
-import { TreePine } from "lucide-react";
+import { GitBranch, Code2, Zap, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const EmptyAst = () => {
+interface EmptyAstProps {
+  onParse?: () => void;
+  isParsing?: boolean;
+  canParse?: boolean;
+}
+
+const EmptyAst: React.FC<EmptyAstProps> = ({
+  onParse,
+  isParsing = false,
+  canParse = false,
+}) => {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex flex-col items-center justify-center p-12 text-center"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex flex-col items-center justify-center p-8 lg:p-12 text-center min-h-full"
     >
-      <div className="relative mb-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-tokyo-blue/20 to-tokyo-purple/20 rounded-full blur-xl" />
-        <div className="relative bg-gradient-to-br from-tokyo-bg-highlight to-tokyo-bg-dark p-6 rounded-full border border-tokyo-comment">
-          <TreePine size={48} className="text-tokyo-comment" />
-        </div>
-      </div>
+      {/* Main Icon with enhanced animations */}
+      <motion.div
+        initial={{ scale: 0.8, rotate: -10 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        className="relative mb-8"
+      >
+        {/* Animated background glow */}
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute inset-0 bg-gradient-to-r from-[var(--tokyo-blue)]/20 via-[var(--tokyo-purple)]/20 to-[var(--tokyo-cyan)]/20 rounded-full blur-2xl"
+        />
 
-      <h3 className="text-xl font-semibold text-tokyo-fg mb-2">
-        No AST to Display
-      </h3>
-      <p className="text-tokyo-comment max-w-md leading-relaxed">
-        Enter some Enigma code in the editor to see its Abstract Syntax Tree
-        representation. The AST shows how your code is parsed and structured.
-      </p>
+        {/* Icon container */}
+        <motion.div
+          whileHover={{ scale: 1.05, rotate: 5 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          className="relative bg-gradient-to-br from-[var(--tokyo-bg-highlight)] to-[var(--tokyo-bg-dark)] p-8 rounded-2xl border border-[var(--tokyo-comment)]/30 shadow-2xl"
+        >
+          <GitBranch size={64} className="text-[var(--tokyo-blue)]" />
 
-      <div className="mt-6 p-4 bg-tokyo-bg-highlight/50 rounded-lg border border-tokyo-comment max-w-sm">
-        <p className="text-sm text-tokyo-fg mb-2">Try this example:</p>
-        <code className="text-xs text-tokyo-blue font-mono">
-          let x = 5 + 3;
-        </code>
-      </div>
+          {/* Floating elements */}
+          <motion.div
+            animate={{ y: [-2, 2, -2] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-2 -right-2 bg-[var(--tokyo-green)] rounded-full p-1.5"
+          >
+            <Code2 size={12} className="text-white" />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
+      {/* Content */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="max-w-2xl flex flex-col items-center justify-center"
+      >
+        <h3 className="text-2xl lg:text-3xl font-bold text-[var(--tokyo-fg)] mb-4 bg-gradient-to-r from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] bg-clip-text">
+          Ready to Parse Your Code?
+        </h3>
+
+        <p className="text-[var(--tokyo-comment)] text-lg leading-relaxed mb-8">
+          Write some Enigma code in the editor, then hit the{" "}
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] rounded font-mono text-sm">
+            <Zap size={12} />
+            Parse Code
+          </span>{" "}
+          button to visualize its Abstract Syntax Tree structure.
+        </p>
+
+        {/* Parse Button */}
+        {onParse && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+            className="mb-8"
+          >
+            <Button
+              onClick={onParse}
+              disabled={isParsing || !canParse}
+              size="lg"
+              className="bg-tokyo-green/50  text-white px-8 py-3 rounded-xl flex items-center gap-3 transition-all shadow-xl  disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold cursor-pointer hover:bg-tokyo-green/20 hover:shadow-tokyo-green/20 hover:text-tokyo-green hover:shadow-md"
+            >
+              {isParsing ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : (
+                <Zap size={20} />
+              )}
+              {isParsing ? "Parsing Code..." : "Parse Code Now"}
+            </Button>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Call to action */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 1.2 }}
+        className="mt-8 p-6 bg-gradient-to-r from-[var(--tokyo-blue)]/10 to-[var(--tokyo-purple)]/10 rounded-2xl border border-[var(--tokyo-blue)]/20 backdrop-blur-sm"
+      >
+        <p className="text-sm text-[var(--tokyo-fg-dark)] mb-2">
+          💡 The AST shows how your code is structured internally
+        </p>
+        <p className="text-xs text-[var(--tokyo-comment)]">
+          Perfect for understanding parsing, debugging, and learning language
+          design
+        </p>
+      </motion.div>
     </motion.div>
   );
 };
