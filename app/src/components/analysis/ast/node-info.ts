@@ -167,6 +167,7 @@ export const getNodeIcon = (nodeType: string) => {
     FunctionLiteral: "⚙️",
     ArrayLiteral: "📊",
     HashLiteral: "🗂️",
+    FStringLiteral: "🔤",
   };
   return iconMap[nodeType] || "⭕";
 };
@@ -196,6 +197,7 @@ export const getNodeDescription = (nodeType: string) => {
     FunctionLiteral: "Function definition - creates callable object",
     ArrayLiteral: "Array of values - ordered collection",
     HashLiteral: "Hash map - key-value pairs",
+    FStringLiteral: "F-string literal - string with embedded expressions",
   };
   return descriptions[nodeType] || `AST node of type ${nodeType}`;
 };

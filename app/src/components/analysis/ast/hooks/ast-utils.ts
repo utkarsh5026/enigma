@@ -143,6 +143,30 @@ export const getNodeSummary = (node: any): string => {
         return `${prefix} ${varName}`;
       }
 
+      case "FStringLiteral": {
+        const staticStrings = node.actualStrings;
+        const expressions = node.expressions;
+        const parts = [];
+        for (
+          let i = 0;
+          i < Math.min(staticStrings.length, expressions.length);
+          i++
+        ) {
+          parts.push(staticStrings[i]);
+          parts.push(getNodeValue(expressions[i]));
+        }
+
+        if (staticStrings.length > expressions.length) {
+          parts.push(staticStrings[staticStrings.length - 1]);
+        }
+
+        if (expressions.length > staticStrings.length) {
+          parts.push(getNodeValue(expressions[expressions.length - 1]));
+        }
+
+        return parts.join("");
+      }
+
       case "ReturnStatement": {
         const returnValue = node.returnValue
           ? getNodeValue(node.returnValue)
