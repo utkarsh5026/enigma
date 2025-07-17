@@ -34,6 +34,7 @@ export class IndentifierEvaluator implements NodeEvaluator<Identifier> {
         result,
         `Builtin identifier found: ${result.inspect()}`
       );
+      return result;
     }
 
     return new ErrorObject(`identifier not found: ${node.value}`);
