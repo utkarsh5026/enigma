@@ -26,8 +26,7 @@ export const useMonacoEditor = () => {
         tokenizer: {
           root: [
             // Comments
-            [/\/\/.*$/, "comment"],
-            [/\/\*/, "comment", "@comment"],
+            [/#.*$/, "comment"],
 
             // Identifiers and keywords
             [
