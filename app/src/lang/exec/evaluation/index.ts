@@ -1,4 +1,4 @@
 import { ObjectValidator } from "../core/validate";
-import Evaluator from "./eval";
+import { LanguageEvaluator } from "./evaluator";
 
-export { ObjectValidator, Evaluator };
+export { ObjectValidator, LanguageEvaluator };
