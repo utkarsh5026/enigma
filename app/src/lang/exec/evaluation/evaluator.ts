@@ -62,6 +62,10 @@ export class LanguageEvaluator implements EvaluationContext {
     this.stepStorage = stepStorage || new DefaultStepStorage();
   }
 
+  public getStepStorage(): StepStorage | undefined {
+    return this.stepStorage;
+  }
+
   /**
    * 🏗️ Creates new scopes for blocks, functions, loops etc.
    */
