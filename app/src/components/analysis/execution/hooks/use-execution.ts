@@ -36,8 +36,10 @@ export const useExecutionControls = (code: string) => {
 
       const evaluator = new LanguageEvaluator();
       setEvaluator(evaluator);
-      evaluator.evaluateProgram(program, new Environment());
 
+      evaluator.evaluateProgram(program, new Environment());
+      evaluator.getStepStorage().goToStep(0);
+      console.dir(evaluator.getStepStorage().getSteps(), { depth: null });
       const initialState = evaluator.getCurrentExecutionState();
       setExecutionState(initialState);
 
@@ -50,14 +52,18 @@ export const useExecutionControls = (code: string) => {
   }, [program, parserErrors]);
 
   const executeStep = useCallback(() => {
+    console.log("executeStep");
     try {
       if (!evaluator) {
+        console.error("No evaluator found. Please prepare execution first.");
         setError("No evaluator found. Please prepare execution first.");
         return false;
       }
 
-      evaluator.getStepStorage()?.nextStep();
+      evaluator.getStepStorage().nextStep();
+      console.log("currentStep", evaluator.getStepStorage().getCurrentStep());
       const newState = evaluator.getCurrentExecutionState();
+      console.dir(newState, { depth: null });
       setExecutionState({ ...newState });
 
       if (newState.isComplete) {
@@ -67,6 +73,7 @@ export const useExecutionControls = (code: string) => {
 
       return true;
     } catch (error) {
+      console.error("Error executing step:", error);
       const message = error instanceof Error ? error.message : String(error);
       setError(`Execution error: ${message}`);
       setIsRunning(false);
@@ -77,11 +84,12 @@ export const useExecutionControls = (code: string) => {
   const goBackStep = useCallback(() => {
     try {
       if (!evaluator) {
+        console.error("No evaluator found. Please prepare execution first.");
         setError("No evaluator found. Please prepare execution first.");
         return false;
       }
 
-      evaluator.getStepStorage()?.previousStep();
+      evaluator.getStepStorage().previousStep();
       const newState = evaluator.getCurrentExecutionState();
       setExecutionState({ ...newState });
 
@@ -92,6 +100,7 @@ export const useExecutionControls = (code: string) => {
 
       return true;
     } catch (error) {
+      console.error("Error going back:", error);
       const message = error instanceof Error ? error.message : String(error);
       setError(`Error going back: ${message}`);
       return false;

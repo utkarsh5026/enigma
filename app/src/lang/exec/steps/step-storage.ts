@@ -82,6 +82,7 @@ export class DefaultStepStorage implements StepStorage {
   public goToStep(index: number): EvaluationStep | null {
     if (index >= 0 && index < this.steps.length) {
       this.currentStepIndex = index;
+      this.updateCurrentStepInExecutionState();
       return this.steps[this.currentStepIndex];
     }
     return null;
@@ -191,6 +192,8 @@ export class DefaultStepStorage implements StepStorage {
     if (currentStep) {
       this.executionState.currentStep = currentStep;
       this.executionState.currentStepNumber = this.currentStepIndex + 1;
+      this.executionState.isComplete =
+        this.currentStepIndex === this.steps.length - 1;
     }
   }
 }

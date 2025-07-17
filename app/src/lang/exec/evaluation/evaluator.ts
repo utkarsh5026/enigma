@@ -27,7 +27,7 @@ export class LanguageEvaluator implements EvaluationContext {
   private loopContext: LoopContext;
   private evaluationStack: string[] = [];
   private evaluationDepth: number = 0;
-  private readonly stepStorage?: StepStorage;
+  private readonly stepStorage: StepStorage;
   private executionComplete: boolean = false;
 
   // Individual evaluator instances
@@ -69,7 +69,7 @@ export class LanguageEvaluator implements EvaluationContext {
     this.stepStorage = stepStorage || new DefaultStepStorage();
   }
 
-  public getStepStorage(): StepStorage | undefined {
+  public getStepStorage(): StepStorage {
     return this.stepStorage;
   }
 
