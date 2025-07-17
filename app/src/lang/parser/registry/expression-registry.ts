@@ -17,6 +17,7 @@ import {
   GroupedExpressionParser,
   ArrayLiteralParser,
   IfExpressionParser,
+  FloatLiteralParser,
 } from "../parsers/expressions/prefix";
 import {
   ArithmeticOperatorParser,
@@ -80,6 +81,7 @@ export class ExpressionParserRegistry {
       new IfExpressionParser(this.expressionParser, this.statementParser)
     );
     this.registerPrefixParser(new FStringLiteralParser());
+    this.registerPrefixParser(new FloatLiteralParser());
   }
 
   private registerInfixParsers() {
