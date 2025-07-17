@@ -7,7 +7,7 @@ export interface ConsoleEntry {
   id: string;
   content: string;
   timestamp: number;
-  type: "print" | "println" | "error" | "info";
+  type: "print" | "println" | "error" | "info" | "success";
 }
 
 /**
