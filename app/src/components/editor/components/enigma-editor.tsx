@@ -242,8 +242,8 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
           // Enhanced suggestions and IntelliSense
           quickSuggestions: {
             other: true,
-            comments: false,
-            strings: false,
+            comments: true,
+            strings: true,
           },
           quickSuggestionsDelay: 100,
           suggestOnTriggerCharacters: true,

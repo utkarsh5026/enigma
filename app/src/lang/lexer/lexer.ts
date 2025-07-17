@@ -53,6 +53,7 @@ export default class Lexer {
    * @returns The next token in the input.
    */
   public nextToken(): Token {
+    console.log(this.currCh);
     let token: Token;
     this.skipWhitespace();
     this.skipComments();
@@ -128,18 +129,18 @@ export default class Lexer {
         break;
 
       case "/":
-        if (this.peekChar() === "/") {
-          this.skipSingleLineComment();
-          return this.nextToken();
-        } else if (this.peekChar() === "*") {
-          this.skipMultiLineComment();
-          return this.nextToken();
-        }
-
         token = this.handleDoubleLiteral(
-          TokenType.SLASH_ASSIGN,
-          TokenType.SLASH
+          TokenType.INTEGER_DIVISION,
+          TokenType.SLASH,
+          "/"
         );
+
+        if (token.type === TokenType.SLASH) {
+          token = this.handleDoubleLiteral(
+            TokenType.SLASH_ASSIGN,
+            TokenType.SLASH
+          );
+        }
         break;
 
       case "<":
@@ -194,6 +195,7 @@ export default class Lexer {
     }
 
     this.readCurrChar();
+    console.log(token);
     return token;
   }
 
@@ -314,9 +316,17 @@ export default class Lexer {
 
       const identType = lookupIdentifier(literal);
       return this.createTok(identType, literal);
-    } else if (Lexer.isDigit(this.currCh)) {
-      const literal = this.readNumber();
-      return this.createTok(TokenType.INT, literal);
+    }
+
+    if (Lexer.isDigit(this.currCh)) {
+      const result = this.readNumber();
+      const tokenType = result.isFloat ? TokenType.FLOAT : TokenType.INT;
+      return this.createTok(tokenType, result.numberStr);
+    }
+
+    if (this.currCh == "." && Lexer.isDigit(this.peekChar())) {
+      const result = this.readNumber();
+      return this.createTok(TokenType.FLOAT, result.numberStr);
     }
 
     return this.createTok(TokenType.ILLEGAL, this.currCh);
@@ -338,18 +348,67 @@ export default class Lexer {
   }
 
   /**
-   * Reads a number from the input.
-   * @returns The number as a string.
+   * 🔢 Enhanced readNumber method that handles both integers and floats
+   *
+   * From first principles, a number can be:
+   * - Integer: sequence of digits (123, 0, 999)
+   * - Float: digits + decimal point + digits (12.34, 0.5, 999.0)
+   * - Float starting with decimal: .5 becomes 0.5
+   * - Float ending with decimal: 5. becomes 5.0
+   *
+   * Algorithm:
+   * 1. Read initial digits
+   * 2. Check for decimal point
+   * 3. If decimal found, read fractional part
+   * 4. Return result indicating integer or float
+   *
+   * @return NumberParseResult containing the number string and type
    */
-  private readNumber(): string {
-    const position = this.position;
+  private readNumber() {
+    const startPosition = this.position;
+    let isFloat = false;
+
+    // Handle numbers starting with decimal point (like .5)
+    if (this.currCh == ".") {
+      isFloat = true;
+      this.readCurrChar();
+
+      // Must have digits after decimal point
+      if (!Lexer.isDigit(this.currCh)) {
+        // This is just a dot, not a number - backtrack
+        this.moveBack(1);
+        return { numberStr: "", isFloat: false };
+      }
+
+      // Read fractional part
+      while (Lexer.isDigit(this.currCh)) {
+        this.readCurrChar();
+      }
+
+      const numberStr = this.input.substring(startPosition, this.position);
+      this.moveBack(1);
+      return { numberStr, isFloat };
+    }
+
+    // Read integer part
     while (Lexer.isDigit(this.currCh)) {
       this.readCurrChar();
     }
 
-    const literal = this.input.slice(position, this.position);
+    // Check for decimal point
+    if (this.currCh == "." && Lexer.isDigit(this.peekChar())) {
+      isFloat = true;
+      this.readCurrChar(); // consume the '.'
+
+      // Read fractional part
+      while (Lexer.isDigit(this.currCh)) {
+        this.readCurrChar();
+      }
+    }
+
+    const numberStr = this.input.substring(startPosition, this.position);
     this.moveBack(1);
-    return literal;
+    return { numberStr, isFloat };
   }
 
   /**
@@ -390,9 +449,7 @@ export default class Lexer {
   private skipComments(): void {
     while (true) {
       this.skipWhitespace();
-
-      if (this.currCh === "/" && this.peekChar() === "/")
-        this.skipSingleLineComment();
+      if (this.currCh === "#") this.skipSingleLineComment();
       else if (this.currCh === "/" && this.peekChar() === "*")
         this.skipMultiLineComment();
       else break;

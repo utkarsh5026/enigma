@@ -1,5 +1,5 @@
 export const sampleCodeSnippets = {
-  fibonacci: `// Recursive Fibonacci function with debug output
+  fibonacci: `# Recursive Fibonacci function with debug output
 let fibonacci = fn(n) {
   print("Computing fibonacci(", n, ")");
   if (n < 2) {
@@ -12,13 +12,13 @@ let fibonacci = fn(n) {
   }
 };
 
-// Calculate the 8th Fibonacci number
+# Calculate the 8th Fibonacci number
 print("=== Fibonacci Calculation ===");
 let result = fibonacci(8);
 print("Final result: fibonacci(8) =", result);
 `,
 
-  factorial: `// Factorial function with step-by-step output
+  factorial: `# Factorial function with step-by-step output
 let factorial = fn(n) {
   print("Computing factorial(", n, ")");
   if (n <= 1) {
@@ -31,13 +31,13 @@ let factorial = fn(n) {
   }
 };
 
-// Calculate 5! with debug output
+# Calculate 5! with debug output
 print("=== Factorial Calculation ===");
 let result = factorial(5);
 print("Final result: 5! =", result);
 `,
 
-  bubbleSort: `// Bubble Sort with visualization
+  bubbleSort: `# Bubble Sort with visualization
 let bubbleSort = fn(arr) {
   print("=== Bubble Sort Algorithm ===");
   print("Initial array:", arr);
@@ -52,7 +52,7 @@ let bubbleSort = fn(arr) {
       print("Comparing", arr[j], "and", arr[j + 1]);
       
       if (arr[j] > arr[j + 1]) {
-        // Swap elements
+        # Swap elements
         let temp = arr[j];
         arr[j] = arr[j + 1];
         arr[j + 1] = temp;
@@ -77,7 +77,7 @@ let numbers = [64, 34, 25, 12, 22, 11, 90];
 bubbleSort(numbers);
 `,
 
-  filterAndMap: `// Functional Programming: Filter and Map with debug output
+  filterAndMap: `# Functional Programming: Filter and Map with debug output
 let filter = fn(arr, predicate) {
   print("=== Filtering Array ===");
   print("Input array:", arr);
@@ -129,7 +129,7 @@ print("Even numbers:", evenNumbers);
 print("Doubled evens:", doubledEvens);
 `,
 
-  binarySearch: `// Binary Search with step visualization
+  binarySearch: `# Binary Search with step visualization
 let binarySearch = fn(arr, target) {
   print("=== Binary Search Algorithm ===");
   print("Searching for", target, "in array:", arr);
@@ -174,7 +174,7 @@ if (index != -1) {
 }
 `,
 
-  rpgCharacterSystem: `// RPG Character Combat System with detailed output
+  rpgCharacterSystem: `# RPG Character Combat System with detailed output
 let createCharacter = fn(name, className) {
   let baseStats = {
     "warrior": {"hp": 100, "attack": 15, "defense": 10},
@@ -260,7 +260,7 @@ print("");
 displayCharacter(mage);
 `,
 
-  ticTacToe: `// Tic-Tac-Toe Game with board visualization
+  ticTacToe: `# Tic-Tac-Toe Game with board visualization
 let createBoard = fn() {
   return [
     [" ", " ", " "],
@@ -296,7 +296,7 @@ let makeMove = fn(board, row, col, player) {
 let checkWin = fn(board, player) {
   print("Checking win condition for player", player);
   
-  // Check rows
+  # Check rows
   for (let i = 0; i < 3; i = i + 1) {
     if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
       print("Player", player, "wins with row", i, "!");
@@ -304,7 +304,7 @@ let checkWin = fn(board, player) {
     }
   }
 
-  // Check columns  
+  # Check columns  
   for (let j = 0; j < 3; j = j + 1) {
     if (board[0][j] == player && board[1][j] == player && board[2][j] == player) {
       print("Player", player, "wins with column", j, "!");
@@ -312,7 +312,7 @@ let checkWin = fn(board, player) {
     }
   }
 
-  // Check diagonals
+  # Check diagonals
   if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
     print("Player", player, "wins with main diagonal!");
     return true;
@@ -331,7 +331,7 @@ let board = createBoard();
 print("Starting game with empty board:");
 printBoard(board);
 
-// Simulate a game
+# Simulate a game
 makeMove(board, 0, 0, "X");
 printBoard(board);
 
@@ -355,14 +355,14 @@ if (gameWon) {
 }
 `,
 
-  primeNumbers: `// Sieve of Eratosthenes with step-by-step output
+  primeNumbers: `# Sieve of Eratosthenes with step-by-step output
 let sieveOfEratosthenes = fn(limit) {
   print("=== Sieve of Eratosthenes ===");
   print("Finding all prime numbers up to", limit);
   
   let isPrime = [];
 
-  // Initialize array
+  # Initialize array
   print("\\n1. Initializing array...");
   for (let i = 0; i <= limit; i = i + 1) {
     isPrime = push(isPrime, true);
@@ -405,7 +405,7 @@ let sieveOfEratosthenes = fn(limit) {
 sieveOfEratosthenes(30);
 `,
 
-  matrixMultiplication: `// Matrix Multiplication with detailed computation
+  matrixMultiplication: `# Matrix Multiplication with detailed computation
 let printMatrix = fn(matrix, name) {
   print("\\nMatrix", name, ":");
   for (let i = 0; i < len(matrix); i = i + 1) {
@@ -466,7 +466,7 @@ let matrixB = [[7, 8], [9, 10], [11, 12]];
 multiplyMatrices(matrixA, matrixB);
 `,
 
-  bankAccount: `// Object-Oriented Bank Account with transaction history
+  bankAccount: `# Object-Oriented Bank Account with transaction history
 let createBankAccount = fn(accountHolder, initialBalance) {
   let balance = initialBalance;
   let transactions = [];
@@ -476,7 +476,7 @@ let createBankAccount = fn(accountHolder, initialBalance) {
       "type": type,
       "amount": amount,
       "balance": newBalance,
-      "timestamp": "now"  // In a real system, this would be actual timestamp
+      "timestamp": "now"  # In a real system, this would be actual timestamp
     };
     transactions = push(transactions, transaction);
     print("Transaction recorded:", type, amount, "New balance:", newBalance);
@@ -550,13 +550,13 @@ let account = createBankAccount("Alice Johnson", 1000);
 
 account["deposit"](250);
 account["withdraw"](150);
-account["withdraw"](2000);  // This should fail
+account["withdraw"](2000);  # This should fail
 account["deposit"](500);
 account["getBalance"]();
 account["getTransactionHistory"]();
 `,
 
-  fibonacci_iterative: `// Iterative Fibonacci with comparison to recursive
+  fibonacci_iterative: `# Iterative Fibonacci with comparison to recursive
 let fibonacciRecursive = fn(n) {
   if (n < 2) {
     return n;
@@ -610,7 +610,7 @@ let comparePerformance = fn(n) {
 comparePerformance(10);
 `,
 
-  closureCounter: `// Advanced Closure: Counter Factory with multiple instances
+  closureCounter: `# Advanced Closure: Counter Factory with multiple instances
 let createCounterFactory = fn() {
   let instanceCount = 0;
   
@@ -687,10 +687,10 @@ livesCounter["getValue"]();
 levelCounter["getValue"]();
 `,
 
-  simpleBeginnerExample: `// Perfect for beginners: Variables and basic operations
+  simpleBeginnerExample: `# Perfect for beginners: Variables and basic operations
 print("=== Welcome to Programming! ===");
 
-// Variables store information
+# Variables store information
 let myName = "Alice";
 let myAge = 25;
 let isStudent = true;
@@ -699,7 +699,7 @@ print("Hello! My name is", myName);
 print("I am", myAge, "years old");
 print("Am I a student?", isStudent);
 
-// Numbers and math
+# Numbers and math
 let apples = 5;
 let oranges = 3;
 let totalFruit = apples + oranges;
@@ -707,7 +707,7 @@ let totalFruit = apples + oranges;
 print("\\nI have", apples, "apples and", oranges, "oranges");
 print("Total fruit:", totalFruit);
 
-// Simple decisions
+# Simple decisions
 if (totalFruit > 5) {
   print("I have lots of fruit!");
 } else {
@@ -717,7 +717,7 @@ if (totalFruit > 5) {
 print("\\n=== The End ===");
 `,
 
-  basicArithmetic: `// Basic arithmetic operations with explanations
+  basicArithmetic: `# Basic arithmetic operations with explanations
 print("=== Basic Math Operations ===");
 
 let a = 15;
@@ -752,7 +752,7 @@ print("\\n=== Summary ===");
 print("We performed 5 different math operations!");
 `,
 
-  stringOperations: `// String manipulation with detailed examples
+  stringOperations: `# String manipulation with detailed examples
 print("=== Working with Text (Strings) ===");
 
 let firstName = "John";
@@ -788,11 +788,11 @@ if (firstNameLength > lastNameLength) {
 }
 `,
 
-  simpleFunction: `// Understanding Functions - Reusable Code Blocks
+  simpleFunction: `# Understanding Functions - Reusable Code Blocks
 print("=== Learning About Functions ===");
 
-// A function is like a recipe - it takes ingredients (parameters)
-// and produces a result (return value)
+# A function is like a recipe - it takes ingredients (parameters)
+# and produces a result (return value)
 
 let greet = fn(name) {
   print("Inside the greet function with name:", name);
