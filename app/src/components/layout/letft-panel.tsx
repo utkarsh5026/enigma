@@ -1,13 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { FileCode, Play, Copy, Download } from "lucide-react";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
 import EditorToolbarButton from "./toolbar-button";
 import EnigmaEditor from "@/components/editor/components/enigma-editor";
-import IntegratedConsole from "@/components/console/enigma-console";
 import { useMobile } from "@/hooks/use-mobile";
 import { consoleStore } from "@/stores/console-stores";
 import Lexer from "@/lang/lexer/lexer";
@@ -34,8 +28,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   setActiveTab,
 }) => {
   const { isMobile } = useMobile();
-  const [showConsole, setShowConsole] = useState(false);
-  const [isConsoleMinimized, setIsConsoleMinimized] = useState(false);
 
   const handleRunCode = () => {
     consoleStore.clear();
@@ -53,20 +45,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     const result = evaluator.evaluateProgram(ast, new Environment());
 
     consoleStore.addEntry(result.inspect(), "info");
-
-    setShowConsole(true);
-    setIsConsoleMinimized(false);
-
     setActiveTab("execution");
-  };
-
-  const handleCloseConsole = () => {
-    setShowConsole(false);
-    setIsConsoleMinimized(false);
-  };
-
-  const handleToggleConsoleSize = () => {
-    setIsConsoleMinimized(!isConsoleMinimized);
   };
 
   return (
@@ -130,41 +109,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
 
       {/* Editor and Console Area */}
       <div className="flex-1 overflow-hidden">
-        {showConsole ? (
-          <ResizablePanelGroup direction="vertical" className="h-full">
-            {/* Editor Panel */}
-            <ResizablePanel
-              defaultSize={isConsoleMinimized ? 95 : 70}
-              minSize={30}
-              className="overflow-hidden"
-            >
-              <EnigmaEditor code={code} onCodeChange={onCodeChange} />
-            </ResizablePanel>
-
-            {/* Resizable Handle */}
-            {!isConsoleMinimized && (
-              <ResizableHandle className="h-1 bg-[var(--tokyo-comment)]/20 hover:bg-[var(--tokyo-comment)]/40 transition-colors" />
-            )}
-
-            {/* Console Panel */}
-            <ResizablePanel
-              defaultSize={isConsoleMinimized ? 5 : 30}
-              minSize={5}
-              maxSize={60}
-              className="overflow-hidden"
-            >
-              <IntegratedConsole
-                isVisible={showConsole}
-                onClose={handleCloseConsole}
-                onToggleSize={handleToggleConsoleSize}
-                isMinimized={isConsoleMinimized}
-              />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        ) : (
-          // No console, just editor
-          <EnigmaEditor code={code} onCodeChange={onCodeChange} />
-        )}
+        <EnigmaEditor code={code} onCodeChange={onCodeChange} />
       </div>
     </div>
   );
