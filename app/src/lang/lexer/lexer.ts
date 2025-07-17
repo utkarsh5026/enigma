@@ -306,6 +306,12 @@ export default class Lexer {
   private handleIdentifier(): Token {
     if (Lexer.isLetter(this.currCh)) {
       const literal = this.readIdentifier();
+      if (literal === "f" && this.peekChar() == '"') {
+        this.readCurrChar();
+        const fstr = this.readFString();
+        return this.createTok(TokenType.F_STRING, fstr);
+      }
+
       const identType = lookupIdentifier(literal);
       return this.createTok(identType, literal);
     } else if (Lexer.isDigit(this.currCh)) {
@@ -426,6 +432,59 @@ export default class Lexer {
         this.readCurrChar();
       }
     }
+  }
+
+  /**
+   * 🎯 Reads an f-string literal from the input
+   *
+   * F-strings start with 'f"' and contain both static text and expressions in
+   * braces.
+   * Example: f"Hello {name}, you are {age} years old!"
+   *
+   * The lexer treats the entire f-string as one token - the parser will handle
+   * the internal structure of static parts and expressions.
+   *
+   * @return The complete f-string content (without the f" and closing ")
+   * @throws RuntimeException if f-string is not properly closed
+   */
+  private readFString() {
+    let sb = "";
+    let braceDepth = 0;
+
+    while (true) {
+      this.readCurrChar();
+
+      if (this.currCh == "\0") {
+        throw new Error("Unterminated f-string");
+      }
+
+      if (this.currCh == '"' && braceDepth == 0) {
+        break; // End of f-string
+      }
+
+      if (this.currCh == "{") {
+        braceDepth++;
+      } else if (this.currCh == "}") {
+        braceDepth--;
+        if (braceDepth < 0) {
+          throw new Error("Unmatched '}' in f-string");
+        }
+      }
+
+      if (this.currCh == "\\") {
+        this.readCurrChar();
+        sb += this.handleEscapeSequence();
+        continue;
+      }
+
+      sb += this.currCh;
+    }
+
+    if (braceDepth > 0) {
+      throw new Error("Unclosed '{' in f-string");
+    }
+
+    return sb;
   }
 
   private handleEscapeSequence(): string {
