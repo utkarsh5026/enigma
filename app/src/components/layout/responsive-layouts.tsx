@@ -16,23 +16,17 @@ import {
 } from "@/components/ui/drawer";
 import LeftPanel from "./letft-panel";
 import AnalysisContent from "./ananlysis-panel";
-import { Token } from "@/lang/token/token";
-import { Program } from "@/lang/ast";
-import { ParseError } from "@/lang/parser";
+import type { Token } from "@/lang/token/token";
 
 interface DesktopLayoutProps {
   code: string;
   handleCodeChange: (newCode: string) => void;
   tokens: Token[];
-  program: Program | null;
-  parserErrors: ParseError[];
 }
 export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   code,
   handleCodeChange,
   tokens,
-  program,
-  parserErrors,
 }) => {
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full">
@@ -50,11 +44,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
       {/* Analysis Panel */}
       <ResizablePanel defaultSize={50} minSize={30}>
         <div className="h-full flex flex-col">
-          <AnalysisContent
-            tokens={tokens}
-            program={program}
-            parserErrors={parserErrors}
-          />
+          <AnalysisContent tokens={tokens} code={code} />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
@@ -65,15 +55,11 @@ interface MobileLayoutProps {
   code: string;
   handleCodeChange: (newCode: string) => void;
   tokens: Token[];
-  program: Program | null;
-  parserErrors: ParseError[];
 }
 export const MobileLayout: React.FC<MobileLayoutProps> = ({
   code,
   handleCodeChange,
   tokens,
-  program,
-  parserErrors,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -110,11 +96,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
               <DrawerTitle>Code Analysis</DrawerTitle>
             </DrawerHeader>
             <div className="flex-1 min-h-0">
-              <AnalysisContent
-                tokens={tokens}
-                program={program}
-                parserErrors={parserErrors}
-              />
+              <AnalysisContent tokens={tokens} code={code} />
             </div>
           </DrawerContent>
         </Drawer>

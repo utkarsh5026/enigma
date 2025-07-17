@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExecutionState } from "@/lang/exec/stepwise";
+import type { ExecutionState } from "@/lang/exec/steps/step-info";
 import {
   AlertCircle,
   Database,

@@ -53,4 +53,44 @@ export interface StepStorage {
   getSteps(): EvaluationStep[];
   reset(): void;
   getCurrentStep(): EvaluationStep | null;
+
+  pushCallStack(frame: CallStackFrame): void;
+  popCallStack(): CallStackFrame | null;
+  addOutput(output: OutputEntry): void;
+  getExecutionState(): ExecutionState;
+  updateExecutionState(updates: Partial<ExecutionState>): void;
+
+  nextStep(): EvaluationStep | null;
+  previousStep(): EvaluationStep | null;
+  goToStep(index: number): EvaluationStep | null;
+}
+
+export class ExecutionState {
+  currentStep: EvaluationStep | null = null;
+  callStack: CallStackFrame[] = [];
+  output: OutputEntry[] = [];
+  isComplete: boolean = false;
+  currentStepNumber: number = 0;
+}
+
+/**
+ * Represents a function call in the call stack
+ */
+export interface CallStackFrame {
+  functionName: string;
+  args: string[];
+  returnValue?: string;
+  startLine: number;
+  startColumn: number;
+  isActive: boolean;
+}
+
+/**
+ * Represents an output entry (console output, return value, etc.)
+ */
+export interface OutputEntry {
+  value: string;
+  type: "log" | "error" | "return" | "assignment" | "operation";
+  timestamp: number;
+  stepNumber: number;
 }

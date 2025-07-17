@@ -11,9 +11,7 @@ import {
 import { GuideTab } from "@/components/guide";
 
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { ParseError } from "@/lang/parser";
 import { Token } from "@/lang/token/token";
-import { Program } from "@/lang/ast";
 
 interface TabTriggerProps {
   value: string;
@@ -46,15 +44,10 @@ const CustomTabTrigger: React.FC<TabTriggerProps> = ({
 
 interface AnalysisContentProps {
   tokens: Token[];
-  program: Program | null;
-  parserErrors: ParseError[];
+  code: string;
 }
 
-const AnalysisContent: React.FC<AnalysisContentProps> = ({
-  tokens,
-  program,
-  parserErrors,
-}) => (
+const AnalysisContent: React.FC<AnalysisContentProps> = ({ tokens, code }) => (
   <Tabs defaultValue="tokens" className="h-full flex flex-col">
     {/* Analysis Tabs */}
     <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
@@ -89,14 +82,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
     <TabsContent value="ast" className="flex-1 min-h-0 m-0">
       <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-        <ASTDisplay program={program} parserErrors={parserErrors} />
+        <ASTDisplay code={code} />
         <ScrollBar orientation="vertical" />
       </ScrollArea>
     </TabsContent>
 
     <TabsContent value="execution" className="flex-1 min-h-0 m-0">
       <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-        <ExecutionVisualizer program={program} parserErrors={parserErrors} />
+        <ExecutionVisualizer code={code} />
         <ScrollBar orientation="vertical" />
       </ScrollArea>
     </TabsContent>

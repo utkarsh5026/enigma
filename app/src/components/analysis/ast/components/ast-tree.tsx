@@ -72,7 +72,7 @@ const AstTree: React.FC<AstTreeProps> = ({
             <div className="flex flex-col">
               <span className="text-tokyo-comment">Statements</span>
               <span className="text-tokyo-green font-mono">
-                {ast.program.statements?.length || 0}
+                {ast.program.getStatements().length || 0}
               </span>
             </div>
             <div className="flex flex-col">

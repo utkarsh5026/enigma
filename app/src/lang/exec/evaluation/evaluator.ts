@@ -14,7 +14,13 @@ import {
   ReturnValueObject,
 } from "../objects";
 import { ObjectValidator } from "../core/validate";
-import { StepStorage, StepType } from "../steps/step-info";
+import {
+  type CallStackFrame,
+  ExecutionState,
+  type OutputEntry,
+  type StepStorage,
+  type StepType,
+} from "../steps/step-info";
 import { DefaultStepStorage } from "../steps/step-storage";
 
 export class LanguageEvaluator implements EvaluationContext {
@@ -22,6 +28,7 @@ export class LanguageEvaluator implements EvaluationContext {
   private evaluationStack: string[] = [];
   private evaluationDepth: number = 0;
   private readonly stepStorage?: StepStorage;
+  private executionComplete: boolean = false;
 
   // Individual evaluator instances
   private readonly letEvaluator = new statements.LetEvaluator();
@@ -278,19 +285,29 @@ export class LanguageEvaluator implements EvaluationContext {
    * 🚀 Public entry point for evaluating programs
    */
   public evaluateProgram(program: ast.Program, env: Environment): BaseObject {
+    this.addOutput("Program execution started", "log");
     let result: BaseObject = NullObject.INSTANCE;
 
     for (const stmt of program.getStatements()) {
       result = this.evaluate(stmt, env);
 
       if (ObjectValidator.isReturnValue(result)) {
+        this.addOutput(
+          `Program returned: ${(result as ReturnValueObject).value.inspect()}`,
+          "return"
+        );
+        this.markExecutionComplete();
         return (result as ReturnValueObject).value;
       }
       if (ObjectValidator.isError(result)) {
+        this.addOutput(`Program error: ${result.message}`, "error");
+        this.markExecutionComplete();
         return result;
       }
     }
 
+    this.addOutput("Program execution completed", "log");
+    this.markExecutionComplete();
     return result;
   }
 
@@ -371,11 +388,95 @@ export class LanguageEvaluator implements EvaluationContext {
     this.stepStorage.addStep(enrichedStep);
   }
 
+  /**
+   * 🔄 **Current Evaluation Path**
+   *
+   * Gets the current evaluation path
+   *
+   */
   getCurrentEvaluationPath(): string {
     return this.evaluationStack.join(" → ");
   }
 
+  /**
+   * 🔄 **Evaluation Depth**
+   *
+   * Gets the current evaluation depth
+   *
+   */
   getEvaluationDepth(): number {
     return this.evaluationDepth;
+  }
+
+  /**
+   * 🔄 **Push Call Stack**
+   *
+   * Pushes a call stack frame to the evaluation context
+   *
+   */
+  pushCallStack(
+    functionName: string,
+    args: BaseObject[],
+    node: ast.Node
+  ): void {
+    if (!this.stepStorage) return;
+
+    const { line, column } = node.position();
+    const frame: CallStackFrame = {
+      functionName,
+      args: args.map((arg) => arg.inspect()),
+      startLine: line,
+      startColumn: column,
+      isActive: true,
+    };
+
+    this.stepStorage.pushCallStack(frame);
+  }
+
+  /**
+   * 🔄 **Pop Call Stack**
+   *
+   * Pops a call stack frame from the evaluation context
+   *
+   */
+  popCallStack(returnValue?: BaseObject): void {
+    if (!this.stepStorage) return;
+
+    const frame = this.stepStorage.popCallStack();
+    if (frame && returnValue) {
+      // Update the frame with return value before it's fully removed
+      frame.returnValue = returnValue.inspect();
+    }
+  }
+
+  addOutput(value: string, type: OutputEntry["type"]): void {
+    if (!this.stepStorage) return;
+
+    const output: OutputEntry = {
+      value,
+      type,
+      timestamp: Date.now(),
+      stepNumber: 0, // Will be set by storage
+    };
+
+    this.stepStorage.addOutput(output);
+  }
+
+  getCurrentExecutionState(): ExecutionState {
+    if (!this.stepStorage) {
+      return new ExecutionState();
+    }
+    return this.stepStorage.getExecutionState();
+  }
+
+  isExecutionComplete(): boolean {
+    return this.executionComplete;
+  }
+
+  markExecutionComplete(): void {
+    this.executionComplete = true;
+    if (this.stepStorage) {
+      this.stepStorage.updateExecutionState({ isComplete: true });
+    }
   }
 }

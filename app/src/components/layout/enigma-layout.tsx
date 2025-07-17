@@ -4,14 +4,14 @@ import { sampleCodeSnippets, getRandomSampleCode } from "@/utils/snippets";
 import ToolBar from "./editor-toolbar";
 import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
-import { useProgram } from "@/hooks/use-program";
 import { DesktopLayout, MobileLayout } from "./responsive-layouts";
+import { useTokens } from "@/hooks/use-tokens";
 
 const examples = Object.keys(sampleCodeSnippets);
 
 const Enigma: React.FC = () => {
   const [code, setCode] = useState("");
-  const { tokens, program, parserErrors } = useProgram(code);
+  const { tokens } = useTokens(code);
   const [selectedExample, setSelectedExample] = useState<
     keyof typeof sampleCodeSnippets | null
   >(null);
@@ -66,16 +66,12 @@ const Enigma: React.FC = () => {
             code={code}
             handleCodeChange={handleCodeChange}
             tokens={tokens}
-            program={program}
-            parserErrors={parserErrors}
           />
         ) : (
           <DesktopLayout
             code={code}
             handleCodeChange={handleCodeChange}
             tokens={tokens}
-            program={program}
-            parserErrors={parserErrors}
           />
         )}
       </motion.div>

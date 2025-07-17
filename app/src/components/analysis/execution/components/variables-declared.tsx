@@ -1,4 +1,4 @@
-import { ExecutionState } from "@/lang/exec/stepwise";
+import type { ExecutionState } from "@/lang/exec/steps/step-info";
 import { ChevronRight } from "lucide-react";
 import { Database } from "lucide-react";
 import {
@@ -35,9 +35,9 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
             <Database size={16} />
             <span className="font-medium">
               Variables (
-              {executionState?.currentStep?.environment.variables.length})
+              {executionState?.currentStep?.envSnapshot.variables.length})
             </span>
-            {executionState?.currentStep?.environment.variables.some(
+            {executionState?.currentStep?.envSnapshot.variables.some(
               (v) => v.isNew
             ) && (
               <span className="bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] text-xs px-2 py-1 rounded animate-in zoom-in-50">
@@ -48,7 +48,7 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
         </CollapsibleTrigger>
 
         <CollapsibleContent className="space-y-3 overflow-hidden">
-          {executionState?.currentStep?.environment.variables.map(
+          {executionState?.currentStep?.envSnapshot.variables.map(
             (variable, index) => (
               <div
                 key={variable.name}

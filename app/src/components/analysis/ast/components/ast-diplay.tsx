@@ -14,24 +14,20 @@ import { Button } from "@/components/ui/button";
 import { extractSearchableText } from "../hooks/ast-utils";
 import EmptyAst from "./empty-ast";
 import AstTree from "./ast-tree";
-import { ParseError } from "@/lang/parser";
-import { Program } from "@/lang/ast";
+import { useAst } from "../hooks/use-ast";
 
 interface ASTDisplayProps {
-  program: Program | null;
-  parserErrors: ParseError[];
+  code: string;
 }
 
-const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
-  program,
-  parserErrors,
-}) => {
+const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(
     new Set()
   );
   const [forceRefresh, setForceRefresh] = useState(0);
+  const { ast } = useAst(code);
 
   // Count nodes recursively with better detection
   const countNodes = (node: any): number => {
@@ -63,7 +59,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
 
   // Enhanced search functionality
   const searchNodes = (searchTerm: string) => {
-    if (!searchTerm || !program) {
+    if (!searchTerm || !ast?.program) {
       setHighlightedNodes(new Set());
       return;
     }
@@ -111,7 +107,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
       }
     };
 
-    searchInNode(program, "root");
+    searchInNode(ast?.program, "root");
     setHighlightedNodes(matches);
   };
 
@@ -122,9 +118,9 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm, program]);
+  }, [searchTerm, ast]);
 
-  const nodeCount = program ? countNodes(program) : 0;
+  const nodeCount = ast?.program ? countNodes(ast.program) : 0;
 
   return (
     <motion.div
@@ -163,7 +159,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
             </div>
           </div>
 
-          {program && (
+          {ast?.program && (
             <div className="flex items-center gap-2">
               <Badge
                 className="text-xs px-2 py-1"
@@ -208,7 +204,7 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
         </div>
 
         {/* Search */}
-        {program && (
+        {ast?.program && (
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Search
@@ -262,13 +258,13 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
 
       {/* Content */}
       <div className="flex-1 overflow-auto">
-        {!program ? (
+        {!ast?.program ? (
           <EmptyAst />
         ) : (
           <AstTree
             ast={{
-              program,
-              errors: parserErrors,
+              program: ast.program,
+              errors: ast.errors,
             }}
             forceRefresh={forceRefresh}
             nodeCount={nodeCount}
@@ -280,4 +276,4 @@ const EnhancedASTDisplay: React.FC<ASTDisplayProps> = ({
   );
 };
 
-export default EnhancedASTDisplay;
+export default ASTDisplay;

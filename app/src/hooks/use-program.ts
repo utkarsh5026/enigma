@@ -42,7 +42,6 @@ export const useProgram = (code: string) => {
   const parse = useCallback(() => {
     try {
       const lexer = new Lexer(code);
-
       const parser = new LanguageParser(lexer);
       const program = parser.parseProgram();
       setProgram(program);
@@ -62,10 +61,7 @@ export const useProgram = (code: string) => {
       reset();
       return;
     }
+  }, [code, reset]);
 
-    reset();
-    parse();
-  }, [code, reset, parse]);
-
-  return { program, parserErrors, tokens };
+  return { program, parserErrors, tokens, parse };
 };

@@ -1,6 +1,6 @@
 import { Node } from "@/lang/ast/ast";
 import { BaseObject, Environment } from "../objects";
-import type { StepType } from "../steps/step-info";
+import type { StepType, ExecutionState, OutputEntry } from "../steps/step-info";
 
 /**
  * 🎯 NodeEvaluator - The Universal Evaluation Contract 🎯
@@ -95,4 +95,34 @@ export interface EvaluationContext {
    * Gets the evaluation depth
    */
   getEvaluationDepth(): number;
+
+  /**
+   * Pushes a call stack frame to the evaluation context
+   */
+  pushCallStack(functionName: string, args: BaseObject[], node: Node): void;
+
+  /**
+   * Pops a call stack frame from the evaluation context
+   */
+  popCallStack(returnValue?: BaseObject): void;
+
+  /**
+   * Adds an output entry to the evaluation context
+   */
+  addOutput(value: string, type: OutputEntry["type"]): void;
+
+  /**
+   * Gets the current execution state
+   */
+  getCurrentExecutionState(): ExecutionState;
+
+  /**
+   * Checks if the execution is complete
+   */
+  isExecutionComplete(): boolean;
+
+  /**
+   * Marks the execution as complete
+   */
+  markExecutionComplete(): void;
 }

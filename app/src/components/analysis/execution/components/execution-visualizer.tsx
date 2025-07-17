@@ -9,8 +9,6 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Program } from "@/lang/ast";
-import { ParseError } from "@/lang/parser";
 import ExecutionControls from "./execution-controls";
 import VariablesDeclared from "./variables-declared";
 import OutputVisualizer from "./output-visualizer";
@@ -18,14 +16,10 @@ import { parseDescriptionWithBadges } from "./utils";
 import { useExecutionControls } from "../hooks/use-execution";
 
 interface ExecutionVisualizerProps {
-  program: Program | null;
-  parserErrors: ParseError[];
+  code: string;
 }
 
-const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
-  program,
-  parserErrors,
-}) => {
+const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({ code }) => {
   const {
     executionState,
     isRunning,
@@ -38,7 +32,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
     stopAutoRun,
     setAutoRunSpeed,
     setError,
-  } = useExecutionControls(program, parserErrors);
+  } = useExecutionControls(code);
 
   const [highlightedVariable, setHighlightedVariable] = useState<string | null>(
     null

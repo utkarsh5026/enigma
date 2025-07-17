@@ -7,7 +7,7 @@ import {
   SkipBack,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { ExecutionState } from "@/lang/exec/stepwise";
+import { ExecutionState } from "@/lang/exec/steps/step-info";
 import { Slider } from "@/components/ui/slider";
 
 interface ExecutionControlsProps {

@@ -1,22 +1,23 @@
-import { ExecutionState } from "@/lang/exec/stepwise/types";
-import { Program } from "@/lang/ast/ast";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ParseError } from "@/lang/parser";
-import { StepwiseEvaluator } from "@/lang/exec/stepwise";
+import { LanguageEvaluator } from "@/lang/exec/evaluation";
+import { Environment } from "@/lang/exec/objects";
+import { ExecutionState } from "@/lang/exec/steps/step-info";
+import { useProgram } from "@/hooks/use-program";
 
-const evaluator = new StepwiseEvaluator();
-
-export const useExecutionControls = (
-  program: Program | null,
-  parserErrors: ParseError[]
-) => {
+export const useExecutionControls = (code: string) => {
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
   );
+  const [evaluator, setEvaluator] = useState<LanguageEvaluator | null>(null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [autoRunSpeed, setAutoRunSpeed] = useState<number>(1000);
   const autoRunRef = useRef<NodeJS.Timeout | null>(null);
+  const { program, parserErrors, parse } = useProgram(code);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    parse();
+  }, [parse]);
 
   const prepareExecution = useCallback(() => {
     try {
@@ -33,9 +34,11 @@ export const useExecutionControls = (
         return false;
       }
 
-      evaluator.prepare(program);
+      const evaluator = new LanguageEvaluator();
+      setEvaluator(evaluator);
+      evaluator.evaluateProgram(program, new Environment());
 
-      const initialState = evaluator.nextStep();
+      const initialState = evaluator.getCurrentExecutionState();
       setExecutionState(initialState);
 
       return true;
@@ -48,7 +51,13 @@ export const useExecutionControls = (
 
   const executeStep = useCallback(() => {
     try {
-      const newState = evaluator.nextStep();
+      if (!evaluator) {
+        setError("No evaluator found. Please prepare execution first.");
+        return false;
+      }
+
+      evaluator.getStepStorage()?.nextStep();
+      const newState = evaluator.getCurrentExecutionState();
       setExecutionState({ ...newState });
 
       if (newState.isComplete) {
@@ -63,22 +72,31 @@ export const useExecutionControls = (
       setIsRunning(false);
       return false;
     }
-  }, []);
+  }, [evaluator]);
 
   const goBackStep = useCallback(() => {
     try {
-      const prevState = evaluator.previousStep();
-      if (prevState) {
-        setExecutionState({ ...prevState });
-        return true;
+      if (!evaluator) {
+        setError("No evaluator found. Please prepare execution first.");
+        return false;
       }
-      return false;
+
+      evaluator.getStepStorage()?.previousStep();
+      const newState = evaluator.getCurrentExecutionState();
+      setExecutionState({ ...newState });
+
+      if (newState.isComplete) {
+        setIsRunning(false);
+        return false;
+      }
+
+      return true;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       setError(`Error going back: ${message}`);
       return false;
     }
-  }, []);
+  }, [evaluator]);
 
   const startAutoRun = useCallback(() => {
     if (autoRunRef.current) clearInterval(autoRunRef.current);
