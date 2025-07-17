@@ -59,6 +59,7 @@ export class LanguageEvaluator implements EvaluationContext {
   private readonly hashEvaluator = new literals.HashLiteralEvaluator();
   private readonly functionEvaluator = new literals.FunctionLiteralEvaluator();
   private readonly nullEvaluator = new literals.NullLiteralEvaluator();
+  private readonly fstringEvaluator = new literals.FStringLiteralEvaluator();
 
   constructor(stepStorage?: StepStorage) {
     this.loopContext = new LoopContext(0);
@@ -262,6 +263,13 @@ export class LanguageEvaluator implements EvaluationContext {
       case literal.NullLiteral:
         return this.nullEvaluator.evaluate(
           node as literal.NullLiteral,
+          env,
+          this
+        );
+
+      case literal.FStringLiteral:
+        return this.fstringEvaluator.evaluate(
+          node as literal.FStringLiteral,
           env,
           this
         );

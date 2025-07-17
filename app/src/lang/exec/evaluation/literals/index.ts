@@ -5,6 +5,7 @@ import { NullLiteralEvaluator } from "./null-literal";
 import { HashLiteralEvaluator } from "./hash-literal";
 import { FunctionLiteralEvaluator } from "./function-literal";
 import { ArrayLiteralEvaluator } from "./array-literal";
+import { FStringLiteralEvaluator } from "./fstring-literal";
 
 export {
   IntegerLiteralEvaluator,
@@ -14,4 +15,5 @@ export {
   HashLiteralEvaluator,
   FunctionLiteralEvaluator,
   ArrayLiteralEvaluator,
+  FStringLiteralEvaluator,
 };
