@@ -1,14 +1,14 @@
 import React from "react";
 
-import { Terminal, Braces, BookOpen, ChevronsRight } from "lucide-react";
+import { Terminal, Braces, Monitor, ChevronsRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   ExecutionVisualizer,
   TokenDisplay,
   ASTDisplay,
+  OutputPanel,
 } from "@/components/analysis";
-import { GuideTab } from "@/components/guide";
 
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Token } from "@/lang/token/token";
@@ -47,62 +47,63 @@ interface AnalysisContentProps {
   code: string;
 }
 
-const AnalysisContent: React.FC<AnalysisContentProps> = ({ tokens, code }) => (
-  <Tabs defaultValue="tokens" className="h-full flex flex-col">
-    {/* Analysis Tabs */}
-    <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
-      <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
-        <CustomTabTrigger
-          value="tokens"
-          icon={<Terminal size={16} />}
-          label="Tokens"
-          badge={tokens.length}
-        />
-        <CustomTabTrigger value="ast" icon={<Braces size={16} />} label="AST" />
-        <CustomTabTrigger
-          value="execution"
-          icon={<ChevronsRight size={16} />}
-          label="Execution"
-        />
-        <CustomTabTrigger
-          value="guide"
-          icon={<BookOpen size={16} />}
-          label="Guide"
-        />
-      </TabsList>
-    </div>
+const AnalysisContent: React.FC<AnalysisContentProps> = ({ tokens, code }) => {
+  return (
+    <Tabs defaultValue="tokens" className="h-full flex flex-col">
+      {/* Analysis Tabs */}
+      <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
+        <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
+          <CustomTabTrigger
+            value="tokens"
+            icon={<Terminal size={16} />}
+            label="Tokens"
+            badge={tokens.length}
+          />
+          <CustomTabTrigger
+            value="ast"
+            icon={<Braces size={16} />}
+            label="AST"
+          />
+          <CustomTabTrigger
+            value="execution"
+            icon={<ChevronsRight size={16} />}
+            label="Execution"
+          />
+          <CustomTabTrigger
+            value="output"
+            icon={<Monitor size={16} />}
+            label="Output"
+          />
+        </TabsList>
+      </div>
 
-    {/* Tab Content */}
-    <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
-      <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-        <TokenDisplay tokens={tokens} />
-        <ScrollBar orientation="vertical" />
-      </ScrollArea>
-    </TabsContent>
+      {/* Tab Content */}
+      <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
+        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+          <TokenDisplay tokens={tokens} />
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      </TabsContent>
 
-    <TabsContent value="ast" className="flex-1 min-h-0 m-0">
-      <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-        <ASTDisplay code={code} />
-        <ScrollBar orientation="vertical" />
-      </ScrollArea>
-    </TabsContent>
+      <TabsContent value="ast" className="flex-1 min-h-0 m-0">
+        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+          <ASTDisplay code={code} />
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      </TabsContent>
 
-    <TabsContent value="execution" className="flex-1 min-h-0 m-0">
-      <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-        <ExecutionVisualizer code={code} />
-        <ScrollBar orientation="vertical" />
-      </ScrollArea>
-    </TabsContent>
+      <TabsContent value="execution" className="flex-1 min-h-0 m-0">
+        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+          <ExecutionVisualizer code={code} />
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      </TabsContent>
 
-    <TabsContent value="guide" className="flex-1 min-h-0 m-0">
-      <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-        <div className="p-4">
-          <GuideTab />
-        </div>
-        <ScrollBar orientation="vertical" />
-      </ScrollArea>
-    </TabsContent>
-  </Tabs>
-);
+      <TabsContent value="output" className="flex-1 min-h-0 m-0">
+        <OutputPanel />
+      </TabsContent>
+    </Tabs>
+  );
+};
 
 export default AnalysisContent;
