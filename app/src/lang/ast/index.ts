@@ -33,6 +33,7 @@ import {
   AssignmentExpression,
 } from "./expression";
 import { AstValidator } from "./validate";
+import { Node, Expression, Identifier, Statement } from "./ast";
 
 type ASTLiterals =
   | StringLiteral
@@ -102,4 +103,8 @@ export {
   type ASTStatements,
   type ASTExpressions,
   AstValidator,
+  type Node,
+  Expression,
+  Identifier,
+  Statement,
 };
