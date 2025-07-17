@@ -4,8 +4,7 @@ import {
   ParserException,
 } from "@/lang/parser/core";
 import { TokenType } from "@/lang/token/token";
-import { FStringLiteral } from "@/lang/ast/expression";
-import { Expression } from "@/lang/ast/ast";
+import { FStringLiteral, Expression } from "@/lang/ast";
 import Lexer from "@/lang/lexer/lexer";
 import { LanguageParser } from "@/lang/parser/parser";
 
