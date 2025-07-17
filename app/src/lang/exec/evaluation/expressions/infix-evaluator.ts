@@ -127,7 +127,7 @@ export class InfixExpressionEvaluator
         if (rightInteger == 0) {
           return new ErrorObject("division by zero");
         }
-        return new IntegerObject(leftInteger / rightInteger);
+        return new IntegerObject(Math.floor(leftInteger / rightInteger));
 
       case "%":
         return new IntegerObject(leftInteger % rightInteger);
