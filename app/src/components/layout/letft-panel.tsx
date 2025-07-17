@@ -9,6 +9,7 @@ import { LanguageParser } from "@/lang/parser";
 import { LanguageEvaluator } from "@/lang/exec/evaluation/evaluator";
 import { Environment } from "@/lang/exec/objects";
 import { Button } from "../ui/button";
+import { ObjectValidator } from "@/lang/exec/core";
 
 interface LeftPanelProps {
   code: string;
@@ -37,14 +38,17 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
 
     if (parser.getErrors().length > 0) {
       consoleStore.addEntry(parser.getErrors()[0].message, "error");
-    } else {
-      consoleStore.addEntry("Code executed successfully", "info");
     }
 
     const evaluator = new LanguageEvaluator();
     const result = evaluator.evaluateProgram(ast, new Environment());
 
-    consoleStore.addEntry(result.inspect(), "info");
+    if (!ObjectValidator.isError(result)) {
+      consoleStore.addEntry(
+        "Code executed successfully with exit code 0 😎",
+        "success"
+      );
+    }
     setActiveTab("execution");
   };
 
