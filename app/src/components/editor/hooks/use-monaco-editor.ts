@@ -148,29 +148,29 @@ export const useMonacoEditor = () => {
         base: "vs-dark",
         inherit: true,
         rules: [
-          { token: "keyword", foreground: "ff7b72" }, // GitHub Dark red for keywords
-          { token: "identifier", foreground: "c9d1d9" }, // GitHub Dark default text color
-          { token: "type", foreground: "79c0ff" }, // GitHub Dark blue for types
-          { token: "number", foreground: "d2a8ff" }, // GitHub Dark purple for numbers
-          { token: "string", foreground: "a5d6ff" }, // GitHub Dark light blue for strings
-          { token: "comment", foreground: "8b949e", fontStyle: "italic" }, // GitHub Dark gray for comments
-          { token: "operator", foreground: "ff7b72" }, // GitHub Dark red for operators
-          { token: "delimiter", foreground: "8b949e" }, // GitHub Dark gray for delimiters
-          { token: "brackets", foreground: "8b949e" }, // GitHub Dark gray for brackets
-          { token: "builtin.function", foreground: "d2a8ff" }, // Purple for built-in functions
+          { token: "keyword", foreground: "569cd6" }, // VS Code blue for keywords
+          { token: "identifier", foreground: "d4d4d4" }, // VS Code default text color
+          { token: "type", foreground: "4ec9b0" }, // VS Code teal for types
+          { token: "number", foreground: "b5cea8" }, // VS Code light green for numbers
+          { token: "string", foreground: "ce9178" }, // VS Code orange/peach for strings
+          { token: "comment", foreground: "6a9955", fontStyle: "italic" }, // VS Code green for comments
+          { token: "operator", foreground: "d4d4d4" }, // VS Code default text for operators
+          { token: "delimiter", foreground: "d4d4d4" }, // VS Code default text for delimiters
+          { token: "brackets", foreground: "d4d4d4" }, // VS Code default text for brackets
+          { token: "builtin.function", foreground: "dcdcaa" }, // VS Code yellow for built-in functions
         ],
         colors: {
-          "editor.background": "#0d1117", // GitHub Dark background
-          "editor.foreground": "#c9d1d9", // GitHub Dark default text
-          "editorCursor.foreground": "#58a6ff", // GitHub Dark blue cursor
-          "editor.lineHighlightBackground": "#161b22", // GitHub Dark line highlight
-          "editor.selectionBackground": "#2d3139", // GitHub Dark selection
-          "editorLineNumber.foreground": "#484f58", // GitHub Dark line number
-          "editorLineNumber.activeForeground": "#8b949e", // GitHub Dark active line number
-          "editorIndentGuide.background": "#21262d", // GitHub Dark indent guide
-          "editorIndentGuide.activeBackground": "#30363d", // GitHub Dark active indent guide
-          "editorGutter.background": "#0d1117", // GitHub Dark gutter
-          "editor.inactiveSelectionBackground": "#272e38", // GitHub Dark inactive selection
+          "editor.background": "#1e1e1e", // VS Code background
+          "editor.foreground": "#d4d4d4", // VS Code default text
+          "editorCursor.foreground": "#aeafad", // VS Code cursor
+          "editor.lineHighlightBackground": "#2a2d2e", // VS Code line highlight
+          "editor.selectionBackground": "#264f78", // VS Code selection
+          "editorLineNumber.foreground": "#858585", // VS Code line number
+          "editorLineNumber.activeForeground": "#c6c6c6", // VS Code active line number
+          "editorIndentGuide.background": "#404040", // VS Code indent guide
+          "editorIndentGuide.activeBackground": "#707070", // VS Code active indent guide
+          "editorGutter.background": "#1e1e1e", // VS Code gutter
+          "editor.inactiveSelectionBackground": "#3a3d41", // VS Code inactive selection
         },
       });
     }

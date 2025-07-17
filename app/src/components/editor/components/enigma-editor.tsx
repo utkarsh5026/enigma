@@ -52,14 +52,32 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
 
   useMonacoEditor();
 
-  // Responsive configuration
+  // Enhanced responsive configuration
   const getResponsiveConfig = () => {
     if (isMobile) {
       return {
         fontSize: 14,
-        padding: { top: 8, bottom: 8 },
+        lineHeight: 20,
+        padding: { top: 12, bottom: 12, left: 8, right: 8 },
         lineNumbers: "off" as const,
         glyphMargin: false,
+        scrollbar: {
+          vertical: "visible" as const,
+          horizontal: "visible" as const,
+          verticalScrollbarSize: 16,
+          horizontalScrollbarSize: 16,
+          verticalSliderSize: 16,
+          horizontalSliderSize: 16,
+          arrowSize: 11,
+        },
+      };
+    } else if (isTablet) {
+      return {
+        fontSize: 16,
+        lineHeight: 24,
+        padding: { top: 16, bottom: 16, left: 12, right: 12 },
+        lineNumbers: "on" as const,
+        glyphMargin: true,
         scrollbar: {
           vertical: "visible" as const,
           horizontal: "visible" as const,
@@ -67,12 +85,14 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
           horizontalScrollbarSize: 14,
           verticalSliderSize: 14,
           horizontalSliderSize: 14,
+          arrowSize: 10,
         },
       };
-    } else if (isTablet) {
+    } else {
       return {
-        fontSize: 16,
-        padding: { top: 12, bottom: 12 },
+        fontSize: 18,
+        lineHeight: 28,
+        padding: { top: 20, bottom: 20, left: 16, right: 16 },
         lineNumbers: "on" as const,
         glyphMargin: true,
         scrollbar: {
@@ -82,21 +102,8 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
           horizontalScrollbarSize: 12,
           verticalSliderSize: 12,
           horizontalSliderSize: 12,
-        },
-      };
-    } else {
-      return {
-        fontSize: 20,
-        padding: { top: 16, bottom: 16 },
-        lineNumbers: "on" as const,
-        glyphMargin: true,
-        scrollbar: {
-          vertical: "visible" as const,
-          horizontal: "visible" as const,
-          verticalScrollbarSize: 10,
-          horizontalScrollbarSize: 10,
-          verticalSliderSize: 10,
-          horizontalSliderSize: 10,
+          arrowSize: 9,
+          useShadows: false,
         },
       };
     }
@@ -109,9 +116,18 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
 
     editor.updateOptions({
       renderLineHighlight: "all",
-      cursorBlinking: "phase",
+      cursorBlinking: "expand",
       cursorSmoothCaretAnimation: "on",
+      cursorWidth: 2,
       theme: "enigmaDark",
+      bracketPairColorization: { enabled: true },
+      guides: {
+        bracketPairs: true,
+        bracketPairsHorizontal: true,
+        highlightActiveBracketPair: true,
+        indentation: true,
+        highlightActiveIndentation: true,
+      },
     });
 
     // Focus the editor only on desktop to avoid virtual keyboard issues on mobile
@@ -129,7 +145,7 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
   const responsiveConfig = getResponsiveConfig();
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative">
       <MonacoEditor
         className="h-full"
         value={code}
@@ -138,34 +154,134 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
         onChange={handleEditorChange}
         onMount={handleEditorDidMount}
         options={{
-          minimap: { enabled: !isMobile }, // Disable minimap on mobile
+          // Enhanced minimap
+          minimap: {
+            enabled: !isMobile,
+            side: "right",
+            size: "proportional",
+            showSlider: "always",
+            renderCharacters: true,
+            maxColumn: 120,
+          },
+
+          // Enhanced typography
           fontSize: responsiveConfig.fontSize,
+          lineHeight: responsiveConfig.lineHeight,
           fontFamily:
-            "'Source Code Pro', Menlo, Monaco, 'Courier New', monospace",
+            "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Source Code Pro', 'SF Mono', Menlo, Monaco, 'Courier New', monospace",
           fontLigatures: true,
+          fontWeight: "400",
+          letterSpacing: 0.5,
+
+          // Enhanced layout
           lineNumbers: responsiveConfig.lineNumbers,
+          lineNumbersMinChars: 3,
+          lineDecorationsWidth: 10,
           tabSize: 2,
+          insertSpaces: true,
+          detectIndentation: false,
           scrollBeyondLastLine: false,
+          scrollBeyondLastColumn: 5,
           automaticLayout: true,
           wordWrap: "on",
+          wordWrapColumn: 100,
+          wrappingIndent: "indent",
           padding: responsiveConfig.padding,
           glyphMargin: responsiveConfig.glyphMargin,
-          scrollbar: responsiveConfig.scrollbar,
+
+          // Enhanced scrollbar
+          scrollbar: {
+            ...responsiveConfig.scrollbar,
+            alwaysConsumeMouseWheel: false,
+            handleMouseWheel: true,
+            useShadows: true,
+            verticalHasArrows: false,
+            horizontalHasArrows: false,
+          },
+
+          // Enhanced visual features
           overviewRulerBorder: false,
-          hideCursorInOverviewRuler: true,
-          renderLineHighlight: "line",
+          overviewRulerLanes: 2,
+          hideCursorInOverviewRuler: false,
+          renderLineHighlight: "all",
+          renderLineHighlightOnlyWhenFocus: false,
           smoothScrolling: true,
-          cursorBlinking: "smooth",
+          cursorBlinking: "expand",
           cursorSmoothCaretAnimation: "on",
-          contextmenu: !isMobile, // Disable context menu on mobile to avoid conflicts
+          cursorWidth: 2,
+          cursorStyle: "line",
+          contextmenu: !isMobile,
           roundedSelection: true,
-          renderControlCharacters: !isMobile, // Simplify on mobile
-          renderWhitespace: "none",
+          renderControlCharacters: false,
+          renderWhitespace: "selection",
+
           links: true,
+          colorDecorators: true,
+
+          // Enhanced bracket features
+          bracketPairColorization: { enabled: true },
+          guides: {
+            bracketPairs: "active",
+            bracketPairsHorizontal: "active",
+            highlightActiveBracketPair: true,
+            indentation: true,
+            highlightActiveIndentation: true,
+          },
+          matchBrackets: "always",
+
+          // Enhanced selection and highlighting
+          selectionHighlight: true,
+          occurrencesHighlight: "singleFile",
+          codeLens: false,
+          folding: !isMobile,
+          foldingHighlight: true,
+          foldingStrategy: "indentation",
+          showFoldingControls: "mouseover",
+          unfoldOnClickAfterEndOfLine: false,
+
+          // Enhanced suggestions and IntelliSense
+          quickSuggestions: {
+            other: true,
+            comments: false,
+            strings: false,
+          },
+          quickSuggestionsDelay: 100,
+          suggestOnTriggerCharacters: true,
+          acceptSuggestionOnCommitCharacter: true,
+          acceptSuggestionOnEnter: "on",
+          wordBasedSuggestions: "currentDocument",
+          suggestSelection: "first",
+
+          // Enhanced hover and parameter hints
+          hover: {
+            enabled: true,
+            delay: 300,
+            sticky: true,
+          },
+          parameterHints: {
+            enabled: true,
+            cycle: true,
+          },
+
+          // Enhanced find widget
+          find: {
+            addExtraSpaceOnTop: false,
+            autoFindInSelection: "never",
+            seedSearchStringFromSelection: "selection",
+          },
+
+          // Performance optimizations
+          stopRenderingLineAfter: 10000,
+          mouseWheelScrollSensitivity: 1,
+          fastScrollSensitivity: 5,
+          multiCursorModifier: "ctrlCmd",
+          multiCursorMergeOverlapping: true,
+          accessibilitySupport: "auto",
+
           // Mobile-specific optimizations
           ...(isMobile && {
-            acceptSuggestionOnEnter: "off", // Prevent accidental accepts on mobile
-            quickSuggestions: false, // Disable quick suggestions on mobile
+            acceptSuggestionOnEnter: "off",
+            quickSuggestions: false,
             suggestOnTriggerCharacters: false,
             wordBasedSuggestions: "off",
             parameterHints: { enabled: false },
@@ -177,7 +293,15 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
             foldingHighlight: false,
             unfoldOnClickAfterEndOfLine: false,
             showFoldingControls: "never",
+            guides: {
+              bracketPairs: false,
+              bracketPairsHorizontal: false,
+              highlightActiveBracketPair: false,
+              indentation: false,
+              highlightActiveIndentation: false,
+            },
           }),
+
           // Tablet-specific optimizations
           ...(isTablet && {
             acceptSuggestionOnEnter: "smart",
@@ -191,6 +315,13 @@ const EnigmaEditor: React.FC<EnigmaEditorProps> = ({ code, onCodeChange }) => {
             codeLens: false,
             folding: true,
             foldingHighlight: true,
+            guides: {
+              bracketPairs: "active",
+              bracketPairsHorizontal: false,
+              highlightActiveBracketPair: true,
+              indentation: true,
+              highlightActiveIndentation: true,
+            },
           }),
         }}
       />
