@@ -7,6 +7,7 @@ export enum TokenType {
   IDENTIFIER = "IDENTIFIER",
   INT = "INT",
   STRING = "STRING",
+  FLOAT = "FLOAT",
 
   ASSIGN = "=",
   PLUS = "+",
