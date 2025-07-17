@@ -26,6 +26,7 @@ import {
   CallExpressionParser,
   IndexExpressionParser,
 } from "../parsers/expressions/infix";
+import { FStringLiteralParser } from "../parsers/expressions/prefix/fstring-literal";
 
 export class ExpressionParserRegistry {
   private prefixParsers: Map<TokenType, PrefixExpressionParser> = new Map();
@@ -78,6 +79,7 @@ export class ExpressionParserRegistry {
     this.registerPrefixParser(
       new IfExpressionParser(this.expressionParser, this.statementParser)
     );
+    this.registerPrefixParser(new FStringLiteralParser());
   }
 
   private registerInfixParsers() {
