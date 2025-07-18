@@ -3,11 +3,11 @@ import { PrefixExpression } from "@/lang/ast";
 import {
   Environment,
   BaseObject,
-  ErrorObject,
   BooleanObject,
   IntegerObject,
 } from "@/lang/exec/objects";
-import { EvaluationContext } from "@/lang/exec/core";
+import type { EvaluationContext } from "@/lang/exec/core";
+import type { Position } from "@/lang/token/token";
 
 export class PrefixExpressionEvaluator
   implements NodeEvaluator<PrefixExpression>
@@ -39,7 +39,12 @@ export class PrefixExpressionEvaluator
       );
       return right;
     }
-    const result = this.evalPrefixExpression(node.operator, right);
+    const result = this.evalPrefixExpression(
+      node.operator,
+      right,
+      context,
+      node.position()
+    );
     context.addAfterStep(
       node,
       env,
@@ -57,18 +62,21 @@ export class PrefixExpressionEvaluator
    */
   private evalPrefixExpression(
     operator: string,
-    right: BaseObject
+    right: BaseObject,
+    context: EvaluationContext,
+    position: Position
   ): BaseObject {
     if (operator === "!") {
       return this.evalLogicalNotOperator(right);
     }
 
     if (operator === "-") {
-      return this.evalNegationOperator(right);
+      return this.evalNegationOperator(right, context, position);
     }
 
-    return new ErrorObject(
-      `unknown operator: ${operator}${right.type()}, You can only use ! or - operator with BOOLEAN or INTEGER`
+    return context.createError(
+      `unknown operator: ${operator}${right.type()}, You can only use ! or - operator with BOOLEAN or INTEGER`,
+      position
     );
   }
 
@@ -84,13 +92,17 @@ export class PrefixExpressionEvaluator
     return new BooleanObject(!(value as BaseObject).isTruthy());
   }
 
-  private evalNegationOperator(value: BaseObject): BaseObject {
+  private evalNegationOperator(
+    value: BaseObject,
+    context: EvaluationContext,
+    position: Position
+  ): BaseObject {
     if (ObjectValidator.isInteger(value)) {
       return new IntegerObject(-value.value);
     }
 
     const errorMessage = `unknown operator: -${value.type()}, You can only use - operator with INTEGER like -5, -10, -100, -1000, etc.`;
 
-    return new ErrorObject(errorMessage);
+    return context.createError(errorMessage, position);
   }
 }
