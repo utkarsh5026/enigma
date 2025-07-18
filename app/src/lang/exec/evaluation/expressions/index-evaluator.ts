@@ -8,6 +8,19 @@ import {
 } from "@/lang/exec/core";
 import { Expression } from "@/lang/ast/ast";
 
+/**
+ * ➖ PrefixExpressionEvaluator - Unary Operation Handler
+ *
+ * Evaluates prefix (unary) expressions that operate on a single operand.
+ * Handles logical negation for boolean values and arithmetic negation
+ * for numeric values, with proper type checking and error handling.
+ *
+ * @example
+ * - Logical negation: !true, !isValid, !user.hasPermission
+ * - Arithmetic negation: -42, -totalCost, -temperature
+ * - Boolean conversion: !0, !null, !"", ![]
+ * - Sign flipping: -positiveNumber, -(-5)
+ */
 export class IndexExpressionEvaluator
   implements NodeEvaluator<IndexExpression>
 {

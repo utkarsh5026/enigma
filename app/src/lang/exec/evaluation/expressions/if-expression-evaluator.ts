@@ -7,6 +7,19 @@ import {
   ObjectValidator,
 } from "@/lang/exec/core";
 
+/**
+ * 🔀 IfExpressionEvaluator - Conditional Logic Processor
+ *
+ * Evaluates conditional expressions by testing conditions and executing the
+ * appropriate branch. Supports multiple if-else-if chains and handles both
+ * expression-style and statement-style conditional logic.
+ *
+ * @example
+ * - Simple conditions: if (age >= 18) then "adult" else "minor"
+ * - Multiple branches: if score >= 90 then "A" else if score >= 80 then "B"
+ * - Boolean tests: if isLoggedIn then showDashboard() else showLogin()
+ * - Null checks: if user != null then user.name else "Guest"
+ */
 export class IfExpressionEvaluator implements NodeEvaluator<IfExpression> {
   public evaluate(
     node: IfExpression,

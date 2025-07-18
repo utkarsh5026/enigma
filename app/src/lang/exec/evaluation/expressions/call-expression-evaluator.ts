@@ -11,6 +11,19 @@ import { FrameType } from "@/lang/exec/debug";
 import { Position } from "@/lang/token/token";
 import { AstValidator } from "@/lang/ast";
 
+/**
+ * 📞 CallExpressionEvaluator - Function Invocation Handler
+ *
+ * Evaluates function call expressions by resolving the function and executing
+ * it with provided arguments. Handles both user-defined functions and built-in
+ * system functions with proper parameter binding and return value handling.
+ *
+ * @example
+ * - Simple calls: print("Hello"), max(5, 10), len([1, 2, 3])
+ * - User functions: calculateTotal(items), processData(input)
+ * - Method-style: math.sqrt(16), string.upper("hello")
+ * - Complex calls: fibonacci(10), sortArray([3, 1, 4, 1, 5])
+ */
 export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
   public evaluate(
     node: CallExpression,

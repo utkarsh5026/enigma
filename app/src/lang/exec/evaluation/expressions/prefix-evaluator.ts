@@ -9,16 +9,22 @@ import { BooleanObject, IntegerObject } from "@/lang/exec/objects";
 import type { EvaluationContext } from "@/lang/exec/core";
 import type { Position } from "@/lang/token/token";
 
+/**
+ * ➖ PrefixExpressionEvaluator - Unary Operation Handler
+ *
+ * Evaluates prefix (unary) expressions that operate on a single operand.
+ * Handles logical negation for boolean values and arithmetic negation
+ * for numeric values, with proper type checking and error handling.
+ *
+ * @example
+ * - Logical negation: !true, !isValid, !user.hasPermission
+ * - Arithmetic negation: -42, -totalCost, -temperature
+ * - Boolean conversion: !0, !null, !"", ![]
+ * - Sign flipping: -positiveNumber, -(-5)
+ */
 export class PrefixExpressionEvaluator
   implements NodeEvaluator<PrefixExpression>
 {
-  /**
-   * Evaluates a prefix expression.
-   * @param node - The prefix expression to evaluate.
-   * @param env - The environment to evaluate the expression in.
-   * @param context - The context to evaluate the expression in.
-   * @returns The result of the evaluation.
-   */
   public evaluate(
     node: PrefixExpression,
     env: Environment,

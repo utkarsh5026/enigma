@@ -1,5 +1,3 @@
-// app/src/stores/console-store.ts
-
 /**
  * Console Entry represents a single line of output in our console
  */
