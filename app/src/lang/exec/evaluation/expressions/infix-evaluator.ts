@@ -61,7 +61,13 @@ export class InfixExpressionEvaluator
     }
 
     context.addBeforeStep(node, env, `Evaluating the infix expression`);
-    const result = this.evalInfixExpression(node.operator, left, right);
+    const result = this.evalInfixExpression(
+      node.operator,
+      left,
+      right,
+      context,
+      node
+    );
     context.addAfterStep(
       node,
       env,
@@ -74,10 +80,12 @@ export class InfixExpressionEvaluator
   private evalStringInfixExpression(
     operator: string,
     left: BaseObject,
-    right: BaseObject
+    right: BaseObject,
+    context: EvaluationContext,
+    node: InfixExpression
   ) {
     if (!ObjectValidator.isString(left) || !ObjectValidator.isString(right)) {
-      return this.createTypeMismatchError(operator, left, right);
+      return this.createTypeMismatchError(operator, left, right, context, node);
     }
 
     const leftString = left.value;
@@ -100,17 +108,25 @@ export class InfixExpressionEvaluator
         return new BooleanObject(leftString < rightString);
 
       default:
-        return this.createInvalidOperatorError(operator, left, right);
+        return this.createInvalidOperatorError(
+          operator,
+          left,
+          right,
+          context,
+          node
+        );
     }
   }
 
   private evalIntegerInfixExpression(
     operator: string,
     left: BaseObject,
-    right: BaseObject
+    right: BaseObject,
+    context: EvaluationContext,
+    node: InfixExpression
   ) {
     if (!ObjectValidator.isInteger(left) || !ObjectValidator.isInteger(right)) {
-      return this.createTypeMismatchError(operator, left, right);
+      return this.createTypeMismatchError(operator, left, right, context, node);
     }
 
     const leftInteger = left.value;
@@ -128,7 +144,13 @@ export class InfixExpressionEvaluator
 
       case "/":
         if (rightInteger == 0) {
-          return new ErrorObject("division by zero");
+          return context.createError("division by zero", node.position());
+        }
+        return new IntegerObject(Math.floor(leftInteger / rightInteger));
+
+      case "//":
+        if (rightInteger == 0) {
+          return context.createError("division by zero", node.position());
         }
         return new IntegerObject(Math.floor(leftInteger / rightInteger));
 
@@ -154,17 +176,25 @@ export class InfixExpressionEvaluator
         return new BooleanObject(leftInteger >= rightInteger);
 
       default:
-        return this.createInvalidOperatorError(operator, left, right);
+        return this.createInvalidOperatorError(
+          operator,
+          left,
+          right,
+          context,
+          node
+        );
     }
   }
 
   private evalBooleanInfixExpression(
     operator: string,
     left: BaseObject,
-    right: BaseObject
+    right: BaseObject,
+    context: EvaluationContext,
+    node: InfixExpression
   ) {
     if (!ObjectValidator.isBoolean(left) || !ObjectValidator.isBoolean(right)) {
-      return this.createTypeMismatchError(operator, left, right);
+      return this.createTypeMismatchError(operator, left, right, context, node);
     }
 
     const leftBoolean = left.value;
@@ -184,14 +214,22 @@ export class InfixExpressionEvaluator
         return new BooleanObject(leftBoolean || rightBoolean);
 
       default:
-        return this.createInvalidOperatorError(operator, left, right);
+        return this.createInvalidOperatorError(
+          operator,
+          left,
+          right,
+          context,
+          node
+        );
     }
   }
 
   private evalInfixExpression(
     operator: string,
     left: BaseObject,
-    right: BaseObject
+    right: BaseObject,
+    context: EvaluationContext,
+    node: InfixExpression
   ) {
     // Handle null operations first
     if (ObjectValidator.isNull(left) || ObjectValidator.isNull(right)) {
@@ -199,15 +237,39 @@ export class InfixExpressionEvaluator
     }
 
     if (ObjectValidator.isString(left) && ObjectValidator.isString(right))
-      return this.evalStringInfixExpression(operator, left, right);
+      return this.evalStringInfixExpression(
+        operator,
+        left,
+        right,
+        context,
+        node
+      );
 
     if (ObjectValidator.isInteger(left) && ObjectValidator.isInteger(right))
-      return this.evalIntegerInfixExpression(operator, left, right);
+      return this.evalIntegerInfixExpression(
+        operator,
+        left,
+        right,
+        context,
+        node
+      );
 
     if (ObjectValidator.isBoolean(left) && ObjectValidator.isBoolean(right))
-      return this.evalBooleanInfixExpression(operator, left, right);
+      return this.evalBooleanInfixExpression(
+        operator,
+        left,
+        right,
+        context,
+        node
+      );
 
-    return this.createInvalidOperatorError(operator, left, right);
+    return this.createInvalidOperatorError(
+      operator,
+      left,
+      right,
+      context,
+      node
+    );
   }
 
   private evalNullInfixExpression(
@@ -242,32 +304,36 @@ export class InfixExpressionEvaluator
   private createInvalidOperatorError(
     operator: string,
     left: BaseObject,
-    right: BaseObject
+    right: BaseObject,
+    context: EvaluationContext,
+    node: InfixExpression
   ) {
-    return new ErrorObject(
+    const message =
       "Invalid operator '" +
-        operator +
-        "' for types " +
-        left.type() +
-        " and " +
-        right.type() +
-        ". This operation is not supported."
-    );
+      operator +
+      "' for types " +
+      left.type() +
+      " and " +
+      right.type() +
+      ". This operation is not supported.";
+    return context.createError(message, node.position());
   }
 
   private createTypeMismatchError(
     operator: string,
     left: BaseObject,
-    right: BaseObject
+    right: BaseObject,
+    context: EvaluationContext,
+    node: InfixExpression
   ) {
-    return new ErrorObject(
+    const message =
       "Type mismatch: " +
-        left.type() +
-        " " +
-        operator +
-        " " +
-        right.type() +
-        ". This operation is not supported."
-    );
+      left.type() +
+      " " +
+      operator +
+      " " +
+      right.type() +
+      ". This operation is not supported.";
+    return context.createError(message, node.position());
   }
 }
