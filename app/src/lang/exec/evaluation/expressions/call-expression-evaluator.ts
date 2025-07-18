@@ -7,6 +7,9 @@ import {
   ObjectValidator,
 } from "@/lang/exec/core";
 import { Identifier } from "@/lang/ast/ast";
+import { FrameType } from "@/lang/exec/debug";
+import { Position } from "@/lang/token/token";
+import { AstValidator } from "@/lang/ast";
 
 export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
   public evaluate(
@@ -119,33 +122,109 @@ export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
     node: CallExpression
   ): BaseObject {
     if (ObjectValidator.isBuiltin(functionObject)) {
-      return functionObject.fn(args);
-    }
-
-    if (!ObjectValidator.isFunction(functionObject)) {
-      return context.createError(
-        `Not a function: ${functionObject.type()}`,
+      return this.applyBuiltinFunction(
+        functionObject,
+        args,
+        context,
         node.position()
       );
     }
 
-    const extendedEnv = new Environment(functionObject.env, false);
-    const { parameters } = functionObject;
+    if (ObjectValidator.isFunction(functionObject)) {
+      return this.applyUserFunction(functionObject, args, context, node);
+    }
 
-    parameters.forEach((param, i) => {
-      extendedEnv.defineVariable(param.value, args[i]);
-    });
+    return context.createError(
+      `Not a function: ${functionObject.type()}`,
+      node.position()
+    );
+  }
 
-    const result = context.evaluate(functionObject.body, extendedEnv);
+  private applyBuiltinFunction(
+    builtin: BaseObject,
+    args: BaseObject[],
+    context: EvaluationContext,
+    functionPos: Position
+  ): BaseObject {
+    if (!ObjectValidator.isBuiltin(builtin)) {
+      return context.createError(
+        `Not a builtin function: ${builtin.type()}`,
+        functionPos
+      );
+    }
 
-    if (ObjectValidator.isError(result)) {
+    const functionName = builtin.name;
+    context.enterFunction(functionName, functionPos, FrameType.BUILTIN);
+
+    try {
+      const result = builtin.fn(args);
+      if (ObjectValidator.isError(result)) {
+        const message = `Error in evaluation of the builtin function ${functionName}: ${result.message}`;
+        return context.createError(message, functionPos);
+      }
       return result;
+    } finally {
+      context.exitFunction();
+    }
+  }
+
+  /**
+   * Applies a user function to the given arguments and returns the result.
+   */
+  private applyUserFunction(
+    func: BaseObject,
+    args: BaseObject[],
+    context: EvaluationContext,
+    caller: CallExpression
+  ): BaseObject {
+    if (!ObjectValidator.isFunction(func)) {
+      return context.createError(
+        `Not a function: ${func.type()}`,
+        caller.func.position()
+      );
     }
 
-    if (ObjectValidator.isReturnValue(result)) {
-      return result.value;
-    }
+    const functionName = this.determineFunctionName(caller);
+    context.enterFunction(
+      functionName,
+      caller.func.position(),
+      FrameType.USER_FUNCTION
+    );
 
-    return result;
+    try {
+      const extendedEnv = new Environment(func.env, false);
+      const parameters = func.parameters;
+
+      // Bind arguments to parameters
+      for (let i = 0; i < parameters.length; i++) {
+        const param = parameters[i];
+        const arg = args[i];
+        extendedEnv.defineVariable(param.value, arg);
+      }
+
+      const result = context.evaluate(func.body, extendedEnv);
+      if (ObjectValidator.isError(result)) {
+        return result;
+      }
+
+      if (ObjectValidator.isReturnValue(result)) {
+        return result.value;
+      }
+
+      return result;
+    } finally {
+      context.exitFunction();
+    }
+  }
+
+  /**
+   * Determines the name of the function to be used in the stack trace.
+   */
+  private determineFunctionName(node: CallExpression): string {
+    const functionExpr = node.func;
+    if (AstValidator.isIdentifier(functionExpr)) {
+      return functionExpr.value;
+    }
+    return "<anonymous>";
   }
 }
