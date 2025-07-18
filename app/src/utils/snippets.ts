@@ -566,10 +566,10 @@ let fibonacciRecursive = fn(n) {
 
 let fibonacciIterative = fn(n) {
   print("=== Iterative Fibonacci ===");
-  print("Computing fibonacci(", n, ") iteratively");
+  print(f"Computing fibonacci({n}) iteratively");
   
   if (n < 2) {
-    print("Base case: fibonacci(", n, ") =", n);
+    print(f"Base case: fibonacci({n}) = {n}");
     return n;
   }
   
@@ -577,23 +577,23 @@ let fibonacciIterative = fn(n) {
   let b = 1;
   let result = 0;
   
-  print("Starting with: a =", a, ", b =", b);
+  print(f"Starting with: a = {a}, b = {b}");
   
   for (let i = 2; i <= n; i = i + 1) {
     result = a + b;
-    print("Step", i, ":", a, "+", b, "=", result);
+    print(f"Step {i}: {a} + {b} = {result}");
     a = b;
     b = result;
-    print("  Update: a =", a, ", b =", b);
+    print(f"  Update: a = {a}, b = {b}");
   }
   
-  print("\\nFinal result: fibonacci(", n, ") =", result);
+  print(f"\\nFinal result: fibonacci({n}) = {result}");
   return result;
 };
 
 let comparePerformance = fn(n) {
   print("\\n=== Performance Comparison ===");
-  print("Computing fibonacci(", n, ") with both methods:\\n");
+  print(f"Computing fibonacci({n}) with both methods:\\n");
   
   print("Iterative approach:");
   let iterativeResult = fibonacciIterative(n);
@@ -602,9 +602,9 @@ let comparePerformance = fn(n) {
   let recursiveResult = fibonacciRecursive(n);
   
   print("\\n=== Results ===");
-  print("Iterative result:", iterativeResult);
-  print("Recursive result:", recursiveResult);
-  print("Results match:", iterativeResult == recursiveResult);
+  print(f"Iterative result: {iterativeResult}");
+  print(f"Recursive result: {recursiveResult}");
+  print(f"Results match: {iterativeResult == recursiveResult}");
 };
 
 comparePerformance(10);
@@ -628,31 +628,31 @@ let createCounterFactory = fn() {
       "getName": fn() { name; },
       "getId": fn() { id; },
       "getValue": fn() { 
-        print("Counter", name, "(#" + id + ") current value:", count);
+        print(f"Counter {name} (#{id}) current value: {count}");
         return count; 
       },
       "increment": fn() {
         let oldValue = count;
         count = count + 1;
-        print("Counter", name, "incremented:", oldValue, "->", count);
+        print(f"Counter {name} incremented: {oldValue} -> {count}");
         return count;
       },
       "decrement": fn() {
         let oldValue = count;
         count = count - 1;
-        print("Counter", name, "decremented:", oldValue, "->", count);
+        print(f"Counter {name} decremented: {oldValue} -> {count}");
         return count;
       },
       "reset": fn() {
         let oldValue = count;
         count = initialValue;
-        print("Counter", name, "reset:", oldValue, "->", count);
+        print(f"Counter {name} reset: {oldValue} -> {count}");
         return count;
       },
       "add": fn(value) {
         let oldValue = count;
         count = count + value;
-        print("Counter", name, "added", value, ":", oldValue, "->", count);
+        print(f"Counter {name} added {value}: {oldValue} -> {count}");
         return count;
       }
     };
@@ -695,17 +695,17 @@ let myName = "Alice";
 let myAge = 25;
 let isStudent = true;
 
-print("Hello! My name is", myName);
-print("I am", myAge, "years old");
-print("Am I a student?", isStudent);
+print(f"Hello! My name is {myName}");
+print(f"I am {myAge} years old");
+print(f"Am I a student? {isStudent}");
 
 # Numbers and math
 let apples = 5;
 let oranges = 3;
 let totalFruit = apples + oranges;
 
-print("\\nI have", apples, "apples and", oranges, "oranges");
-print("Total fruit:", totalFruit);
+print(f"\\nI have {apples} apples and {oranges} oranges");
+print(f"Total fruit: {totalFruit}");
 
 # Simple decisions
 if (totalFruit > 5) {
@@ -724,29 +724,29 @@ let a = 15;
 let b = 4;
 
 print("Let's work with two numbers:");
-print("a =", a);
-print("b =", b);
+print(f"a = {a}");
+print(f"b = {b}");
 
 print("\\n--- Addition ---");
 let sum = a + b;
-print(a, "+", b, "=", sum);
+print(f"{a} + {b} = {sum}");
 
 print("\\n--- Subtraction ---");
 let difference = a - b;
-print(a, "-", b, "=", difference);
+print(f"{a} - {b} = {difference}");
 
 print("\\n--- Multiplication ---");
 let product = a * b;
-print(a, "×", b, "=", product);
+print(f"{a} × {b} = {product}");
 
 print("\\n--- Division ---");
 let quotient = a / b;
-print(a, "÷", b, "=", quotient);
+print(f"{a} ÷ {b} = {quotient}");
 
 print("\\n--- Remainder (Modulus) ---");
 let remainder = a % b;
-print(a, "mod", b, "=", remainder);
-print("This means", a, "÷", b, "leaves a remainder of", remainder);
+print(f"{a} mod {b} = {remainder}");
+print(f"This means {a} ÷ {b} leaves a remainder of {remainder}");
 
 print("\\n=== Summary ===");
 print("We performed 5 different math operations!");
@@ -758,28 +758,28 @@ print("=== Working with Text (Strings) ===");
 let firstName = "John";
 let lastName = "Smith";
 
-print("First name:", firstName);
-print("Last name:", lastName);
+print(f"First name: {firstName}");
+print(f"Last name: {lastName}");
 
 print("\\n--- Combining Strings ---");
 let fullName = firstName + " " + lastName;
-print("Full name:", fullName);
+print(f"Full name: {fullName}");
 
 let greeting = "Hello, " + fullName + "!";
-print("Greeting:", greeting);
+print(f"Greeting: {greeting}");
 
 print("\\n--- String Information ---");
 let nameLength = len(fullName);
-print("The name", fullName, "has", nameLength, "characters");
+print(f"The name {fullName} has {nameLength} characters");
 
 let firstNameLength = len(firstName);
 let lastNameLength = len(lastName);
-print("First name length:", firstNameLength);
-print("Last name length:", lastNameLength);
+print(f"First name length: {firstNameLength}");
+print(f"Last name length: {lastNameLength}");
 
 print("\\n--- Fun with Strings ---");
-let message = firstName + " has " + firstNameLength + " letters in their first name";
-print(message);
+let message = f"{firstName} has {firstNameLength} letters in their first name";
+print(f"Message: {message}");
 
 if (firstNameLength > lastNameLength) {
   print("First name is longer than last name");
@@ -795,39 +795,39 @@ print("=== Learning About Functions ===");
 # and produces a result (return value)
 
 let greet = fn(name) {
-  print("Inside the greet function with name:", name);
+  print(f"Inside the greet function with name: {name}");
   let message = "Hello, " + name + "!";
-  print("Created message:", message);
+  print(f"Created message: {message}");
   return message;
 };
 
 print("\\n--- Using Our Function ---");
 print("Calling greet with 'Alice':");
 let greeting1 = greet("Alice");
-print("Function returned:", greeting1);
+print(f"Function returned: {greeting1}");
 
 print("\\nCalling greet with 'Bob':");
 let greeting2 = greet("Bob");
-print("Function returned:", greeting2);
+print(f"Function returned: {greeting2}");
 
 print("\\n--- Functions Can Do Math Too ---");
 let add = fn(x, y) {
-  print("Adding", x, "and", y);
+  print(f"Adding {x} and {y}");
   let result = x + y;
-  print("Result:", result);
+  print(f"Result: {result}");
   return result;
 };
 
 let sum = add(7, 3);
-print("7 + 3 =", sum);
+print(f"7 + 3 = {sum}");
 
 let multiply = fn(a, b) {
-  print("Multiplying", a, "and", b);
+  print(f"Multiplying {a} and {b}");
   return a * b;
 };
 
 let product = multiply(4, 5);
-print("4 × 5 =", product);
+print(f"4 × 5 = {product}");
 
 print("\\n=== Functions make code reusable! ===");
 `,
