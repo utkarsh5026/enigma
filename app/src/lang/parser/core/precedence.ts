@@ -35,6 +35,7 @@ export class PrecedenceTable {
     [TokenType.SLASH, Precedence.PRODUCT],
     [TokenType.ASTERISK, Precedence.PRODUCT],
     [TokenType.MODULUS, Precedence.PRODUCT],
+    [TokenType.INTEGER_DIVISION, Precedence.PRODUCT],
     [TokenType.LPAREN, Precedence.CALL],
     [TokenType.LBRACKET, Precedence.INDEX],
   ]);

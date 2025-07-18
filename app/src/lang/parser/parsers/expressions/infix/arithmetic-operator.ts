@@ -33,6 +33,7 @@ export class ArithmeticOperatorParser implements InfixExpressionParser {
       TokenType.ASTERISK,
       TokenType.SLASH,
       TokenType.MODULUS,
+      TokenType.INTEGER_DIVISION,
     ]);
 
     this.delegate = new BinaryOperatorParser(
