@@ -2,13 +2,12 @@ import {
   NodeEvaluator,
   EvaluationContext,
   ObjectValidator,
+  Environment,
+  BaseObject,
 } from "@/lang/exec/core";
 import { FStringLiteral } from "@/lang/ast/literal";
 import {
-  Environment,
   StringObject,
-  ErrorObject,
-  BaseObject,
   IntegerObject,
   BooleanObject,
   NullObject,
@@ -48,8 +47,9 @@ export class FStringLiteralEvaluator implements NodeEvaluator<FStringLiteral> {
     for (let i = 0; i < expressions.length; i++) {
       const result = context.evaluate(expressions[i], env);
       if (ObjectValidator.isError(result)) {
-        return new ErrorObject(
-          `Error evaluating expression in f-string: ${result.message}`
+        return context.createError(
+          `Error evaluating expression in f-string: ${result.message}`,
+          expressions[i].position()
         );
       }
       expressionValues[i] = this.convertToString(result);
@@ -82,10 +82,8 @@ export class FStringLiteralEvaluator implements NodeEvaluator<FStringLiteral> {
       case obj instanceof BooleanObject:
         return obj.value ? "true" : "false";
       case obj instanceof NullObject:
-        // Null becomes "null"
         return "null";
       case ObjectValidator.isBuiltin(obj):
-        // Built-in functions show their name
         return `<builtin function: ${obj.name}>`;
       default:
         return (obj as BaseObject).inspect();

@@ -1,6 +1,11 @@
-import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
+import {
+  EvaluationContext,
+  NodeEvaluator,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 import { BooleanExpression } from "@/lang/ast";
-import { BaseObject, BooleanObject, Environment } from "@/lang/exec/objects";
+import { BooleanObject } from "@/lang/exec/objects";
 
 export class BooleanLiteralEvaluator
   implements NodeEvaluator<BooleanExpression>

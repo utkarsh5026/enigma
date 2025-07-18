@@ -1,6 +1,11 @@
-import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
+import {
+  EvaluationContext,
+  NodeEvaluator,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 import { IntegerLiteral } from "@/lang/ast";
-import { BaseObject, Environment, IntegerObject } from "@/lang/exec/objects";
+import { IntegerObject } from "@/lang/exec/objects";
 
 export class IntegerLiteralEvaluator implements NodeEvaluator<IntegerLiteral> {
   public evaluate(

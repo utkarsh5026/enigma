@@ -1,6 +1,11 @@
-import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
+import {
+  EvaluationContext,
+  NodeEvaluator,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 import { NullLiteral } from "@/lang/ast";
-import { BaseObject, Environment, NullObject } from "@/lang/exec/objects";
+import { NullObject } from "@/lang/exec/objects";
 
 export class NullLiteralEvaluator implements NodeEvaluator<NullLiteral> {
   public evaluate(

@@ -1,6 +1,11 @@
 import { FunctionLiteral } from "@/lang/ast";
-import { Environment, BaseObject, FunctionObject } from "@/lang/exec/objects";
-import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
+import { FunctionObject } from "@/lang/exec/objects";
+import {
+  EvaluationContext,
+  NodeEvaluator,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 
 export class FunctionLiteralEvaluator
   implements NodeEvaluator<FunctionLiteral>
