@@ -8,6 +8,19 @@ import {
 } from "@/lang/exec/core";
 import { ObjectValidator } from "@/lang/exec/core";
 
+/**
+ * 🗺️ HashLiteralEvaluator - Key-Value Mapping Builder
+ *
+ * Evaluates hash literal expressions into runtime hash objects. Creates
+ * dictionary-like structures that map string keys to arbitrary values,
+ * enabling structured data storage and retrieval.
+ *
+ * @example
+ * - Empty hash: {}
+ * - Simple mapping: {"name": "Alice", "age": 30}
+ * - Nested structures: {"person": {"name": "Bob"}, "scores": [95, 87]}
+ * - Configuration objects: {"debug": true, "timeout": 5000, "retries": 3}
+ */
 export class HashLiteralEvaluator implements NodeEvaluator<HashLiteral> {
   public evaluate(
     node: HashLiteral,

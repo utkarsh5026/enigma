@@ -8,6 +8,20 @@ import {
   BaseObject,
 } from "@/lang/exec/core";
 
+/**
+ * 📚 ArrayLiteralEvaluator - Array Collection Builder
+ *
+ * Evaluates array literal expressions into runtime array objects. Handles
+ * ordered collections of elements where each element can be any expression
+ * that gets evaluated to a value.
+ *
+ * @example
+ * - Empty arrays: []
+ * - Numeric arrays: [1, 2, 3, 4, 5]
+ * - Mixed-type arrays: [42, "hello", true, null]
+ * - Nested arrays: [[1, 2], [3, 4], [5, 6]]
+ * - Expression arrays: [x + 1, getName(), calculateTotal()]
+ */
 export class ArrayLiteralEvaluator implements NodeEvaluator<ArrayLiteral> {
   public evaluate(
     node: ArrayLiteral,
