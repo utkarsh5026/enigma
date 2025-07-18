@@ -1,11 +1,11 @@
 import { ReturnStatement } from "@/lang/ast";
+import { BaseObject, ReturnValueObject } from "@/lang/exec/objects";
 import {
+  EvaluationContext,
+  NodeEvaluator,
   Environment,
-  BaseObject,
-  ReturnValueObject,
-} from "@/lang/exec/objects";
-import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
+  ObjectValidator,
+} from "@/lang/exec/core";
 
 export class ReturnStatementEvaluator
   implements NodeEvaluator<ReturnStatement>

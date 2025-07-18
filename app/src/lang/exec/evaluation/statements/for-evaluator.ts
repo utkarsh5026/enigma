@@ -1,12 +1,12 @@
 import { ForStatement } from "@/lang/ast";
+import { BaseObject, NullObject } from "../../objects";
 import {
+  LoopContext,
+  NodeEvaluator,
+  EvaluationContext,
+  ObjectValidator,
   Environment,
-  BaseObject,
-  NullObject,
-  ErrorObject,
-} from "../../objects";
-import { LoopContext, NodeEvaluator, EvaluationContext } from "../../core";
-import { ObjectValidator } from "../../core/validate";
+} from "@/lang/exec/core";
 
 export class ForStatementEvaluator implements NodeEvaluator<ForStatement> {
   constructor(private readonly loopContext: LoopContext) {}
@@ -48,8 +48,9 @@ export class ForStatementEvaluator implements NodeEvaluator<ForStatement> {
       while (true) {
         iterationCount++;
         if (this.loopContext.isMaxIterationsReached()) {
-          const error = new ErrorObject(
-            `Maximum iterations (${LoopContext.getMaxIterations()}) reached for loop`
+          const error = context.createError(
+            `Maximum iterations (${LoopContext.getMaxIterations()}) reached for loop`,
+            node.position()
           );
 
           context.addAfterStep(

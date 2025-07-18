@@ -1,7 +1,11 @@
-import { NodeEvaluator, EvaluationContext } from "../../core/interfaces";
+import {
+  NodeEvaluator,
+  EvaluationContext,
+  ObjectValidator,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 import { ConstStatement } from "@/lang/ast";
-import { Environment, BaseObject, ErrorObject } from "../../objects";
-import { ObjectValidator } from "../../core/validate";
 
 export class ConstEvaluator implements NodeEvaluator<ConstStatement> {
   evaluate(
@@ -12,23 +16,26 @@ export class ConstEvaluator implements NodeEvaluator<ConstStatement> {
     const varName = node.name.value;
     context.addBeforeStep(node, env, `Evaluating const statement ${varName}`);
 
-    if (env.has(varName)) {
+    if (env.containsVariableLocally(varName)) {
+      const error = context.createError(
+        `variable '${varName}' already declared in this scope`,
+        node.name.position()
+      );
       context.addAfterStep(
         node,
         env,
-        new ErrorObject(`variable '${varName}' already declared in this scope`),
+        error,
         `Error: variable '${varName}' already declared in this scope`
       );
-      return new ErrorObject(
-        `variable '${varName}' already declared in this scope`
-      );
+      return error;
     }
 
     const value = context.evaluate(node.value, env);
 
     if (ObjectValidator.isError(value)) {
-      const error = new ErrorObject(
-        `error evaluating expression for variable '${varName}': ${value.message}`
+      const error = context.createError(
+        `error evaluating expression for variable '${varName}': ${value.message}`,
+        node.value.position()
       );
       context.addAfterStep(
         node,
@@ -39,7 +46,7 @@ export class ConstEvaluator implements NodeEvaluator<ConstStatement> {
       return error;
     }
 
-    env.set(varName, value);
+    env.defineConstant(varName, value);
 
     context.addAfterStep(
       node,

@@ -1,13 +1,12 @@
-import { LoopContext, NodeEvaluator } from "@/lang/exec/core";
-import { WhileStatement } from "@/lang/ast";
 import {
+  LoopContext,
+  NodeEvaluator,
   Environment,
   BaseObject,
-  NullObject,
-  ErrorObject,
-} from "@/lang/exec/objects";
-import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
+} from "@/lang/exec/core";
+import { WhileStatement } from "@/lang/ast";
+import { EvaluationContext, ObjectValidator } from "@/lang/exec/core";
+import { NullObject } from "@/lang/exec/objects";
 
 export class WhileStatementEvaluator implements NodeEvaluator<WhileStatement> {
   constructor(private readonly loopContext: LoopContext) {}
@@ -24,8 +23,9 @@ export class WhileStatementEvaluator implements NodeEvaluator<WhileStatement> {
     try {
       while (true) {
         if (this.loopContext.isMaxIterationsReached()) {
-          const error = new ErrorObject(
-            `Maximum iterations (${LoopContext.getMaxIterations()}) reached for loop`
+          const error = context.createError(
+            `Maximum iterations (${LoopContext.getMaxIterations()}) reached for loop`,
+            node.position()
           );
           context.addAfterStep(
             node,

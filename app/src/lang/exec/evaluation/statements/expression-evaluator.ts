@@ -1,6 +1,10 @@
-import { NodeEvaluator, EvaluationContext } from "../../core/interfaces";
+import {
+  NodeEvaluator,
+  EvaluationContext,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 import { ExpressionStatement } from "@/lang/ast";
-import { Environment, BaseObject } from "../../objects";
 
 /**
  * 📦 ExpressionEvaluator - The Expression Statement Expert 📦
