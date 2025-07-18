@@ -1,4 +1,4 @@
-import { BaseObject } from "../objects";
+import type { BaseObject } from "./base";
 
 /**
  * Environment represents a lexical scope for variable storage and retrieval.

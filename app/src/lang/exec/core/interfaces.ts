@@ -1,8 +1,10 @@
-import { Node } from "@/lang/ast/ast";
-import { BaseObject, Environment, ErrorObject } from "../objects";
+import type { Node } from "@/lang/ast/";
+import { ErrorObject } from "../objects";
 import type { StepType, ExecutionState, OutputEntry } from "../steps/step-info";
 import { FrameType } from "../debug/stack-frame";
-import { Position } from "@/lang/token/token";
+import type { Position } from "@/lang/token/token";
+import type { Environment } from "./environment";
+import type { BaseObject } from "./base";
 
 /**
  * 🎯 NodeEvaluator - The Universal Evaluation Contract 🎯

@@ -2,7 +2,7 @@ import { LoopContext } from "./loop-context";
 import { NodeEvaluator, EvaluationContext } from "./interfaces";
 import { ObjectValidator } from "./validate";
 import { Environment } from "./environment";
-import { BaseObject, ObjectType } from "../objects";
+import { BaseObject, ObjectType } from "./base";
 
 export {
   LoopContext,
