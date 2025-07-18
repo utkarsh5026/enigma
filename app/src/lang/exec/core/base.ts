@@ -1,6 +1,7 @@
 export enum ObjectType {
   INTEGER = "INTEGER",
   BOOLEAN = "BOOLEAN",
+  FLOAT = "FLOAT",
   STRING = "STRING",
   NULL = "NULL",
   RETURN_VALUE = "RETURN_VALUE",
