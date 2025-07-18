@@ -12,6 +12,7 @@ import { HashObject } from "./hash";
 import { ClassObject } from "./clas";
 import { InstanceObject } from "./instance";
 import { BuiltinObject } from "./builtin";
+import { FloatObject } from "./float";
 
 export {
   ArrayObject,
@@ -28,4 +29,5 @@ export {
   StringObject,
   ClassObject,
   InstanceObject,
+  FloatObject,
 };
