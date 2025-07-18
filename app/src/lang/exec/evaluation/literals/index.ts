@@ -6,6 +6,7 @@ import { HashLiteralEvaluator } from "./hash-literal";
 import { FunctionLiteralEvaluator } from "./function-literal";
 import { ArrayLiteralEvaluator } from "./array-literal";
 import { FStringLiteralEvaluator } from "./fstring-literal";
+import { FloatLiteralEvaluator } from "./float-literal";
 
 export {
   IntegerLiteralEvaluator,
@@ -16,4 +17,5 @@ export {
   FunctionLiteralEvaluator,
   ArrayLiteralEvaluator,
   FStringLiteralEvaluator,
+  FloatLiteralEvaluator,
 };
