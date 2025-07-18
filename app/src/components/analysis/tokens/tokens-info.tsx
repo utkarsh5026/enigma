@@ -54,6 +54,7 @@ export const tokenCategories = {
     TokenType.BITWISE_RIGHT_SHIFT,
     TokenType.LESS_THAN_OR_EQUAL,
     TokenType.GREATER_THAN_OR_EQUAL,
+    TokenType.INTEGER_DIVISION,
   ],
   Punctuation: [
     TokenType.COMMA,
@@ -123,6 +124,8 @@ export const getTokenColor = (type: TokenType): string => {
       "bg-gray-100 text-gray-800 dark:bg-[var(--color-tokyo-comment)]/20 dark:text-[var(--color-tokyo-comment)]",
 
     // Operators - Tokyo cyan
+    [TokenType.INTEGER_DIVISION]:
+      "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.ASSIGN]:
       "bg-cyan-100 text-cyan-800 dark:bg-[var(--color-tokyo-cyan)]/20 dark:text-[var(--color-tokyo-cyan)]",
     [TokenType.PLUS]:
