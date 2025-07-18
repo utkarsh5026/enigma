@@ -6,14 +6,7 @@ import * as ast from "@/lang/ast/ast";
 import * as statement from "@/lang/ast/statement";
 import * as expression from "@/lang/ast/expression";
 import * as literal from "@/lang/ast/literal";
-import {
-  Environment,
-  BaseObject,
-  ErrorObject,
-  NullObject,
-  ReturnValueObject,
-} from "../objects";
-import { ObjectValidator } from "../core/validate";
+import { ErrorObject, NullObject, ReturnValueObject } from "../objects";
 import {
   type CallStackFrame,
   ExecutionState,
@@ -24,6 +17,7 @@ import {
 import { DefaultStepStorage } from "../steps/step-storage";
 import { Position } from "@/lang/token/token";
 import { FrameType, StackFrame, CallStack } from "../debug";
+import { ObjectValidator, Environment, BaseObject } from "../core";
 
 export class LanguageEvaluator implements EvaluationContext {
   private loopContext: LoopContext;
@@ -66,13 +60,24 @@ export class LanguageEvaluator implements EvaluationContext {
   private readonly nullEvaluator = new literals.NullLiteralEvaluator();
   private readonly fstringEvaluator = new literals.FStringLiteralEvaluator();
 
-  constructor(stepStorage?: StepStorage) {
+  constructor(
+    enableStackTraces: boolean,
+    sourceLines?: string[],
+    stepStorage?: StepStorage
+  ) {
     this.loopContext = new LoopContext(0);
     this.whileEvaluator = new statements.WhileStatementEvaluator(
       this.loopContext
     );
     this.forEvaluator = new statements.ForStatementEvaluator(this.loopContext);
     this.stepStorage = stepStorage || new DefaultStepStorage();
+    this.callStack = enableStackTraces ? new CallStack() : null;
+    this.readonlysourceLines = sourceLines || [];
+  }
+
+  public static withSourceCode(sourceCode: string, enableStackTraces: boolean) {
+    const lines = sourceCode.split(/\r?\n|\r/);
+    return new LanguageEvaluator(enableStackTraces, lines);
   }
 
   public getStepStorage(): StepStorage {
@@ -547,26 +552,61 @@ export class LanguageEvaluator implements EvaluationContext {
     const startLine = Math.max(1, line - 1);
     const endLine = Math.min(this.readonlysourceLines.length, line + 1);
 
-    // Calculate the maximum width needed for the box
+    // Constants for width management
+    const MAX_DISPLAY_WIDTH = 100; // Maximum total display width
+    const ELLIPSIS = "...";
     const maxLineNumWidth = endLine.toString().length;
-    let maxContentWidth = 0;
+    const prefixWidth = maxLineNumWidth + 6; // "123 | " or "123 → "
+    const maxTextWidth = MAX_DISPLAY_WIDTH - prefixWidth;
 
-    // First pass: calculate max content width
-    for (let i = startLine; i <= endLine; i++) {
-      const lineContent = this.readonlysourceLines[i - 1];
-      const contentWidth = `  ${i
-        .toString()
-        .padStart(maxLineNumWidth, " ")}  ${lineContent}`.length;
-      maxContentWidth = Math.max(maxContentWidth, contentWidth);
-    }
+    /**
+     * Truncates a line of text intelligently based on error position
+     */
+    const truncateLine = (
+      text: string,
+      errorColumn?: number
+    ): { content: string; adjustedColumn: number } => {
+      if (text.length <= maxTextWidth) {
+        return { content: text, adjustedColumn: errorColumn || 0 };
+      }
 
-    // Ensure minimum width for the box
-    maxContentWidth = Math.max(maxContentWidth, 50);
+      // If we have an error column, try to center the view around it
+      if (errorColumn && errorColumn > 0) {
+        const halfWidth = Math.floor(maxTextWidth / 2);
+        let start = Math.max(0, errorColumn - halfWidth);
+        const end = Math.min(
+          text.length,
+          start + maxTextWidth - ELLIPSIS.length
+        );
 
-    // Top border
-    context.push(`┌${"─".repeat(maxContentWidth + 2)}┐\n`);
-    context.push(`│ ${"Source Context".padEnd(maxContentWidth + 1)}│\n`);
-    context.push(`├${"─".repeat(maxContentWidth + 2)}┤\n`);
+        // Adjust start if we're near the end
+        if (end - start < maxTextWidth - ELLIPSIS.length) {
+          start = Math.max(0, end - maxTextWidth + ELLIPSIS.length);
+        }
+
+        let truncated = text.substring(start, end);
+        let adjustedColumn = errorColumn - start;
+
+        // Add ellipsis indicators
+        if (start > 0) {
+          truncated = ELLIPSIS + truncated;
+          adjustedColumn += ELLIPSIS.length;
+        }
+        if (end < text.length) {
+          truncated = truncated + ELLIPSIS;
+        }
+
+        return { content: truncated, adjustedColumn };
+      } else {
+        // No error column, just truncate from the start
+        const truncated =
+          text.substring(0, maxTextWidth - ELLIPSIS.length) + ELLIPSIS;
+        return { content: truncated, adjustedColumn: 0 };
+      }
+    };
+
+    // Header with context information
+    context.push(`\n🔍 Source Context (line ${line}, column ${column}):\n\n`);
 
     for (let i = startLine; i <= endLine; i++) {
       const lineContent = this.readonlysourceLines[i - 1];
@@ -574,27 +614,31 @@ export class LanguageEvaluator implements EvaluationContext {
 
       if (i === line) {
         // Error line with arrow
-        const content = ` → ${lineNumStr}  ${lineContent}`;
-        context.push(`│ ${content.padEnd(maxContentWidth + 1)}│\n`);
+        const { content: truncatedContent, adjustedColumn } = truncateLine(
+          lineContent,
+          column
+        );
 
-        // Add pointer line if column is specified
-        if (column > 0) {
-          let pointer = "   ";
-          pointer += " ".repeat(maxLineNumWidth);
-          pointer += "  ";
-          pointer += " ".repeat(column - 1);
-          pointer += "^";
-          context.push(`│ ${pointer.padEnd(maxContentWidth + 1)}│\n`);
+        context.push(`  ${lineNumStr} → ${truncatedContent}\n`);
+
+        // Add pointer line if column is specified and within visible range
+        if (
+          column > 0 &&
+          adjustedColumn > 0 &&
+          adjustedColumn <= truncatedContent.length
+        ) {
+          const spaces = " ".repeat(maxLineNumWidth + 3 + adjustedColumn - 1);
+          context.push(`  ${spaces}^ Error occurred here\n`);
         }
       } else {
         // Regular context line
-        const content = `   ${lineNumStr}  ${lineContent}`;
-        context.push(`│ ${content.padEnd(maxContentWidth + 1)}│\n`);
+        const { content: truncatedContent } = truncateLine(lineContent);
+        const lineIndicator = i < line ? "↑" : "↓";
+        context.push(`  ${lineNumStr} ${lineIndicator} ${truncatedContent}\n`);
       }
     }
 
-    // Bottom border
-    context.push(`└${"─".repeat(maxContentWidth + 2)}┘\n`);
+    context.push(`\n`);
 
     return context.join("");
   }
