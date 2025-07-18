@@ -1,5 +1,6 @@
 import * as objects from "../objects";
 import { BuiltinObject, BuiltinFunction } from "../objects/builtin";
+import { BaseObject } from "../core";
 
 // ============================================================================
 // 1. FUNCTIONAL PROGRAMMING OPERATIONS
@@ -11,9 +12,7 @@ import { BuiltinObject, BuiltinFunction } from "../objects/builtin";
  * Usage: map([1, 2, 3], fn(x) { return x * 2; })
  * Result: [2, 4, 6]
  */
-const mapFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const mapFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -48,9 +47,7 @@ const mapFunction: BuiltinFunction = (
  * Usage: filter([1, 2, 3, 4], fn(x) { return x % 2 == 0; })
  * Result: [2, 4]
  */
-const filterFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const filterFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -83,9 +80,7 @@ const filterFunction: BuiltinFunction = (
  * Usage: reduce([1, 2, 3, 4], fn(acc, x) { return acc + x; }, 0)
  * Result: 10
  */
-const reduceFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const reduceFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 2 || args.length > 3) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2 or 3`
@@ -118,9 +113,7 @@ const reduceFunction: BuiltinFunction = (
  * Usage: forEach([1, 2, 3], fn(x) { print(x); })
  * Side effect: prints each element
  */
-const forEachFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const forEachFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -154,9 +147,7 @@ const forEachFunction: BuiltinFunction = (
 /**
  * sort(array, compareFn?) - Sort array elements
  */
-const sortFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const sortFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 1 || args.length > 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1 or 2`
@@ -202,9 +193,7 @@ const sortFunction: BuiltinFunction = (
 /**
  * unique(array) - Remove duplicate elements
  */
-const uniqueFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const uniqueFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -219,7 +208,7 @@ const uniqueFunction: BuiltinFunction = (
   }
 
   const seen = new Set<string>();
-  const uniqueElements: objects.BaseObject[] = [];
+  const uniqueElements: BaseObject[] = [];
 
   for (const element of arr.elements) {
     const key = element.inspect();
@@ -235,9 +224,7 @@ const uniqueFunction: BuiltinFunction = (
 /**
  * flatten(array, depth?) - Flatten nested arrays
  */
-const flattenFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const flattenFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 1 || args.length > 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1 or 2`
@@ -263,10 +250,10 @@ const flattenFunction: BuiltinFunction = (
   }
 
   const flattenHelper = (
-    elements: objects.BaseObject[],
+    elements: BaseObject[],
     currentDepth: number
-  ): objects.BaseObject[] => {
-    const result: objects.BaseObject[] = [];
+  ): BaseObject[] => {
+    const result: BaseObject[] = [];
 
     for (const element of elements) {
       if (element instanceof objects.ArrayObject && currentDepth > 0) {
@@ -286,9 +273,7 @@ const flattenFunction: BuiltinFunction = (
 /**
  * zip(array1, array2) - Combine two arrays element-wise
  */
-const zipFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const zipFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -311,7 +296,7 @@ const zipFunction: BuiltinFunction = (
   }
 
   const minLength = Math.min(arr1.elements.length, arr2.elements.length);
-  const pairs: objects.BaseObject[] = [];
+  const pairs: BaseObject[] = [];
 
   for (let i = 0; i < minLength; i++) {
     const pair = new objects.ArrayObject([arr1.elements[i], arr2.elements[i]]);
@@ -324,9 +309,7 @@ const zipFunction: BuiltinFunction = (
 /**
  * enumerate(array) - Add index to each element
  */
-const enumerateFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const enumerateFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -340,7 +323,7 @@ const enumerateFunction: BuiltinFunction = (
     );
   }
 
-  const indexed: objects.BaseObject[] = [];
+  const indexed: BaseObject[] = [];
 
   for (let i = 0; i < arr.elements.length; i++) {
     const pair = new objects.ArrayObject([
@@ -360,9 +343,7 @@ const enumerateFunction: BuiltinFunction = (
 /**
  * format(template, ...args) - String formatting
  */
-const formatFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const formatFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length === 0) {
     return new objects.ErrorObject("format() expects at least 1 argument");
   }
@@ -401,9 +382,7 @@ const formatFunction: BuiltinFunction = (
 /**
  * repeat(string, count) - Repeat string
  */
-const repeatFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const repeatFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -435,9 +414,7 @@ const repeatFunction: BuiltinFunction = (
 /**
  * padLeft(string, length, char?) - Pad string on the left
  */
-const padLeftFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const padLeftFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 2 || args.length > 3) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2 or 3`
@@ -474,9 +451,7 @@ const padLeftFunction: BuiltinFunction = (
 /**
  * padRight(string, length, char?) - Pad string on the right
  */
-const padRightFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const padRightFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 2 || args.length > 3) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2 or 3`
@@ -517,9 +492,7 @@ const padRightFunction: BuiltinFunction = (
 /**
  * now() - Get current timestamp
  */
-const nowFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const nowFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 0) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=0`
@@ -532,9 +505,7 @@ const nowFunction: BuiltinFunction = (
 /**
  * sleep(milliseconds) - Pause execution (Note: This is a simulation)
  */
-const sleepFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const sleepFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -569,9 +540,7 @@ const sleepFunction: BuiltinFunction = (
 /**
  * deepCopy(obj) - Create deep copy of object
  */
-const deepCopyFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const deepCopyFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -580,14 +549,14 @@ const deepCopyFunction: BuiltinFunction = (
 
   const obj = args[0];
 
-  const copyObject = (original: objects.BaseObject): objects.BaseObject => {
+  const copyObject = (original: BaseObject): BaseObject => {
     if (original instanceof objects.ArrayObject) {
       const copiedElements = original.elements.map(copyObject);
       return new objects.ArrayObject(copiedElements);
     }
 
     if (original instanceof objects.HashObject) {
-      const copiedPairs = new Map<string, objects.BaseObject>();
+      const copiedPairs = new Map<string, BaseObject>();
       for (const [key, value] of original.pairs) {
         copiedPairs.set(key, copyObject(value));
       }
@@ -604,9 +573,7 @@ const deepCopyFunction: BuiltinFunction = (
 /**
  * isEmpty(obj) - Check if object is empty
  */
-const isEmptyFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const isEmptyFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -637,9 +604,7 @@ const isEmptyFunction: BuiltinFunction = (
 /**
  * isEqual(obj1, obj2) - Deep equality comparison
  */
-const isEqualFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const isEqualFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -649,7 +614,7 @@ const isEqualFunction: BuiltinFunction = (
   const obj1 = args[0];
   const obj2 = args[1];
 
-  const isEqual = (a: objects.BaseObject, b: objects.BaseObject): boolean => {
+  const isEqual = (a: BaseObject, b: BaseObject): boolean => {
     if (a.type() !== b.type()) {
       return false;
     }

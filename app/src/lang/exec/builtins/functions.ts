@@ -1,6 +1,7 @@
 import { consolePrint, consolePrintln } from "@/stores/console-stores";
 import * as objects from "../objects";
 import { BuiltinObject, BuiltinFunction } from "../objects/builtin";
+import { BaseObject } from "../core";
 
 // ============================================================================
 // 1. CORE DATA OPERATIONS
@@ -9,9 +10,7 @@ import { BuiltinObject, BuiltinFunction } from "../objects/builtin";
 /**
  * len(obj) - Returns the length of arrays, strings, or hash objects
  */
-const lenFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const lenFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -40,9 +39,7 @@ const lenFunction: BuiltinFunction = (
 /**
  * type(obj) - Returns the type of an object as a string
  */
-const typeFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const typeFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -55,9 +52,7 @@ const typeFunction: BuiltinFunction = (
 /**
  * str(obj) - Converts any value to its string representation
  */
-const strFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const strFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -81,9 +76,7 @@ const strFunction: BuiltinFunction = (
 /**
  * int(str) - Converts a string or number to an integer
  */
-const intFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const intFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -114,9 +107,7 @@ const intFunction: BuiltinFunction = (
 /**
  * bool(obj) - Converts any value to boolean
  */
-const boolFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const boolFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -146,9 +137,7 @@ const boolFunction: BuiltinFunction = (
 /**
  * first(array) - Returns the first element of an array
  */
-const firstFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const firstFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -172,9 +161,7 @@ const firstFunction: BuiltinFunction = (
 /**
  * last(array) - Returns the last element of an array
  */
-const lastFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const lastFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -199,9 +186,7 @@ const lastFunction: BuiltinFunction = (
 /**
  * rest(array) - Returns a new array with all elements except the first
  */
-const restFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const restFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -227,9 +212,7 @@ const restFunction: BuiltinFunction = (
 /**
  * push(array, element) - Returns a new array with the element added to the end
  */
-const pushFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const pushFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -252,9 +235,7 @@ const pushFunction: BuiltinFunction = (
 /**
  * pop(array) - Returns a new array with the last element removed
  */
-const popFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const popFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -279,9 +260,7 @@ const popFunction: BuiltinFunction = (
 /**
  * slice(array, start, end?) - Returns a portion of the array
  */
-const sliceFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const sliceFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 2 || args.length > 3) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2 or 3`
@@ -331,9 +310,7 @@ const sliceFunction: BuiltinFunction = (
 /**
  * concat(array1, array2) - Concatenates two arrays
  */
-const concatFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const concatFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -362,9 +339,7 @@ const concatFunction: BuiltinFunction = (
 /**
  * reverse(array) - Returns a new array with elements in reverse order
  */
-const reverseFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const reverseFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -385,9 +360,7 @@ const reverseFunction: BuiltinFunction = (
 /**
  * join(array, separator?) - Joins array elements into a string
  */
-const joinFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const joinFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 1 || args.length > 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1 or 2`
@@ -423,9 +396,7 @@ const joinFunction: BuiltinFunction = (
 /**
  * split(string, delimiter) - Splits a string by delimiter
  */
-const splitFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const splitFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -456,9 +427,7 @@ const splitFunction: BuiltinFunction = (
 /**
  * replace(string, search, replace) - Replace occurrences in string
  */
-const replaceFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const replaceFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 3) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=3`
@@ -497,9 +466,7 @@ const replaceFunction: BuiltinFunction = (
 /**
  * trim(string) - Remove whitespace from both ends
  */
-const trimFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const trimFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -519,9 +486,7 @@ const trimFunction: BuiltinFunction = (
 /**
  * upper(string) - Convert to uppercase
  */
-const upperFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const upperFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -541,9 +506,7 @@ const upperFunction: BuiltinFunction = (
 /**
  * lower(string) - Convert to lowercase
  */
-const lowerFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const lowerFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -563,9 +526,7 @@ const lowerFunction: BuiltinFunction = (
 /**
  * substr(string, start, length?) - Extract substring
  */
-const substrFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const substrFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 2 || args.length > 3) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2 or 3`
@@ -610,9 +571,7 @@ const substrFunction: BuiltinFunction = (
 /**
  * indexOf(string, substring) - Find index of substring
  */
-const indexOfFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const indexOfFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -641,9 +600,7 @@ const indexOfFunction: BuiltinFunction = (
 /**
  * contains(string, substring) - Check if string contains substring
  */
-const containsFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const containsFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -676,9 +633,7 @@ const containsFunction: BuiltinFunction = (
 /**
  * abs(number) - Absolute value
  */
-const absFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const absFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -698,9 +653,7 @@ const absFunction: BuiltinFunction = (
 /**
  * max(...numbers) - Maximum value
  */
-const maxFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const maxFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length === 0) {
     return new objects.ErrorObject("max() expected at least 1 argument, got 0");
   }
@@ -725,9 +678,7 @@ const maxFunction: BuiltinFunction = (
 /**
  * min(...numbers) - Minimum value
  */
-const minFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const minFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length === 0) {
     return new objects.ErrorObject("min() expected at least 1 argument, got 0");
   }
@@ -752,9 +703,7 @@ const minFunction: BuiltinFunction = (
 /**
  * round(number) - Round to nearest integer
  */
-const roundFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const roundFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -774,9 +723,7 @@ const roundFunction: BuiltinFunction = (
 /**
  * floor(number) - Round down to integer
  */
-const floorFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const floorFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -796,9 +743,7 @@ const floorFunction: BuiltinFunction = (
 /**
  * ceil(number) - Round up to integer
  */
-const ceilFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const ceilFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -818,9 +763,7 @@ const ceilFunction: BuiltinFunction = (
 /**
  * pow(base, exponent) - Power function
  */
-const powFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const powFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=2`
@@ -849,9 +792,7 @@ const powFunction: BuiltinFunction = (
 /**
  * sqrt(number) - Square root
  */
-const sqrtFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const sqrtFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -878,9 +819,7 @@ const sqrtFunction: BuiltinFunction = (
 /**
  * random(max?) - Random number
  */
-const randomFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const randomFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length > 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=0 or 1`
@@ -914,9 +853,7 @@ const randomFunction: BuiltinFunction = (
 /**
  * print(...args) - Print values to console
  */
-const printFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const printFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   const values = args.map((arg) => arg.inspect()).join(" ");
   consolePrint(values);
   return new objects.NullObject();
@@ -925,9 +862,7 @@ const printFunction: BuiltinFunction = (
 /**
  * println(...args) - Print values with newline
  */
-const printlnFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const printlnFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   const values = args.map((arg) => arg.inspect()).join(" ");
   consolePrintln(values);
   return new objects.NullObject();
@@ -940,9 +875,7 @@ const printlnFunction: BuiltinFunction = (
 /**
  * range(start, end?, step?) - Generate range of numbers
  */
-const rangeFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const rangeFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 1 || args.length > 3) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1, 2, or 3`
@@ -997,7 +930,7 @@ const rangeFunction: BuiltinFunction = (
     }
   }
 
-  const elements: objects.BaseObject[] = [];
+  const elements: BaseObject[] = [];
 
   if (step > 0) {
     for (let i = start; i < end; i += step) {
@@ -1015,9 +948,7 @@ const rangeFunction: BuiltinFunction = (
 /**
  * keys(hash) - Get all keys from hash object
  */
-const keysFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const keysFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -1040,9 +971,7 @@ const keysFunction: BuiltinFunction = (
 /**
  * values(hash) - Get all values from hash object
  */
-const valuesFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const valuesFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -1067,9 +996,7 @@ const valuesFunction: BuiltinFunction = (
 /**
  * error(message) - Create an error object
  */
-const errorFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const errorFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length !== 1) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1`
@@ -1089,9 +1016,7 @@ const errorFunction: BuiltinFunction = (
 /**
  * assert(condition, message?) - Assert condition is true
  */
-const assertFunction: BuiltinFunction = (
-  args: objects.BaseObject[]
-): objects.BaseObject => {
+const assertFunction: BuiltinFunction = (args: BaseObject[]): BaseObject => {
   if (args.length < 1 || args.length > 2) {
     return new objects.ErrorObject(
       `wrong number of arguments. got=${args.length}, want=1 or 2`
