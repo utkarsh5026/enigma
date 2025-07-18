@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LanguageEvaluator } from "@/lang/exec/evaluation";
-import { Environment } from "@/lang/exec/objects";
+import { Environment } from "@/lang/exec/core";
 import { ExecutionState } from "@/lang/exec/steps/step-info";
 import { useProgram } from "@/hooks/use-program";
 
@@ -34,7 +34,7 @@ export const useExecutionControls = (code: string) => {
         return false;
       }
 
-      const evaluator = new LanguageEvaluator();
+      const evaluator = LanguageEvaluator.withSourceCode(code, true);
       setEvaluator(evaluator);
 
       evaluator.evaluateProgram(program, new Environment());
@@ -49,7 +49,7 @@ export const useExecutionControls = (code: string) => {
       setError(`Error preparing execution: ${message}`);
       return false;
     }
-  }, [program, parserErrors]);
+  }, [program, parserErrors, code]);
 
   const executeStep = useCallback(() => {
     console.log("executeStep");
