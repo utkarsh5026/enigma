@@ -1,5 +1,5 @@
 // app/src/lang/exec/objects/builtin.ts
-import { BaseObject, ObjectType } from "./base";
+import { BaseObject, ObjectType } from "../core/base";
 
 /**
  * Represents a built-in function in the programming language.

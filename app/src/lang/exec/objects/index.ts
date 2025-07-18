@@ -15,7 +15,7 @@ import {
 import { HashObject } from "./hash";
 import { ClassObject } from "./clas";
 import { InstanceObject } from "./instance";
-import { BaseObject, ObjectType } from "./base";
+import { BaseObject, ObjectType } from "../core/base";
 import { BuiltinObject } from "./builtin";
 
 export {

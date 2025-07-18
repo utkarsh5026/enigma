@@ -1,4 +1,4 @@
-import { BaseObject, ObjectType } from "./base";
+import { BaseObject, ObjectType } from "../core/base";
 
 /**
  * Represents a break statement object in the Mutant programming language.

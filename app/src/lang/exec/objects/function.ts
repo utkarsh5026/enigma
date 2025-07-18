@@ -1,5 +1,5 @@
 import { Identifier } from "@/lang/ast/ast";
-import { BaseObject, ObjectType } from "./base";
+import { BaseObject, ObjectType } from "../core/base";
 import { BlockStatement } from "@/lang/ast";
 import { InstanceObject } from "./instance";
 

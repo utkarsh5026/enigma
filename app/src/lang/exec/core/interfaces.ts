@@ -1,6 +1,8 @@
 import { Node } from "@/lang/ast/ast";
-import { BaseObject, Environment } from "../objects";
+import { BaseObject, Environment, ErrorObject } from "../objects";
 import type { StepType, ExecutionState, OutputEntry } from "../steps/step-info";
+import { FrameType } from "../debug/stack-frame";
+import { Position } from "@/lang/token/token";
 
 /**
  * 🎯 NodeEvaluator - The Universal Evaluation Contract 🎯
@@ -125,4 +127,23 @@ export interface EvaluationContext {
    * Marks the execution as complete
    */
   markExecutionComplete(): void;
+
+  /**
+   * Creates a new error object
+   */
+  createError(message: string, position: Position): ErrorObject;
+
+  /**
+   * Enters a new function
+   */
+  enterFunction(
+    functionName: string,
+    position: Position,
+    frameType: FrameType
+  ): void;
+
+  /**
+   * Exits a function
+   */
+  exitFunction(): void;
 }

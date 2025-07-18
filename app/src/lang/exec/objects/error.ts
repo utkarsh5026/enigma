@@ -1,4 +1,4 @@
-import { BaseObject, ObjectType } from "./base";
+import { BaseObject, ObjectType } from "../core/base";
 import { StackFrame } from "../debug/stack-frame";
 import { CallStack } from "../debug/call-stack";
 import { Position } from "../../token/token";

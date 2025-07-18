@@ -1,4 +1,4 @@
-import { BaseObject, ObjectType } from "./base";
+import { BaseObject, ObjectType } from "../core/base";
 import { FunctionObject } from "./function";
 
 export class ClassObject implements BaseObject {

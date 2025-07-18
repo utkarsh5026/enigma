@@ -22,6 +22,8 @@ import {
   type StepType,
 } from "../steps/step-info";
 import { DefaultStepStorage } from "../steps/step-storage";
+import { Position } from "@/lang/token/token";
+import { FrameType, StackFrame, CallStack } from "../debug";
 
 export class LanguageEvaluator implements EvaluationContext {
   private loopContext: LoopContext;
@@ -29,6 +31,9 @@ export class LanguageEvaluator implements EvaluationContext {
   private evaluationDepth: number = 0;
   private readonly stepStorage: StepStorage;
   private executionComplete: boolean = false;
+
+  private callStack: CallStack | null = null;
+  private readonlysourceLines: string[] = [];
 
   // Individual evaluator instances
   private readonly letEvaluator = new statements.LetEvaluator();
@@ -486,5 +491,111 @@ export class LanguageEvaluator implements EvaluationContext {
     if (this.stepStorage) {
       this.stepStorage.updateExecutionState({ isComplete: true });
     }
+  }
+
+  enterFunction(
+    functionName: string,
+    position: Position,
+    frameType: FrameType
+  ): void {
+    if (!this.callStack) return;
+    const frame = new StackFrame(functionName, position, frameType);
+    this.callStack.push(frame);
+  }
+
+  exitFunction(): void {
+    if (!this.callStack) return;
+    this.callStack.pop();
+  }
+
+  /**
+   * 🔴 Creates an error object with source context and stack trace
+   */
+  createError(message: string, position: Position): ErrorObject {
+    const sourceContext = this.extractSourceContext(position);
+
+    if (this.callStack) {
+      return ErrorObject.withStackTrace(
+        message,
+        this.callStack,
+        position,
+        sourceContext
+      );
+    } else {
+      return new ErrorObject(message, position, null, sourceContext);
+    }
+  }
+
+  /**
+   * 📝 Extracts source context around the error position
+   * Get the one line above and one line below the text
+   */
+  private extractSourceContext(position: Position): string | null {
+    if (!this.readonlysourceLines || !position) {
+      return null;
+    }
+
+    const line = position.line;
+    const column = position.column;
+
+    if (line < 1 || line > this.readonlysourceLines.length) {
+      return null;
+    }
+
+    const context: string[] = [];
+
+    const startLine = Math.max(1, line - 1);
+    const endLine = Math.min(this.readonlysourceLines.length, line + 1);
+
+    // Calculate the maximum width needed for the box
+    const maxLineNumWidth = endLine.toString().length;
+    let maxContentWidth = 0;
+
+    // First pass: calculate max content width
+    for (let i = startLine; i <= endLine; i++) {
+      const lineContent = this.readonlysourceLines[i - 1];
+      const contentWidth = `  ${i
+        .toString()
+        .padStart(maxLineNumWidth, " ")}  ${lineContent}`.length;
+      maxContentWidth = Math.max(maxContentWidth, contentWidth);
+    }
+
+    // Ensure minimum width for the box
+    maxContentWidth = Math.max(maxContentWidth, 50);
+
+    // Top border
+    context.push(`┌${"─".repeat(maxContentWidth + 2)}┐\n`);
+    context.push(`│ ${"Source Context".padEnd(maxContentWidth + 1)}│\n`);
+    context.push(`├${"─".repeat(maxContentWidth + 2)}┤\n`);
+
+    for (let i = startLine; i <= endLine; i++) {
+      const lineContent = this.readonlysourceLines[i - 1];
+      const lineNumStr = i.toString().padStart(maxLineNumWidth, " ");
+
+      if (i === line) {
+        // Error line with arrow
+        const content = ` → ${lineNumStr}  ${lineContent}`;
+        context.push(`│ ${content.padEnd(maxContentWidth + 1)}│\n`);
+
+        // Add pointer line if column is specified
+        if (column > 0) {
+          let pointer = "   ";
+          pointer += " ".repeat(maxLineNumWidth);
+          pointer += "  ";
+          pointer += " ".repeat(column - 1);
+          pointer += "^";
+          context.push(`│ ${pointer.padEnd(maxContentWidth + 1)}│\n`);
+        }
+      } else {
+        // Regular context line
+        const content = `   ${lineNumStr}  ${lineContent}`;
+        context.push(`│ ${content.padEnd(maxContentWidth + 1)}│\n`);
+      }
+    }
+
+    // Bottom border
+    context.push(`└${"─".repeat(maxContentWidth + 2)}┘\n`);
+
+    return context.join("");
   }
 }

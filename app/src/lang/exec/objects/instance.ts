@@ -1,4 +1,4 @@
-import { BaseObject, ObjectType } from "./base";
+import { BaseObject, ObjectType } from "../core/base";
 import { ClassObject } from "./clas";
 
 /**
