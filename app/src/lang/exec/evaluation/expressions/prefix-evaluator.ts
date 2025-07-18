@@ -1,11 +1,11 @@
-import { NodeEvaluator, ObjectValidator } from "@/lang/exec/core";
-import { PrefixExpression } from "@/lang/ast";
 import {
+  NodeEvaluator,
+  ObjectValidator,
   Environment,
   BaseObject,
-  BooleanObject,
-  IntegerObject,
-} from "@/lang/exec/objects";
+} from "@/lang/exec/core";
+import { PrefixExpression } from "@/lang/ast";
+import { BooleanObject, IntegerObject } from "@/lang/exec/objects";
 import type { EvaluationContext } from "@/lang/exec/core";
 import type { Position } from "@/lang/token/token";
 
@@ -54,12 +54,6 @@ export class PrefixExpressionEvaluator
     return result;
   }
 
-  /**
-   * Evaluates a prefix expression.
-   * @param operator - The operator to evaluate.
-   * @param right - The right operand.
-   * @returns The result of the evaluation.
-   */
   private evalPrefixExpression(
     operator: string,
     right: BaseObject,

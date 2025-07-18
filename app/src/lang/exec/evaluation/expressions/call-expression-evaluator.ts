@@ -1,8 +1,11 @@
 import { NodeEvaluator } from "@/lang/exec/core";
 import { CallExpression } from "@/lang/ast";
-import { Environment, BaseObject, ErrorObject } from "@/lang/exec/objects";
-import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
+import {
+  EvaluationContext,
+  Environment,
+  BaseObject,
+  ObjectValidator,
+} from "@/lang/exec/core";
 import { Identifier } from "@/lang/ast/ast";
 
 export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
@@ -72,8 +75,9 @@ export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
 
     if (isFunction || isBuiltin) {
       if (isFunction && args.length != functionObject.parameters.length) {
-        const error = new ErrorObject(
-          `Wrong number of arguments. Expected ${functionObject.parameters.length}, got ${args.length}`
+        const error = context.createError(
+          `Wrong number of arguments. Expected ${functionObject.parameters.length}, got ${args.length}`,
+          node.position()
         );
 
         context.addAfterStep(
@@ -85,7 +89,7 @@ export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
 
         return error;
       }
-      const result = this.applyFunction(functionObject, args, context);
+      const result = this.applyFunction(functionObject, args, context, node);
       context.addAfterStep(
         node,
         env,
@@ -95,7 +99,10 @@ export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
       return result;
     }
 
-    const error = new ErrorObject(`Not a function: ${functionObject.type()}`);
+    const error = context.createError(
+      `Not a function: ${functionObject.type()}`,
+      node.position()
+    );
     context.addAfterStep(
       node,
       env,
@@ -108,21 +115,25 @@ export class CallExpressionEvaluator implements NodeEvaluator<CallExpression> {
   private applyFunction(
     functionObject: BaseObject,
     args: BaseObject[],
-    context: EvaluationContext
+    context: EvaluationContext,
+    node: CallExpression
   ): BaseObject {
     if (ObjectValidator.isBuiltin(functionObject)) {
       return functionObject.fn(args);
     }
 
     if (!ObjectValidator.isFunction(functionObject)) {
-      return new ErrorObject(`Not a function: ${functionObject.type()}`);
+      return context.createError(
+        `Not a function: ${functionObject.type()}`,
+        node.position()
+      );
     }
 
     const extendedEnv = new Environment(functionObject.env, false);
     const { parameters } = functionObject;
 
     parameters.forEach((param, i) => {
-      extendedEnv.set(param.value, args[i]);
+      extendedEnv.defineVariable(param.value, args[i]);
     });
 
     const result = context.evaluate(functionObject.body, extendedEnv);

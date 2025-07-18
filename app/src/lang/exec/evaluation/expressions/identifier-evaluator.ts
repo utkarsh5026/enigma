@@ -1,6 +1,10 @@
-import { EvaluationContext, NodeEvaluator } from "@/lang/exec/core";
+import {
+  EvaluationContext,
+  NodeEvaluator,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 import { Identifier } from "@/lang/ast/ast";
-import { Environment, BaseObject, ErrorObject } from "@/lang/exec/objects";
 import { isBuiltin, getBuiltin } from "@/lang/exec/builtins";
 
 export class IndentifierEvaluator implements NodeEvaluator<Identifier> {
@@ -10,7 +14,7 @@ export class IndentifierEvaluator implements NodeEvaluator<Identifier> {
     context: EvaluationContext
   ): BaseObject {
     context.addBeforeStep(node, env, `Evaluating identifier: ${node.value}`);
-    const value = env.get(node.value);
+    const value = env.resolveVariable(node.value);
     if (value !== null) {
       context.addAfterStep(
         node,
@@ -37,6 +41,9 @@ export class IndentifierEvaluator implements NodeEvaluator<Identifier> {
       return result;
     }
 
-    return new ErrorObject(`identifier not found: ${node.value}`);
+    return context.createError(
+      `identifier not found: ${node.value}`,
+      node.position()
+    );
   }
 }

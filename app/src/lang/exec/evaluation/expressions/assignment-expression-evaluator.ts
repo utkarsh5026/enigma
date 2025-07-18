@@ -1,14 +1,12 @@
 import { AssignmentExpression, AstValidator } from "@/lang/ast";
-import { NodeEvaluator } from "@/lang/exec/core";
 import {
+  NodeEvaluator,
+  EvaluationContext,
   Environment,
   BaseObject,
-  ErrorObject,
-  HashObject,
-  ArrayObject,
-} from "@/lang/exec/objects";
-import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
+  ObjectValidator,
+} from "@/lang/exec/core";
+import { HashObject, ArrayObject } from "@/lang/exec/objects";
 
 /**
  * 📝 AssignmentExpressionEvaluator - Universal Assignment Specialist 📝
@@ -32,11 +30,14 @@ export class AssignmentExpressionEvaluator
     }
 
     if (node.isIdentifierAssignment()) {
-      return this.evaluateIdentifierAssignment(node, value, env);
+      return this.evaluateIdentifierAssignment(node, value, env, context);
     } else if (node.isIndexAssignment()) {
       return this.evaluateIndexAssignment(node, value, env, context);
     } else {
-      return new ErrorObject(`Invalid assignment target: ${node.name}`);
+      return context.createError(
+        `Invalid assignment target: ${node.name}`,
+        node.position()
+      );
     }
   }
 
@@ -49,24 +50,34 @@ export class AssignmentExpressionEvaluator
   private evaluateIdentifierAssignment(
     node: AssignmentExpression,
     value: BaseObject,
-    env: Environment
+    env: Environment,
+    context: EvaluationContext
   ): BaseObject {
     if (!AstValidator.isIdentifier(node.name)) {
-      return new ErrorObject(`Invalid assignment target: ${node.name}`);
+      return context.createError(
+        `Invalid assignment target: ${node.name}`,
+        node.position()
+      );
     }
 
     const variableName = node.name.value;
-    const definingScope = env.getDefiningScope(variableName);
+    const definingScope = env.findVariableDeclarationScope(variableName);
 
     if (definingScope == null) {
-      return new ErrorObject("identifier not found: " + variableName);
+      return context.createError(
+        `identifier not found: ${variableName}`,
+        node.position()
+      );
     }
 
-    if (definingScope.isConstant(variableName)) {
-      return new ErrorObject(`cannot assign to constant ${variableName}`);
+    if (definingScope.isVariableImmutable(variableName)) {
+      return context.createError(
+        `cannot assign to constant ${variableName}`,
+        node.position()
+      );
     }
 
-    definingScope.set(variableName, value);
+    definingScope.defineVariable(variableName, value);
     return value;
   }
 
@@ -100,15 +111,26 @@ export class AssignmentExpressionEvaluator
       return this.evaluateArrayIndexAssignment(
         targetObject,
         indexObject,
-        value
-      );
-    } else if (ObjectValidator.isHash(targetObject)) {
-      return this.evaluateHashIndexAssignment(targetObject, indexObject, value);
-    } else {
-      return new ErrorObject(
-        "Index assignment not supported for type: " + targetObject.type()
+        value,
+        context,
+        node
       );
     }
+
+    if (ObjectValidator.isHash(targetObject)) {
+      return this.evaluateHashIndexAssignment(
+        targetObject,
+        indexObject,
+        value,
+        context,
+        node
+      );
+    }
+
+    return context.createError(
+      `Index assignment not supported for type: ${targetObject.type()}`,
+      node.position()
+    );
   }
 
   /**
@@ -117,18 +139,22 @@ export class AssignmentExpressionEvaluator
   private evaluateArrayIndexAssignment(
     array: ArrayObject,
     indexObject: BaseObject,
-    value: BaseObject
+    value: BaseObject,
+    context: EvaluationContext,
+    node: AssignmentExpression
   ) {
     if (!ObjectValidator.isInteger(indexObject)) {
-      return new ErrorObject(
-        `Array index must be an integer, got: ${indexObject.type()}`
+      return context.createError(
+        `Array index must be an integer, got: ${indexObject.type()}`,
+        node.position()
       );
     }
 
     const index = indexObject.value;
     if (!array.isValidIndex(index)) {
-      return new ErrorObject(
-        `Array index out of bounds: ${index} for array of size ${array.size()}`
+      return context.createError(
+        `Array index out of bounds: ${index} for array of size ${array.size()}`,
+        node.position()
       );
     }
 
@@ -136,9 +162,9 @@ export class AssignmentExpressionEvaluator
       return array.set(index, value);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        return new ErrorObject(e.message);
+        return context.createError(e.message, node.position());
       }
-      return new ErrorObject("Unknown error");
+      return context.createError("Unknown error", node.position());
     }
   }
 
@@ -153,14 +179,17 @@ export class AssignmentExpressionEvaluator
   private evaluateHashIndexAssignment(
     hash: HashObject,
     keyObject: BaseObject,
-    value: BaseObject
+    value: BaseObject,
+    context: EvaluationContext,
+    node: AssignmentExpression
   ) {
     if (
       !ObjectValidator.isString(keyObject) &&
       !ObjectValidator.isInteger(keyObject)
     ) {
-      return new ErrorObject(
-        `Hash key must be a string or integer, got: ${keyObject.type()}`
+      return context.createError(
+        `Hash key must be a string or integer, got: ${keyObject.type()}`,
+        node.position()
       );
     }
 

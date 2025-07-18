@@ -1,8 +1,11 @@
 import { NodeEvaluator } from "@/lang/exec/core";
 import { IfExpression } from "@/lang/ast/expression";
-import { Environment, NullObject } from "@/lang/exec/objects";
-import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
+import { NullObject } from "@/lang/exec/objects";
+import {
+  EvaluationContext,
+  Environment,
+  ObjectValidator,
+} from "@/lang/exec/core";
 
 export class IfExpressionEvaluator implements NodeEvaluator<IfExpression> {
   public evaluate(

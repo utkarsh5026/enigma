@@ -1,8 +1,11 @@
 import { InfixExpression } from "@/lang/ast/expression";
-import { NodeEvaluator, ObjectValidator } from "@/lang/exec/core";
 import {
+  NodeEvaluator,
+  ObjectValidator,
   Environment,
   BaseObject,
+} from "@/lang/exec/core";
+import {
   ErrorObject,
   StringObject,
   BooleanObject,

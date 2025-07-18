@@ -1,14 +1,11 @@
 import { NodeEvaluator } from "@/lang/exec/core";
 import { IndexExpression } from "@/lang/ast/expression";
+import { ArrayObject, HashObject, NullObject } from "@/lang/exec/objects";
 import {
+  EvaluationContext,
+  ObjectValidator,
   Environment,
-  ErrorObject,
-  ArrayObject,
-  HashObject,
-  NullObject,
-} from "@/lang/exec/objects";
-import { EvaluationContext } from "@/lang/exec/core";
-import { ObjectValidator } from "../../core/validate";
+} from "@/lang/exec/core";
 import { Expression } from "@/lang/ast/ast";
 
 export class IndexExpressionEvaluator
@@ -37,7 +34,8 @@ export class IndexExpressionEvaluator
         left,
         node.index,
         env,
-        context
+        context,
+        node
       );
       context.addAfterStep(
         node,
@@ -54,7 +52,8 @@ export class IndexExpressionEvaluator
         left,
         node.index,
         env,
-        context
+        context,
+        node
       );
       context.addAfterStep(
         node,
@@ -65,8 +64,9 @@ export class IndexExpressionEvaluator
       return result;
     }
 
-    const error = new ErrorObject(
-      "Index operator not supported for type: " + left.type()
+    const error = context.createError(
+      "Index operator not supported for type: " + left.type(),
+      node.position()
     );
     context.addAfterStep(
       node,
@@ -81,21 +81,24 @@ export class IndexExpressionEvaluator
     array: ArrayObject,
     index: Expression,
     env: Environment,
-    context: EvaluationContext
+    context: EvaluationContext,
+    indexExpression: IndexExpression
   ) {
     const indexObject = context.evaluate(index, env);
 
     if (!ObjectValidator.isInteger(indexObject)) {
-      return new ErrorObject(
-        `Index must be an integer literal, got: ${indexObject.inspect()}`
+      return context.createError(
+        `Index must be an integer literal, got: ${indexObject.inspect()}`,
+        indexExpression.position()
       );
     }
 
     const arrIndex = indexObject.value;
 
     if (arrIndex < 0 || arrIndex >= array.size()) {
-      return new ErrorObject(
-        `Index out of bounds: ${arrIndex} for array of size ${array.size()}`
+      return context.createError(
+        `Index out of bounds: ${arrIndex} for array of size ${array.size()}`,
+        indexExpression.position()
       );
     }
 
@@ -106,7 +109,8 @@ export class IndexExpressionEvaluator
     hash: HashObject,
     index: Expression,
     env: Environment,
-    context: EvaluationContext
+    context: EvaluationContext,
+    indexExpression: IndexExpression
   ) {
     const indexObject = context.evaluate(index, env);
 
@@ -114,8 +118,9 @@ export class IndexExpressionEvaluator
       !ObjectValidator.isString(indexObject) &&
       !ObjectValidator.isInteger(indexObject)
     ) {
-      return new ErrorObject(
-        `Index must be a string or integer literal, got: ${indexObject.inspect()}`
+      return context.createError(
+        `Index must be a string or integer literal, got: ${indexObject.inspect()}`,
+        indexExpression.position()
       );
     }
 
