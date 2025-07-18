@@ -7,9 +7,8 @@ import { consoleStore } from "@/stores/console-stores";
 import Lexer from "@/lang/lexer/lexer";
 import { LanguageParser } from "@/lang/parser";
 import { LanguageEvaluator } from "@/lang/exec/evaluation/evaluator";
-import { Environment } from "@/lang/exec/objects";
-import { Button } from "../ui/button";
-import { ObjectValidator } from "@/lang/exec/core";
+import { Button } from "@/components/ui/button";
+import { ObjectValidator, Environment } from "@/lang/exec/core";
 
 interface LeftPanelProps {
   code: string;
@@ -40,7 +39,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
       consoleStore.addEntry(parser.getErrors()[0].message, "error");
     }
 
-    const evaluator = new LanguageEvaluator();
+    const evaluator = LanguageEvaluator.withSourceCode(code, true);
     const result = evaluator.evaluateProgram(ast, new Environment());
 
     if (!ObjectValidator.isError(result)) {
@@ -48,6 +47,8 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
         "Code executed successfully with exit code 0 😎",
         "success"
       );
+    } else {
+      consoleStore.addEntry(result.inspect(), "error");
     }
     setActiveTab("execution");
   };
