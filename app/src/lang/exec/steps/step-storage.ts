@@ -8,7 +8,7 @@ import {
   ExecutionState,
   type CallStackFrame,
 } from "./step-info";
-import { Environment } from "../objects";
+import { Environment } from "@/lang/exec/core";
 
 export class DefaultStepStorage implements StepStorage {
   private steps: EvaluationStep[] = [];
@@ -106,12 +106,12 @@ export class DefaultStepStorage implements StepStorage {
   private createEnvironmentSnapshot(env: Environment): EnvironmentSnapshot {
     const variables: Variable[] = [];
 
-    env.store().forEach((value, name) => {
+    env.variableBindings.forEach((value, name) => {
       variables.push({
         name,
         value: value.inspect(),
         type: value.type(),
-        isConstant: env.isConstant(name),
+        isConstant: env.isVariableImmutable(name),
         isNew: false,
       });
     });
@@ -119,8 +119,8 @@ export class DefaultStepStorage implements StepStorage {
     return {
       variables,
       isBlockScope: env.isBlockScope(),
-      parentEnvironment: env.outer()
-        ? this.createEnvironmentSnapshot(env.outer()!)
+      parentEnvironment: env.enclosingScope
+        ? this.createEnvironmentSnapshot(env.enclosingScope)
         : undefined,
     };
   }
