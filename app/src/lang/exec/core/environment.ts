@@ -4,10 +4,10 @@ import type { BaseObject } from "./base";
  * Environment represents a lexical scope for variable storage and retrieval.
  */
 export class Environment {
-  private readonly variableBindings: Map<string, BaseObject>;
-  private readonly enclosingScope: Environment | null;
-  private readonly immutableVariableNames: Set<string>;
-  private readonly representsBlockScope: boolean;
+  readonly variableBindings: Map<string, BaseObject>;
+  readonly enclosingScope: Environment | null;
+  readonly immutableVariableNames: Set<string>;
+  readonly representsBlockScope: boolean;
 
   constructor(
     enclosingScope?: Environment | null,
