@@ -1,5 +1,5 @@
 import { Node } from "@/lang/ast/ast";
-import { BaseObject, Environment } from "../objects";
+import { BaseObject, Environment } from "@/lang/exec/core";
 
 export type StepInfo = {
   node: Node;
