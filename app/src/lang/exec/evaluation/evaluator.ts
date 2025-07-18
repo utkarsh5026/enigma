@@ -59,6 +59,7 @@ export class LanguageEvaluator implements EvaluationContext {
   private readonly functionEvaluator = new literals.FunctionLiteralEvaluator();
   private readonly nullEvaluator = new literals.NullLiteralEvaluator();
   private readonly fstringEvaluator = new literals.FStringLiteralEvaluator();
+  private readonly floatEvaluator = new literals.FloatLiteralEvaluator();
 
   constructor(
     enableStackTraces: boolean,
@@ -280,6 +281,13 @@ export class LanguageEvaluator implements EvaluationContext {
       case literal.FStringLiteral:
         return this.fstringEvaluator.evaluate(
           node as literal.FStringLiteral,
+          env,
+          this
+        );
+
+      case literal.FloatLiteral:
+        return this.floatEvaluator.evaluate(
+          node as literal.FloatLiteral,
           env,
           this
         );
