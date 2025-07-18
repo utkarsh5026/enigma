@@ -1,11 +1,12 @@
 import { ForStatement } from "@/lang/ast";
-import { BaseObject, NullObject } from "../../objects";
+import { NullObject } from "@/lang/exec/objects";
 import {
   LoopContext,
   NodeEvaluator,
   EvaluationContext,
   ObjectValidator,
   Environment,
+  BaseObject,
 } from "@/lang/exec/core";
 
 export class ForStatementEvaluator implements NodeEvaluator<ForStatement> {
