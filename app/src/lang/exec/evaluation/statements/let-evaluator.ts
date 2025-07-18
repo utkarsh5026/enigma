@@ -1,7 +1,11 @@
-import { BaseObject, Environment, ErrorObject } from "../../objects";
 import { LetStatement } from "@/lang/ast/statement";
-import { EvaluationContext, NodeEvaluator } from "../../core/interfaces";
-import { ObjectValidator } from "../../core/validate";
+import {
+  EvaluationContext,
+  NodeEvaluator,
+  ObjectValidator,
+  Environment,
+  BaseObject,
+} from "@/lang/exec/core";
 
 /**
  * 📦 LetEvaluator - The Variable Declaration Expert 📦
@@ -24,10 +28,12 @@ export class LetEvaluator implements NodeEvaluator<LetStatement> {
 
     context.addBeforeStep(node, env, `Declaring variable "${varName}"`);
 
-    if (env.has(varName)) {
-      const error = new ErrorObject(
-        `variable '${varName}' already declared in this scope`
+    if (env.containsVariableLocally(varName)) {
+      const error = context.createError(
+        `variable '${varName}' already declared in this scope`,
+        node.name.position()
       );
+
       context.addAfterStep(
         node,
         env,
@@ -47,12 +53,13 @@ export class LetEvaluator implements NodeEvaluator<LetStatement> {
         `Error evaluating expression for variable "${varName}": ${value.message}`
       );
 
-      return new ErrorObject(
-        `error evaluating expression for variable '${varName}': ${value.message}`
+      return context.createError(
+        `error evaluating expression for variable '${varName}': ${value.message}`,
+        node.value.position()
       );
     }
 
-    env.set(varName, value);
+    env.defineVariable(varName, value);
 
     context.addAfterStep(
       node,
