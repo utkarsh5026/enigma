@@ -1,32 +1,32 @@
 export const sampleCodeSnippets = {
   fibonacci: `# Recursive Fibonacci function with debug output
 let fibonacci = fn(n) {
-  print("Computing fibonacci(", n, ")");
+  print(f"Computing fibonacci({n})");
   if (n < 2) {
-    print("Base case: fibonacci(", n, ") = ", n);
+    print(f"Base case: fibonacci({n}) = {n}");
     return n;
   } else {
     let result = fibonacci(n - 1) + fibonacci(n - 2);
-    print("fibonacci(", n, ") = ", result);
+    print(f"fibonacci({n}) = {result}");
     return result;
   }
 };
 
-# Calculate the 8th Fibonacci number
+# Calculate the 4th Fibonacci number
 print("=== Fibonacci Calculation ===");
-let result = fibonacci(8);
-print("Final result: fibonacci(8) =", result);
+let result = fibonacci(4);
+print(f"Final result: fibonacci(4) = {result}");
 `,
 
   factorial: `# Factorial function with step-by-step output
 let factorial = fn(n) {
-  print("Computing factorial(", n, ")");
+  print(f"Computing factorial({n})");
   if (n <= 1) {
-    print("Base case: factorial(", n, ") = 1");
+    print(f"Base case: factorial({n}) = 1");
     return 1;
   } else {
     let result = n * factorial(n - 1);
-    print("factorial(", n, ") =", n, "* factorial(", n-1, ") =", result);
+    print(f"factorial({n}) = {n} * factorial({n-1}) = {result}");
     return result;
   }
 };
@@ -34,22 +34,22 @@ let factorial = fn(n) {
 # Calculate 5! with debug output
 print("=== Factorial Calculation ===");
 let result = factorial(5);
-print("Final result: 5! =", result);
+print(f"Final result: 5! = {result}");
 `,
 
   bubbleSort: `# Bubble Sort with visualization
 let bubbleSort = fn(arr) {
   print("=== Bubble Sort Algorithm ===");
-  print("Initial array:", arr);
+  print(f"Initial array: {arr}");
   
   let n = len(arr);
   
   for (let i = 0; i < n - 1; i = i + 1) {
-    print("\\nPass", i + 1, ":");
+    print(f"\\nPass {i + 1}:");
     let swapped = false;
     
     for (let j = 0; j < n - i - 1; j = j + 1) {
-      print("Comparing", arr[j], "and", arr[j + 1]);
+      print(f"Comparing {arr[j]} and {arr[j + 1]}");
       
       if (arr[j] > arr[j + 1]) {
         # Swap elements
@@ -57,7 +57,7 @@ let bubbleSort = fn(arr) {
         arr[j] = arr[j + 1];
         arr[j + 1] = temp;
         swapped = true;
-        print("  Swapped! Array now:", arr);
+        print(f"  Swapped! Array now: {arr}");
       } else {
         print("  No swap needed");
       }
@@ -69,7 +69,7 @@ let bubbleSort = fn(arr) {
     }
   }
   
-  print("\\nFinal sorted array:", arr);
+  print(f"\\nFinal sorted array: {arr}");
   return arr;
 };
 
