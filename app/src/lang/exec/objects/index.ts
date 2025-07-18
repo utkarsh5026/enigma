@@ -7,15 +7,10 @@ import {
 } from "./literals";
 import { BreakObject, ContinueObject } from "./loop";
 import { ErrorObject } from "./error";
-import {
-  FunctionObject,
-  ReturnValue as ReturnValueObject,
-  Environment,
-} from "./function";
+import { FunctionObject, ReturnValue as ReturnValueObject } from "./function";
 import { HashObject } from "./hash";
 import { ClassObject } from "./clas";
 import { InstanceObject } from "./instance";
-import { BaseObject, ObjectType } from "../core/base";
 import { BuiltinObject } from "./builtin";
 
 export {
@@ -33,7 +28,4 @@ export {
   StringObject,
   ClassObject,
   InstanceObject,
-  type BaseObject,
-  ObjectType,
-  Environment,
 };
