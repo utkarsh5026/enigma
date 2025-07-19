@@ -41,7 +41,6 @@ export class LanguageParser {
    */
   public parseProgram(): Program {
     const statements: Statement[] = [];
-    console.log(statements);
 
     while (!this.context.isAtEnd()) {
       try {
@@ -50,7 +49,6 @@ export class LanguageParser {
           statements.push(statement);
         }
       } catch (e) {
-        console.log(e);
         if (e instanceof ParserException) {
           const token = e.getToken();
           if (token !== undefined) {
