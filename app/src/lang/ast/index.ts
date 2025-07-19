@@ -19,10 +19,6 @@ import {
   ContinueStatement,
   ForStatement,
   ConstStatement,
-  ClassDeclaration,
-  MethodDefinition,
-  ConstructorDefinition,
-  PropertyDefinition,
 } from "./statement";
 import {
   InfixExpression,
@@ -35,6 +31,7 @@ import {
 } from "./expression";
 import { AstValidator } from "./validate";
 import { Node, Expression, Identifier, Statement } from "./ast";
+import { ClassStatement } from "./statements/class-statement";
 
 type ASTLiterals =
   | StringLiteral
@@ -54,10 +51,7 @@ type ASTStatements =
   | ContinueStatement
   | ForStatement
   | ConstStatement
-  | ClassDeclaration
-  | MethodDefinition
-  | ConstructorDefinition
-  | PropertyDefinition;
+  | ClassStatement;
 
 type ASTExpressions =
   | InfixExpression
@@ -89,10 +83,7 @@ export {
   ContinueStatement,
   ForStatement,
   ConstStatement,
-  ClassDeclaration,
-  MethodDefinition,
-  ConstructorDefinition,
-  PropertyDefinition,
+  ClassStatement,
   InfixExpression,
   PrefixExpression,
   BooleanExpression,
