@@ -14,6 +14,7 @@ export enum ObjectType {
   CLASS = "CLASS",
   INSTANCE = "INSTANCE",
   BUILTIN = "BUILTIN",
+  CLASS_CONTEXT = "CLASS_CONTEXT",
 }
 
 /**
