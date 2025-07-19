@@ -23,6 +23,7 @@ import {
   InfixExpression,
   IndexExpression,
   IfExpression,
+  NewExpression,
 } from "./expressions";
 import {
   BooleanLiteral,
@@ -70,4 +71,5 @@ export {
   ThisExpression,
   SuperExpression,
   PropertyExpression,
+  NewExpression,
 };

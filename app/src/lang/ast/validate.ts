@@ -17,6 +17,7 @@ import {
   IndexExpression,
   CallExpression,
   AssignmentExpression,
+  PropertyExpression,
 } from "./expressions";
 import {
   IntegerLiteral,
@@ -114,5 +115,9 @@ export class AstValidator {
 
   static isHashLiteral(node: Node): node is HashLiteral {
     return node instanceof HashLiteral;
+  }
+
+  static isPropertyExpression(node: Node): node is PropertyExpression {
+    return node instanceof PropertyExpression;
   }
 }
