@@ -4,8 +4,8 @@ import * as expressions from "./expressions";
 import * as literals from "./literals";
 import * as ast from "@/lang/ast/ast";
 import * as statement from "@/lang/ast/statement";
-import * as expression from "@/lang/ast/expression";
-import * as literal from "@/lang/ast/literal";
+import * as expression from "@/lang/ast/expressions";
+import * as literal from "@/lang/ast/literals";
 import { ErrorObject, NullObject, ReturnValueObject } from "../objects";
 import {
   type CallStackFrame,
@@ -228,9 +228,9 @@ export class LanguageEvaluator implements EvaluationContext {
           this
         );
 
-      case expression.BooleanExpression:
+      case literal.BooleanLiteral:
         return this.booleanEvaluator.evaluate(
-          node as expression.BooleanExpression,
+          node as literal.BooleanLiteral,
           env,
           this
         );
