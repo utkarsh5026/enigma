@@ -6,6 +6,7 @@ import { ForStatementParser } from "./for-loop-statement";
 import { BreakStatementParser, ContinueStatementParser } from "./loop-control";
 import { BlockStatementParser } from "./block-statement";
 import { ExpressionStatementParser } from "./expression-statement";
+import { ClassStatementParser } from "./class-statement";
 
 export {
   LetStatementParser,
@@ -17,4 +18,5 @@ export {
   ContinueStatementParser,
   BlockStatementParser,
   ExpressionStatementParser,
+  ClassStatementParser,
 };
