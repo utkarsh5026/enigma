@@ -4,7 +4,7 @@ import {
   ParsingContext,
   Precedence,
   type ExpressionParser,
-} from "../core";
+} from "@/lang/parser/core";
 import { NullLiteral, ReturnStatement } from "@/lang/ast";
 
 export class ReturnStatementParser implements Parser<ReturnStatement> {

@@ -5,9 +5,9 @@ import {
   Precedence,
   type StatementParse,
   type ExpressionParser,
-} from "../core";
+} from "@/lang/parser/core";
 import { BlockStatementParser } from "./block-statement";
-import { BlockStatement, WhileStatement } from "@/lang/ast/statement";
+import { BlockStatement, WhileStatement } from "@/lang/ast";
 
 export class WhileStatementParser implements Parser<WhileStatement> {
   constructor(
