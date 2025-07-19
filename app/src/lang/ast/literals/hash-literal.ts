@@ -1,0 +1,29 @@
+import { Token } from "@/lang/token/token";
+import { Expression } from "../ast";
+
+/**
+ * Represents a hash literal (key-value pairs) in the AST.
+ */
+export class HashLiteral extends Expression {
+  pairs: Map<string, Expression>;
+
+  constructor(token: Token, pairs: Map<string, Expression>) {
+    super(token);
+    this.pairs = pairs;
+  }
+
+  /**
+   * Returns a string representation of the HashLiteral.
+   * @returns A string representation of the hash, with key-value pairs separated by commas.
+   */
+  toString(): string {
+    const pairs = Array.from(this.pairs.entries())
+      .map(([key, value]) => {
+        const keyStr = key.toString();
+        const valueStr = value.toString();
+        return `${keyStr}:${valueStr}`;
+      })
+      .join(", ");
+    return `{${pairs}}`;
+  }
+}

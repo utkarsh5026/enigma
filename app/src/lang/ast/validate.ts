@@ -8,27 +8,24 @@ import {
   BreakStatement,
   ContinueStatement,
   ForStatement,
-  ClassDeclaration,
-  ConstructorDefinition,
-  MethodDefinition,
 } from "./statement";
 import { Identifier, Node } from "./ast";
 import {
-  BooleanExpression,
   InfixExpression,
   PrefixExpression,
   IfExpression,
   IndexExpression,
   CallExpression,
   AssignmentExpression,
-} from "./expression";
+} from "./expressions";
 import {
   IntegerLiteral,
   StringLiteral,
   FunctionLiteral,
   ArrayLiteral,
   HashLiteral,
-} from "./literal";
+  BooleanLiteral,
+} from "./literals";
 
 export class AstValidator {
   static isLetStatement(node: Node): node is LetStatement {
@@ -67,18 +64,6 @@ export class AstValidator {
     return node instanceof ForStatement;
   }
 
-  static isClassDeclaration(node: Node): node is ClassDeclaration {
-    return node instanceof ClassDeclaration;
-  }
-
-  static isMethodDefinition(node: Node): node is MethodDefinition {
-    return node instanceof MethodDefinition;
-  }
-
-  static isConstructorDefinition(node: Node): node is ConstructorDefinition {
-    return node instanceof ConstructorDefinition;
-  }
-
   static isIdentifier(node: Node): node is Identifier {
     return node instanceof Identifier;
   }
@@ -91,8 +76,8 @@ export class AstValidator {
     return node instanceof InfixExpression;
   }
 
-  static isBooleanExpression(node: Node): node is BooleanExpression {
-    return node instanceof BooleanExpression;
+  static isBooleanLiteral(node: Node): node is BooleanLiteral {
+    return node instanceof BooleanLiteral;
   }
 
   static isIfExpression(node: Node): node is IfExpression {

@@ -97,7 +97,9 @@ export class HashLiteralParser implements PrefixExpressionParser {
   private getKeyString(key: Expression): string | null {
     if (AstValidator.isStringLiteral(key)) {
       return key.toString();
-    } else if (AstValidator.isIntegerLiteral(key)) {
+    }
+
+    if (AstValidator.isIntegerLiteral(key)) {
       return key.toString();
     }
     return null;

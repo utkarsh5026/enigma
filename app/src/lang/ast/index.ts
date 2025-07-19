@@ -1,15 +1,5 @@
 import { Program } from "./ast";
 import {
-  StringLiteral,
-  ArrayLiteral,
-  HashLiteral,
-  IntegerLiteral,
-  FunctionLiteral,
-  FStringLiteral,
-  NullLiteral,
-  FloatLiteral,
-} from "./literal";
-import {
   LetStatement,
   ReturnStatement,
   ExpressionStatement,
@@ -34,8 +24,17 @@ import {
   IndexExpression,
   IfExpression,
 } from "./expressions";
-import { BooleanLiteral } from "./literals";
-
+import {
+  BooleanLiteral,
+  FunctionLiteral,
+  StringLiteral,
+  ArrayLiteral,
+  HashLiteral,
+  IntegerLiteral,
+  NullLiteral,
+  FStringLiteral,
+  FloatLiteral,
+} from "./literals";
 export {
   Program,
   StringLiteral,
