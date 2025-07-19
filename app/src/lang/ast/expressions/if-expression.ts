@@ -3,7 +3,17 @@ import { Expression } from "../ast";
 import { BlockStatement } from "../statement";
 
 /**
- * Represents an if-else expression in the AST.
+ * 🔀 IfExpression - Conditional Logic AST Node
+ *
+ * Represents conditional expressions that evaluate different branches based
+ * on boolean conditions. Supports if-else-if chains with multiple conditions
+ * and optional else clauses for comprehensive decision-making logic.
+ *
+ * @example
+ * - Simple conditions: if age >= 18 then "adult" else "minor"
+ * - Multiple branches: if score >= 90 then "A" else if score >= 80 then "B"
+ * - Complex logic: if user.isActive && user.hasPermission then allowAccess
+ * - Nested conditions: if weather == "sunny" then if temp > 75 then "beach"
  */
 export class IfExpression extends Expression {
   constructor(

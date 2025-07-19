@@ -2,7 +2,17 @@ import { Operator, Token } from "@/lang/token/token";
 import { Expression } from "../ast";
 
 /**
- * Represents an infix expression in the AST.
+ * ⚡ InfixExpression - Binary Operation AST Node
+ *
+ * Represents binary operations that combine two operands with an operator.
+ * Handles arithmetic calculations, logical comparisons, string operations,
+ * and boolean logic with proper operator precedence and type handling.
+ *
+ * @example
+ * - Arithmetic: 5 + 3, total * tax, balance - withdrawal
+ * - Comparisons: age >= 18, score == 100, name != "admin"
+ * - Logical: isActive && hasPermission, isGuest || isAdmin
+ * - String operations: firstName + " " + lastName, "Hello" == greeting
  */
 export class InfixExpression extends Expression {
   constructor(

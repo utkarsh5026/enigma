@@ -2,8 +2,17 @@ import { Token } from "@/lang/token/token";
 import { Expression } from "../ast";
 
 /**
- * Represents an index expression in the AST.
- * This is used for accessing elements in arrays or other indexable structures.
+ * 🗂️ IndexExpression - Collection Access AST Node
+ *
+ * Represents indexed access operations for retrieving elements from arrays
+ * or values from hash tables. Handles both numeric indexing for arrays and
+ * string key access for hash/object structures with bounds checking.
+ *
+ * @example
+ * - Array indexing: numbers[0], items[length-1], grid[row][col]
+ * - Hash access: person["name"], settings["theme"], data["results"]
+ * - Dynamic access: users[currentIndex], config[keyName]
+ * - Nested access: company.employees[0].salary, matrix[i][j]
  */
 export class IndexExpression extends Expression {
   constructor(

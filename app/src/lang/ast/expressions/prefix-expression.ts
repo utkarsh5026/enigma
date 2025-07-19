@@ -2,18 +2,22 @@ import { Token } from "@/lang/token/token";
 import { Expression } from "../ast";
 
 /**
- * Represents a prefix expression in the AST.
+ * ➖ PrefixExpression - Unary Operation AST Node
+ *
+ * Represents unary operations that apply a single operator to one operand.
+ * Handles logical negation for boolean values and arithmetic negation for
+ * numeric values, providing essential unary transformations.
+ *
+ * @example
+ * - Logical negation: !isActive, !user.hasPermission, !isEmpty
+ * - Arithmetic negation: -temperature, -balance, -offset
+ * - Boolean conversion: !0, !null, !"", ![]
+ * - Sign operations: -positiveNumber, -(-value)
  */
 export class PrefixExpression extends Expression {
-  operator: string;
-  right: Expression;
+  readonly operator: string; // 🔄 Operator
+  readonly right: Expression; // 🔄 Right operand
 
-  /**
-   * Creates a new PrefixExpression instance.
-   * @param token The token associated with this expression.
-   * @param operator The prefix operator.
-   * @param right The expression to the right of the operator.
-   */
   constructor(token: Token, operator: string, right: Expression) {
     super(token);
     this.operator = operator;

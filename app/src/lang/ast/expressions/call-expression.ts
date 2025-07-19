@@ -2,8 +2,17 @@ import { Token } from "@/lang/token/token";
 import { Expression } from "../ast";
 
 /**
- * Represents a function call expression in the AST.
- * in the function call hello(name)
+ * 📞 CallExpression - Function Invocation AST Node
+ *
+ * Represents function call operations that invoke callable objects with
+ * provided arguments. Handles both built-in function calls and user-defined
+ * function invocations with parameter passing and return value handling.
+ *
+ * @example
+ * - Built-in functions: print("Hello"), len(myArray), max(5, 10)
+ * - User functions: calculateTotal(items), processData(input)
+ * - Method calls: object.method(), this.doSomething()
+ * - Nested calls: getUser(getCurrentId()).getName()
  */
 export class CallExpression extends Expression {
   constructor(
