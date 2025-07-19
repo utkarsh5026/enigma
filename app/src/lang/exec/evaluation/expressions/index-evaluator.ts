@@ -1,12 +1,11 @@
 import { NodeEvaluator } from "@/lang/exec/core";
-import { IndexExpression } from "@/lang/ast/expression";
+import { IndexExpression, Expression } from "@/lang/ast";
 import { ArrayObject, HashObject, NullObject } from "@/lang/exec/objects";
 import {
   EvaluationContext,
   ObjectValidator,
   Environment,
 } from "@/lang/exec/core";
-import { Expression } from "@/lang/ast/ast";
 
 /**
  * ➖ PrefixExpressionEvaluator - Unary Operation Handler

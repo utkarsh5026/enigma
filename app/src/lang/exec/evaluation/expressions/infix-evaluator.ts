@@ -1,4 +1,4 @@
-import { InfixExpression } from "@/lang/ast/expression";
+import { InfixExpression } from "@/lang/ast";
 import {
   NodeEvaluator,
   ObjectValidator,

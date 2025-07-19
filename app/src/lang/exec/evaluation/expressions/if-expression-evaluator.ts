@@ -1,5 +1,5 @@
 import { NodeEvaluator } from "@/lang/exec/core";
-import { IfExpression } from "@/lang/ast/expression";
+import { IfExpression } from "@/lang/ast";
 import { NullObject } from "@/lang/exec/objects";
 import {
   EvaluationContext,
