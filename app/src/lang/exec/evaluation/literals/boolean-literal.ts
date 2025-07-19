@@ -4,7 +4,7 @@ import {
   Environment,
   BaseObject,
 } from "@/lang/exec/core";
-import { BooleanExpression } from "@/lang/ast";
+import { BooleanLiteral } from "@/lang/ast";
 import { BooleanObject } from "@/lang/exec/objects";
 
 /**
@@ -20,11 +20,9 @@ import { BooleanObject } from "@/lang/exec/objects";
  * - Used in conditions: if true then... else...
  * - Used in assignments: let isReady = true
  */
-export class BooleanLiteralEvaluator
-  implements NodeEvaluator<BooleanExpression>
-{
+export class BooleanLiteralEvaluator implements NodeEvaluator<BooleanLiteral> {
   public evaluate(
-    node: BooleanExpression,
+    node: BooleanLiteral,
     env: Environment,
     context: EvaluationContext
   ): BaseObject {

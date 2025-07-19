@@ -5,7 +5,7 @@ import {
   Environment,
   BaseObject,
 } from "@/lang/exec/core";
-import { FStringLiteral } from "@/lang/ast/literal";
+import { FStringLiteral } from "@/lang/ast";
 import {
   StringObject,
   IntegerObject,

@@ -3,7 +3,7 @@ import {
   NodeEvaluator,
   EvaluationContext,
 } from "@/lang/exec/core";
-import { FloatLiteral } from "@/lang/ast/literal";
+import { FloatLiteral } from "@/lang/ast";
 import { FloatObject } from "@/lang/exec/objects";
 
 /**
