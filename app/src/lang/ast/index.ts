@@ -20,49 +20,21 @@ import {
   ForStatement,
   ConstStatement,
 } from "./statement";
-import {
-  InfixExpression,
-  PrefixExpression,
-  BooleanExpression,
-  IfExpression,
-  IndexExpression,
-  CallExpression,
-  AssignmentExpression,
-} from "./expression";
 import { AstValidator } from "./validate";
 import { Node, Expression, Identifier, Statement } from "./ast";
 import { ClassStatement } from "./statements/class-statement";
-
-type ASTLiterals =
-  | StringLiteral
-  | ArrayLiteral
-  | HashLiteral
-  | IntegerLiteral
-  | FunctionLiteral
-  | FStringLiteral;
-
-type ASTStatements =
-  | LetStatement
-  | ReturnStatement
-  | ExpressionStatement
-  | BlockStatement
-  | WhileStatement
-  | BreakStatement
-  | ContinueStatement
-  | ForStatement
-  | ConstStatement
-  | ClassStatement;
-
-type ASTExpressions =
-  | InfixExpression
-  | PrefixExpression
-  | BooleanExpression
-  | IfExpression
-  | IndexExpression
-  | CallExpression
-  | AssignmentExpression;
-
-type ASTNodes = ASTLiterals | ASTStatements | ASTExpressions | Program;
+import {
+  ThisExpression,
+  SuperExpression,
+  PropertyExpression,
+  CallExpression,
+  AssignmentExpression,
+  PrefixExpression,
+  InfixExpression,
+  IndexExpression,
+  IfExpression,
+} from "./expressions";
+import { BooleanLiteral } from "./literals";
 
 export {
   Program,
@@ -86,18 +58,17 @@ export {
   ClassStatement,
   InfixExpression,
   PrefixExpression,
-  BooleanExpression,
+  BooleanLiteral,
   IfExpression,
   IndexExpression,
   CallExpression,
   AssignmentExpression,
-  type ASTNodes,
-  type ASTLiterals,
-  type ASTStatements,
-  type ASTExpressions,
   AstValidator,
   type Node,
   Expression,
   Identifier,
   Statement,
+  ThisExpression,
+  SuperExpression,
+  PropertyExpression,
 };

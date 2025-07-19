@@ -3,6 +3,10 @@ import { ThisExpression } from "./this-expression";
 import { PropertyExpression } from "./property-expression";
 import { CallExpression } from "./call-expression";
 import { AssignmentExpression } from "./assignment-expression";
+import { PrefixExpression } from "./prefix-expression";
+import { IfExpression } from "./if-expression";
+import { InfixExpression } from "./infix-expression";
+import { IndexExpression } from "./index-expression";
 
 export {
   SuperExpression,
@@ -10,4 +14,8 @@ export {
   PropertyExpression,
   CallExpression,
   AssignmentExpression,
+  PrefixExpression,
+  IfExpression,
+  InfixExpression,
+  IndexExpression,
 };
