@@ -18,6 +18,9 @@ import {
   ArrayLiteralParser,
   IfExpressionParser,
   FloatLiteralParser,
+  NewExpressionParser,
+  ThisExpressionParser,
+  SuperExpressionParser,
 } from "../parsers/expressions/prefix";
 import {
   ArithmeticOperatorParser,
@@ -26,6 +29,7 @@ import {
   AssignmentExpressionParser,
   CallExpressionParser,
   IndexExpressionParser,
+  PropertyExpressionParser,
 } from "../parsers/expressions/infix";
 import { FStringLiteralParser } from "../parsers/expressions/prefix/fstring-literal";
 
@@ -82,6 +86,9 @@ export class ExpressionParserRegistry {
     );
     this.registerPrefixParser(new FStringLiteralParser());
     this.registerPrefixParser(new FloatLiteralParser());
+    this.registerPrefixParser(new NewExpressionParser(this.expressionParser));
+    this.registerPrefixParser(new ThisExpressionParser());
+    this.registerPrefixParser(new SuperExpressionParser(this.expressionParser));
   }
 
   private registerInfixParsers() {
@@ -97,6 +104,7 @@ export class ExpressionParserRegistry {
     );
     this.registerInfixParser(new CallExpressionParser(this.expressionParser));
     this.registerInfixParser(new IndexExpressionParser(this.expressionParser));
+    this.registerInfixParser(new PropertyExpressionParser());
   }
 
   public registerInfixParser(parser: InfixExpressionParser) {

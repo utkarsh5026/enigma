@@ -10,6 +10,9 @@ import { FunctionalLiteralParser } from "./function-literal";
 import { HashLiteralParser } from "./hash-literal";
 import { IfExpressionParser } from "./if-expression";
 import { FloatLiteralParser } from "./float-literal";
+import { NewExpressionParser } from "./new-expression";
+import { ThisExpressionParser } from "./this-expression";
+import { SuperExpressionParser } from "./super-expression";
 
 export {
   BooleanLiteralParser,
@@ -24,4 +27,7 @@ export {
   HashLiteralParser,
   FloatLiteralParser,
   IfExpressionParser,
+  NewExpressionParser,
+  ThisExpressionParser,
+  SuperExpressionParser,
 };

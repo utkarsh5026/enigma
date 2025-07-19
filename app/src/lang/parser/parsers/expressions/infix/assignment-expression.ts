@@ -38,7 +38,8 @@ export class AssignmentExpressionParser implements InfixExpressionParser {
   ): AssignmentExpression {
     if (
       !AstValidator.isIdentifier(left) &&
-      !AstValidator.isIndexExpression(left)
+      !AstValidator.isIndexExpression(left) &&
+      !AstValidator.isPropertyExpression(left)
     ) {
       throw new ParserException(
         "Invalid assignment target - must be an identifier or index expression",

@@ -50,7 +50,6 @@ export class ClassStatementParser implements Parser<ClassStatement> {
     const className = new Identifier(nameToken, nameToken.literal);
 
     const parentClass = this.parseParentClass(context);
-    console.log(parentClass);
     context.consumeCurrentToken(
       TokenType.LBRACE,
       "Expected '{' to start class body"
@@ -104,7 +103,6 @@ export class ClassStatementParser implements Parser<ClassStatement> {
         const name = nameToken.literal;
 
         if (name === "init") {
-          console.log("constructor");
           if (classConstructor) {
             throw new ParserException(
               "Class can only have one constructor",

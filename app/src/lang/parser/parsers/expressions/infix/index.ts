@@ -4,6 +4,7 @@ import { LogicalOperatorParser } from "./logical-operator";
 import { IndexExpressionParser } from "./index-expression";
 import { CallExpressionParser } from "./call-expression";
 import { AssignmentExpressionParser } from "./assignment-expression";
+import { PropertyExpressionParser } from "./property-expression";
 
 export {
   ArithmeticOperatorParser,
@@ -12,4 +13,5 @@ export {
   IndexExpressionParser,
   CallExpressionParser,
   AssignmentExpressionParser,
+  PropertyExpressionParser,
 };
