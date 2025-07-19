@@ -8,7 +8,7 @@ import {
   ContinueStatementParser,
   BlockStatementParser,
   ExpressionStatementParser,
-} from "../statements";
+} from "@/lang/parser/parsers/statements";
 import {
   ExpressionParser,
   Parser,
