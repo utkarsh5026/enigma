@@ -4,11 +4,14 @@ import {
   Precedence,
   type ExpressionParser,
   ParserException,
-} from "../core";
+} from "@/lang/parser/core";
 import { Token, TokenType, type Operator } from "@/lang/token/token";
-import { ExpressionStatement } from "@/lang/ast/statement";
-import { Identifier } from "@/lang/ast/ast";
-import { AssignmentExpression, InfixExpression } from "@/lang/ast/expression";
+import {
+  ExpressionStatement,
+  Identifier,
+  AssignmentExpression,
+  InfixExpression,
+} from "@/lang/ast";
 
 export class ExpressionStatementParser implements Parser<ExpressionStatement> {
   canParse(context: ParsingContext): boolean {

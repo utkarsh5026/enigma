@@ -5,8 +5,7 @@ import {
   Precedence,
   type ExpressionParser,
 } from "../core";
-import { ReturnStatement } from "@/lang/ast/statement";
-import { NullLiteral } from "@/lang/ast/literal";
+import { NullLiteral, ReturnStatement } from "@/lang/ast";
 
 export class ReturnStatementParser implements Parser<ReturnStatement> {
   constructor(private expressionParser: ExpressionParser) {}

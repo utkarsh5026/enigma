@@ -1,8 +1,7 @@
 import { Token, TokenType } from "@/lang/token/token";
 import { type Parser, ParsingContext, type ExpressionParser } from "../core";
 import { AssignmentStatementParser } from "./assignment-parser";
-import { LetStatement } from "@/lang/ast/statement";
-import { Identifier, Expression } from "@/lang/ast/ast";
+import { LetStatement, Identifier, Expression } from "@/lang/ast";
 export class LetStatementParser implements Parser<LetStatement> {
   private delegate: AssignmentStatementParser<LetStatement>;
 

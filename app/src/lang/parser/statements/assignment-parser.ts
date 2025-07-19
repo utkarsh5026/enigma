@@ -1,5 +1,10 @@
-import { Parser, ParsingContext, ExpressionParser, Precedence } from "../core";
-import { Expression, Identifier, Statement } from "@/lang/ast/ast";
+import {
+  type Parser,
+  ParsingContext,
+  type ExpressionParser,
+  Precedence,
+} from "@/lang/parser/core";
+import { Expression, Identifier, Statement } from "@/lang/ast";
 import { Token, TokenType } from "@/lang/token/token";
 
 interface StatementFactory<T extends Statement> {

@@ -1,7 +1,10 @@
 import { TokenType } from "@/lang/token/token";
-import { Parser, ParsingContext, StatementParse } from "../core";
-import { BlockStatement } from "@/lang/ast/statement";
-import { Statement } from "@/lang/ast/ast";
+import {
+  type Parser,
+  ParsingContext,
+  type StatementParse,
+} from "@/lang/parser/core";
+import { BlockStatement, Statement } from "@/lang/ast";
 
 export class BlockStatementParser implements Parser<BlockStatement> {
   constructor(private parseStatement: StatementParse) {}

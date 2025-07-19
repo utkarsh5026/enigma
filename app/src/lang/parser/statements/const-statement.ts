@@ -1,8 +1,11 @@
 import { Token, TokenType } from "@/lang/token/token";
-import { type Parser, ParsingContext, type ExpressionParser } from "../core";
+import {
+  type Parser,
+  ParsingContext,
+  type ExpressionParser,
+} from "@/lang/parser/core";
 import { AssignmentStatementParser } from "./assignment-parser";
-import { ConstStatement } from "@/lang/ast/statement";
-import { Expression, Identifier } from "@/lang/ast/ast";
+import { ConstStatement, Expression, Identifier } from "@/lang/ast";
 
 export class ConstStatementParser implements Parser<ConstStatement> {
   private delegate: AssignmentStatementParser<ConstStatement>;

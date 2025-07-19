@@ -1,6 +1,10 @@
 import { TokenType } from "@/lang/token/token";
-import { Parser, ParserException, ParsingContext } from "../core";
-import { BreakStatement, ContinueStatement } from "@/lang/ast/statement";
+import {
+  type Parser,
+  ParserException,
+  ParsingContext,
+} from "@/lang/parser/core";
+import { BreakStatement, ContinueStatement } from "@/lang/ast";
 
 export class BreakStatementParser implements Parser<BreakStatement> {
   canParse(context: ParsingContext): boolean {

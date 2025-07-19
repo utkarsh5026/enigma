@@ -5,9 +5,9 @@ import {
   ParsingContext,
   Precedence,
   type StatementParse,
-} from "../core";
+} from "@/lang/parser/core";
 import { BlockStatementParser } from "./block-statement";
-import { BlockStatement, ForStatement } from "@/lang/ast/statement";
+import { BlockStatement, ForStatement } from "@/lang/ast";
 import { LetStatementParser } from "./let-statement";
 
 export class ForStatementParser implements Parser<ForStatement> {
