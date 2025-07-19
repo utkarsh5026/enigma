@@ -5,9 +5,8 @@ import {
 import { StatementParse } from "@/lang/parser/core";
 import { TokenType } from "@/lang/token/token";
 import { parseCustomList } from "@/lang/parser/utils/list-parsing";
-import { BlockStatementParser } from "@/lang/parser/statements/block-statement";
-import { FunctionLiteral } from "@/lang/ast";
-import { Identifier } from "@/lang/ast/ast";
+import { BlockStatementParser } from "@/lang/parser/parsers/statements";
+import { FunctionLiteral, Identifier } from "@/lang/ast";
 
 /**
  * 🔧 FunctionLiteralParser - Function Definition Specialist 🔧

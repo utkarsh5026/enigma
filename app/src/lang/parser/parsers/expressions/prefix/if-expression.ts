@@ -7,7 +7,7 @@ import {
   Precedence,
 } from "@/lang/parser/core";
 import { TokenType } from "@/lang/token/token";
-import { BlockStatementParser } from "@/lang/parser/statements";
+import { BlockStatementParser } from "@/lang/parser/parsers/statements";
 
 /**
  * 🔀 IfExpressionParser - Conditional Logic Specialist 🔀
