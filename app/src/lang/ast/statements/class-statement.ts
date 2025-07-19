@@ -1,7 +1,6 @@
 import { Token } from "@/lang/token/token";
-import { Statement } from "../ast";
-import { Identifier } from "../ast";
-import { FunctionLiteral } from "../literal";
+import { Statement, Identifier } from "@/lang/ast/ast";
+import { FunctionLiteral } from "@/lang/ast/literals";
 
 /**
  * 🏛️ ClassStatement - Class Definition AST Node 🏛️
