@@ -8,6 +8,7 @@ import {
   ContinueStatementParser,
   BlockStatementParser,
   ExpressionStatementParser,
+  ClassStatementParser,
 } from "@/lang/parser/parsers/statements";
 import {
   ExpressionParser,
@@ -32,13 +33,13 @@ export class StatementParserRegistry implements StatementParse {
     this.addParser(new ConstStatementParser(this.expressionParser));
     this.addParser(new ReturnStatementParser(this.expressionParser));
 
-    // Control flow
     this.addParser(new WhileStatementParser(this, this.expressionParser));
     this.addParser(new ForStatementParser(this, this.expressionParser));
     this.addParser(new BreakStatementParser());
     this.addParser(new ContinueStatementParser());
 
     this.addParser(new BlockStatementParser(this));
+    this.addParser(new ClassStatementParser(this));
   }
 
   findParser(context: ParsingContext): Parser<Statement> | null {
