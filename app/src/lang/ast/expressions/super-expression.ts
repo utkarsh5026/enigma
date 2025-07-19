@@ -20,10 +20,10 @@ import { Expression } from "../ast";
  * ```
  */
 export class SuperExpression extends Expression {
-  readonly method: Expression; // 🏷️ Method to call on parent
+  readonly method: Expression | null; // 🏷️ Method to call on parent
   readonly args: Expression[]; // 📋 Arguments for parent method
 
-  constructor(token: Token, method: Expression, args: Expression[]) {
+  constructor(token: Token, method: Expression | null, args: Expression[]) {
     super(token);
     this.method = method;
     this.args = [...args];
@@ -44,7 +44,7 @@ export class SuperExpression extends Expression {
     if (this.isConstructorCall()) {
       return `super(${args})`;
     } else {
-      return `super.${this.method.toString()}(${args})`;
+      return `super.${this.method?.toString()}(${args})`;
     }
   }
 }
