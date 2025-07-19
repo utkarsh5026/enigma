@@ -1,6 +1,5 @@
-import { Expression } from "@/lang/ast/ast";
+import { Expression, NullLiteral } from "@/lang/ast";
 import { ParsingContext, PrefixExpressionParser } from "@/lang/parser/core";
-import { NullLiteral } from "@/lang/ast";
 import { TokenType } from "@/lang/token/token";
 
 /**

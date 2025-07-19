@@ -1,5 +1,4 @@
-import { BlockStatement, IfExpression } from "@/lang/ast";
-import { Expression } from "@/lang/ast/ast";
+import { BlockStatement, Expression, IfExpression } from "@/lang/ast";
 import {
   ExpressionParser,
   ParsingContext,

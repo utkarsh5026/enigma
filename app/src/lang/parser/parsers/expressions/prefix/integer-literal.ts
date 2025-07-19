@@ -1,5 +1,4 @@
-import { IntegerLiteral } from "@/lang/ast";
-import { Expression } from "@/lang/ast/ast";
+import { IntegerLiteral, Expression } from "@/lang/ast";
 import {
   ParserException,
   ParsingContext,

@@ -4,8 +4,7 @@ import {
   ParsingContext,
   ParserException,
 } from "@/lang/parser/core";
-import { Expression } from "@/lang/ast/ast";
-import { BooleanExpression } from "@/lang/ast/expression";
+import { BooleanLiteral, Expression } from "@/lang/ast";
 
 export class BooleanLiteralParser implements PrefixExpressionParser {
   public parsePrefix(context: ParsingContext): Expression {
@@ -20,7 +19,7 @@ export class BooleanLiteralParser implements PrefixExpressionParser {
 
     context.consumeCurrentToken(currToken.type);
 
-    return new BooleanExpression(currToken, currToken.type == TokenType.TRUE);
+    return new BooleanLiteral(currToken, currToken.type == TokenType.TRUE);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {
