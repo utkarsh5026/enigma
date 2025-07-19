@@ -59,8 +59,6 @@ export class LanguageExpressionParser implements ExpressionParser {
   private parseInfix(context: ParsingContext, left: Expression) {
     const currentToken = context.getCurrentToken();
 
-    console.log("Parsing infix: " + currentToken);
-
     const parser = this.registry.getInfixParser(currentToken.type);
     if (parser === undefined) {
       throw new ParserException(
