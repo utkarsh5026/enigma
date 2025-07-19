@@ -103,7 +103,7 @@ export class ClassStatement extends Statement {
  * Represents a method definition in a class.
  * in the method hello() {return "hello"}
  */
-class MethodDefinition {
+export class MethodDefinition {
   readonly name: Identifier;
   readonly function: FunctionLiteral;
 
