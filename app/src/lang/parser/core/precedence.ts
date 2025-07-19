@@ -38,6 +38,7 @@ export class PrecedenceTable {
     [TokenType.INTEGER_DIVISION, Precedence.PRODUCT],
     [TokenType.LPAREN, Precedence.CALL],
     [TokenType.LBRACKET, Precedence.INDEX],
+    [TokenType.DOT, Precedence.INDEX],
   ]);
 
   getPrecedence(tokenType: TokenType): Precedence {
