@@ -53,7 +53,6 @@ export default class Lexer {
    * @returns The next token in the input.
    */
   public nextToken(): Token {
-    console.log(this.currCh);
     let token: Token;
     this.skipWhitespace();
     this.skipComments();
@@ -195,7 +194,6 @@ export default class Lexer {
     }
 
     this.readCurrChar();
-    console.log(token);
     return token;
   }
 
