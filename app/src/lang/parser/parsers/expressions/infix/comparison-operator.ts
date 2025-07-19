@@ -5,7 +5,7 @@ import {
 } from "@/lang/parser/core";
 import { TokenType } from "@/lang/token/token";
 import { BinaryOperatorParser } from "./binary-operator-parser";
-import { Expression } from "@/lang/ast/ast";
+import { Expression } from "@/lang/ast";
 
 /**
  * ⚡ BinaryOperatorParser - Generic Binary Operation Handler ⚡

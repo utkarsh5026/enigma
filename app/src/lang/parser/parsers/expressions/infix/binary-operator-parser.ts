@@ -5,8 +5,7 @@ import {
   ParsingContext,
 } from "@/lang/parser/core";
 import { Operator, TokenType } from "@/lang/token/token";
-import { Expression } from "@/lang/ast/ast";
-import { InfixExpression } from "@/lang/ast/expression";
+import { Expression, InfixExpression } from "@/lang/ast";
 
 /**
  * ⚡ BinaryOperatorParser - Generic Binary Operation Handler ⚡

@@ -1,8 +1,7 @@
 import { InfixExpressionParser, Precedence } from "@/lang/parser/core";
-import { Expression } from "@/lang/ast/ast";
+import { Expression, IndexExpression } from "@/lang/ast";
 import { TokenType } from "@/lang/token/token";
 import { ParsingContext, ExpressionParser } from "@/lang/parser/core";
-import { IndexExpression } from "@/lang/ast/expression";
 
 /**
  * 🗂️ IndexExpressionParser - Array/Object Access Specialist 🗂️

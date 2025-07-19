@@ -1,10 +1,9 @@
-import { Expression } from "@/lang/ast/ast";
+import { Expression, CallExpression } from "@/lang/ast";
 import {
   ParsingContext,
   type ExpressionParser,
   type InfixExpressionParser,
 } from "@/lang/parser/core";
-import { CallExpression } from "@/lang/ast";
 import { TokenType } from "@/lang/token/token";
 import { parseExpressionList } from "@/lang/parser/utils/list-parsing";
 
