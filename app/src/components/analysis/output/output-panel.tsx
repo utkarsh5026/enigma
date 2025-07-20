@@ -77,11 +77,8 @@ const TerminalEntry: React.FC<TerminalEntryProps> = ({ entry }) => {
         return "[INFO]";
       case "success":
         return "[SUCCESS]";
-      case "print":
-      case "println":
-        return ">";
       default:
-        return ">";
+        return "";
     }
   };
 

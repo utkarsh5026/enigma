@@ -154,7 +154,6 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
                     }`}
                     onClick={() => handleExampleClick(example.key)}
                   >
-                    <Code size={isMobile ? 14 : 12} className="opacity-60" />
                     <span
                       className={`${
                         isMobile ? "text-xs flex-1" : "text-xs"
