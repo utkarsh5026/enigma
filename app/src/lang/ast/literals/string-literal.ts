@@ -19,4 +19,12 @@ export class StringLiteral extends Expression {
   toString(): string {
     return this.token.literal;
   }
+
+  whatIam() {
+    return {
+      name: "StringLiteral",
+      description:
+        "A string literal is an expression that is used to represent a string value.",
+    };
+  }
 }

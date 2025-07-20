@@ -26,4 +26,12 @@ export class HashLiteral extends Expression {
       .join(", ");
     return `{${pairs}}`;
   }
+
+  whatIam() {
+    return {
+      name: "HashLiteral",
+      description:
+        "A hash literal is an expression that is used to create a hash (key-value pairs).",
+    };
+  }
 }

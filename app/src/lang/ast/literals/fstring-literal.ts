@@ -34,4 +34,12 @@ export class FStringLiteral extends Expression {
   public isOnlyStaticString(): boolean {
     return this.expressions.length === 0 && this.actualStrings.length === 1;
   }
+
+  whatIam() {
+    return {
+      name: "FStringLiteral",
+      description:
+        "A f-string literal is an expression that is used to create a formatted string. It is used to embed variables or expressions within a string.",
+    };
+  }
 }

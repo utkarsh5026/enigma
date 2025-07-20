@@ -12,4 +12,12 @@ export class BooleanLiteral extends Expression {
   toString(): string {
     return this.token.literal;
   }
+
+  whatIam() {
+    return {
+      name: "BooleanLiteral",
+      description:
+        "A boolean literal is an expression that is used to represent a boolean value.",
+    };
+  }
 }

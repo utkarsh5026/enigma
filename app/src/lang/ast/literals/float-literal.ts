@@ -33,4 +33,12 @@ export class FloatLiteral extends Expression {
 
     return str;
   }
+
+  whatIam() {
+    return {
+      name: "FloatLiteral",
+      description:
+        "A float literal is an expression that is used to represent a floating-point number.",
+    };
+  }
 }

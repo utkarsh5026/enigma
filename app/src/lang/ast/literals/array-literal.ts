@@ -16,4 +16,12 @@ export class ArrayLiteral extends Expression {
     const elements = this.elements.map((e) => e.toString()).join(", ");
     return `[${elements}]`;
   }
+
+  whatIam() {
+    return {
+      name: "ArrayLiteral",
+      description:
+        "An array literal is an expression that is used to create an array.",
+    };
+  }
 }

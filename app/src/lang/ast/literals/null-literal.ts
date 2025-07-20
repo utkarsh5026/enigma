@@ -9,4 +9,12 @@ export class NullLiteral extends Expression {
   toString(): string {
     return "null";
   }
+
+  whatIam() {
+    return {
+      name: "NullLiteral",
+      description:
+        "A null literal is an expression that is used to represent a null value.",
+    };
+  }
 }

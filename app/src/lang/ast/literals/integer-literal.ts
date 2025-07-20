@@ -24,4 +24,12 @@ export class IntegerLiteral extends Expression {
   toString(): string {
     return this.value.toString();
   }
+
+  whatIam() {
+    return {
+      name: "IntegerLiteral",
+      description:
+        "An integer literal is an expression that is used to represent an integer number.",
+    };
+  }
 }

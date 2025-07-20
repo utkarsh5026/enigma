@@ -21,4 +21,12 @@ export class FunctionLiteral extends Expression {
     const params = this.parameters.map((p) => p.toString()).join(", ");
     return `${this.tokenLiteral()}(${params})`;
   }
+
+  whatIam() {
+    return {
+      name: "FunctionLiteral",
+      description:
+        "A function literal is an expression that is used to create a function.",
+    };
+  }
 }
