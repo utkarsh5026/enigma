@@ -91,11 +91,12 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerTrigger asChild>
             <Button
-              className="w-full bg-[var(--tokyo-blue)] hover:bg-[var(--tokyo-blue)]/90 text-white"
+              className="w-full bg-tokyo-bg-dark/80 text-white"
               size="lg"
+              variant="outline"
             >
               <BarChart3 size={20} className="mr-2" />
-              Analyze Code
+              See Code Output
               {tokenProps.tokens.length > 0 && (
                 <Badge className="ml-2 bg-white/20 text-white">
                   {tokenProps.tokens.length}
@@ -106,7 +107,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
           <DrawerContent className="bg-[var(--tokyo-bg)]/50 backdrop-blur-sm max-w-full h-[80vh] font-mono">
             <DrawerHeader className="border-b border-[var(--tokyo-comment)]/40 p-4">
               <DrawerTitle className="text-lg font-medium">
-                Code Analysis
+                Code Output
               </DrawerTitle>
             </DrawerHeader>
             <div className="flex-1 min-h-0 p-4">
