@@ -67,6 +67,11 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
         <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
           <CustomTabTrigger
+            value="output"
+            icon={<Monitor size={16} />}
+            label="Output"
+          />
+          <CustomTabTrigger
             value="tokens"
             icon={<Terminal size={16} />}
             label="Tokens"
@@ -82,13 +87,12 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             icon={<ChevronsRight size={16} />}
             label="Execution"
           />
-          <CustomTabTrigger
-            value="output"
-            icon={<Monitor size={16} />}
-            label="Output"
-          />
         </TabsList>
       </div>
+
+      <TabsContent value="output" className="flex-1 min-h-0 m-0">
+        <OutputPanel />
+      </TabsContent>
 
       {/* Tab Content */}
       <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
@@ -110,10 +114,6 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
           <ExecutionVisualizer code={code} />
           <ScrollBar orientation="vertical" />
         </ScrollArea>
-      </TabsContent>
-
-      <TabsContent value="output" className="flex-1 min-h-0 m-0">
-        <OutputPanel />
       </TabsContent>
     </Tabs>
   );
