@@ -7,16 +7,29 @@ import { useMobile } from "../../hooks/use-mobile";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface CategoryExample {
+  key: string;
+  name: string;
+}
+
+interface ExampleCategory {
+  key: string;
+  emoji: string;
+  name: string;
+  description: string;
+  examples: CategoryExample[];
+}
+
 interface ToolBarProps {
   selectedExample: string;
   loadExample: (example: string) => void;
-  examples: string[];
+  categorizedExamples: ExampleCategory[];
 }
 
 const ToolBar: React.FC<ToolBarProps> = ({
   selectedExample,
   loadExample,
-  examples,
+  categorizedExamples,
 }) => {
   const { isMobile, isPhone } = useMobile();
   const [showExamplesDropdown, setShowExamplesDropdown] = useState(false);
@@ -55,7 +68,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
           showExamplesDropdown={showExamplesDropdown}
           handleOpenChange={setShowExamplesDropdown}
           selectedExample={selectedExample}
-          examples={examples}
+          categorizedExamples={categorizedExamples}
           loadExample={loadExample}
         />
 
