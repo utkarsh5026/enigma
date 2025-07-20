@@ -8,6 +8,7 @@ import { IfExpressionEvaluator } from "./if-expression-evaluator";
 import { ThisExpressionEvaluator } from "./this-expression";
 import { NewExpressionEvaluator } from "./new-expression";
 import { SuperExpressionEvaluator } from "./super-expression";
+import { PropertyExpressionEvaluator } from "./property-expression-evaluator";
 
 export {
   IndentifierEvaluator,
@@ -20,4 +21,5 @@ export {
   ThisExpressionEvaluator,
   NewExpressionEvaluator,
   SuperExpressionEvaluator,
+  PropertyExpressionEvaluator,
 };
