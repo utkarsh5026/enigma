@@ -18,15 +18,26 @@ import LeftPanel from "./letft-panel";
 import AnalysisContent from "./ananlysis-panel";
 import type { Token } from "@/lang/token/token";
 
+interface TokenProps {
+  tokens: Token[];
+  isTokenizing: boolean;
+  error: string | null;
+  hasTokens: boolean;
+  isCodeChanged: (code: string) => boolean;
+  onTokenize: (code: string) => void;
+  onClearTokens: () => void;
+}
+
 interface DesktopLayoutProps {
   code: string;
   handleCodeChange: (newCode: string) => void;
-  tokens: Token[];
+  tokenProps: TokenProps;
 }
+
 export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   code,
   handleCodeChange,
-  tokens,
+  tokenProps,
 }) => {
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full">
@@ -44,7 +55,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
       {/* Analysis Panel */}
       <ResizablePanel defaultSize={50} minSize={30}>
         <div className="h-full flex flex-col">
-          <AnalysisContent tokens={tokens} code={code} />
+          <AnalysisContent tokenProps={tokenProps} code={code} />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
@@ -54,12 +65,13 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
 interface MobileLayoutProps {
   code: string;
   handleCodeChange: (newCode: string) => void;
-  tokens: Token[];
+  tokenProps: TokenProps;
 }
+
 export const MobileLayout: React.FC<MobileLayoutProps> = ({
   code,
   handleCodeChange,
-  tokens,
+  tokenProps,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -84,9 +96,9 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
             >
               <BarChart3 size={20} className="mr-2" />
               Analyze Code
-              {tokens.length > 0 && (
+              {tokenProps.tokens.length > 0 && (
                 <Badge className="ml-2 bg-white/20 text-white">
-                  {tokens.length}
+                  {tokenProps.tokens.length}
                 </Badge>
               )}
             </Button>
@@ -96,7 +108,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
               <DrawerTitle>Code Analysis</DrawerTitle>
             </DrawerHeader>
             <div className="flex-1 min-h-0">
-              <AnalysisContent tokens={tokens} code={code} />
+              <AnalysisContent tokenProps={tokenProps} code={code} />
             </div>
           </DrawerContent>
         </Drawer>

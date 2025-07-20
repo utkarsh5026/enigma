@@ -9,16 +9,39 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Terminal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Terminal,
+  Play,
+  RotateCcw,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import { getTokenCategory, getCategoryIcon } from "./tokens-info";
 import CodeTokens from "./code-tokens";
 import TokenBadge from "./token-badge";
 
 interface TokenDisplayProps {
   tokens: Token[];
+  code: string;
+  isTokenizing: boolean;
+  error: string | null;
+  hasTokens: boolean;
+  isCodeChanged: (code: string) => boolean;
+  onTokenize: (code: string) => void;
+  onClearTokens: () => void;
 }
 
-const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
+const TokenDisplay: React.FC<TokenDisplayProps> = ({
+  tokens,
+  code,
+  isTokenizing,
+  error,
+  hasTokens,
+  isCodeChanged,
+  onTokenize,
+  onClearTokens,
+}) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const tokensByLine = tokens.reduce<Record<number, Token[]>>((acc, token) => {
@@ -38,6 +61,13 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
     .map(Number)
     .sort((a, b) => a - b);
 
+  const handleTokenize = () => {
+    onTokenize(code);
+  };
+
+  const codeHasContent = code.trim().length > 0;
+  const showCodeChanged = codeHasContent && hasTokens && isCodeChanged(code);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -52,8 +82,81 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
           </CardTitle>
 
           <CardDescription className="text-tokyo-fg-dark">
-            Visualized token stream from lexical analysis
+            Manually analyze your code to view the token stream from lexical
+            analysis
           </CardDescription>
+
+          {/* Tokenize Controls */}
+          <div className="flex items-center gap-3 pt-2">
+            <Button
+              onClick={handleTokenize}
+              disabled={!codeHasContent || isTokenizing}
+              className="bg-tokyo-blue hover:bg-tokyo-blue/90 text-white disabled:opacity-50"
+              size="sm"
+            >
+              {isTokenizing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                  Tokenizing...
+                </>
+              ) : (
+                <>
+                  <Play size={16} className="mr-2" />
+                  Tokenize Code
+                </>
+              )}
+            </Button>
+
+            {hasTokens && (
+              <Button
+                onClick={onClearTokens}
+                variant="outline"
+                size="sm"
+                className="border-tokyo-comment text-tokyo-comment hover:bg-tokyo-comment/10"
+              >
+                <RotateCcw size={16} className="mr-2" />
+                Clear
+              </Button>
+            )}
+
+            {/* Status Indicators */}
+            {showCodeChanged && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center text-tokyo-orange text-sm"
+              >
+                <AlertCircle size={16} className="mr-1" />
+                Code changed - click tokenize to update
+              </motion.div>
+            )}
+
+            {hasTokens && !showCodeChanged && !isTokenizing && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center text-tokyo-green text-sm"
+              >
+                <CheckCircle2 size={16} className="mr-1" />
+                Tokens up to date
+              </motion.div>
+            )}
+          </div>
+
+          {/* Error Display */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-tokyo-red/10 border border-tokyo-red/30 rounded-lg p-3 mt-2"
+            >
+              <div className="flex items-center text-tokyo-red text-sm">
+                <AlertCircle size={16} className="mr-2" />
+                <span className="font-medium">Tokenization Error:</span>
+              </div>
+              <p className="text-tokyo-red/80 text-sm mt-1">{error}</p>
+            </motion.div>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-6">
@@ -123,6 +226,9 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ tokens }) => {
             tokensByLine={tokensByLine}
             activeFilter={activeFilter}
             lineNumbers={lineNumbers}
+            isEmpty={!hasTokens && !isTokenizing}
+            isTokenizing={isTokenizing}
+            code={code}
           />
         </CardContent>
       </Card>

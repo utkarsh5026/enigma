@@ -83,7 +83,15 @@ const categorizedExamples = createCategorizedExamples();
 
 const Enigma: React.FC = () => {
   const [code, setCode] = useState("");
-  const { tokens } = useTokens(code);
+  const {
+    tokens,
+    isTokenizing,
+    error,
+    hasTokens,
+    tokenize,
+    clearTokens,
+    isCodeChanged,
+  } = useTokens();
   const [selectedExample, setSelectedExample] = useState<
     keyof typeof sampleCodeSnippets | null
   >(null);
@@ -103,6 +111,7 @@ const Enigma: React.FC = () => {
     if (selectedCode) {
       handleCodeChange(selectedCode);
       setSelectedExample(exampleKey);
+      clearTokens(); // Clear tokens when loading new example
     }
   };
 
@@ -115,6 +124,16 @@ const Enigma: React.FC = () => {
         staggerChildren: 0.1,
       },
     },
+  };
+
+  const tokenProps = {
+    tokens,
+    isTokenizing,
+    error,
+    hasTokens,
+    isCodeChanged,
+    onTokenize: tokenize,
+    onClearTokens: clearTokens,
   };
 
   return (
@@ -137,13 +156,13 @@ const Enigma: React.FC = () => {
           <MobileLayout
             code={code}
             handleCodeChange={handleCodeChange}
-            tokens={tokens}
+            tokenProps={tokenProps}
           />
         ) : (
           <DesktopLayout
             code={code}
             handleCodeChange={handleCodeChange}
-            tokens={tokens}
+            tokenProps={tokenProps}
           />
         )}
       </motion.div>

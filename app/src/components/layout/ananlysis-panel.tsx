@@ -42,12 +42,25 @@ const CustomTabTrigger: React.FC<TabTriggerProps> = ({
   </TabsTrigger>
 );
 
-interface AnalysisContentProps {
+interface TokenProps {
   tokens: Token[];
+  isTokenizing: boolean;
+  error: string | null;
+  hasTokens: boolean;
+  isCodeChanged: (code: string) => boolean;
+  onTokenize: (code: string) => void;
+  onClearTokens: () => void;
+}
+
+interface AnalysisContentProps {
+  tokenProps: TokenProps;
   code: string;
 }
 
-const AnalysisContent: React.FC<AnalysisContentProps> = ({ tokens, code }) => {
+const AnalysisContent: React.FC<AnalysisContentProps> = ({
+  tokenProps,
+  code,
+}) => {
   return (
     <Tabs defaultValue="tokens" className="h-full flex flex-col">
       {/* Analysis Tabs */}
@@ -57,7 +70,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({ tokens, code }) => {
             value="tokens"
             icon={<Terminal size={16} />}
             label="Tokens"
-            badge={tokens.length}
+            badge={tokenProps.tokens.length}
           />
           <CustomTabTrigger
             value="ast"
@@ -80,7 +93,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({ tokens, code }) => {
       {/* Tab Content */}
       <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
         <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-          <TokenDisplay tokens={tokens} />
+          <TokenDisplay code={code} {...tokenProps} />
           <ScrollBar orientation="vertical" />
         </ScrollArea>
       </TabsContent>

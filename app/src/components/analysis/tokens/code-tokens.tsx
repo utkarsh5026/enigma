@@ -1,4 +1,4 @@
-import { Terminal, Code } from "lucide-react";
+import { Terminal, Code, Play } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Token } from "@/lang/token/token";
 import React, { useState } from "react";
@@ -8,14 +8,21 @@ interface CodeTokensProps {
   lineNumbers: number[];
   tokensByLine: Record<number, Token[]>;
   activeFilter: string | null;
+  isEmpty?: boolean;
+  isTokenizing?: boolean;
+  code?: string;
 }
 
 const CodeTokens: React.FC<CodeTokensProps> = ({
   lineNumbers,
   tokensByLine,
   activeFilter,
+  isTokenizing = false,
+  code = "",
 }: CodeTokensProps) => {
   const [hoveredToken, setHoveredToken] = useState<Token | null>(null);
+
+  const hasCode = code.trim().length > 0;
 
   return (
     <div className="space-y-3">
@@ -25,7 +32,20 @@ const CodeTokens: React.FC<CodeTokensProps> = ({
       </h3>
 
       <div className="rounded-lg p-4 border border-tokyo-bg-highlight/30 bg-tokyo-bg-dark/40">
-        {lineNumbers.length > 0 ? (
+        {isTokenizing ? (
+          <motion.div
+            className="flex flex-col items-center justify-center py-12 text-tokyo-blue"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-tokyo-blue border-t-transparent mb-4" />
+            <p className="text-lg font-medium">Tokenizing your code...</p>
+            <p className="text-tokyo-fg-dark text-sm mt-1">
+              This may take a moment for complex code
+            </p>
+          </motion.div>
+        ) : lineNumbers.length > 0 ? (
           <div className="space-y-1">
             <AnimatePresence>
               {lineNumbers.map((lineNum) => {
@@ -49,13 +69,29 @@ const CodeTokens: React.FC<CodeTokensProps> = ({
           </div>
         ) : (
           <motion.div
-            className="flex flex-col items-center justify-center py-8 text-tokyo-comment italic"
+            className="flex flex-col items-center justify-center py-12 text-tokyo-comment"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <Terminal size={40} className="mb-3 opacity-50" />
-            <p>No tokens to display. Enter some code in the editor.</p>
+            {hasCode ? (
+              <>
+                <Play size={40} className="mb-3 opacity-50" />
+                <p className="text-lg font-medium">Ready to tokenize!</p>
+                <p className="text-tokyo-fg-dark text-sm mt-1">
+                  Click the "Tokenize Code" button above to analyze your code
+                </p>
+              </>
+            ) : (
+              <>
+                <Terminal size={40} className="mb-3 opacity-50" />
+                <p className="text-lg font-medium">No code to tokenize</p>
+                <p className="text-tokyo-fg-dark text-sm mt-1">
+                  Enter some code in the editor, then click tokenize to see the
+                  analysis
+                </p>
+              </>
+            )}
           </motion.div>
         )}
       </div>
