@@ -60,6 +60,9 @@ export class LanguageEvaluator implements EvaluationContext {
   private readonly nullEvaluator = new literals.NullLiteralEvaluator();
   private readonly fstringEvaluator = new literals.FStringLiteralEvaluator();
   private readonly floatEvaluator = new literals.FloatLiteralEvaluator();
+  private readonly newEvaluator = new expressions.NewExpressionEvaluator();
+  private readonly superEvaluator = new expressions.SuperExpressionEvaluator();
+  private readonly thisEvaluator = new expressions.ThisExpressionEvaluator();
 
   constructor(
     enableStackTraces: boolean,
@@ -296,6 +299,27 @@ export class LanguageEvaluator implements EvaluationContext {
       case ast.Identifier:
         return this.identifierEvaluator.evaluate(
           node as ast.Identifier,
+          env,
+          this
+        );
+
+      case expression.NewExpression:
+        return this.newEvaluator.evaluate(
+          node as expression.NewExpression,
+          env,
+          this
+        );
+
+      case expression.SuperExpression:
+        return this.superEvaluator.evaluate(
+          node as expression.SuperExpression,
+          env,
+          this
+        );
+
+      case expression.ThisExpression:
+        return this.thisEvaluator.evaluate(
+          node as expression.ThisExpression,
           env,
           this
         );
