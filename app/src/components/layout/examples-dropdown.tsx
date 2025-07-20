@@ -83,7 +83,7 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className={`bg-[var(--tokyo-bg-dark)]/95 backdrop-blur-md border border-[var(--tokyo-comment)]/30 font-cascadia-code max-h-[80vh] overflow-y-auto ${
+        className={`bg-[var(--tokyo-bg-dark)]/95 backdrop-blur-md border border-[var(--tokyo-comment)]/30 font-cascadia-code ${
           isMobile
             ? "w-[90vw] max-w-sm" // Responsive width for mobile
             : "w-80"
@@ -105,75 +105,88 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
 
         <DropdownMenuSeparator className="bg-[var(--tokyo-comment)]/20" />
 
-        {categorizedExamples.map((category) => (
-          <div key={category.key}>
-            {/* Category Header */}
-            <div
-              className={`flex items-center gap-2 cursor-pointer px-2 py-2 hover:bg-[var(--tokyo-bg-highlight)]/30 border-l-2 border-transparent hover:border-[var(--tokyo-blue)]/50 transition-colors ${
-                isMobile ? "px-3 py-3" : "px-2 py-2"
-              }`}
-              onClick={() => toggleCategory(category.key)}
-            >
-              <span className="text-lg">{category.emoji}</span>
-              <div className="flex-1 min-w-0">
-                <div
-                  className={`font-medium text-[var(--tokyo-fg)] ${
-                    isMobile ? "text-sm" : "text-xs"
-                  }`}
-                >
-                  {category.name}
-                </div>
-                <div
-                  className={`text-[var(--tokyo-fg-dark)] ${
-                    isMobile ? "text-xs" : "text-xs"
-                  } truncate`}
-                >
-                  {category.description}
-                </div>
-              </div>
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 text-[var(--tokyo-fg-dark)] ${
-                  expandedCategories.has(category.key) ? "rotate-180" : ""
+        <div
+          className="max-h-[60vh] w-full overflow-y-auto scrollbar-hide"
+          style={{
+            scrollbarWidth: "none" /* Firefox */,
+            msOverflowStyle: "none" /* IE and Edge */,
+          }}
+        >
+          <style>{`
+            div::-webkit-scrollbar {
+              display: none; /* Chrome, Safari and Opera */
+            }
+          `}</style>
+          {categorizedExamples.map((category) => (
+            <div key={category.key}>
+              {/* Category Header */}
+              <div
+                className={`flex items-center gap-2 cursor-pointer px-2 py-2 hover:bg-[var(--tokyo-bg-highlight)]/30 border-l-2 border-transparent hover:border-[var(--tokyo-blue)]/50 transition-colors ${
+                  isMobile ? "px-3 py-3" : "px-2 py-2"
                 }`}
-              />
-            </div>
-
-            {/* Category Examples */}
-            {expandedCategories.has(category.key) && (
-              <div className="ml-6 border-l border-[var(--tokyo-comment)]/20">
-                {category.examples.map((example) => (
-                  <DropdownMenuItem
-                    key={example.key}
-                    className={`flex items-center gap-2 cursor-pointer ml-2 ${
-                      isMobile ? "px-3 py-2 min-h-[36px]" : "px-2 py-1.5"
-                    } ${
-                      selectedExample === example.key
-                        ? "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-l-2 border-[var(--tokyo-blue)]"
-                        : "text-[var(--tokyo-fg-dark)] hover:bg-[var(--tokyo-bg-highlight)]/30 hover:text-[var(--tokyo-fg)] font-cascadia-code"
+                onClick={() => toggleCategory(category.key)}
+              >
+                <span className="text-lg">{category.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div
+                    className={`font-medium text-[var(--tokyo-fg)] ${
+                      isMobile ? "text-sm" : "text-xs"
                     }`}
-                    onClick={() => handleExampleClick(example.key)}
                   >
-                    <span
-                      className={`${
-                        isMobile ? "text-xs flex-1" : "text-xs"
-                      } truncate`}
-                    >
-                      {example.name}
-                    </span>
-                    {selectedExample === example.key && (
-                      <div
-                        className={`ml-auto rounded-full bg-[var(--tokyo-blue)] animate-pulse ${
-                          isMobile ? "w-1.5 h-1.5" : "w-1 h-1"
-                        }`}
-                      />
-                    )}
-                  </DropdownMenuItem>
-                ))}
+                    {category.name}
+                  </div>
+                  <div
+                    className={`text-[var(--tokyo-fg-dark)] ${
+                      isMobile ? "text-xs" : "text-xs"
+                    } truncate`}
+                  >
+                    {category.description}
+                  </div>
+                </div>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 text-[var(--tokyo-fg-dark)] ${
+                    expandedCategories.has(category.key) ? "rotate-180" : ""
+                  }`}
+                />
               </div>
-            )}
-          </div>
-        ))}
+
+              {/* Category Examples */}
+              {expandedCategories.has(category.key) && (
+                <div className="ml-6 border-l border-[var(--tokyo-comment)]/20">
+                  {category.examples.map((example) => (
+                    <DropdownMenuItem
+                      key={example.key}
+                      className={`flex items-center gap-2 cursor-pointer ml-2 ${
+                        isMobile ? "px-3 py-2 min-h-[36px]" : "px-2 py-1.5"
+                      } ${
+                        selectedExample === example.key
+                          ? "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-l-2 border-[var(--tokyo-blue)]"
+                          : "text-[var(--tokyo-fg-dark)] hover:bg-[var(--tokyo-bg-highlight)]/30 hover:text-[var(--tokyo-fg)] font-cascadia-code"
+                      }`}
+                      onClick={() => handleExampleClick(example.key)}
+                    >
+                      <span
+                        className={`${
+                          isMobile ? "text-xs flex-1" : "text-xs"
+                        } truncate`}
+                      >
+                        {example.name}
+                      </span>
+                      {selectedExample === example.key && (
+                        <div
+                          className={`ml-auto rounded-full bg-[var(--tokyo-blue)] animate-pulse ${
+                            isMobile ? "w-1.5 h-1.5" : "w-1 h-1"
+                          }`}
+                        />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
