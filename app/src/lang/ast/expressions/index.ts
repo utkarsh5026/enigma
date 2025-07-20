@@ -8,6 +8,7 @@ import { IfExpression } from "./if-expression";
 import { InfixExpression } from "./infix-expression";
 import { IndexExpression } from "./index-expression";
 import { NewExpression } from "./new-expression";
+import { Identifier } from "./identifier-expression";
 
 export {
   SuperExpression,
@@ -19,5 +20,6 @@ export {
   IfExpression,
   InfixExpression,
   IndexExpression,
+  Identifier,
   NewExpression,
 };
