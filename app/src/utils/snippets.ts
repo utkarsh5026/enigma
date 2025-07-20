@@ -610,83 +610,6 @@ let comparePerformance = fn(n) {
 comparePerformance(10);
 `,
 
-  closureCounter: `# Advanced Closure: Counter Factory with multiple instances
-let createCounterFactory = fn() {
-  let instanceCount = 0;
-  
-  return fn(name, initialValue) {
-    instanceCount = instanceCount + 1;
-    let count = initialValue;
-    let id = instanceCount;
-    
-    print("=== Creating Counter Instance ===");
-    print("Counter name:", name);
-    print("Instance ID:", id);
-    print("Initial value:", initialValue);
-    
-    return {
-      "getName": fn() { name; },
-      "getId": fn() { id; },
-      "getValue": fn() { 
-        print(f"Counter {name} (#{id}) current value: {count}");
-        return count; 
-      },
-      "increment": fn() {
-        let oldValue = count;
-        count = count + 1;
-        print(f"Counter {name} incremented: {oldValue} -> {count}");
-        return count;
-      },
-      "decrement": fn() {
-        let oldValue = count;
-        count = count - 1;
-        print(f"Counter {name} decremented: {oldValue} -> {count}");
-        return count;
-      },
-      "reset": fn() {
-        let oldValue = count;
-        count = initialValue;
-        print(f"Counter {name} reset: {oldValue} -> {count}");
-        return count;
-      },
-      "add": fn(value) {
-        let oldValue = count;
-        count = count + value;
-        print(f"Counter {name} added {value}: {oldValue} -> {count}");
-        return count;
-      }
-    };
-  };
-};
-
-print("=== Closure Counter Demo ===");
-
-let counterFactory = createCounterFactory();
-
-print("\\n--- Creating Counters ---");
-let scoreCounter = counterFactory("Score", 0);
-let livesCounter = counterFactory("Lives", 3);
-let levelCounter = counterFactory("Level", 1);
-
-print("\\n--- Testing Counters ---");
-scoreCounter["add"](100);
-scoreCounter["add"](50);
-scoreCounter["getValue"]();
-
-livesCounter["decrement"]();
-livesCounter["getValue"]();
-
-levelCounter["increment"]();
-levelCounter["increment"]();
-levelCounter["getValue"]();
-
-print("\\n--- Counter States ---");
-print("Final scores:");
-scoreCounter["getValue"]();
-livesCounter["getValue"]();
-levelCounter["getValue"]();
-`,
-
   simpleBeginnerExample: `# Perfect for beginners: Variables and basic operations
 print("=== Welcome to Programming! ===");
 
@@ -1690,334 +1613,1126 @@ bike.getStatus();
 print("\\n=== Multi-level inheritance creates rich object hierarchies! ===");
 `,
 
-  libraryManagement: `# Library Management System with Classes
-print("=== Digital Library Management System ===");
+  // ========== DATA STRUCTURES ==========
+  linkedListImplementation: `# Linked List Implementation - Dynamic Data Storage
+print("=== Linked List Data Structure ===");
 
-# Base Item class for all library items
-class LibraryItem {
-  init(title, author, itemId) {
-    print(f"📚 Adding to library: {title} by {author}");
-    this.title = title;
-    this.author = author;
-    this.itemId = itemId;
-    this.isCheckedOut = false;
-    this.borrower = null;
-    this.borrowDate = null;
-    this.dueDate = null;
-    print(f"   ID: {this.itemId}, Status: Available");
-  }
-
-  checkOut(memberName, borrowDays) {
-    if (this.isCheckedOut) {
-      print(f"❌ {this.title} is already checked out by {this.borrower}");
-      return false;
-    }
-
-    this.isCheckedOut = true;
-    this.borrower = memberName;
-    this.borrowDate = "Today";  # In real system, would be actual date
-    this.dueDate = f"Today + {borrowDays} days";
-    
-    print(f"✅ {this.title} checked out to {memberName}");
-    print(f"   Due date: {this.dueDate}");
-    return true;
-  }
-
-  checkIn() {
-    if (!this.isCheckedOut) {
-      print(f"❌ {this.title} is not currently checked out");
-      return false;
-    }
-
-    let previousBorrower = this.borrower;
-    this.isCheckedOut = false;
-    this.borrower = null;
-    this.borrowDate = null;
-    this.dueDate = null;
-    
-    print(f"📚 {this.title} returned by {previousBorrower}");
-    print("   Status: Available");
-    return true;
-  }
-
-  getStatus() {
-    print(f"\\n📋 {this.getItemType()}: {this.title}");
-    print(f"   Author: {this.author}");
-    print(f"   ID: {this.itemId}");
-    if (this.isCheckedOut) {
-      print(f"   Status: Checked out to {this.borrower}");
-      print(f"   Due: {this.dueDate}");
-    } else {
-      print("   Status: Available");
-    }
-    this.getSpecificInfo();
-  }
-
-  getItemType() {
-    return "Library Item";
-  }
-
-  getSpecificInfo() {
-    # Override in child classes
+class ListNode {
+  init(data) {
+    this.data = data;
+    this.next = null;
+    print(f"Created node with data: {data}");
   }
 }
 
-# Book class extends LibraryItem
-class Book extends LibraryItem {
-  init(title, author, itemId, pages, genre) {
-    super(title, author, itemId);
-    this.pages = pages;
-    this.genre = genre;
-    this.bookmark = 0;
-    print(f"   📖 Book details: {pages} pages, Genre: {genre}");
+class LinkedList {
+  init() {
+    this.head = null;
+    this.size = 0;
+    print("Created empty linked list");
   }
 
-  getItemType() {
-    return "Book";
-  }
-
-  getSpecificInfo() {
-    print(f"   Pages: {this.pages}");
-    print(f"   Genre: {this.genre}");
-    if (this.bookmark > 0) {
-      print(f"   Bookmark: Page {this.bookmark}");
-    }
-  }
-
-  setBookmark(page) {
-    if (page >= 0 && page <= this.pages) {
-      this.bookmark = page;
-      print(f"🔖 Bookmark set to page {page} in {this.title}");
+  append(data) {
+    print(f"\\nAppending {data} to list");
+    let newNode = new ListNode(data);
+    
+    if (this.head == null) {
+      this.head = newNode;
+      print("Added as first node (head)");
     } else {
-      print(f"❌ Invalid page number: {page} (Book has {this.pages} pages)");
+      let current = this.head;
+      let position = 0;
+      
+      while (current.next != null) {
+        current = current.next;
+        position = position + 1;
+      }
+      
+      current.next = newNode;
+      print(f"Added at position {position + 1}");
+    }
+    
+    this.size = this.size + 1;
+    print(f"List size is now: {this.size}");
+  }
+
+  prepend(data) {
+    print(f"\\nPrepending {data} to list");
+    let newNode = new ListNode(data);
+    newNode.next = this.head;
+    this.head = newNode;
+    this.size = this.size + 1;
+    print(f"Added as new head. List size: {this.size}");
+  }
+
+  find(data) {
+    print(f"\\nSearching for {data}");
+    let current = this.head;
+    let position = 0;
+    
+    while (current != null) {
+      print(f"Checking position {position}: {current.data}");
+      if (current.data == data) {
+        print(f"Found {data} at position {position}");
+        return position;
+      }
+      current = current.next;
+      position = position + 1;
+    }
+    
+    print(f"{data} not found in list");
+    return -1;
+  }
+
+  removeAt(index) {
+    print(f"\\nRemoving element at index {index}");
+    
+    if (index < 0 || index >= this.size) {
+      print(f"Invalid index {index}. List size is {this.size}");
+      return null;
+    }
+    
+    if (index == 0) {
+      let data = this.head.data;
+      this.head = this.head.next;
+      this.size = this.size - 1;
+      print(f"Removed head node with data: {data}");
+      return data;
+    }
+    
+    let current = this.head;
+    for (let i = 0; i < index - 1; i = i + 1) {
+      current = current.next;
+    }
+    
+    let nodeToRemove = current.next;
+    let data = nodeToRemove.data;
+    current.next = nodeToRemove.next;
+    this.size = this.size - 1;
+    
+    print(f"Removed node with data: {data}");
+    return data;
+  }
+
+  display() {
+    print("\\nCurrent list contents:");
+    if (this.head == null) {
+      print("List is empty");
+      return;
+    }
+    
+    let current = this.head;
+    let position = 0;
+    let elements = [];
+    
+    while (current != null) {
+      elements = push(elements, current.data);
+      print(f"Position {position}: {current.data}");
+      current = current.next;
+      position = position + 1;
+    }
+    
+    print(f"List: {elements} (size: {this.size})");
+  }
+
+  reverse() {
+    print("\\nReversing the linked list");
+    let prev = null;
+    let current = this.head;
+    let next = null;
+    
+    while (current != null) {
+      next = current.next;
+      current.next = prev;
+      prev = current;
+      current = next;
+    }
+    
+    this.head = prev;
+    print("List reversed successfully");
+  }
+}
+
+print("\\n--- Building a Linked List ---");
+let list = new LinkedList();
+
+list.append(10);
+list.append(20);
+list.append(30);
+list.display();
+
+list.prepend(5);
+list.display();
+
+print("\\n--- Search Operations ---");
+list.find(20);
+list.find(99);
+
+print("\\n--- Removal Operations ---");
+list.removeAt(1);
+list.display();
+
+print("\\n--- List Reversal ---");
+list.reverse();
+list.display();
+
+print("\\n=== Linked Lists provide dynamic, efficient insertion! ===");
+`,
+
+  stackImplementation: `# Stack Implementation - Last In, First Out (LIFO)
+print("=== Stack Data Structure ===");
+
+class Stack {
+  init() {
+    this.items = [];
+    this.top = -1;
+    print("Created empty stack");
+  }
+
+  push(element) {
+    this.items = push(this.items, element);
+    this.top = this.top + 1;
+    print(f"Pushed {element}. Stack size: {this.top + 1}");
+    this.display();
+  }
+
+  pop() {
+    if (this.isEmpty()) {
+      print("Cannot pop - stack is empty!");
+      return null;
+    }
+    
+    let element = this.items[this.top];
+    # Remove last element (since we don't have built-in pop)
+    let newItems = [];
+    for (let i = 0; i < this.top; i = i + 1) {
+      newItems = push(newItems, this.items[i]);
+    }
+    this.items = newItems;
+    this.top = this.top - 1;
+    
+    print(f"Popped {element}. Stack size: {this.top + 1}");
+    this.display();
+    return element;
+  }
+
+  peek() {
+    if (this.isEmpty()) {
+      print("Cannot peek - stack is empty!");
+      return null;
+    }
+    
+    let topElement = this.items[this.top];
+    print(f"Top element: {topElement}");
+    return topElement;
+  }
+
+  isEmpty() {
+    let empty = this.top == -1;
+    return empty;
+  }
+
+  size() {
+    return this.top + 1;
+  }
+
+  display() {
+    if (this.isEmpty()) {
+      print("Stack: [] (empty)");
+      return;
+    }
+    
+    print("Stack (bottom to top):");
+    for (let i = 0; i <= this.top; i = i + 1) {
+      let marker = "";
+      if (i == this.top) {
+        marker = " <- TOP";
+      }
+      print(f"  [{i}] {this.items[i]}{marker}");
     }
   }
 
-  getReadingProgress() {
-    if (this.bookmark == 0) {
+  clear() {
+    this.items = [];
+    this.top = -1;
+    print("Stack cleared");
+  }
+}
+
+# Demonstrate stack with balanced parentheses checker
+let checkBalancedParentheses = fn(expression) {
+  print(f"\\n=== Checking Balanced Parentheses ===");
+  print(f"Expression: {expression}");
+  
+  let stack = new Stack();
+  let balanced = true;
+  
+  for (let i = 0; i < len(expression); i = i + 1) {
+    let char = expression[i];  # Note: This is conceptual - we'd need char access
+    
+    # For demonstration, let's assume we have parentheses as separate elements
+    if (char == "(") {
+      print(f"Found opening parenthesis at position {i}");
+      stack.push(i);
+    } elif (char == ")") {
+      print(f"Found closing parenthesis at position {i}");
+      if (stack.isEmpty()) {
+        print("Error: Closing parenthesis without matching opening");
+        balanced = false;
+        break;
+      } else {
+        let openPos = stack.pop();
+        print(f"Matched with opening parenthesis at position {openPos}");
+      }
+    }
+  }
+  
+  if (balanced && !stack.isEmpty()) {
+    print("Error: Unmatched opening parentheses remain");
+    balanced = false;
+  }
+  
+  if (balanced) {
+    print("✓ Expression is balanced!");
+  } else {
+    print("✗ Expression is NOT balanced!");
+  }
+  
+  return balanced;
+};
+
+print("\\n--- Basic Stack Operations ---");
+let stack = new Stack();
+
+stack.push(10);
+stack.push(20);
+stack.push(30);
+
+stack.peek();
+
+stack.pop();
+stack.pop();
+
+stack.push(40);
+stack.peek();
+
+# For parentheses demo, we'll manually push/pop
+print("\\n--- Parentheses Checking Demo ---");
+let parenStack = new Stack();
+print("Simulating: ((())())");
+print("Processing opening parentheses:");
+parenStack.push("(");
+parenStack.push("(");
+parenStack.push("(");
+
+print("\\nProcessing closing parentheses:");
+parenStack.pop();  # matches (((
+parenStack.pop();  # matches ((
+parenStack.push("(");  # new opening
+parenStack.pop();  # matches new (
+parenStack.pop();  # matches remaining (
+
+print("\\nAll parentheses matched - expression is balanced!");
+
+print("\\n=== Stacks are perfect for LIFO operations! ===");
+`,
+
+  queueImplementation: `# Queue Implementation - First In, First Out (FIFO)
+print("=== Queue Data Structure ===");
+
+class Queue {
+  init() {
+    this.items = [];
+    this.front = 0;
+    this.rear = -1;
+    this.count = 0;
+    print("Created empty queue");
+  }
+
+  enqueue(element) {
+    this.items = push(this.items, element);
+    this.rear = this.rear + 1;
+    this.count = this.count + 1;
+    print(f"Enqueued {element}. Queue size: {this.count}");
+    this.display();
+  }
+
+  dequeue() {
+    if (this.isEmpty()) {
+      print("Cannot dequeue - queue is empty!");
+      return null;
+    }
+    
+    let element = this.items[this.front];
+    this.front = this.front + 1;
+    this.count = this.count - 1;
+    
+    print(f"Dequeued {element}. Queue size: {this.count}");
+    this.display();
+    return element;
+  }
+
+  peek() {
+    if (this.isEmpty()) {
+      print("Cannot peek - queue is empty!");
+      return null;
+    }
+    
+    let frontElement = this.items[this.front];
+    print(f"Front element: {frontElement}");
+    return frontElement;
+  }
+
+  isEmpty() {
+    return this.count == 0;
+  }
+
+  size() {
+    return this.count;
+  }
+
+  display() {
+    if (this.isEmpty()) {
+      print("Queue: [] (empty)");
+      return;
+    }
+    
+    print("Queue (front to rear):");
+    let queueElements = [];
+    for (let i = this.front; i <= this.rear; i = i + 1) {
+      queueElements = push(queueElements, this.items[i]);
+    }
+    print(f"  {queueElements}");
+    print(f"  Front index: {this.front}, Rear index: {this.rear} \n");
+  }
+
+  clear() {
+    this.items = [];
+    this.front = 0;
+    this.rear = -1;
+    this.count = 0;
+    print("Queue cleared");
+  }
+}
+
+# Simulate a customer service queue
+let simulateCustomerService = fn() {
+  print("\\n=== Customer Service Queue Simulation ===");
+  
+  let serviceQueue = new Queue();
+  let customers = ["Alice", "Bob", "Carol", "David", "Eve"];
+  
+  print("Customers arriving:");
+  for (let i = 0; i < len(customers); i = i + 1) {
+    print(f"Customer {customers[i]} joins the queue");
+    serviceQueue.enqueue(customers[i]);
+  }
+  
+  print("\\nServicing customers (FIFO order):");
+  while (!serviceQueue.isEmpty()) {
+    let customer = serviceQueue.dequeue();
+    print(f"Now serving: {customer}");
+    print(f"Customers waiting: {serviceQueue.size()}");
+    
+    if (!serviceQueue.isEmpty()) {
+      print(f"Next customer: {serviceQueue.peek()}");
+    }
+    print("---");
+  }
+  
+  print("All customers served!");
+};
+
+# Breadth-First Search simulation using queue
+let simulateBFS = fn() {
+  print("\\n=== BFS Traversal Simulation ===");
+  print("Simulating breadth-first search on a tree");
+  
+  let bfsQueue = new Queue();
+  
+  # Simulate tree nodes (normally these would be objects)
+  print("Starting BFS from root node 'A'");
+  bfsQueue.enqueue("A");
+  
+  let visited = [];
+  
+  while (!bfsQueue.isEmpty()) {
+    let currentNode = bfsQueue.dequeue();
+    visited = push(visited, currentNode);
+    print(f"Visiting node: {currentNode}");
+    
+    # Simulate adding children to queue
+    if (currentNode == "A") {
+      print("Adding children of A: B, C");
+      bfsQueue.enqueue("B");
+      bfsQueue.enqueue("C");
+    } elif (currentNode == "B") {
+      print("Adding children of B: D, E");
+      bfsQueue.enqueue("D");
+      bfsQueue.enqueue("E");
+    } elif (currentNode == "C") {
+      print("Adding children of C: F");
+      bfsQueue.enqueue("F");
+    }
+    # D, E, F are leaf nodes - no children
+    
+    print(f"Visited so far: {visited}");
+    print("---");
+  }
+  
+  print(f"BFS traversal complete: {visited}");
+};
+
+print("\\n--- Basic Queue Operations ---");
+let queue = new Queue();
+
+queue.enqueue(10);
+queue.enqueue(20);
+queue.enqueue(30);
+
+queue.peek();
+
+queue.dequeue();
+queue.dequeue();
+
+queue.enqueue(40);
+queue.enqueue(50);
+
+simulateCustomerService();
+simulateBFS();
+
+print("\\n=== Queues ensure fair, first-come-first-served processing! ===");
+`,
+
+  binaryTreeImplementation: `# Binary Tree Implementation - Hierarchical Data Structure
+print("=== Binary Tree Data Structure ===");
+
+class TreeNode {
+  init(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+    print(f"Created tree node with data: {data}");
+  }
+}
+
+class BinaryTree {
+  init() {
+    this.root = null;
+    print("Created empty binary tree");
+  }
+
+  insert(data) {
+    print(f"\\nInserting {data} into tree");
+    if (this.root == null) {
+      this.root = new TreeNode(data);
+      print(f"{data} inserted as root");
+    } else {
+      this.insertNode(this.root, data);
+    }
+  }
+
+  insertNode(node, data) {
+    if (data < node.data) {
+      print(f"{data} < {node.data}, going left");
+      if (node.left == null) {
+        node.left = new TreeNode(data);
+        print(f"{data} inserted as left child of {node.data}");
+      } else {
+        this.insertNode(node.left, data);
+      }
+    } else {
+      print(f"{data} >= {node.data}, going right");
+      if (node.right == null) {
+        node.right = new TreeNode(data);
+        print(f"{data} inserted as right child of {node.data}");
+      } else {
+        this.insertNode(node.right, data);
+      }
+    }
+  }
+
+  search(data) {
+    print(f"\\nSearching for {data}");
+    return this.searchNode(this.root, data);
+  }
+
+  searchNode(node, data) {
+    if (node == null) {
+      print(f"{data} not found");
+      return false;
+    }
+    
+    print(f"Checking node: {node.data}");
+    
+    if (data == node.data) {
+      print(f"Found {data}!");
+      return true;
+    } elif (data < node.data) {
+      print(f"{data} < {node.data}, searching left subtree");
+      return this.searchNode(node.left, data);
+    } else {
+      print(f"{data} > {node.data}, searching right subtree");
+      return this.searchNode(node.right, data);
+    }
+  }
+
+  inorderTraversal() {
+    print("\\nInorder traversal (Left -> Root -> Right):");
+    let result = [];
+    this.inorderHelper(this.root, result);
+    print(f"Inorder result: {result}");
+    return result;
+  }
+
+  inorderHelper(node, result) {
+    if (node != null) {
+      this.inorderHelper(node.left, result);
+      print(f"Visiting: {node.data}");
+      result = push(result, node.data);
+      this.inorderHelper(node.right, result);
+    }
+  }
+
+  preorderTraversal() {
+    print("\\nPreorder traversal (Root -> Left -> Right):");
+    let result = [];
+    this.preorderHelper(this.root, result);
+    print(f"Preorder result: {result}");
+    return result;
+  }
+
+  preorderHelper(node, result) {
+    if (node != null) {
+      print(f"Visiting: {node.data}");
+      result = push(result, node.data);
+      this.preorderHelper(node.left, result);
+      this.preorderHelper(node.right, result);
+    }
+  }
+
+  postorderTraversal() {
+    print("\\nPostorder traversal (Left -> Right -> Root):");
+    let result = [];
+    this.postorderHelper(this.root, result);
+    print(f"Postorder result: {result}");
+    return result;
+  }
+
+  postorderHelper(node, result) {
+    if (node != null) {
+      this.postorderHelper(node.left, result);
+      this.postorderHelper(node.right, result);
+      print(f"Visiting: {node.data}");
+      result = push(result, node.data);
+    }
+  }
+
+  height() {
+    print("\\nCalculating tree height");
+    let h = this.heightHelper(this.root);
+    print(f"Tree height: {h}");
+    return h;
+  }
+
+  heightHelper(node) {
+    if (node == null) {
       return 0;
     }
-    let progress = (this.bookmark / this.pages) * 100;
-    print(f"📊 Reading progress for {this.title}: {progress}%");
-    return progress;
-  }
-}
-
-# DVD class extends LibraryItem
-class DVD extends LibraryItem {
-  init(title, director, itemId, duration, rating) {
-    super(title, director, itemId);
-    this.director = director;  # Override author for DVDs
-    this.duration = duration;
-    this.rating = rating;
-    this.watchCount = 0;
-    print(f"   🎬 DVD details: {duration} minutes, Rated {rating}");
-  }
-
-  getItemType() {
-    return "DVD";
-  }
-
-  getSpecificInfo() {
-    print(f"   Director: {this.director}");
-    print(f"   Duration: {this.duration} minutes");
-    print(f"   Rating: {this.rating}");
-    print(f"   Times watched: {this.watchCount}");
-  }
-
-  watchMovie() {
-    if (this.isCheckedOut) {
-      this.watchCount = this.watchCount + 1;
-      print(f"🎬 Watching {this.title}!");
-      print(f"   Watch count: {this.watchCount}");
-      print(f"   Enjoy the {this.duration}-minute film!");
-    } else {
-      print(f"❌ {this.title} must be checked out to watch");
+    
+    let leftHeight = this.heightHelper(node.left);
+    let rightHeight = this.heightHelper(node.right);
+    
+    let maxHeight = leftHeight;
+    if (rightHeight > leftHeight) {
+      maxHeight = rightHeight;
     }
-  }
-}
-
-# Magazine class extends LibraryItem
-class Magazine extends LibraryItem {
-  init(title, publisher, itemId, issue, month, year) {
-    super(title, publisher, itemId);
-    this.publisher = publisher;  # Override author for magazines
-    this.issue = issue;
-    this.month = month;
-    this.year = year;
-    this.articlesRead = [];
-    print(f"   📰 Magazine details: Issue {issue}, {month} {year}");
+    
+    return maxHeight + 1;
   }
 
-  getItemType() {
-    return "Magazine";
-  }
-
-  getSpecificInfo() {
-    print(f"   Publisher: {this.publisher}");
-    print(f"   Issue: {this.issue} ({this.month} {this.year})");
-    print(f"   Articles read: {len(this.articlesRead)}");
-  }
-
-  readArticle(articleTitle) {
-    this.articlesRead = push(this.articlesRead, articleTitle);
-    print(f"📰 Reading article: {articleTitle}");
-    print(f"   Articles read in this issue: {len(this.articlesRead)}");
-  }
-
-  listArticlesRead() {
-    if (len(this.articlesRead) == 0) {
-      print(f"No articles read yet in {this.title}");
-    } else {
-      print(f"📰 Articles read in {this.title}:");
-      for (let i = 0; i < len(this.articlesRead); i = i + 1) {
-        print(f"   {i + 1}. {this.articlesRead[i]}");
+  levelOrder() {
+    print("\\nLevel-order traversal (breadth-first):");
+    if (this.root == null) {
+      print("Tree is empty");
+      return [];
+    }
+    
+    # Simulate queue with array (manual queue implementation)
+    let queue = [this.root];
+    let result = [];
+    let front = 0;
+    
+    while (front < len(queue)) {
+      let current = queue[front];
+      front = front + 1;
+      
+      print(f"Visiting: {current.data}");
+      result = push(result, current.data);
+      
+      if (current.left != null) {
+        queue = push(queue, current.left);
+      }
+      if (current.right != null) {
+        queue = push(queue, current.right);
       }
     }
+    
+    print(f"Level-order result: {result}");
+    return result;
   }
 }
 
-# Library class to manage all items
-class Library {
-  init(name) {
-    print(f"🏛️  Initializing {name}");
-    this.name = name;
-    this.items = [];
-    this.members = [];
-    this.totalCheckouts = 0;
-    print("   Library system ready!");
+print("\\n--- Building a Binary Search Tree ---");
+let bst = new BinaryTree();
+
+# Insert values to create a balanced tree
+let values = [50, 30, 70, 20, 40, 60, 80];
+print(f"Inserting values: {values}");
+
+for (let i = 0; i < len(values); i = i + 1) {
+  bst.insert(values[i]);
+}
+
+print("\\n--- Tree Traversals ---");
+bst.inorderTraversal();    # Should print sorted order for BST
+bst.preorderTraversal();
+bst.postorderTraversal();
+bst.levelOrder();
+
+print("\\n--- Search Operations ---");
+bst.search(40);
+bst.search(25);
+bst.search(80);
+
+print("\\n--- Tree Properties ---");
+bst.height();
+
+print("\\n=== Binary trees enable efficient searching and sorting! ===");
+`,
+
+  hashTableImplementation: `
+  # Hash Table Implementation - Fast Key-Value Storage
+print("=== Hash Table Data Structure ===");
+
+class HashTable {
+  init(size) {
+    this.size = size;
+    this.buckets = [];
+    this.count = 0;
+    
+    # Initialize all buckets as empty arrays
+    for (let i = 0; i < size; i = i + 1) {
+      this.buckets = push(this.buckets, []);
+    }
+    
+    print(f"Created hash table with {size} buckets");
   }
 
-  addItem(item) {
-    this.items = push(this.items, item);
-    print(f"➕ Added {item.getItemType()}: {item.title} to library");
-    print(f"   Total items: {len(this.items)}");
+  hash(key) {
+    # Simple hash function: sum of character codes mod table size
+    # In a real implementation, this would be more sophisticated
+    let hash = 0;
+    
+    if (lower(type(key)) == "string") {
+      # Simulate character code sum
+      hash = len(key) * 31;  # Simple approximation
+    } else {
+      hash = key;
+    }
+    
+    let index = hash % this.size;
+    print(f"Hash({key}) = {hash} -> bucket {index}");
+    return index;
   }
 
-  findItem(itemId) {
-    for (let i = 0; i < len(this.items); i = i + 1) {
-      if (this.items[i].itemId == itemId) {
-        return this.items[i];
+  put(key, value) {
+    print(f"\nInserting key: {key}, value: {value}");
+    let index = this.hash(key);
+    let bucket = this.buckets[index];
+    
+    # Check if key already exists
+    let found = false;
+    for (let i = 0; i < len(bucket); i = i + 1) {
+      let pair = bucket[i];
+      if (pair[0] == key) {
+        print(f"Key {key} already exists, updating value");
+        pair[1] = value;
+        found = true;
+        break;
       }
     }
+    
+    if (!found) {
+      let newPair = [key, value];
+      bucket = push(bucket, newPair);
+      this.buckets[index] = bucket;
+      this.count = this.count + 1;
+      print(f"Added new key-value pair to bucket {index}");
+    }
+    
+    print(f"Total entries: {this.count}");
+    if (len(bucket) > 1) {
+      print(f"Collision detected! Bucket {index} has {len(bucket)} entries");
+    }
+  }
+
+  get(key) {
+    print(f"\nLooking up key: {key}");
+    let index = this.hash(key);
+    let bucket = this.buckets[index];
+    
+    print(f"Searching in bucket {index}");
+    for (let i = 0; i < len(bucket); i = i + 1) {
+      let pair = bucket[i];
+      if (pair[0] == key) {
+        print(f"Found {key} -> {pair[1]}");
+        return pair[1];
+      }
+    }
+    
+    print(f"Key {key} not found");
     return null;
   }
 
-  checkOutItem(itemId, memberName, days) {
-    let item = this.findItem(itemId);
-    if (item == null) {
-      print(f"❌ Item with ID {itemId} not found");
-      return false;
-    }
-
-    if (item.checkOut(memberName, days)) {
-      this.totalCheckouts = this.totalCheckouts + 1;
-      print(f"📊 Total library checkouts: {this.totalCheckouts}");
-      return true;
-    }
-    return false;
-  }
-
-  checkInItem(itemId) {
-    let item = this.findItem(itemId);
-    if (item == null) {
-      print(f"❌ Item with ID {itemId} not found");
-      return false;
-    }
-
-    return item.checkIn();
-  }
-
-  showLibraryStatus() {
-    print(f"\\n🏛️  {this.name} Status Report");
-    print(f"   Total items: {len(this.items)}");
-    print(f"   Total checkouts: {this.totalCheckouts}");
-
-    let available = 0;
-    let checkedOut = 0;
-
-    for (let i = 0; i < len(this.items); i = i + 1) {
-      if (this.items[i].isCheckedOut) {
-        checkedOut = checkedOut + 1;
+  remove(key) {
+    print(f"\nRemoving key: {key}");
+    let index = this.hash(key);
+    let bucket = this.buckets[index];
+    
+    let newBucket = [];
+    let found = false;
+    
+    for (let i = 0; i < len(bucket); i = i + 1) {
+      let pair = bucket[i];
+      if (pair[0] != key) {
+        newBucket = push(newBucket, pair);
       } else {
-        available = available + 1;
+        found = true;
+        print(f"Removed {key} -> {pair[1]}");
       }
     }
-
-    print(f"   Available: {available}");
-    print(f"   Checked out: {checkedOut}");
+    
+    if (found) {
+      this.buckets[index] = newBucket;
+      this.count = this.count - 1;
+      print(f"Total entries: {this.count}");
+    } else {
+      print(f"Key {key} not found for removal");
+    }
+    
+    return found;
   }
 
-  listAllItems() {
-    print(f"\\n📚 All items in {this.name}:");
-    for (let i = 0; i < len(this.items); i = i + 1) {
-      let item = this.items[i];
-      let status = item.isCheckedOut ? f"(Checked out to {item.borrower})" : "(Available)";
-      print(f"   {item.itemId}: {item.title} {status}");
+  display() {
+    print("\nHash Table Contents:");
+    print(f"Size: {this.size}, Entries: {this.count}");
+    
+    for (let i = 0; i < this.size; i = i + 1) {
+      let bucket = this.buckets[i];
+      if (len(bucket) > 0) {
+        print(f"Bucket {i}:");
+        for (let j = 0; j < len(bucket); j = j + 1) {
+          let pair = bucket[j];
+          print(f"  {pair[0]} -> {pair[1]}");
+        }
+      }
     }
+  }
+
+  loadFactor() {
+    let factor = this.count / this.size;
+    print(f"\nLoad factor: {this.count}/{this.size} = {factor}");
+    if (factor > 0.75) {
+      print("Warning: High load factor - consider resizing");
+    }
+    return factor;
+  }
+
+  getKeys() {
+    print("\nAll keys in hash table:");
+    let keys = [];
+    
+    for (let i = 0; i < this.size; i = i + 1) {
+      let bucket = this.buckets[i];
+      for (let j = 0; j < len(bucket); j = j + 1) {
+        let pair = bucket[j];
+        keys = push(keys, pair[0]);
+      }
+    }
+    
+    print(f"Keys: {keys}");
+    return keys;
   }
 }
 
-print("\\n=== Setting Up Central Library ===");
-let library = new Library("Central City Library");
+print("\n--- Creating Hash Table ---");
+let hashTable = new HashTable(7);  # Prime number for better distribution
 
-print("\\n=== Adding Books ===");
-let book1 = new Book("The Great Gatsby", "F. Scott Fitzgerald", "B001", 180, "Classic");
-let book2 = new Book("To Kill a Mockingbird", "Harper Lee", "B002", 376, "Fiction");
-let book3 = new Book("1984", "George Orwell", "B003", 328, "Dystopian");
+print("\n--- Basic Operations ---");
+hashTable.put("name", "Alice");
+hashTable.put("age", 25);
+hashTable.put("city", "New York");
+hashTable.put("job", "Engineer");
 
-library.addItem(book1);
-library.addItem(book2);
-library.addItem(book3);
+hashTable.display();
 
-print("\\n=== Adding DVDs ===");
-let dvd1 = new DVD("The Matrix", "Wachowski Sisters", "D001", 136, "R");
-let dvd2 = new DVD("Finding Nemo", "Andrew Stanton", "D002", 100, "G");
+print("\n--- Lookup Operations ---");
+hashTable.get("name");
+hashTable.get("age");
+hashTable.get("nonexistent");
 
-library.addItem(dvd1);
-library.addItem(dvd2);
+print("\n--- Collision Demonstration ---");
+# These might cause collisions depending on hash function
+hashTable.put("abc", "value1");
+hashTable.put("bca", "value2");  # Might hash to same bucket
+hashTable.put("cab", "value3");
 
-print("\\n=== Adding Magazines ===");
-let mag1 = new Magazine("National Geographic", "National Geographic Society", "M001", 45, "October", 2023);
-let mag2 = new Magazine("Scientific American", "Springer Nature", "M002", 312, "November", 2023);
+hashTable.display();
+hashTable.loadFactor();
 
-library.addItem(mag1);
-library.addItem(mag2);
+print("\n--- Update and Remove ---");
+hashTable.put("age", 26);  # Update existing key
+hashTable.remove("city");
+hashTable.display();
 
-print("\\n=== Library Operations ===");
-library.showLibraryStatus();
-library.listAllItems();
+hashTable.getKeys();
 
-print("\\n=== Member Activity ===");
-library.checkOutItem("B001", "Alice Johnson", 14);
-library.checkOutItem("D001", "Bob Smith", 7);
-library.checkOutItem("M001", "Carol Davis", 3);
+print("\n--- Performance Analysis ---");
+print("Hash tables provide O(1) average case for:");
+print("- Insert: put(key, value)");
+print("- Search: get(key)");  
+print("- Delete: remove(key)");
+print("\nWorst case is O(n) when all keys hash to same bucket");
 
-print("\\n=== Using Checked Out Items ===");
-book1.setBookmark(45);
-book1.getReadingProgress();
-
-dvd1.watchMovie();
-
-mag1.readArticle("Climate Change Impact");
-mag1.readArticle("Ocean Conservation");
-mag1.listArticlesRead();
-
-print("\\n=== Item Status Check ===");
-book1.getStatus();
-dvd1.getStatus();
-mag1.getStatus();
-
-print("\\n=== Returning Items ===");
-library.checkInItem("B001");
-library.checkInItem("D001");
-
-library.showLibraryStatus();
-
-print("\\n=== Classes enable complex real-world systems! ===");
+print("\n=== Hash tables enable lightning-fast key-value lookups! ===");
 `,
 
-  // Add to categories at the end of the object
+  graphRepresentation: `
+  # Graph Data Structure - Adjacency List Representation
+print("=== Graph Data Structure ===");
+
+class Graph {
+  init(directed) {
+    this.adjacencyList = {};
+    this.directed = directed;
+    this.vertexCount = 0;
+    this.edgeCount = 0;
+  }
+
+  addVertex(vertex) {
+    if (this.adjacencyList[vertex] == null) {
+      this.adjacencyList[vertex] = [];
+      this.vertexCount = this.vertexCount + 1;
+      print(f"Added vertex: {vertex}");
+    } else {
+      print(f"Vertex {vertex} already exists");
+    }
+  }
+
+  addEdge(vertex1, vertex2, weight) {
+    if (weight == null) {
+      weight = 1;
+    }
+    
+    print(f"Adding edge: {vertex1} -> {vertex2} (weight: {weight})");
+    
+    # Ensure vertices exist
+    if (this.adjacencyList[vertex1] == null) {
+      this.addVertex(vertex1);
+    }
+    if (this.adjacencyList[vertex2] == null) {
+      this.addVertex(vertex2);
+    }
+    
+    # Add edge from vertex1 to vertex2
+    let edge1 = {"vertex": vertex2, "weight": weight};
+    this.adjacencyList[vertex1] = push(this.adjacencyList[vertex1], edge1);
+    
+    # If undirected, add reverse edge
+    if (!this.directed) {
+      let edge2 = {"vertex": vertex1, "weight": weight};
+      this.adjacencyList[vertex2] = push(this.adjacencyList[vertex2], edge2);
+    }
+    
+    this.edgeCount = this.edgeCount + 1;
+  }
+
+  display() {
+    print("\n=== Graph Structure ===");
+    print(f"Type: {this.graphType()}");
+    print(f"Vertices: {this.vertexCount}, Edges: {this.edgeCount}");
+    
+    let vertices = keys(this.adjacencyList);
+    for (let i = 0; i < len(vertices); i = i + 1) {
+      let vertex = vertices[i];
+      let edges = this.adjacencyList[vertex];
+      
+      if (len(edges) == 0) {
+        print(f"{vertex}: (no connections)");
+      } else {
+        let connections = [];
+        for (let j = 0; j < len(edges); j = j + 1) {
+          let edge = edges[j];
+          connections = push(connections, f"{edge['vertex']}({edge['weight']})");
+        }
+        print(f"{vertex}: {join(connections, ', ')}");
+      }
+    }
+  }
+
+  graphType() {
+    if (this.directed) {
+      return "Directed";
+    }
+    return "Undirected";
+    }
+
+  bfs(startVertex) {
+    print(f"\\n=== Breadth-First Search from {startVertex} ===");
+    
+    if (this.adjacencyList[startVertex] == null) {
+      print(f"Vertex {startVertex} not found in graph");
+      return [];
+    }
+    
+    let visited = {};
+    let queue = [startVertex];
+    let result = [];
+    let front = 0;
+    
+    visited[startVertex] = true;
+    print(f"Starting BFS from {startVertex}");
+    
+    while (front < len(queue)) {
+      let currentVertex = queue[front];
+      front = front + 1;
+      
+      result = push(result, currentVertex);
+      print(f"Visiting: {currentVertex}");
+      
+      let neighbors = this.adjacencyList[currentVertex];
+      for (let i = 0; i < len(neighbors); i = i + 1) {
+        let neighbor = neighbors[i]["vertex"];
+        
+        if (visited[neighbor] == null) {
+          visited[neighbor] = true;
+          queue = push(queue, neighbor);
+          print(f"  Added {neighbor} to queue");
+        }
+      }
+    }
+    
+    print(f"BFS traversal order: {result}");
+    return result;
+  }
+
+
+  dfs(startVertex) {
+    print(f"\\n=== Depth-First Search from {startVertex} ===");
+    
+    if (this.adjacencyList[startVertex] == null) {
+      print(f"Vertex {startVertex} not found in graph");
+      return [];
+    }
+    
+    let visited = {};
+    let result = [];
+    
+    this.dfsHelper(startVertex, visited, result);
+    
+    print(f"DFS traversal order: {result}");
+    return result;
+  }
+
+  dfsHelper(vertex, visited, result) {
+    visited[vertex] = true;
+    result = push(result, vertex);
+    print(f"Visiting: {vertex}");
+    
+    let neighbors = this.adjacencyList[vertex];
+    for (let i = 0; i < len(neighbors); i = i + 1) {
+      let neighbor = neighbors[i]["vertex"];
+      
+      if (visited[neighbor] == null) {
+        print(f"  Exploring {neighbor} from {vertex}");
+        this.dfsHelper(neighbor, visited, result);
+      }
+    }
+  }
+
+  hasPath(start, end) {
+    print(f"\\n=== Checking if path exists: {start} -> {end} ===");
+    
+    if (start == end) {
+      print("Start and end are the same vertex");
+      return true;
+    }
+    
+    let visited = {};
+    let queue = [start];
+    let front = 0;
+    
+    visited[start] = true;
+    
+    while (front < len(queue)) {
+      let current = queue[front];
+      front = front + 1;
+      
+      let neighbors = this.adjacencyList[current];
+      for (let i = 0; i < len(neighbors); i = i + 1) {
+        let neighbor = neighbors[i]["vertex"];
+        
+        if (neighbor == end) {
+          print(f"Path found: {start} -> ... -> {current} -> {end}");
+          return true;
+        }
+        
+        if (visited[neighbor] == null) {
+          visited[neighbor] = true;
+          queue = push(queue, neighbor);
+        }
+      }
+    }
+    
+    print(f"No path exists from {start} to {end}");
+    return false;
+  }
+}
+
+print("\n--- Creating and Building Graph ---");
+let graph = new Graph(false);  # Undirected graph
+
+# Add vertices
+let vertices = ["A", "B", "C", "D", "E", "F"];
+for (let i = 0; i < len(vertices); i = i + 1) {
+  graph.addVertex(vertices[i]);
+}
+
+# Add edges to create a connected graph
+graph.addEdge("A", "B", 4);
+graph.addEdge("A", "C", 2);
+graph.addEdge("B", "D", 3);
+graph.addEdge("C", "D", 1);
+graph.addEdge("C", "E", 5);
+graph.addEdge("D", "E", 2);
+graph.addEdge("D", "F", 6);
+graph.addEdge("E", "F", 1);
+
+graph.display();
+
+print("\n--- Graph Traversals ---");
+graph.bfs("A");
+graph.dfs("A");
+
+print("\n--- Path Finding ---");
+graph.hasPath("A", "F");
+graph.hasPath("B", "E");
+graph.hasPath("A", "X");  # Non-existent vertex
+
+print("\n=== Graphs model relationships and enable pathfinding! ===");
+
+  `,
 };
 
 export const getRandomSampleCode = (): string => {
@@ -2043,8 +2758,6 @@ export const snippetCategories = {
     "matrixMultiplication",
   ],
 
-  dataStructures: ["filterAndMap", "closureCounter", "bankAccount"],
-
   games: ["ticTacToe", "rpgCharacterSystem", "gameCharacterClasses"],
 
   mathematics: [
@@ -2054,22 +2767,23 @@ export const snippetCategories = {
     "primeNumbers",
   ],
 
-  advanced: ["closureCounter", "bankAccount", "matrixMultiplication"],
-
   // NEW CLASS CATEGORIES
   objectOriented: [
     "basicClass",
     "classInheritance",
     "gameCharacterClasses",
     "vehicleHierarchy",
-    "libraryManagement",
   ],
 
-  realWorld: [
-    "bankAccount",
-    "libraryManagement",
-    "vehicleHierarchy",
-    "gameCharacterClasses",
+  realWorld: ["bankAccount", "vehicleHierarchy", "gameCharacterClasses"],
+
+  dataStructures: [
+    "linkedListImplementation",
+    "stackImplementation",
+    "queueImplementation",
+    "binaryTreeImplementation",
+    "hashTableImplementation",
+    "graphRepresentation",
   ],
 
   inheritance: ["classInheritance", "gameCharacterClasses", "vehicleHierarchy"],
