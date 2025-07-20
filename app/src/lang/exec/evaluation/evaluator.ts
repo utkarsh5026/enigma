@@ -18,6 +18,7 @@ import { DefaultStepStorage } from "../steps/step-storage";
 import { Position } from "@/lang/token/token";
 import { FrameType, StackFrame, CallStack } from "../debug";
 import { ObjectValidator, Environment, BaseObject } from "../core";
+import { ClassStatement } from "@/lang/ast";
 
 export class LanguageEvaluator implements EvaluationContext {
   private loopContext: LoopContext;
@@ -39,6 +40,7 @@ export class LanguageEvaluator implements EvaluationContext {
   private readonly breakEvaluator = new statements.BreakStatementEvaluator();
   private readonly continueEvaluator =
     new statements.ContinueStatementEvaluator();
+  private readonly classEvaluator = new statements.ClassStatementEvaluator();
 
   private readonly callEvaluator = new expressions.CallExpressionEvaluator();
   private readonly ifEvaluator = new expressions.IfExpressionEvaluator();
@@ -323,6 +325,9 @@ export class LanguageEvaluator implements EvaluationContext {
           env,
           this
         );
+
+      case ClassStatement:
+        return this.classEvaluator.evaluate(node as ClassStatement, env, this);
 
       default:
         return new ErrorObject(
