@@ -35,4 +35,8 @@ export class AssignmentExpression extends Expression {
   public isIndexAssignment(): boolean {
     return AstValidator.isIndexExpression(this.name);
   }
+
+  public isPropertyAssignment(): boolean {
+    return AstValidator.isPropertyExpression(this.name);
+  }
 }
