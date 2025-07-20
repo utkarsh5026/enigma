@@ -622,12 +622,6 @@ export const categories = {
     "ArrayLiteral",
     "HashLiteral",
   ],
-  Structural: [
-    "ExpressionStatement",
-    "TokenStream",
-    "Environment",
-    "ErrorObject",
-  ],
 };
 
 // Built-in function categories (based on the Java code structure)
