@@ -194,7 +194,7 @@ export class InfixExpressionEvaluator
             node.position()
           );
         }
-        return new IntegerObject(leftInteger / rightInteger);
+        return new IntegerObject(Math.floor(leftInteger / rightInteger));
 
       case "%":
         if (rightInteger == 0) {
@@ -284,7 +284,7 @@ export class InfixExpressionEvaluator
             node.position()
           );
         }
-        // Floor division - always returns integer
+
         return new IntegerObject(
           Math.floor(leftDoubleValue / rightDoubleValue)
         );
