@@ -3,7 +3,7 @@ import * as statements from "./statements";
 import * as expressions from "./expressions";
 import * as literals from "./literals";
 import * as ast from "@/lang/ast/ast";
-import * as statement from "@/lang/ast/statement";
+import * as statement from "@/lang/ast/statements";
 import * as expression from "@/lang/ast/expressions";
 import * as literal from "@/lang/ast/literals";
 import { ErrorObject, NullObject, ReturnValueObject } from "../objects";

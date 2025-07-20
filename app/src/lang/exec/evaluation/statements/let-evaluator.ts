@@ -1,4 +1,4 @@
-import { LetStatement } from "@/lang/ast/statement";
+import { LetStatement } from "@/lang/ast";
 import {
   EvaluationContext,
   NodeEvaluator,
