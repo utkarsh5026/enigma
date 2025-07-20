@@ -5,6 +5,9 @@ import { AssignmentExpressionEvaluator } from "./assignment-expression-evaluator
 import { InfixExpressionEvaluator } from "./infix-evaluator";
 import { IndexExpressionEvaluator } from "./index-evaluator";
 import { IfExpressionEvaluator } from "./if-expression-evaluator";
+import { ThisExpressionEvaluator } from "./this-expression";
+import { NewExpressionEvaluator } from "./new-expression";
+import { SuperExpressionEvaluator } from "./super-expression";
 
 export {
   IndentifierEvaluator,
@@ -14,4 +17,7 @@ export {
   InfixExpressionEvaluator,
   IndexExpressionEvaluator,
   IfExpressionEvaluator,
+  ThisExpressionEvaluator,
+  NewExpressionEvaluator,
+  SuperExpressionEvaluator,
 };
