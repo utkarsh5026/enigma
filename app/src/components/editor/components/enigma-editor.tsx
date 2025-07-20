@@ -10,36 +10,7 @@ interface EnhancedEnigmaEditorProps {
   className?: string;
 }
 
-const sampleCode = `// Welcome to Enhanced Enigma Editor! ✨
-// This editor features advanced syntax highlighting, smart completions, and beautiful visuals
-
-let fibonacci = fn(n) {
-  if (n < 2) {
-    return n;
-  } else {
-    return fibonacci(n - 1) + fibonacci(n - 2);
-  }
-};
-
-// Calculate fibonacci sequence
-let numbers = range(0, 10);
-for (let i = 0; i < len(numbers); i = i + 1) {
-  let result = fibonacci(numbers[i]);
-  println(f"fibonacci({numbers[i]}) = {result}");
-}
-
-// Working with arrays and strings
-let fruits = ["apple", "banana", "cherry"];
-let message = f"We have {len(fruits)} fruits: {join(fruits, ", ")}";
-println(message);
-
-// Hash operations
-let person = {"name": "Alice", "age": 30, "city": "Tokyo"};
-let keys_list = keys(person);
-println(f"Person keys: {join(keys_list, ", ")}");
-`;
-
-const EnhancedEnigmaEditor: React.FC<EnhancedEnigmaEditorProps> = ({
+const EnigmaEditor: React.FC<EnhancedEnigmaEditorProps> = ({
   code,
   onCodeChange,
   className = "",
@@ -91,10 +62,6 @@ const EnhancedEnigmaEditor: React.FC<EnhancedEnigmaEditorProps> = ({
     (editor: editor.IStandaloneCodeEditor) => {
       editorRef.current = editor;
       setIsLoading(false);
-
-      if (!code) {
-        onCodeChange(sampleCode);
-      }
 
       editor.updateOptions({
         theme: "enigma-enhanced",
@@ -196,7 +163,7 @@ const EnhancedEnigmaEditor: React.FC<EnhancedEnigmaEditorProps> = ({
         setTimeout(() => editor.focus(), 100);
       }
     },
-    [code, onCodeChange, monaco]
+    [monaco]
   );
 
   const handleEditorChange = useCallback(
@@ -262,7 +229,7 @@ const EnhancedEnigmaEditor: React.FC<EnhancedEnigmaEditorProps> = ({
             fontSize: responsiveConfig.fontSize,
             lineHeight: responsiveConfig.lineHeight,
             fontFamily:
-              "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', Menlo, Monaco, 'Courier New', monospace",
+              "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'SF Mono', Menlo, Monaco, 'Courier New', monospace",
             fontLigatures: true,
             fontWeight: "400",
             letterSpacing: 0.5,
@@ -435,4 +402,4 @@ const EnhancedEnigmaEditor: React.FC<EnhancedEnigmaEditorProps> = ({
   );
 };
 
-export default EnhancedEnigmaEditor;
+export default EnigmaEditor;
