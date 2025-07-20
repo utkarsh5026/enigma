@@ -155,18 +155,20 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
               )}
             </Button>
 
-            <EditorToolbarButton
-              icon={
-                copySuccess ? (
-                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--tokyo-green)] animate-in zoom-in-50 duration-200" />
-                ) : (
-                  <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
-                )
-              }
-              tooltip={copySuccess ? "Copied!" : "Copy Code"}
-              onClick={handleCopyCode}
-              disabled={isExecuting || copySuccess}
-              className={`
+            {!isMobile && (
+              <>
+                <EditorToolbarButton
+                  icon={
+                    copySuccess ? (
+                      <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--tokyo-green)] animate-in zoom-in-50 duration-200" />
+                    ) : (
+                      <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
+                    )
+                  }
+                  tooltip={copySuccess ? "Copied!" : "Copy Code"}
+                  onClick={handleCopyCode}
+                  disabled={isExecuting || copySuccess}
+                  className={`
                 min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]
                 transition-all duration-200
                 ${
@@ -176,19 +178,21 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 }
                 disabled:opacity-70 disabled:cursor-not-allowed
               `}
-            />
+                />
 
-            <EditorToolbarButton
-              icon={<Download className="h-4 w-4 sm:h-5 sm:w-5" />}
-              tooltip="Download Code"
-              onClick={handleDownloadCode}
-              disabled={isExecuting}
-              className={`
+                <EditorToolbarButton
+                  icon={<Download className="h-4 w-4 sm:h-5 sm:w-5" />}
+                  tooltip="Download Code"
+                  onClick={handleDownloadCode}
+                  disabled={isExecuting}
+                  className={`
                 min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]
                 transition-all duration-200
                 disabled:opacity-70 disabled:cursor-not-allowed
-              `}
-            />
+                `}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>
