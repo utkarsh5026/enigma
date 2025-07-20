@@ -1,6 +1,5 @@
 import { Identifier } from "@/lang/ast/ast";
 import { BlockStatement } from "@/lang/ast";
-import { InstanceObject } from "./instance";
 import { BaseObject, ObjectType, Environment } from "@/lang/exec/core";
 
 export class FunctionObject implements BaseObject {
@@ -10,19 +9,14 @@ export class FunctionObject implements BaseObject {
   readonly body: BlockStatement;
   /** The environment in which the function was created. */
   readonly env: Environment;
-  /** The bound instance for this function, if any. */
-  readonly boundInstance: InstanceObject | null;
-
   constructor(
     parameters: Identifier[],
     body: BlockStatement,
-    env: Environment,
-    boundInstance: InstanceObject | null = null
+    env: Environment
   ) {
     this.parameters = parameters;
     this.body = body;
     this.env = env;
-    this.boundInstance = boundInstance;
   }
 
   inspect(): string {
