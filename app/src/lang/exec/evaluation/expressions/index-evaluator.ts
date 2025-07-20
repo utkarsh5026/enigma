@@ -28,63 +28,28 @@ export class IndexExpressionEvaluator
     env: Environment,
     context: EvaluationContext
   ) {
-    context.addBeforeStep(node, env, `Evaluating index expression`);
     const left = context.evaluate(node.left, env);
     if (ObjectValidator.isError(left)) {
-      context.addAfterStep(
-        node,
-        env,
-        left,
-        `Error evaluating index expression left: ${left.message}`
-      );
       return left;
     }
 
     if (ObjectValidator.isArray(left)) {
-      context.addBeforeStep(node, env, `Evaluating array index expression`);
-      const result = this.evalArrayIndexExpression(
+      return this.evalArrayIndexExpression(
         left,
         node.index,
         env,
         context,
         node
       );
-      context.addAfterStep(
-        node,
-        env,
-        result,
-        `Array index expression evaluated: ${result.inspect()}`
-      );
-      return result;
     }
 
     if (ObjectValidator.isHash(left)) {
-      context.addBeforeStep(node, env, `Evaluating hash index expression`);
-      const result = this.evalHashIndexExpression(
-        left,
-        node.index,
-        env,
-        context,
-        node
-      );
-      context.addAfterStep(
-        node,
-        env,
-        result,
-        `Hash index expression evaluated: ${result.inspect()}`
-      );
-      return result;
+      return this.evalHashIndexExpression(left, node.index, env, context, node);
     }
 
     const error = context.createError(
       "Index operator not supported for type: " + left.type(),
       node.position()
-    );
-    context.addAfterStep(
-      node,
-      env,
-      error,
-      `Error evaluating index expression: ${error.message}`
     );
     return error;
   }
