@@ -831,6 +831,1193 @@ print(f"4 × 5 = {product}");
 
 print("\\n=== Functions make code reusable! ===");
 `,
+
+  // NEW CLASS EXAMPLES START HERE
+
+  basicClass: `# Introduction to Classes - Your First Class!
+print("=== Welcome to Object-Oriented Programming! ===");
+
+# A class is like a blueprint for creating objects
+# Think of it as a cookie cutter - it defines the shape,
+# but you can make many cookies (objects) from it!
+
+class Person {
+  init(name, age) {
+    print(f"Creating a new Person: {name}, age {age}");
+    this.name = name;
+    this.age = age;
+    this.energy = 100;
+    print(f"  Initialized {this.name} with {this.energy} energy");
+  }
+
+  greet() {
+    print(f"Hello! My name is {this.name} and I'm {this.age} years old.");
+    return f"Hi, I'm {this.name}!";
+  }
+
+  haveBirthday() {
+    let oldAge = this.age;
+    this.age = this.age + 1;
+    print(f"🎂 Happy birthday {this.name}!");
+    print(f"   Age: {oldAge} -> {this.age}");
+    print(f"   Getting wiser!");
+  }
+
+  exercise() {
+    if (this.energy >= 20) {
+      this.energy = this.energy - 20;
+      print(f"{this.name} exercises! Energy: {this.energy + 20} -> {this.energy}");
+      print("  Feeling healthy!");
+    } else {
+      print(f"{this.name} is too tired to exercise (energy: {this.energy})");
+    }
+  }
+
+  rest() {
+    let oldEnergy = this.energy;
+    this.energy = this.energy + 30;
+    if (this.energy > 100) {
+      this.energy = 100;
+    }
+    print(f"{this.name} rests and recovers energy: {oldEnergy} -> {this.energy}");
+  }
+
+  getInfo() {
+    print(f"\\n=== {this.name}'s Status ===");
+    print(f"  Age: {this.age}");
+    print(f"  Energy: {this.energy}/100");
+    print(f"  Status: {this.getStatus()}");
+  }
+
+  getStatus() {
+    if (this.energy >= 80) {
+      return "Energetic!";
+    } elif (this.energy >= 50) {
+      return "Doing fine";
+    } elif (this.energy >= 20) {
+      return "Getting tired";
+    } else {
+      return "Exhausted";
+    }
+  }
+}
+
+print("\\n--- Creating People ---");
+let alice = new Person("Alice", 25);
+let bob = new Person("Bob", 30);
+
+print("\\n--- Initial Greetings ---");
+alice.greet();
+bob.greet();
+
+print("\\n--- Life Activities ---");
+alice.exercise();
+alice.exercise();
+alice.getInfo();
+
+bob.haveBirthday();
+bob.rest();
+bob.getInfo();
+
+print("\\n--- More Activities ---");
+alice.rest();
+alice.getInfo();
+
+print("\\n=== Classes let us create multiple objects with the same behavior! ===");
+`,
+
+  classInheritance: `# Class Inheritance - Building on Existing Classes
+print("=== Understanding Inheritance ===");
+
+# Inheritance lets us create new classes based on existing ones
+# The new class gets all the methods from the parent class,
+# plus it can add its own methods or override existing ones!
+
+class Animal {
+  init(name, species) {
+    print(f"Creating animal: {name} ({species})");
+    this.name = name;
+    this.species = species;
+    this.energy = 100;
+    this.hunger = 0;
+  }
+
+  speak() {
+    print(f"{this.name} makes a sound!");
+    return "Some generic animal sound";
+  }
+
+  eat() {
+    if (this.hunger >= 20) {
+      this.hunger = this.hunger - 30;
+      this.energy = this.energy + 20;
+      if (this.energy > 100) { this.energy = 100; }
+      if (this.hunger < 0) { this.hunger = 0; }
+      print(f"{this.name} eats and feels better!");
+      print(f"  Hunger: {this.hunger + 30} -> {this.hunger}");
+      print(f"  Energy: {this.energy - 20} -> {this.energy}");
+    } else {
+      print(f"{this.name} is not hungry right now");
+    }
+  }
+
+  sleep() {
+    let oldEnergy = this.energy;
+    this.energy = this.energy + 40;
+    this.hunger = this.hunger + 10;
+    if (this.energy > 100) { this.energy = 100; }
+    print(f"{this.name} sleeps peacefully...");
+    print(f"  Energy restored: {oldEnergy} -> {this.energy}");
+    print(f"  Getting hungrier: {this.hunger - 10} -> {this.hunger}");
+  }
+
+  getStatus() {
+    print(f"\\n=== {this.name} the {this.species} ===");
+    print(f"  Energy: {this.energy}/100");
+    print(f"  Hunger: {this.hunger}/100");
+  }
+}
+
+# Dog inherits from Animal - it gets ALL of Animal's methods
+# but can add its own special methods!
+class Dog extends Animal {
+  init(name, breed) {
+    print(f"Creating dog with breed: {breed}");
+    super(name, "Dog");  # Call parent init
+    this.breed = breed;
+    this.loyalty = 100;
+    print(f"  {name} is a {breed} with {this.loyalty} loyalty");
+  }
+
+  speak() {
+    print(f"{this.name} barks: Woof! Woof!");
+    return "Woof!";
+  }
+
+  wagTail() {
+    if (this.energy >= 10) {
+      this.energy = this.energy - 5;
+      print(f"{this.name} wags tail excitedly! 🐕");
+      print(f"  Energy: {this.energy + 5} -> {this.energy}");
+      print("  Such a good dog!");
+    } else {
+      print(f"{this.name} is too tired to wag tail");
+    }
+  }
+
+  fetch() {
+    if (this.energy >= 25) {
+      this.energy = this.energy - 25;
+      this.hunger = this.hunger + 15;
+      print(f"{this.name} fetches the ball! Great exercise!");
+      print(f"  Energy: {this.energy + 25} -> {this.energy}");
+      print(f"  Hunger: {this.hunger - 15} -> {this.hunger}");
+    } else {
+      print(f"{this.name} is too tired to fetch");
+    }
+  }
+}
+
+# Cat also inherits from Animal but behaves differently
+class Cat extends Animal {
+  init(name, color) {
+    print(f"Creating cat with color: {color}");
+    super(name, "Cat");  # Call parent init
+    this.color = color;
+    this.independence = 80;
+    print(f"  {name} is a {color} cat with {this.independence} independence");
+  }
+
+  speak() {
+    print(f"{this.name} meows: Meow! Purr...");
+    return "Meow";
+  }
+
+  climb() {
+    if (this.energy >= 20) {
+      this.energy = this.energy - 20;
+      print(f"{this.name} climbs up high! 🐱");
+      print(f"  Energy: {this.energy + 20} -> {this.energy}");
+      print("  Great view from up here!");
+    } else {
+      print(f"{this.name} is too tired to climb");
+    }
+  }
+
+  purr() {
+    print(f"{this.name} purrs contentedly: Purr purr purr...");
+    this.energy = this.energy + 5;
+    print(f"  Feeling relaxed! Energy: {this.energy - 5} -> {this.energy}");
+  }
+}
+
+print("\\n--- Creating Our Pet Family ---");
+let dog = new Dog("Buddy", "Golden Retriever");
+let cat = new Cat("Whiskers", "Orange");
+
+print("\\n--- Animal Sounds ---");
+dog.speak();
+cat.speak();
+
+print("\\n--- Dog Activities ---");
+dog.wagTail();
+dog.fetch();
+dog.getStatus();
+
+print("\\n--- Cat Activities ---");
+cat.climb();
+cat.purr();
+cat.getStatus();
+
+print("\\n--- Both Animals Can Eat and Sleep (Inherited Methods) ---");
+dog.eat();
+cat.sleep();
+
+dog.getStatus();
+cat.getStatus();
+
+print("\\n=== Inheritance allows us to share common behavior! ===");
+`,
+
+  gameCharacterClasses: `# Advanced Game Character System with Class Hierarchy
+print("=== Epic Fantasy Game Character System ===");
+
+# Base Character class - foundation for all game characters
+class Character {
+  init(name, level) {
+    print(f"⚔️  Creating character: {name} (Level {level})");
+    this.name = name;
+    this.level = level;
+    this.hp = 50 + (level * 10);
+    this.maxHp = this.hp;
+    this.mp = 20 + (level * 5);
+    this.maxMp = this.mp;
+    this.xp = 0;
+    this.isAlive = true;
+    print(f"   HP: {this.hp}, MP: {this.mp}");
+  }
+
+  displayStats() {
+    print(f"\\n📊 {this.name} (Level {this.level}) Stats:");
+    print(f"   HP: {this.hp}/{this.maxHp}");
+    print(f"   MP: {this.mp}/{this.maxMp}");
+    print(f"   XP: {this.xp}");
+    print(f"   Status: {this.getStatus()}");
+  }
+
+  getStatus() {
+    if (!this.isAlive) {
+      return "💀 Defeated";
+    } elif (this.hp >= this.maxHp * 0.8) {
+      return "💪 Excellent";
+    } elif (this.hp >= this.maxHp * 0.5) {
+      return "😐 Fair";
+    } elif (this.hp >= this.maxHp * 0.2) {
+      return "😰 Poor";
+    } else {
+      return "💀 Critical";
+    }
+  }
+
+  takeDamage(damage) {
+    if (!this.isAlive) {
+      print(f"{this.name} is already defeated!");
+      return;
+    }
+
+    let oldHp = this.hp;
+    this.hp = this.hp - damage;
+    if (this.hp < 0) { this.hp = 0; }
+
+    print(f"💥 {this.name} takes {damage} damage! ({oldHp} -> {this.hp})");
+    
+    if (this.hp == 0) {
+      this.isAlive = false;
+      print(f"💀 {this.name} has been defeated!");
+    }
+  }
+
+  heal(amount) {
+    if (!this.isAlive) {
+      print(f"{this.name} cannot be healed while defeated!");
+      return;
+    }
+
+    let oldHp = this.hp;
+    this.hp = this.hp + amount;
+    if (this.hp > this.maxHp) { this.hp = this.maxHp; }
+    
+    print(f"💚 {this.name} heals for {amount}! ({oldHp} -> {this.hp})");
+  }
+
+  gainXP(amount) {
+    this.xp = this.xp + amount;
+    print(f"✨ {this.name} gains {amount} XP! (Total: {this.xp})");
+    
+    let xpNeeded = this.level * 100;
+    if (this.xp >= xpNeeded) {
+      this.levelUp();
+    }
+  }
+
+  levelUp() {
+    this.level = this.level + 1;
+    this.xp = 0;
+    
+    let hpGain = 15;
+    let mpGain = 8;
+    
+    this.maxHp = this.maxHp + hpGain;
+    this.maxMp = this.maxMp + mpGain;
+    this.hp = this.maxHp;  # Full heal on level up
+    this.mp = this.maxMp;
+    
+    print(f"🎉 {this.name} levels up to {this.level}!");
+    print(f"   HP increased by {hpGain} to {this.maxHp}");
+    print(f"   MP increased by {mpGain} to {this.maxMp}");
+    print("   Fully restored!");
+  }
+}
+
+# Warrior class - tanky melee fighter
+class Warrior extends Character {
+  init(name, level) {
+    super(name, level);
+    this.strength = 15 + level * 2;
+    this.defense = 12 + level * 2;
+    this.rage = 0;
+    print(f"   ⚔️  Warrior stats - STR: {this.strength}, DEF: {this.defense}");
+  }
+
+  attack(target) {
+    if (!this.isAlive) {
+      print(f"{this.name} cannot attack while defeated!");
+      return;
+    }
+
+    let damage = this.strength + (this.rage * 2);
+    print(f"⚔️  {this.name} attacks {target.name} with sword!");
+    print(f"   Base damage: {this.strength} + Rage bonus: {this.rage * 2} = {damage}");
+    
+    target.takeDamage(damage);
+    this.buildRage();
+  }
+
+  buildRage() {
+    this.rage = this.rage + 1;
+    if (this.rage > 5) { this.rage = 5; }
+    print(f"🔥 {this.name}'s rage builds! (Rage: {this.rage}/5)");
+  }
+
+  shieldBlock() {
+    if (this.mp >= 10) {
+      this.mp = this.mp - 10;
+      print(f"🛡️  {this.name} raises shield! Next attack will be reduced!");
+      print(f"   MP: {this.mp + 10} -> {this.mp}");
+      return true;
+    } else {
+      print(f"{this.name} doesn't have enough MP to block!");
+      return false;
+    }
+  }
+
+  berserkerRage() {
+    if (this.mp >= 25) {
+      this.mp = this.mp - 25;
+      this.rage = 5;
+      print(f"😡 {this.name} enters BERSERKER RAGE!");
+      print(f"   MP: {this.mp + 25} -> {this.mp}");
+      print(f"   Rage maximized: {this.rage}/5");
+    } else {
+      print(f"{this.name} needs 25 MP for Berserker Rage!");
+    }
+  }
+}
+
+# Mage class - magical ranged attacker
+class Mage extends Character {
+  init(name, level) {
+    super(name, level);
+    this.intelligence = 18 + level * 3;
+    this.magicPower = 10 + level * 2;
+    this.spellsKnown = ["Fireball", "Heal", "Lightning"];
+    print(f"   🔮 Mage stats - INT: {this.intelligence}, Magic: {this.magicPower}");
+    print(f"   Spells: {this.spellsKnown}");
+  }
+
+  castFireball(target) {
+    if (!this.isAlive) {
+      print(f"{this.name} cannot cast while defeated!");
+      return;
+    }
+
+    if (this.mp >= 15) {
+      this.mp = this.mp - 15;
+      let damage = this.magicPower + 8;
+      print(f"🔥 {this.name} casts Fireball at {target.name}!");
+      print(f"   MP: {this.mp + 15} -> {this.mp}");
+      print(f"   Spell damage: {damage}");
+      target.takeDamage(damage);
+    } else {
+      print(f"{this.name} needs 15 MP for Fireball!");
+    }
+  }
+
+  castHeal(target) {
+    if (this.mp >= 12) {
+      this.mp = this.mp - 12;
+      let healing = this.magicPower + 5;
+      print(f"💚 {this.name} casts Heal on {target.name}!");
+      print(f"   MP: {this.mp + 12} -> {this.mp}");
+      target.heal(healing);
+    } else {
+      print(f"{this.name} needs 12 MP for Heal!");
+    }
+  }
+
+  castLightning(target) {
+    if (this.mp >= 20) {
+      this.mp = this.mp - 20;
+      let damage = this.magicPower + 12;
+      print(f"⚡ {this.name} casts Lightning Bolt at {target.name}!");
+      print(f"   MP: {this.mp + 20} -> {this.mp}");
+      print(f"   Electric damage: {damage}");
+      target.takeDamage(damage);
+    } else {
+      print(f"{this.name} needs 20 MP for Lightning!");
+    }
+  }
+
+  meditation() {
+    let mpRecovered = 15;
+    this.mp = this.mp + mpRecovered;
+    if (this.mp > this.maxMp) { this.mp = this.maxMp; }
+    print(f"🧘 {this.name} meditates and recovers {mpRecovered} MP");
+    print(f"   MP: {this.mp - mpRecovered} -> {this.mp}");
+  }
+}
+
+# Rogue class - fast, sneaky attacker
+class Rogue extends Character {
+  init(name, level) {
+    super(name, level);
+    this.agility = 20 + level * 3;
+    this.stealth = 15 + level * 2;
+    this.isHidden = false;
+    print(f"   🗡️  Rogue stats - AGI: {this.agility}, Stealth: {this.stealth}");
+  }
+
+  sneak() {
+    if (this.mp >= 10) {
+      this.mp = this.mp - 10;
+      this.isHidden = true;
+      print(f"👤 {this.name} disappears into the shadows!");
+      print(f"   MP: {this.mp + 10} -> {this.mp}");
+      print("   Next attack will be a critical hit!");
+    } else {
+      print(f"{this.name} needs 10 MP to sneak!");
+    }
+  }
+
+  backstab(target) {
+    if (!this.isAlive) {
+      print(f"{this.name} cannot attack while defeated!");
+      return;
+    }
+
+    let baseDamage = this.agility;
+    let damage = baseDamage;
+    
+    if (this.isHidden) {
+      damage = damage * 2;
+      print(f"🗡️  {this.name} strikes from the shadows!");
+      print(f"   CRITICAL HIT! {baseDamage} x 2 = {damage} damage!");
+      this.isHidden = false;
+    } else {
+      print(f"🗡️  {this.name} attacks {target.name} with daggers!");
+      print(f"   Damage: {damage}");
+    }
+    
+    target.takeDamage(damage);
+  }
+
+  poisonBlade() {
+    if (this.mp >= 15) {
+      this.mp = this.mp - 15;
+      print(f"☠️  {this.name} coats blades with poison!");
+      print(f"   MP: {this.mp + 15} -> {this.mp}");
+      print("   Next 3 attacks will cause poison damage!");
+    } else {
+      print(f"{this.name} needs 15 MP for Poison Blade!");
+    }
+  }
+}
+
+print("\\n=== Creating Adventure Party ===");
+let warrior = new Warrior("Sir Galahad", 3);
+let mage = new Mage("Merlin", 3);
+let rogue = new Rogue("Shadow", 3);
+
+print("\\n=== Party Status ===");
+warrior.displayStats();
+mage.displayStats();
+rogue.displayStats();
+
+print("\\n=== Epic Battle Simulation ===");
+print("A wild monster appears!");
+
+print("\\n--- Round 1: Warriors Charge ---");
+warrior.attack(mage);  # Simulating battle
+mage.castHeal(mage);   # Heal self
+
+print("\\n--- Round 2: Magic and Stealth ---");
+rogue.sneak();
+mage.castFireball(warrior);
+rogue.backstab(warrior);
+
+print("\\n--- Round 3: Special Abilities ---");
+warrior.berserkerRage();
+mage.meditation();
+rogue.poisonBlade();
+
+print("\\n=== Final Party Status ===");
+warrior.displayStats();
+mage.displayStats();
+rogue.displayStats();
+
+print("\\n--- Gaining Experience ---");
+warrior.gainXP(250);
+mage.gainXP(300);
+rogue.gainXP(275);
+
+print("\\n=== Classes enable complex game systems! ===");
+`,
+
+  vehicleHierarchy: `# Multi-Level Inheritance: Vehicle System
+print("=== Advanced Inheritance: Vehicle Factory ===");
+
+# Base Vehicle class - common to all vehicles
+class Vehicle {
+  init(brand, model, year) {
+    print(f"🏭 Manufacturing vehicle: {year} {brand} {model}");
+    this.brand = brand;
+    this.model = model;
+    this.year = year;
+    this.speed = 0;
+    this.fuel = 100;
+    this.isRunning = false;
+    this.mileage = 0;
+    print(f"   Fuel tank: {this.fuel}%");
+  }
+
+  start() {
+    if (this.isRunning) {
+      print(f"{this.brand} {this.model} is already running!");
+      return;
+    }
+    
+    if (this.fuel > 0) {
+      this.isRunning = true;
+      print(f"🔑 Starting {this.brand} {this.model}... Engine on!");
+      this.getStartSound();
+    } else {
+      print(f"⛽ Cannot start {this.brand} {this.model} - no fuel!");
+    }
+  }
+
+  stop() {
+    if (!this.isRunning) {
+      print(f"{this.brand} {this.model} is already stopped!");
+      return;
+    }
+    
+    this.isRunning = false;
+    this.speed = 0;
+    print(f"🛑 Stopping {this.brand} {this.model}... Engine off!");
+  }
+
+  accelerate(amount) {
+    if (!this.isRunning) {
+      print(f"Cannot accelerate - {this.brand} {this.model} is not running!");
+      return;
+    }
+    
+    if (this.fuel <= 0) {
+      print(f"⛽ Out of fuel! {this.brand} {this.model} cannot accelerate!");
+      return;
+    }
+    
+    let oldSpeed = this.speed;
+    this.speed = this.speed + amount;
+    this.fuel = this.fuel - (amount * 0.5);
+    this.mileage = this.mileage + 1;
+    
+    if (this.fuel < 0) { this.fuel = 0; }
+    
+    print(f"🚗 {this.brand} {this.model} accelerates!");
+    print(f"   Speed: {oldSpeed} -> {this.speed} mph");
+    print(f"   Fuel: {this.fuel}%");
+  }
+
+  brake(amount) {
+    if (this.speed == 0) {
+      print(f"{this.brand} {this.model} is already stopped!");
+      return;
+    }
+    
+    let oldSpeed = this.speed;
+    this.speed = this.speed - amount;
+    if (this.speed < 0) { this.speed = 0; }
+    
+    print(f"🛑 {this.brand} {this.model} applies brakes!");
+    print(f"   Speed: {oldSpeed} -> {this.speed} mph");
+  }
+
+  refuel() {
+    let oldFuel = this.fuel;
+    this.fuel = 100;
+    print(f"⛽ Refueling {this.brand} {this.model}!");
+    print(f"   Fuel: {oldFuel}% -> {this.fuel}%");
+  }
+
+  getStartSound() {
+    print("   🔊 Vroom vroom!");
+  }
+
+  getStatus() {
+    print(f"\\n📋 {this.year} {this.brand} {this.model} Status:");
+    print(f"   Engine: {this.isRunning ? "Running" : "Off"}");
+    print(f"   Speed: {this.speed} mph");
+    print(f"   Fuel: {this.fuel}%");
+    print(f"   Mileage: {this.mileage} miles");
+  }
+}
+
+# Car inherits from Vehicle
+class Car extends Vehicle {
+  init(brand, model, year, doors) {
+    super(brand, model, year);
+    this.doors = doors;
+    this.passengers = 0;
+    this.maxPassengers = doors;
+    print(f"   🚗 Car features: {doors} doors, seats {this.maxPassengers}");
+  }
+
+  getStartSound() {
+    print("   🔊 *Click* Purrrr... (smooth car engine)");
+  }
+
+  loadPassenger() {
+    if (this.passengers < this.maxPassengers) {
+      this.passengers = this.passengers + 1;
+      print(f"👥 Passenger boards! ({this.passengers}/{this.maxPassengers})");
+    } else {
+      print(f"🚫 Car is full! ({this.passengers}/{this.maxPassengers})");
+    }
+  }
+
+  honkHorn() {
+    print(f"📯 {this.brand} {this.model}: BEEP BEEP!");
+  }
+
+  openTrunk() {
+    print(f"📦 {this.brand} {this.model} trunk opened - loading cargo!");
+  }
+}
+
+# SportsCar extends Car with performance features
+class SportsCar extends Car {
+  init(brand, model, year) {
+    super(brand, model, year, 2);  # Sports cars typically have 2 doors
+    this.turboMode = false;
+    this.topSpeed = 180;
+    print(f"   🏁 Sports car - Top speed: {this.topSpeed} mph");
+  }
+
+  getStartSound() {
+    print("   🔊 ROAAARRR! (powerful sports car engine)");
+  }
+
+  turboBoost() {
+    if (!this.isRunning) {
+      print("Cannot engage turbo - engine not running!");
+      return;
+    }
+    
+    if (this.fuel < 20) {
+      print("⛽ Not enough fuel for turbo boost!");
+      return;
+    }
+    
+    this.turboMode = true;
+    this.fuel = this.fuel - 10;
+    let boost = 30;
+    let oldSpeed = this.speed;
+    this.speed = this.speed + boost;
+    
+    if (this.speed > this.topSpeed) {
+      this.speed = this.topSpeed;
+    }
+    
+    print(f"🚀 TURBO BOOST ACTIVATED!");
+    print(f"   Speed: {oldSpeed} -> {this.speed} mph");
+    print(f"   Fuel: {this.fuel + 10}% -> {this.fuel}%");
+  }
+
+  launchControl() {
+    if (this.speed == 0 && this.isRunning) {
+      print(f"🏁 {this.brand} {this.model} - LAUNCH CONTROL ENGAGED!");
+      this.accelerate(60);
+      print("   Perfect launch!");
+    } else {
+      print("Launch control only works from a standstill!");
+    }
+  }
+}
+
+# Truck inherits from Vehicle with cargo features
+class Truck extends Vehicle {
+  init(brand, model, year, cargoCapacity) {
+    super(brand, model, year);
+    this.cargoCapacity = cargoCapacity;
+    this.currentCargo = 0;
+    print(f"   🚛 Truck features: {cargoCapacity} tons cargo capacity");
+  }
+
+  getStartSound() {
+    print("   🔊 VROOOOM VROOOM! (heavy diesel engine)");
+  }
+
+  loadCargo(weight) {
+    if (this.currentCargo + weight <= this.cargoCapacity) {
+      this.currentCargo = this.currentCargo + weight;
+      print(f"📦 Loading {weight} tons of cargo!");
+      print(f"   Cargo: {this.currentCargo - weight} -> {this.currentCargo} tons");
+      print(f"   Capacity: {this.currentCargo}/{this.cargoCapacity} tons");
+    } else {
+      print(f"🚫 Cannot load {weight} tons - would exceed capacity!");
+      print(f"   Available space: {this.cargoCapacity - this.currentCargo} tons");
+    }
+  }
+
+  unloadCargo() {
+    if (this.currentCargo > 0) {
+      print(f"📤 Unloading all cargo ({this.currentCargo} tons)");
+      this.currentCargo = 0;
+      print("   Truck is now empty!");
+    } else {
+      print("No cargo to unload!");
+    }
+  }
+
+  honkAirHorn() {
+    print(f"📯 {this.brand} {this.model}: HOOOOOONK! (loud air horn)");
+  }
+}
+
+# Motorcycle inherits from Vehicle - lightweight and fast
+class Motorcycle extends Vehicle {
+  init(brand, model, year, engineSize) {
+    super(brand, model, year);
+    this.engineSize = engineSize;
+    this.hasSidecar = false;
+    print(f"   🏍️  Motorcycle features: {engineSize}cc engine");
+  }
+
+  getStartSound() {
+    print("   🔊 *Kick* BRAAP BRAAP BRAAP! (motorcycle engine)");
+  }
+
+  wheelie() {
+    if (this.isRunning && this.speed > 20) {
+      print(f"🤸 {this.brand} {this.model} pulls a WHEELIE!");
+      print("   🎪 Awesome stunt!");
+    } else {
+      print("Need more speed for a wheelie!");
+    }
+  }
+
+  addSidecar() {
+    if (!this.hasSidecar) {
+      this.hasSidecar = true;
+      print(f"🛵 Sidecar attached to {this.brand} {this.model}!");
+      print("   Now seats 2 people!");
+    } else {
+      print("Sidecar already attached!");
+    }
+  }
+}
+
+print("\\n=== Vehicle Dealership Demo ===");
+
+# Create different types of vehicles
+let sedan = new Car("Toyota", "Camry", 2023, 4);
+let sports = new SportsCar("Ferrari", "488", 2023);
+let truck = new Truck("Ford", "F-150", 2023, 2.5);
+let bike = new Motorcycle("Harley", "Sportster", 2023, 883);
+
+print("\\n=== Vehicle Operations ===");
+
+print("\\n--- Sedan Demo ---");
+sedan.start();
+sedan.loadPassenger();
+sedan.loadPassenger();
+sedan.accelerate(40);
+sedan.honkHorn();
+sedan.getStatus();
+
+print("\\n--- Sports Car Demo ---");
+sports.start();
+sports.launchControl();
+sports.turboBoost();
+sports.getStatus();
+
+print("\\n--- Truck Demo ---");
+truck.start();
+truck.loadCargo(1.5);
+truck.loadCargo(1.2);
+truck.accelerate(30);
+truck.honkAirHorn();
+truck.getStatus();
+
+print("\\n--- Motorcycle Demo ---");
+bike.start();
+bike.accelerate(35);
+bike.wheelie();
+bike.addSidecar();
+bike.getStatus();
+
+print("\\n=== Multi-level inheritance creates rich object hierarchies! ===");
+`,
+
+  libraryManagement: `# Library Management System with Classes
+print("=== Digital Library Management System ===");
+
+# Base Item class for all library items
+class LibraryItem {
+  init(title, author, itemId) {
+    print(f"📚 Adding to library: {title} by {author}");
+    this.title = title;
+    this.author = author;
+    this.itemId = itemId;
+    this.isCheckedOut = false;
+    this.borrower = null;
+    this.borrowDate = null;
+    this.dueDate = null;
+    print(f"   ID: {this.itemId}, Status: Available");
+  }
+
+  checkOut(memberName, borrowDays) {
+    if (this.isCheckedOut) {
+      print(f"❌ {this.title} is already checked out by {this.borrower}");
+      return false;
+    }
+
+    this.isCheckedOut = true;
+    this.borrower = memberName;
+    this.borrowDate = "Today";  # In real system, would be actual date
+    this.dueDate = f"Today + {borrowDays} days";
+    
+    print(f"✅ {this.title} checked out to {memberName}");
+    print(f"   Due date: {this.dueDate}");
+    return true;
+  }
+
+  checkIn() {
+    if (!this.isCheckedOut) {
+      print(f"❌ {this.title} is not currently checked out");
+      return false;
+    }
+
+    let previousBorrower = this.borrower;
+    this.isCheckedOut = false;
+    this.borrower = null;
+    this.borrowDate = null;
+    this.dueDate = null;
+    
+    print(f"📚 {this.title} returned by {previousBorrower}");
+    print("   Status: Available");
+    return true;
+  }
+
+  getStatus() {
+    print(f"\\n📋 {this.getItemType()}: {this.title}");
+    print(f"   Author: {this.author}");
+    print(f"   ID: {this.itemId}");
+    if (this.isCheckedOut) {
+      print(f"   Status: Checked out to {this.borrower}");
+      print(f"   Due: {this.dueDate}");
+    } else {
+      print("   Status: Available");
+    }
+    this.getSpecificInfo();
+  }
+
+  getItemType() {
+    return "Library Item";
+  }
+
+  getSpecificInfo() {
+    # Override in child classes
+  }
+}
+
+# Book class extends LibraryItem
+class Book extends LibraryItem {
+  init(title, author, itemId, pages, genre) {
+    super(title, author, itemId);
+    this.pages = pages;
+    this.genre = genre;
+    this.bookmark = 0;
+    print(f"   📖 Book details: {pages} pages, Genre: {genre}");
+  }
+
+  getItemType() {
+    return "Book";
+  }
+
+  getSpecificInfo() {
+    print(f"   Pages: {this.pages}");
+    print(f"   Genre: {this.genre}");
+    if (this.bookmark > 0) {
+      print(f"   Bookmark: Page {this.bookmark}");
+    }
+  }
+
+  setBookmark(page) {
+    if (page >= 0 && page <= this.pages) {
+      this.bookmark = page;
+      print(f"🔖 Bookmark set to page {page} in {this.title}");
+    } else {
+      print(f"❌ Invalid page number: {page} (Book has {this.pages} pages)");
+    }
+  }
+
+  getReadingProgress() {
+    if (this.bookmark == 0) {
+      return 0;
+    }
+    let progress = (this.bookmark / this.pages) * 100;
+    print(f"📊 Reading progress for {this.title}: {progress}%");
+    return progress;
+  }
+}
+
+# DVD class extends LibraryItem
+class DVD extends LibraryItem {
+  init(title, director, itemId, duration, rating) {
+    super(title, director, itemId);
+    this.director = director;  # Override author for DVDs
+    this.duration = duration;
+    this.rating = rating;
+    this.watchCount = 0;
+    print(f"   🎬 DVD details: {duration} minutes, Rated {rating}");
+  }
+
+  getItemType() {
+    return "DVD";
+  }
+
+  getSpecificInfo() {
+    print(f"   Director: {this.director}");
+    print(f"   Duration: {this.duration} minutes");
+    print(f"   Rating: {this.rating}");
+    print(f"   Times watched: {this.watchCount}");
+  }
+
+  watchMovie() {
+    if (this.isCheckedOut) {
+      this.watchCount = this.watchCount + 1;
+      print(f"🎬 Watching {this.title}!");
+      print(f"   Watch count: {this.watchCount}");
+      print(f"   Enjoy the {this.duration}-minute film!");
+    } else {
+      print(f"❌ {this.title} must be checked out to watch");
+    }
+  }
+}
+
+# Magazine class extends LibraryItem
+class Magazine extends LibraryItem {
+  init(title, publisher, itemId, issue, month, year) {
+    super(title, publisher, itemId);
+    this.publisher = publisher;  # Override author for magazines
+    this.issue = issue;
+    this.month = month;
+    this.year = year;
+    this.articlesRead = [];
+    print(f"   📰 Magazine details: Issue {issue}, {month} {year}");
+  }
+
+  getItemType() {
+    return "Magazine";
+  }
+
+  getSpecificInfo() {
+    print(f"   Publisher: {this.publisher}");
+    print(f"   Issue: {this.issue} ({this.month} {this.year})");
+    print(f"   Articles read: {len(this.articlesRead)}");
+  }
+
+  readArticle(articleTitle) {
+    this.articlesRead = push(this.articlesRead, articleTitle);
+    print(f"📰 Reading article: {articleTitle}");
+    print(f"   Articles read in this issue: {len(this.articlesRead)}");
+  }
+
+  listArticlesRead() {
+    if (len(this.articlesRead) == 0) {
+      print(f"No articles read yet in {this.title}");
+    } else {
+      print(f"📰 Articles read in {this.title}:");
+      for (let i = 0; i < len(this.articlesRead); i = i + 1) {
+        print(f"   {i + 1}. {this.articlesRead[i]}");
+      }
+    }
+  }
+}
+
+# Library class to manage all items
+class Library {
+  init(name) {
+    print(f"🏛️  Initializing {name}");
+    this.name = name;
+    this.items = [];
+    this.members = [];
+    this.totalCheckouts = 0;
+    print("   Library system ready!");
+  }
+
+  addItem(item) {
+    this.items = push(this.items, item);
+    print(f"➕ Added {item.getItemType()}: {item.title} to library");
+    print(f"   Total items: {len(this.items)}");
+  }
+
+  findItem(itemId) {
+    for (let i = 0; i < len(this.items); i = i + 1) {
+      if (this.items[i].itemId == itemId) {
+        return this.items[i];
+      }
+    }
+    return null;
+  }
+
+  checkOutItem(itemId, memberName, days) {
+    let item = this.findItem(itemId);
+    if (item == null) {
+      print(f"❌ Item with ID {itemId} not found");
+      return false;
+    }
+
+    if (item.checkOut(memberName, days)) {
+      this.totalCheckouts = this.totalCheckouts + 1;
+      print(f"📊 Total library checkouts: {this.totalCheckouts}");
+      return true;
+    }
+    return false;
+  }
+
+  checkInItem(itemId) {
+    let item = this.findItem(itemId);
+    if (item == null) {
+      print(f"❌ Item with ID {itemId} not found");
+      return false;
+    }
+
+    return item.checkIn();
+  }
+
+  showLibraryStatus() {
+    print(f"\\n🏛️  {this.name} Status Report");
+    print(f"   Total items: {len(this.items)}");
+    print(f"   Total checkouts: {this.totalCheckouts}");
+
+    let available = 0;
+    let checkedOut = 0;
+
+    for (let i = 0; i < len(this.items); i = i + 1) {
+      if (this.items[i].isCheckedOut) {
+        checkedOut = checkedOut + 1;
+      } else {
+        available = available + 1;
+      }
+    }
+
+    print(f"   Available: {available}");
+    print(f"   Checked out: {checkedOut}");
+  }
+
+  listAllItems() {
+    print(f"\\n📚 All items in {this.name}:");
+    for (let i = 0; i < len(this.items); i = i + 1) {
+      let item = this.items[i];
+      let status = item.isCheckedOut ? f"(Checked out to {item.borrower})" : "(Available)";
+      print(f"   {item.itemId}: {item.title} {status}");
+    }
+  }
+}
+
+print("\\n=== Setting Up Central Library ===");
+let library = new Library("Central City Library");
+
+print("\\n=== Adding Books ===");
+let book1 = new Book("The Great Gatsby", "F. Scott Fitzgerald", "B001", 180, "Classic");
+let book2 = new Book("To Kill a Mockingbird", "Harper Lee", "B002", 376, "Fiction");
+let book3 = new Book("1984", "George Orwell", "B003", 328, "Dystopian");
+
+library.addItem(book1);
+library.addItem(book2);
+library.addItem(book3);
+
+print("\\n=== Adding DVDs ===");
+let dvd1 = new DVD("The Matrix", "Wachowski Sisters", "D001", 136, "R");
+let dvd2 = new DVD("Finding Nemo", "Andrew Stanton", "D002", 100, "G");
+
+library.addItem(dvd1);
+library.addItem(dvd2);
+
+print("\\n=== Adding Magazines ===");
+let mag1 = new Magazine("National Geographic", "National Geographic Society", "M001", 45, "October", 2023);
+let mag2 = new Magazine("Scientific American", "Springer Nature", "M002", 312, "November", 2023);
+
+library.addItem(mag1);
+library.addItem(mag2);
+
+print("\\n=== Library Operations ===");
+library.showLibraryStatus();
+library.listAllItems();
+
+print("\\n=== Member Activity ===");
+library.checkOutItem("B001", "Alice Johnson", 14);
+library.checkOutItem("D001", "Bob Smith", 7);
+library.checkOutItem("M001", "Carol Davis", 3);
+
+print("\\n=== Using Checked Out Items ===");
+book1.setBookmark(45);
+book1.getReadingProgress();
+
+dvd1.watchMovie();
+
+mag1.readArticle("Climate Change Impact");
+mag1.readArticle("Ocean Conservation");
+mag1.listArticlesRead();
+
+print("\\n=== Item Status Check ===");
+book1.getStatus();
+dvd1.getStatus();
+mag1.getStatus();
+
+print("\\n=== Returning Items ===");
+library.checkInItem("B001");
+library.checkInItem("D001");
+
+library.showLibraryStatus();
+
+print("\\n=== Classes enable complex real-world systems! ===");
+`,
+
+  // Add to categories at the end of the object
 };
 
 export const getRandomSampleCode = (): string => {
@@ -839,13 +2026,14 @@ export const getRandomSampleCode = (): string => {
   return snippets[randomIndex];
 };
 
-// Category-based snippet access
+// Updated category-based snippet access with new class categories
 export const snippetCategories = {
   beginner: [
     "simpleBeginnerExample",
     "basicArithmetic",
     "stringOperations",
     "simpleFunction",
+    "basicClass",
   ],
 
   algorithms: [
@@ -857,7 +2045,7 @@ export const snippetCategories = {
 
   dataStructures: ["filterAndMap", "closureCounter", "bankAccount"],
 
-  games: ["ticTacToe", "rpgCharacterSystem"],
+  games: ["ticTacToe", "rpgCharacterSystem", "gameCharacterClasses"],
 
   mathematics: [
     "fibonacci",
@@ -867,6 +2055,24 @@ export const snippetCategories = {
   ],
 
   advanced: ["closureCounter", "bankAccount", "matrixMultiplication"],
+
+  // NEW CLASS CATEGORIES
+  objectOriented: [
+    "basicClass",
+    "classInheritance",
+    "gameCharacterClasses",
+    "vehicleHierarchy",
+    "libraryManagement",
+  ],
+
+  realWorld: [
+    "bankAccount",
+    "libraryManagement",
+    "vehicleHierarchy",
+    "gameCharacterClasses",
+  ],
+
+  inheritance: ["classInheritance", "gameCharacterClasses", "vehicleHierarchy"],
 };
 
 export const getSnippetsByCategory = (
