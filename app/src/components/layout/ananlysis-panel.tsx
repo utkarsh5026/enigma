@@ -62,7 +62,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
   code,
 }) => {
   return (
-    <Tabs defaultValue="tokens" className="h-full flex flex-col">
+    <Tabs defaultValue="output" className="h-full flex flex-col">
       {/* Analysis Tabs */}
       <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
         <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
