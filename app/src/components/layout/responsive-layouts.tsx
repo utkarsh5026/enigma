@@ -42,7 +42,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full">
       {/* Editor Panel */}
-      <ResizablePanel defaultSize={50} minSize={30}>
+      <ResizablePanel defaultSize={60} minSize={30}>
         <LeftPanel
           code={code}
           onCodeChange={handleCodeChange}
@@ -53,7 +53,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
       <ResizableHandle withHandle />
 
       {/* Analysis Panel */}
-      <ResizablePanel defaultSize={50} minSize={30}>
+      <ResizablePanel defaultSize={40} minSize={30}>
         <div className="h-full flex flex-col">
           <AnalysisContent tokenProps={tokenProps} code={code} />
         </div>
@@ -103,11 +103,13 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
               )}
             </Button>
           </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Code Analysis</DrawerTitle>
+          <DrawerContent className="bg-[var(--tokyo-bg)]/50 backdrop-blur-sm max-w-full h-[80vh] font-mono">
+            <DrawerHeader className="border-b border-[var(--tokyo-comment)]/40 p-4">
+              <DrawerTitle className="text-lg font-medium">
+                Code Analysis
+              </DrawerTitle>
             </DrawerHeader>
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 p-4">
               <AnalysisContent tokenProps={tokenProps} code={code} />
             </div>
           </DrawerContent>
