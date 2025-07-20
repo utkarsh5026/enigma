@@ -9,6 +9,7 @@ import { ExpressionEvaluator } from "./expression-evaluator";
 import { ReturnStatementEvaluator } from "./return-evaluator";
 import { WhileStatementEvaluator } from "./while-evaluator";
 import { ForStatementEvaluator } from "./for-evaluator";
+import { ClassStatementEvaluator } from "./class-evaluator";
 
 export {
   LetEvaluator,
@@ -20,4 +21,5 @@ export {
   ReturnStatementEvaluator,
   WhileStatementEvaluator,
   ForStatementEvaluator,
+  ClassStatementEvaluator,
 };
