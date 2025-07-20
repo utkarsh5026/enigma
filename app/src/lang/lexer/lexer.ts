@@ -184,6 +184,10 @@ export default class Lexer {
         token = this.createTok(TokenType.STRING, this.readString());
         break;
 
+      case "'":
+        token = this.createTok(TokenType.STRING, this.readString("'"));
+        break;
+
       case "\0":
         token = this.createTok(TokenType.EOF, "");
         break;
@@ -280,12 +284,12 @@ export default class Lexer {
    * Reads a string literal from the input.
    * @returns The string literal without quotes.
    */
-  private readString(): string {
+  private readString(quoteChar: string = '"'): string {
     const result = [];
     while (true) {
       this.readCurrChar();
       if (this.currCh === "\0") throw new Error("Unterminated string");
-      if (this.currCh === '"') break;
+      if (this.currCh === quoteChar) break;
 
       if (this.currCh === "\\") {
         this.readCurrChar();
