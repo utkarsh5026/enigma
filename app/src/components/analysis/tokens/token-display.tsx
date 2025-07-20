@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { Token } from "@/lang/token/token";
-import { motion } from "framer-motion";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Terminal,
   Play,
   RotateCcw,
   AlertCircle,
   CheckCircle2,
+  Loader2,
+  Zap,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import { getTokenCategory, getCategoryIcon } from "./tokens-info";
 import CodeTokens from "./code-tokens";
 import TokenBadge from "./token-badge";
@@ -70,168 +70,282 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="w-full h-full overflow-hidden flex flex-col bg-[var(--tokyo-bg)]"
     >
-      <Card className="w-full shadow-lg border-tokyo-bg-highlight bg-tokyo-bg dark:bg-tokyo-bg">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-2xl font-bold text-tokyo-fg flex items-center">
-            <Terminal size={24} className="mr-2 text-tokyo-cyan" />
-            Token Analysis
-          </CardTitle>
-
-          <CardDescription className="text-tokyo-fg-dark">
-            Manually analyze your code to view the token stream from lexical
-            analysis
-          </CardDescription>
-
-          {/* Tokenize Controls */}
-          <div className="flex items-center gap-3 pt-2">
-            <Button
-              onClick={handleTokenize}
-              disabled={!codeHasContent || isTokenizing}
-              className="bg-tokyo-blue hover:bg-tokyo-blue/90 text-white disabled:opacity-50"
-              size="sm"
-            >
-              {isTokenizing ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                  Tokenizing...
-                </>
-              ) : (
-                <>
-                  <Play size={16} className="mr-2" />
-                  Tokenize Code
-                </>
-              )}
-            </Button>
-
-            {hasTokens && (
-              <Button
-                onClick={onClearTokens}
-                variant="outline"
-                size="sm"
-                className="border-tokyo-comment text-tokyo-comment hover:bg-tokyo-comment/10"
+      {/* Header */}
+      <div className="shrink-0 border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-dark)]/80 backdrop-blur-sm">
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <motion.div
+                className="p-2.5 rounded-lg bg-gradient-to-br from-[var(--tokyo-cyan)] to-[var(--tokyo-blue)] shadow-lg"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <RotateCcw size={16} className="mr-2" />
-                Clear
-              </Button>
-            )}
+                <Terminal size={18} className="text-white" />
+              </motion.div>
+              <div>
+                <h2 className="text-lg font-semibold text-[var(--tokyo-fg)] font-mono">
+                  Token Analyzer
+                </h2>
+                <p className="text-sm text-[var(--tokyo-comment)]">
+                  Lexical analysis and token stream
+                </p>
+              </div>
+            </div>
 
-            {/* Status Indicators */}
+            {/* Tokenize Controls */}
+            <div className="flex items-center gap-2">
+              {!hasTokens && !isTokenizing && codeHasContent && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                >
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleTokenize}
+                        disabled={!codeHasContent || isTokenizing}
+                        className="bg-gradient-to-r from-[var(--tokyo-cyan)] to-[var(--tokyo-blue)] hover:from-[var(--tokyo-cyan)]/90 hover:to-[var(--tokyo-blue)]/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-[var(--tokyo-cyan)]/20"
+                      >
+                        {isTokenizing ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <Zap size={16} />
+                        )}
+                        {isTokenizing ? "Tokenizing..." : "Tokenize Code"}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">
+                        Analyze the current code to generate tokens
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </motion.div>
+              )}
+
+              {hasTokens && (
+                <AnimatePresence>
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center gap-2"
+                  >
+                    <Badge className="bg-[var(--tokyo-cyan)]/20 text-[var(--tokyo-cyan)] border border-[var(--tokyo-cyan)]/30 text-xs px-2 py-1">
+                      {tokens.length} tokens
+                    </Badge>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleTokenize}
+                          disabled={isTokenizing}
+                          className="h-9 w-9 p-0 rounded-md border border-transparent bg-[var(--tokyo-bg)] text-[var(--tokyo-comment)] 
+                                   hover:text-[var(--tokyo-cyan)] hover:bg-[var(--tokyo-bg-highlight)] hover:border-[var(--tokyo-border)]
+                                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-[var(--tokyo-comment)]
+                                   transition-all duration-200 ease-in-out shadow-sm hover:shadow-md
+                                   active:scale-95 transform"
+                        >
+                          {isTokenizing ? (
+                            <Loader2
+                              size={16}
+                              className="animate-spin text-[var(--tokyo-blue)]"
+                            />
+                          ) : showCodeChanged ? (
+                            <AlertCircle size={16} />
+                          ) : (
+                            <Play size={16} />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[var(--tokyo-bg-dark)] border-[var(--tokyo-border)] text-[var(--tokyo-fg)] shadow-lg">
+                        <p className="text-xs font-medium font-cascadia-code">
+                          {showCodeChanged
+                            ? "Code changed - re-tokenize"
+                            : "Re-tokenize code"}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={onClearTokens}
+                          className="h-9 w-9 p-0 rounded-md border border-transparent bg-[var(--tokyo-bg)] text-[var(--tokyo-comment)] 
+                                   hover:text-[var(--tokyo-red)] hover:bg-[var(--tokyo-bg-highlight)] hover:border-[var(--tokyo-border)]
+                                   transition-all duration-200 ease-in-out shadow-sm hover:shadow-md
+                                   active:scale-95 transform"
+                        >
+                          <RotateCcw size={16} />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[var(--tokyo-bg-dark)] border-[var(--tokyo-border)] text-[var(--tokyo-fg)] shadow-lg">
+                        <p className="text-xs font-medium font-cascadia-code">
+                          Clear tokens
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </motion.div>
+                </AnimatePresence>
+              )}
+            </div>
+          </div>
+
+          {/* Status Indicators */}
+          <AnimatePresence>
             {showCodeChanged && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center text-tokyo-orange text-sm"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-[var(--tokyo-orange)]/10 border border-[var(--tokyo-orange)]/30"
               >
-                <AlertCircle size={16} className="mr-1" />
-                Code changed - click tokenize to update
+                <AlertCircle size={16} className="text-[var(--tokyo-orange)]" />
+                <span className="text-sm text-[var(--tokyo-orange)] font-medium">
+                  Code changed - click tokenize to update
+                </span>
               </motion.div>
             )}
 
             {hasTokens && !showCodeChanged && !isTokenizing && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center text-tokyo-green text-sm"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-[var(--tokyo-green)]/10 border border-[var(--tokyo-green)]/30"
               >
-                <CheckCircle2 size={16} className="mr-1" />
-                Tokens up to date
+                <CheckCircle2 size={16} className="text-[var(--tokyo-green)]" />
+                <span className="text-sm text-[var(--tokyo-green)] font-medium">
+                  Tokens up to date
+                </span>
               </motion.div>
             )}
-          </div>
+          </AnimatePresence>
 
           {/* Error Display */}
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-tokyo-red/10 border border-tokyo-red/30 rounded-lg p-3 mt-2"
-            >
-              <div className="flex items-center text-tokyo-red text-sm">
-                <AlertCircle size={16} className="mr-2" />
-                <span className="font-medium">Tokenization Error:</span>
-              </div>
-              <p className="text-tokyo-red/80 text-sm mt-1">{error}</p>
-            </motion.div>
-          )}
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          {tokens.length > 0 && (
-            <motion.div
-              className="flex flex-wrap gap-2 mb-4"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: 0.3,
-                staggerChildren: 0.1,
-              }}
-            >
+          <AnimatePresence>
+            {error && (
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="bg-[var(--tokyo-red)]/10 border border-[var(--tokyo-red)]/30 rounded-lg p-3 mb-3"
               >
-                <Badge
-                  variant={activeFilter === null ? "default" : "outline"}
-                  className="cursor-pointer"
-                  onClick={() => setActiveFilter(null)}
-                >
-                  All
-                </Badge>
+                <div className="flex items-center text-[var(--tokyo-red)] text-sm">
+                  <AlertCircle size={16} className="mr-2" />
+                  <span className="font-medium">Tokenization Error:</span>
+                </div>
+                <p className="text-[var(--tokyo-red)]/80 text-sm mt-1">
+                  {error}
+                </p>
               </motion.div>
+            )}
+          </AnimatePresence>
 
-              {uniqueCategories.map((category, index) => (
+          {/* Category Filters - Only show when we have tokens */}
+          <AnimatePresence>
+            {tokens.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="flex flex-wrap gap-2"
+              >
                 <motion.div
-                  key={category}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{
-                    opacity: 1,
-                    x: 0,
-                    transition: {
-                      delay: 0.3 + index * 0.05,
-                    },
-                  }}
                 >
                   <Badge
-                    variant={activeFilter === category ? "default" : "outline"}
-                    className="cursor-pointer flex items-center"
-                    onClick={() =>
-                      setActiveFilter(
-                        category === activeFilter ? null : category
-                      )
-                    }
+                    variant={activeFilter === null ? "default" : "outline"}
+                    className="cursor-pointer bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border border-[var(--tokyo-blue)]/30 hover:bg-[var(--tokyo-blue)]/30 transition-colors"
+                    onClick={() => setActiveFilter(null)}
                   >
-                    {getCategoryIcon(category)}
-                    {category}
+                    All
                   </Badge>
                 </motion.div>
-              ))}
+
+                {uniqueCategories.map((category, index) => (
+                  <motion.div
+                    key={category}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      transition: {
+                        delay: 0.1 + index * 0.05,
+                      },
+                    }}
+                  >
+                    <Badge
+                      variant={
+                        activeFilter === category ? "default" : "outline"
+                      }
+                      className="cursor-pointer flex items-center bg-[var(--tokyo-purple)]/20 text-[var(--tokyo-purple)] border border-[var(--tokyo-purple)]/30 hover:bg-[var(--tokyo-purple)]/30 transition-colors"
+                      onClick={() =>
+                        setActiveFilter(
+                          category === activeFilter ? null : category
+                        )
+                      }
+                    >
+                      {getCategoryIcon(category)}
+                      {category}
+                    </Badge>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="p-4 space-y-4">
+          <AnimatePresence mode="wait">
+            {tokens.length > 0 && (
+              <motion.div
+                key="token-badge"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
+                <TokenBadge
+                  tokens={tokens}
+                  uniqueCategories={uniqueCategories}
+                  activeFilter={activeFilter}
+                />
+              </motion.div>
+            )}
+
+            <motion.div
+              key="tokens-content"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <CodeTokens
+                tokensByLine={tokensByLine}
+                activeFilter={activeFilter}
+                lineNumbers={lineNumbers}
+                isEmpty={!hasTokens && !isTokenizing}
+                isTokenizing={isTokenizing}
+                code={code}
+              />
             </motion.div>
-          )}
-
-          {tokens.length > 0 && (
-            <TokenBadge
-              tokens={tokens}
-              uniqueCategories={uniqueCategories}
-              activeFilter={activeFilter}
-            />
-          )}
-
-          <CodeTokens
-            tokensByLine={tokensByLine}
-            activeFilter={activeFilter}
-            lineNumbers={lineNumbers}
-            isEmpty={!hasTokens && !isTokenizing}
-            isTokenizing={isTokenizing}
-            code={code}
-          />
-        </CardContent>
-      </Card>
+          </AnimatePresence>
+        </div>
+      </div>
     </motion.div>
   );
 };
