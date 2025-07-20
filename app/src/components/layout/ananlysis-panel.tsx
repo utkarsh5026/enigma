@@ -12,6 +12,7 @@ import {
 
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Token } from "@/lang/token/token";
+import { useMobile } from "@/hooks/use-mobile";
 
 interface TabTriggerProps {
   value: string;
@@ -61,6 +62,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
   tokenProps,
   code,
 }) => {
+  const { isPhone } = useMobile();
   return (
     <Tabs defaultValue="output" className="h-full flex flex-col">
       {/* Analysis Tabs */}
@@ -71,22 +73,26 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             icon={<Monitor size={16} />}
             label="Output"
           />
-          <CustomTabTrigger
-            value="tokens"
-            icon={<Terminal size={16} />}
-            label="Tokens"
-            badge={tokenProps.tokens.length}
-          />
-          <CustomTabTrigger
-            value="ast"
-            icon={<Braces size={16} />}
-            label="AST"
-          />
-          <CustomTabTrigger
-            value="execution"
-            icon={<ChevronsRight size={16} />}
-            label="Execution"
-          />
+          {!isPhone && (
+            <>
+              <CustomTabTrigger
+                value="tokens"
+                icon={<Terminal size={16} />}
+                label="Tokens"
+                badge={tokenProps.tokens.length}
+              />
+              <CustomTabTrigger
+                value="ast"
+                icon={<Braces size={16} />}
+                label="AST"
+              />
+              <CustomTabTrigger
+                value="execution"
+                icon={<ChevronsRight size={16} />}
+                label="Execution"
+              />
+            </>
+          )}
         </TabsList>
       </div>
 
@@ -95,26 +101,30 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
       </TabsContent>
 
       {/* Tab Content */}
-      <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
-        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-          <TokenDisplay code={code} {...tokenProps} />
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      </TabsContent>
+      {!isPhone && (
+        <>
+          <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
+            <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+              <TokenDisplay code={code} {...tokenProps} />
+              <ScrollBar orientation="vertical" />
+            </ScrollArea>
+          </TabsContent>
 
-      <TabsContent value="ast" className="flex-1 min-h-0 m-0">
-        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-          <ASTDisplay code={code} />
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      </TabsContent>
+          <TabsContent value="ast" className="flex-1 min-h-0 m-0">
+            <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+              <ASTDisplay code={code} />
+              <ScrollBar orientation="vertical" />
+            </ScrollArea>
+          </TabsContent>
 
-      <TabsContent value="execution" className="flex-1 min-h-0 m-0">
-        <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-          <ExecutionVisualizer code={code} />
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      </TabsContent>
+          <TabsContent value="execution" className="flex-1 min-h-0 m-0">
+            <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+              <ExecutionVisualizer code={code} />
+              <ScrollBar orientation="vertical" />
+            </ScrollArea>
+          </TabsContent>
+        </>
+      )}
     </Tabs>
   );
 };
