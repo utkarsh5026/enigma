@@ -7,11 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  getMinimalNodeStyle,
-  getNodeIcon,
-  getNodeDescription,
-} from "../node-info";
+import { getMinimalNodeStyle, getNodeIcon } from "../node-info";
 import { Node } from "@/lang/ast/ast";
 interface MinimalAstNodeProps {
   node: any;
@@ -27,10 +23,9 @@ const MinimalAstNode: React.FC<MinimalAstNodeProps> = ({
   isLast = false,
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const nodeType = node.constructor.name;
+  const { name: nodeType, description } = node.whatIam();
   const style = getMinimalNodeStyle(nodeType);
   const icon = getNodeIcon(nodeType);
-  const description = getNodeDescription(nodeType);
 
   // Check if node has children
   const hasChildren = (node: any): boolean => {
