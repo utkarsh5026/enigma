@@ -26,4 +26,12 @@ export class IndexExpression extends Expression {
   toString(): string {
     return `(${this.left.toString()}[${this.index.toString()}])`;
   }
+
+  whatIam() {
+    return {
+      name: "IndexExpression",
+      description:
+        "An index expression is an expression that is used to access an element of an array or a property of an object.",
+    };
+  }
 }

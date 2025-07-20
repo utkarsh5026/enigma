@@ -27,4 +27,11 @@ export class ThisExpression extends Expression {
   toString() {
     return "this";
   }
+
+  whatIam() {
+    return {
+      name: "ThisExpression",
+      description: "The `this` keyword refers to the current object instance.",
+    };
+  }
 }

@@ -31,4 +31,12 @@ export class PrefixExpression extends Expression {
   toString(): string {
     return `(${this.operator}${this.right.toString()})`;
   }
+
+  whatIam() {
+    return {
+      name: "PrefixExpression",
+      description:
+        "A prefix expression is an expression that is prefixed with an operator. It is used to negate a value or perform a logical operation. For example, `!isActive` or `-temperature`.",
+    };
+  }
 }

@@ -47,4 +47,12 @@ export class SuperExpression extends Expression {
       return `super.${this.method?.toString()}(${args})`;
     }
   }
+
+  whatIam() {
+    return {
+      name: "SuperExpression",
+      description:
+        "The `super` keyword refers to the parent class. It is used to access methods or properties from the parent class.",
+    };
+  }
 }

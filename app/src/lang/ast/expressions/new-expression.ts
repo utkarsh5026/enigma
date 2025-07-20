@@ -47,4 +47,12 @@ export class NewExpression extends Expression {
     const args = this.arguments.map((arg) => arg.toString()).join(", ");
     return `new ${this.className.toString()}(${args})`;
   }
+
+  whatIam() {
+    return {
+      name: "NewExpression",
+      description:
+        "The `new` keyword is used to create a new instance of a class.",
+    };
+  }
 }

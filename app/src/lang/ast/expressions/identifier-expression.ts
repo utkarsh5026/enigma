@@ -53,7 +53,8 @@ export class Identifier implements Expression {
   whatIam(): { name: string; description: string } {
     return {
       name: "Identifier",
-      description: "An identifier is a name for a variable or function.",
+      description:
+        "An identifier is a name for a variable or function. It is used to reference a variable or function in the code.",
     };
   }
 }

@@ -32,4 +32,12 @@ export class PropertyExpression extends Expression {
   toString() {
     return `${this.object.toString()}.${this.property.toString()}`;
   }
+
+  whatIam() {
+    return {
+      name: "PropertyExpression",
+      description:
+        "The `.` operator is used to access properties or methods of an object.",
+    };
+  }
 }

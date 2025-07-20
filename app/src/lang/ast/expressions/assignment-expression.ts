@@ -39,4 +39,12 @@ export class AssignmentExpression extends Expression {
   public isPropertyAssignment(): boolean {
     return AstValidator.isPropertyExpression(this.name);
   }
+
+  whatIam() {
+    return {
+      name: "AssignmentExpression",
+      description:
+        "An assignment expression is an expression that is used to assign a value to a variable. It is used to store a value in a variable.",
+    };
+  }
 }

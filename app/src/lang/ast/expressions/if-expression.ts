@@ -37,4 +37,12 @@ export class IfExpression extends Expression {
     }
     return out;
   }
+
+  whatIam() {
+    return {
+      name: "IfExpression",
+      description:
+        "An if expression is an expression that is used to evaluate a condition and execute a block of code if the condition is true.",
+    };
+  }
 }

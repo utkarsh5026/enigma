@@ -29,4 +29,12 @@ export class InfixExpression extends Expression {
     const right = this.right.toString();
     return `(${left} ${this.operator} ${right})`;
   }
+
+  whatIam() {
+    return {
+      name: "InfixExpression",
+      description:
+        "An infix expression is an expression that is in between two operands. It is used to perform a binary operation. For example, `5 + 3` or `isActive && hasPermission`.",
+    };
+  }
 }

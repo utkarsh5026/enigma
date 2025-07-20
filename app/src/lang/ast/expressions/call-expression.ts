@@ -27,4 +27,12 @@ export class CallExpression extends Expression {
     const args = this.args.map((a) => a.toString()).join(", ");
     return `${this.func.toString()}(${args})`;
   }
+
+  whatIam() {
+    return {
+      name: "CallExpression",
+      description:
+        "A call expression is an expression that is used to call a function or method.",
+    };
+  }
 }
