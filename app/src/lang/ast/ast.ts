@@ -21,6 +21,8 @@ export interface Node {
    * @returns {Position} The position of the node.
    */
   position(): Position;
+
+  whatIam(): { name: string; description: string };
 }
 
 /**
@@ -49,6 +51,13 @@ export class Statement implements Node {
 
   position(): Position {
     return this.token.position;
+  }
+
+  whatIam(): { name: string; description: string } {
+    return {
+      name: "Statement",
+      description: "A statement is a unit of code that performs an action.",
+    };
   }
 }
 
@@ -80,6 +89,13 @@ export class Expression implements Node {
 
   position(): Position {
     return this.token.position;
+  }
+
+  whatIam(): { name: string; description: string } {
+    return {
+      name: "Expression",
+      description: "An expression is a unit of code that evaluates to a value.",
+    };
   }
 }
 
@@ -122,6 +138,13 @@ export class Program implements Node {
 
   getStatements(): Statement[] {
     return this.statements;
+  }
+
+  whatIam(): { name: string; description: string } {
+    return {
+      name: "Program",
+      description: "The root node of the AST.",
+    };
   }
 }
 
@@ -172,5 +195,12 @@ export class Identifier implements Expression {
 
   position(): Position {
     return this.token.position;
+  }
+
+  whatIam(): { name: string; description: string } {
+    return {
+      name: "Identifier",
+      description: "An identifier is a name for a variable or function.",
+    };
   }
 }
