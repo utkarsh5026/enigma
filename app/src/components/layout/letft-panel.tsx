@@ -1,5 +1,5 @@
-import React from "react";
-import { FileCode, Play, Copy, Download } from "lucide-react";
+import React, { useState } from "react";
+import { FileCode, Play, Copy, Download, Loader2, Check } from "lucide-react";
 import EditorToolbarButton from "./toolbar-button";
 import EnigmaEditor from "@/components/editor/components/enigma-editor";
 import { useMobile } from "@/hooks/use-mobile";
@@ -28,29 +28,80 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   setActiveTab,
 }) => {
   const { isMobile } = useMobile();
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [executionSuccess, setExecutionSuccess] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
-  const handleRunCode = () => {
-    consoleStore.clear();
-    const lexer = new Lexer(code);
-    const parser = new LanguageParser(lexer);
-    const ast = parser.parseProgram();
+  const handleRunCode = async () => {
+    if (isExecuting) return;
 
-    if (parser.getErrors().length > 0) {
-      consoleStore.addEntry(parser.getErrors()[0].message, "error");
-    }
+    setIsExecuting(true);
+    setExecutionSuccess(false);
 
-    const evaluator = LanguageEvaluator.withSourceCode(code, true);
-    const result = evaluator.evaluateProgram(ast, new Environment());
+    try {
+      // Clear console first
+      consoleStore.clear();
 
-    if (!ObjectValidator.isError(result)) {
+      // Add a small delay to show loading state for better UX
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const lexer = new Lexer(code);
+      const parser = new LanguageParser(lexer);
+      const ast = parser.parseProgram();
+
+      if (parser.getErrors().length > 0) {
+        parser.getErrors().forEach((error) => {
+          consoleStore.addEntry(error.message, "error");
+        });
+      }
+
+      const evaluator = LanguageEvaluator.withSourceCode(code, true);
+      const result = evaluator.evaluateProgram(ast, new Environment());
+
+      if (!ObjectValidator.isError(result)) {
+        consoleStore.addEntry(
+          "Code executed successfully with exit code 0 😎",
+          "success"
+        );
+        setExecutionSuccess(true);
+        setTimeout(() => setExecutionSuccess(false), 2000);
+      } else {
+        consoleStore.addEntry(result.inspect(), "error");
+      }
+
+      setActiveTab("execution");
+    } catch (error) {
       consoleStore.addEntry(
-        "Code executed successfully with exit code 0 😎",
-        "success"
+        `Execution failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        "error"
       );
-    } else {
-      consoleStore.addEntry(result.inspect(), "error");
+    } finally {
+      setIsExecuting(false);
     }
-    setActiveTab("execution");
+  };
+
+  const handleCopyCode = async () => {
+    if (copySuccess) return;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy code:", error);
+    }
+  };
+
+  const handleDownloadCode = () => {
+    const blob = new Blob([code], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "enigma-code.txt";
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -74,9 +125,14 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
           <div className="flex items-center gap-1 sm:gap-0">
             <Button
               onClick={handleRunCode}
-              className="
+              disabled={isExecuting}
+              className={`
                 min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]
-                bg-[var(--tokyo-green)] hover:bg-[var(--tokyo-green)]/80
+                ${
+                  executionSuccess
+                    ? "bg-[var(--tokyo-green)] hover:bg-[var(--tokyo-green)]"
+                    : "bg-[var(--tokyo-green)] hover:bg-[var(--tokyo-green)]/80"
+                }
                 text-[var(--tokyo-bg)] hover:text-[var(--tokyo-bg)]
                 rounded-lg transition-all duration-200
                 flex items-center justify-center
@@ -84,29 +140,54 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 border border-[var(--tokyo-green)]/20
                 active:scale-95
                 group cursor-pointer
-              "
-              title="Run Code"
+                disabled:opacity-70 disabled:cursor-not-allowed
+                disabled:active:scale-100 disabled:hover:shadow-lg
+                ${isExecuting ? "animate-pulse" : ""}
+              `}
+              title={isExecuting ? "Executing..." : "Run Code"}
             >
-              <Play className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform duration-200" />
+              {isExecuting ? (
+                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+              ) : executionSuccess ? (
+                <Check className="h-4 w-4 sm:h-5 sm:w-5 animate-in zoom-in-50 duration-200" />
+              ) : (
+                <Play className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform duration-200" />
+              )}
             </Button>
+
             <EditorToolbarButton
-              icon={<Copy className="h-4 w-4 sm:h-5 sm:w-5" />}
-              tooltip="Copy Code"
-              onClick={() => navigator.clipboard.writeText(code)}
-              className="min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]"
+              icon={
+                copySuccess ? (
+                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--tokyo-green)] animate-in zoom-in-50 duration-200" />
+                ) : (
+                  <Copy className="h-4 w-4 sm:h-5 sm:w-5" />
+                )
+              }
+              tooltip={copySuccess ? "Copied!" : "Copy Code"}
+              onClick={handleCopyCode}
+              disabled={isExecuting || copySuccess}
+              className={`
+                min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]
+                transition-all duration-200
+                ${
+                  copySuccess
+                    ? "bg-[var(--tokyo-green)]/10 border-[var(--tokyo-green)]/20"
+                    : ""
+                }
+                disabled:opacity-70 disabled:cursor-not-allowed
+              `}
             />
+
             <EditorToolbarButton
               icon={<Download className="h-4 w-4 sm:h-5 sm:w-5" />}
               tooltip="Download Code"
-              onClick={() => {
-                const blob = new Blob([code], { type: "text/plain" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "enigma-code.txt";
-                a.click();
-              }}
-              className="min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]"
+              onClick={handleDownloadCode}
+              disabled={isExecuting}
+              className={`
+                min-w-[44px] min-h-[44px] sm:min-w-[36px] sm:min-h-[36px]
+                transition-all duration-200
+                disabled:opacity-70 disabled:cursor-not-allowed
+              `}
             />
           </div>
         </div>
