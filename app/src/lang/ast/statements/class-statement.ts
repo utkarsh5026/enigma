@@ -97,6 +97,13 @@ export class ClassStatement extends Statement {
     parts.push("}");
     return parts.join("");
   }
+
+  whatIam() {
+    return {
+      name: "ClassStatement",
+      description: "A class statement is a statement that defines a class.",
+    };
+  }
 }
 
 /**
