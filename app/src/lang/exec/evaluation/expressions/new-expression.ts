@@ -48,17 +48,16 @@ export class NewExpressionEvaluator implements NodeEvaluator<NewExpression> {
     }
 
     const instance = classObj.createInstance();
-    if (classObj.hasConstructor()) {
-      const { classConstructor } = classObj;
-
-      const requiredArgs = classConstructor?.parameters.length || 0;
+    const { classConstructor } = classObj;
+    if (classConstructor) {
+      const requiredArgs = classConstructor.parameters.length;
       if (args.length != requiredArgs) {
         const message = `Constructor argument mismatchs: ${classObj.name} requires ${requiredArgs} got ${args.length}`;
         return context.createError(message, node.position());
       }
 
       const constructorResult = this.callConstructor(
-        classConstructor!,
+        classConstructor,
         instance,
         args,
         context
