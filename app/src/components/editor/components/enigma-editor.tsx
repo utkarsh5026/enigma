@@ -217,7 +217,7 @@ const EnhancedEnigmaEditor: React.FC<EnhancedEnigmaEditorProps> = ({
       >
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
-          <p className="text-gray-400 text-sm">Loading Enhanced Editor...</p>
+          <p className="text-gray-400 text-sm">Loading Editor...</p>
         </div>
       </div>
     );
