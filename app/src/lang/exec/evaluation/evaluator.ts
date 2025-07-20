@@ -65,6 +65,8 @@ export class LanguageEvaluator implements EvaluationContext {
   private readonly newEvaluator = new expressions.NewExpressionEvaluator();
   private readonly superEvaluator = new expressions.SuperExpressionEvaluator();
   private readonly thisEvaluator = new expressions.ThisExpressionEvaluator();
+  private readonly propertyEvaluator =
+    new expressions.PropertyExpressionEvaluator();
 
   constructor(
     enableStackTraces: boolean,
@@ -125,215 +127,265 @@ export class LanguageEvaluator implements EvaluationContext {
       return new ErrorObject("Cannot evaluate null node");
     }
 
+    console.log(`Evaluating ${node.constructor.name} ${node.toString()}`);
+    let result: BaseObject;
+
     switch (node.constructor) {
-      // Statements
       case statement.LetStatement:
-        return this.letEvaluator.evaluate(
+        result = this.letEvaluator.evaluate(
           node as statement.LetStatement,
           env,
           this
         );
+        break;
 
       case statement.ConstStatement:
-        return this.constEvaluator.evaluate(
+        result = this.constEvaluator.evaluate(
           node as statement.ConstStatement,
           env,
           this
         );
+        break;
 
       case statement.ReturnStatement:
-        return this.returnEvaluator.evaluate(
+        result = this.returnEvaluator.evaluate(
           node as statement.ReturnStatement,
           env,
           this
         );
+        break;
 
       case statement.BlockStatement:
-        return this.blockEvaluator.evaluate(
+        result = this.blockEvaluator.evaluate(
           node as statement.BlockStatement,
           env,
           this
         );
+        break;
 
       case statement.WhileStatement:
-        return this.whileEvaluator.evaluate(
+        result = this.whileEvaluator.evaluate(
           node as statement.WhileStatement,
           env,
           this
         );
+        break;
 
       case statement.ForStatement:
-        return this.forEvaluator.evaluate(
+        result = this.forEvaluator.evaluate(
           node as statement.ForStatement,
           env,
           this
         );
+        break;
 
       case statement.BreakStatement:
-        return this.breakEvaluator.evaluate(
+        result = this.breakEvaluator.evaluate(
           node as statement.BreakStatement,
           env,
           this
         );
+        break;
 
       case statement.ContinueStatement:
-        return this.continueEvaluator.evaluate(
+        result = this.continueEvaluator.evaluate(
           node as statement.ContinueStatement,
           env,
           this
         );
+        break;
 
       case statement.ExpressionStatement:
-        return this.expressionEvaluator.evaluate(
+        result = this.expressionEvaluator.evaluate(
           node as statement.ExpressionStatement,
           env,
           this
         );
+        break;
 
       // Expressions
       case expression.CallExpression:
-        return this.callEvaluator.evaluate(
+        result = this.callEvaluator.evaluate(
           node as expression.CallExpression,
           env,
           this
         );
+        break;
 
       case expression.IfExpression:
-        return this.ifEvaluator.evaluate(
+        result = this.ifEvaluator.evaluate(
           node as expression.IfExpression,
           env,
           this
         );
+        break;
 
       case expression.PrefixExpression:
-        return this.prefixEvaluator.evaluate(
+        result = this.prefixEvaluator.evaluate(
           node as expression.PrefixExpression,
           env,
           this
         );
+        break;
 
       case expression.InfixExpression:
-        return this.infixEvaluator.evaluate(
+        result = this.infixEvaluator.evaluate(
           node as expression.InfixExpression,
           env,
           this
         );
+        break;
 
       case expression.AssignmentExpression:
-        return this.assignmentEvaluator.evaluate(
+        result = this.assignmentEvaluator.evaluate(
           node as expression.AssignmentExpression,
           env,
           this
         );
+        break;
 
       case expression.IndexExpression:
-        return this.indexEvaluator.evaluate(
+        result = this.indexEvaluator.evaluate(
           node as expression.IndexExpression,
           env,
           this
         );
+        break;
 
       case literal.BooleanLiteral:
-        return this.booleanEvaluator.evaluate(
+        result = this.booleanEvaluator.evaluate(
           node as literal.BooleanLiteral,
           env,
           this
         );
+        break;
 
       // Literals
       case literal.StringLiteral:
-        return this.stringEvaluator.evaluate(
+        result = this.stringEvaluator.evaluate(
           node as literal.StringLiteral,
           env,
           this
         );
+        break;
 
       case literal.IntegerLiteral:
-        return this.integerEvaluator.evaluate(
+        result = this.integerEvaluator.evaluate(
           node as literal.IntegerLiteral,
           env,
           this
         );
+        break;
 
       case literal.ArrayLiteral:
-        return this.arrayEvaluator.evaluate(
+        result = this.arrayEvaluator.evaluate(
           node as literal.ArrayLiteral,
           env,
           this
         );
+        break;
 
       case literal.HashLiteral:
-        return this.hashEvaluator.evaluate(
+        result = this.hashEvaluator.evaluate(
           node as literal.HashLiteral,
           env,
           this
         );
+        break;
 
       case literal.FunctionLiteral:
-        return this.functionEvaluator.evaluate(
+        result = this.functionEvaluator.evaluate(
           node as literal.FunctionLiteral,
           env,
           this
         );
+        break;
 
       case literal.NullLiteral:
-        return this.nullEvaluator.evaluate(
+        result = this.nullEvaluator.evaluate(
           node as literal.NullLiteral,
           env,
           this
         );
+        break;
 
       case literal.FStringLiteral:
-        return this.fstringEvaluator.evaluate(
+        result = this.fstringEvaluator.evaluate(
           node as literal.FStringLiteral,
           env,
           this
         );
+        break;
 
       case literal.FloatLiteral:
-        return this.floatEvaluator.evaluate(
+        result = this.floatEvaluator.evaluate(
           node as literal.FloatLiteral,
           env,
           this
         );
+        break;
 
       // Special case for Identifier (from ast.ts)
       case ast.Identifier:
-        return this.identifierEvaluator.evaluate(
+        result = this.identifierEvaluator.evaluate(
           node as ast.Identifier,
           env,
           this
         );
+        break;
 
       case expression.NewExpression:
-        return this.newEvaluator.evaluate(
+        result = this.newEvaluator.evaluate(
           node as expression.NewExpression,
           env,
           this
         );
+        break;
 
       case expression.SuperExpression:
-        return this.superEvaluator.evaluate(
+        result = this.superEvaluator.evaluate(
           node as expression.SuperExpression,
           env,
           this
         );
+        break;
 
       case expression.ThisExpression:
-        return this.thisEvaluator.evaluate(
+        result = this.thisEvaluator.evaluate(
           node as expression.ThisExpression,
           env,
           this
         );
+        break;
+
+      case expression.PropertyExpression:
+        result = this.propertyEvaluator.evaluate(
+          node as expression.PropertyExpression,
+          env,
+          this
+        );
+        break;
 
       case ClassStatement:
-        return this.classEvaluator.evaluate(node as ClassStatement, env, this);
+        result = this.classEvaluator.evaluate(
+          node as ClassStatement,
+          env,
+          this
+        );
+        break;
 
       default:
-        return new ErrorObject(
-          `No evaluator found for node type: ${node.constructor.name}`
+        result = this.createError(
+          `No evaluator found for node type: ${node.constructor.name}`,
+          node.position()
         );
     }
+
+    console.log(
+      `Result: ${result.inspect()} for node ${node.constructor.name}`
+    );
+
+    return result;
   }
 
   /**
