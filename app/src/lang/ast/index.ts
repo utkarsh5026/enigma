@@ -1,5 +1,9 @@
 import { Program } from "./ast";
+import { AstValidator } from "./validate";
+import { Node, Expression, Identifier, Statement } from "./ast";
 import {
+  ClassStatement,
+  ConstStatement,
   LetStatement,
   ReturnStatement,
   ExpressionStatement,
@@ -8,11 +12,7 @@ import {
   BreakStatement,
   ContinueStatement,
   ForStatement,
-  ConstStatement,
-} from "./statement";
-import { AstValidator } from "./validate";
-import { Node, Expression, Identifier, Statement } from "./ast";
-import { ClassStatement } from "./statements/class-statement";
+} from "./statements";
 import {
   ThisExpression,
   SuperExpression,

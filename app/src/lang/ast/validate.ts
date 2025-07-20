@@ -1,14 +1,3 @@
-import {
-  LetStatement,
-  ConstStatement,
-  ReturnStatement,
-  BlockStatement,
-  ExpressionStatement,
-  WhileStatement,
-  BreakStatement,
-  ContinueStatement,
-  ForStatement,
-} from "./statement";
 import { Identifier, Node } from "./ast";
 import {
   InfixExpression,
@@ -27,6 +16,18 @@ import {
   HashLiteral,
   BooleanLiteral,
 } from "./literals";
+import {
+  ConstStatement,
+  ClassStatement,
+  ForStatement,
+  BreakStatement,
+  ContinueStatement,
+  LetStatement,
+  ReturnStatement,
+  BlockStatement,
+  ExpressionStatement,
+  WhileStatement,
+} from "./statements";
 
 export class AstValidator {
   static isLetStatement(node: Node): node is LetStatement {
@@ -119,5 +120,9 @@ export class AstValidator {
 
   static isPropertyExpression(node: Node): node is PropertyExpression {
     return node instanceof PropertyExpression;
+  }
+
+  static isClassStatement(node: Node): node is ClassStatement {
+    return node instanceof ClassStatement;
   }
 }

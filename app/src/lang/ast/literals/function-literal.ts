@@ -1,5 +1,5 @@
 import { Expression, Identifier } from "../ast";
-import { BlockStatement } from "../statement";
+import { BlockStatement } from "../statements";
 import { Token } from "@/lang/token/token";
 
 export class FunctionLiteral extends Expression {

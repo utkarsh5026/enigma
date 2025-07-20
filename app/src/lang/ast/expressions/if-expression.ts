@@ -1,6 +1,6 @@
 import { Token } from "@/lang/token/token";
 import { Expression } from "../ast";
-import { BlockStatement } from "../statement";
+import { BlockStatement } from "../statements";
 
 /**
  * 🔀 IfExpression - Conditional Logic AST Node
