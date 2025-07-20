@@ -1,4 +1,4 @@
-import { AssignmentExpression, AstValidator } from "@/lang/ast";
+import { AssignmentExpression, AstValidator, Expression } from "@/lang/ast";
 import {
   NodeEvaluator,
   EvaluationContext,
@@ -31,14 +31,20 @@ export class AssignmentExpressionEvaluator
 
     if (node.isIdentifierAssignment()) {
       return this.evaluateIdentifierAssignment(node, value, env, context);
-    } else if (node.isIndexAssignment()) {
-      return this.evaluateIndexAssignment(node, value, env, context);
-    } else {
-      return context.createError(
-        `Invalid assignment target: ${node.name}`,
-        node.position()
-      );
     }
+
+    if (node.isIndexAssignment()) {
+      return this.evaluateIndexAssignment(node, value, env, context);
+    }
+
+    if (node.isPropertyAssignment()) {
+      return this.evaluatePropertyAssignment(node, value, env, context);
+    }
+
+    return context.createError(
+      `Invalid assignment target: ${node.name.toString()}`,
+      node.position()
+    );
   }
 
   /**
@@ -92,7 +98,10 @@ export class AssignmentExpressionEvaluator
     context: EvaluationContext
   ) {
     if (!AstValidator.isIndexExpression(node.name)) {
-      throw new Error("Invalid assignment target: " + node.name);
+      return context.createError(
+        `Invalid assignment target: ${node.name}`,
+        node.position()
+      );
     }
 
     const indexExpr = node.name;
@@ -198,5 +207,66 @@ export class AssignmentExpressionEvaluator
     }
 
     return hash.set(keyObject.value.toString(), value);
+  }
+
+  private evaluatePropertyAssignment(
+    node: AssignmentExpression,
+    value: BaseObject,
+    env: Environment,
+    context: EvaluationContext
+  ) {
+    if (!AstValidator.isPropertyExpression(node.name)) {
+      return context.createError(
+        `Invalid assignment target: ${node.name}`,
+        node.position()
+      );
+    }
+    const propertyExpr = node.name;
+
+    const targetObject = context.evaluate(propertyExpr.object, env);
+    if (ObjectValidator.isError(targetObject)) {
+      return targetObject;
+    }
+
+    const propertyName = this.extractPropertyName(
+      propertyExpr.property,
+      env,
+      context
+    );
+    if (propertyName == null) {
+      return context.createError(
+        "Invalid property name",
+        propertyExpr.property.position()
+      );
+    }
+
+    if (ObjectValidator.isInstance(targetObject)) {
+      return targetObject.setProperty(propertyName, value);
+    }
+
+    return context.createError(
+      `Cannot assign property '${propertyName}' on non-instance object: ${targetObject.type()}`,
+      propertyExpr.property.position()
+    );
+  }
+
+  /**
+   * 🏷️ Extracts property name from property expression
+   */
+  private extractPropertyName(
+    propertyExpr: Expression,
+    env: Environment,
+    context: EvaluationContext
+  ) {
+    if (AstValidator.isIdentifier(propertyExpr)) {
+      return propertyExpr.value;
+    }
+
+    const result = context.evaluate(propertyExpr, env);
+    if (ObjectValidator.isString(result)) {
+      return result.value;
+    }
+
+    return null;
   }
 }
