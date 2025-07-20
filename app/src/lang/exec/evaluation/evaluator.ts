@@ -124,10 +124,12 @@ export class LanguageEvaluator implements EvaluationContext {
    */
   public evaluate(node: ast.Node, env: Environment): BaseObject {
     if (node == null) {
-      return new ErrorObject("Cannot evaluate null node");
+      return this.createError("Cannot evaluate null node", {
+        line: 0,
+        column: 0,
+      });
     }
 
-    console.log(`Evaluating ${node.constructor.name} ${node.toString()}`);
     let result: BaseObject;
 
     switch (node.constructor) {
@@ -380,10 +382,6 @@ export class LanguageEvaluator implements EvaluationContext {
           node.position()
         );
     }
-
-    console.log(
-      `Result: ${result.inspect()} for node ${node.constructor.name}`
-    );
 
     return result;
   }
