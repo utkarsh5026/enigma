@@ -67,4 +67,12 @@ export class ObjectValidator {
   static isNumeric(obj: BaseObject): boolean {
     return ObjectValidator.isInteger(obj) || ObjectValidator.isFloat(obj);
   }
+
+  static isClass(obj: BaseObject): obj is objects.ClassObject {
+    return obj instanceof objects.ClassObject;
+  }
+
+  static isInstance(obj: BaseObject): obj is objects.InstanceObject {
+    return obj instanceof objects.InstanceObject;
+  }
 }
