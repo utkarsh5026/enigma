@@ -20,12 +20,6 @@ export class ReturnStatementEvaluator
     const value = context.evaluate(node.returnValue, env);
 
     if (ObjectValidator.isError(value)) {
-      context.addAfterStep(
-        node,
-        env,
-        value,
-        `Error evaluating return statement: ${value.message}`
-      );
       return value;
     }
 

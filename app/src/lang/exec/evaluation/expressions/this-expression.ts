@@ -39,13 +39,6 @@ export class ThisExpressionEvaluator implements NodeEvaluator<ThisExpression> {
       );
     }
 
-    context.addAfterStep(
-      node,
-      env,
-      thisObj,
-      `Evaluated 'this' expression evaluated to '${thisObj.inspect()}'`
-    );
-
     return thisObj;
   }
 }
