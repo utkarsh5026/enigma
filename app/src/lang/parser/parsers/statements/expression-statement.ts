@@ -85,8 +85,19 @@ export class ExpressionStatementParser implements Parser<ExpressionStatement> {
       "Expected ';' after compound statement"
     );
 
-    const infixExpr = new InfixExpression(operatorToken, left, operator, right);
-    const assignExpr = new AssignmentExpression(operatorToken, left, infixExpr);
+    const infixExpr = new InfixExpression(
+      operatorToken,
+      left,
+      operator,
+      right,
+      right.endToken
+    );
+    const assignExpr = new AssignmentExpression(
+      operatorToken,
+      left,
+      infixExpr,
+      infixExpr.endToken
+    );
 
     return new ExpressionStatement(startToken, assignExpr, endToken);
   }
