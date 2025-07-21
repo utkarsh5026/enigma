@@ -18,8 +18,13 @@ export class PrefixExpression extends Expression {
   readonly operator: string; // 🔄 Operator
   readonly right: Expression; // 🔄 Right operand
 
-  constructor(token: Token, operator: string, right: Expression) {
-    super(token);
+  constructor(
+    token: Token,
+    operator: string,
+    right: Expression,
+    endToken: Token | null
+  ) {
+    super(token, endToken);
     this.operator = operator;
     this.right = right;
   }

@@ -18,9 +18,10 @@ export class CallExpression extends Expression {
   constructor(
     token: Token,
     public readonly func: Expression,
-    public readonly args: Expression[]
+    public readonly args: Expression[],
+    endToken: Token | null
   ) {
-    super(token);
+    super(token, endToken);
   }
 
   toString(): string {

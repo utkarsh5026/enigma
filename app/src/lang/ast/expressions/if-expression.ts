@@ -20,9 +20,10 @@ export class IfExpression extends Expression {
     token: Token,
     public readonly conditions: Expression[],
     public readonly consequences: BlockStatement[],
-    public readonly alternative: BlockStatement | null
+    public readonly alternative: BlockStatement | null,
+    endToken: Token | null
   ) {
-    super(token);
+    super(token, endToken);
   }
 
   toString(): string {

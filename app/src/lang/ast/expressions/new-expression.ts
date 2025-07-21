@@ -23,8 +23,13 @@ export class NewExpression extends Expression {
   readonly className: Expression; // 🏷️ Class to instantiate
   readonly arguments: Expression[]; // 📋 Constructor arguments
 
-  constructor(token: Token, className: Expression, args: Expression[]) {
-    super(token);
+  constructor(
+    token: Token,
+    className: Expression,
+    args: Expression[],
+    endToken: Token | null
+  ) {
+    super(token, endToken);
     this.className = className;
     this.arguments = args;
   }

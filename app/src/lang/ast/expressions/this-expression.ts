@@ -20,8 +20,8 @@ import { Expression } from "../ast";
  * ```
  */
 export class ThisExpression extends Expression {
-  constructor(token: Token) {
-    super(token);
+  constructor(token: Token, endToken: Token | null) {
+    super(token, endToken);
   }
 
   toString() {

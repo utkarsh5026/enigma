@@ -19,9 +19,10 @@ export class AssignmentExpression extends Expression {
   constructor(
     token: Token,
     public readonly name: Expression,
-    public readonly value: Expression
+    public readonly value: Expression,
+    endToken: Token | null
   ) {
-    super(token);
+    super(token, endToken);
   }
 
   toString(): string {

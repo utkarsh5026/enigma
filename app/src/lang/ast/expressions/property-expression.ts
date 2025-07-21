@@ -23,8 +23,13 @@ export class PropertyExpression extends Expression {
   readonly object: Expression; // 🎯 Object being accessed
   readonly property: Expression; // 🏷️ Property name
 
-  constructor(token: Token, object: Expression, property: Expression) {
-    super(token);
+  constructor(
+    token: Token,
+    object: Expression,
+    property: Expression,
+    endToken: Token | null
+  ) {
+    super(token, endToken);
     this.object = object;
     this.property = property;
   }

@@ -23,8 +23,13 @@ export class SuperExpression extends Expression {
   readonly method: Expression | null; // 🏷️ Method to call on parent
   readonly args: Expression[]; // 📋 Arguments for parent method
 
-  constructor(token: Token, method: Expression | null, args: Expression[]) {
-    super(token);
+  constructor(
+    token: Token,
+    method: Expression | null,
+    args: Expression[],
+    endToken: Token | null
+  ) {
+    super(token, endToken);
     this.method = method;
     this.args = [...args];
   }

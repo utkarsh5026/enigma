@@ -18,9 +18,10 @@ export class IndexExpression extends Expression {
   constructor(
     token: Token,
     public readonly left: Expression,
-    public readonly index: Expression
+    public readonly index: Expression,
+    endToken: Token | null
   ) {
-    super(token);
+    super(token, endToken);
   }
 
   toString(): string {

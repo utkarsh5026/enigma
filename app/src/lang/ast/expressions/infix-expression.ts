@@ -19,9 +19,10 @@ export class InfixExpression extends Expression {
     token: Token,
     public readonly left: Expression,
     public readonly operator: Operator,
-    public readonly right: Expression
+    public readonly right: Expression,
+    endToken: Token | null
   ) {
-    super(token);
+    super(token, endToken);
   }
 
   toString(): string {
