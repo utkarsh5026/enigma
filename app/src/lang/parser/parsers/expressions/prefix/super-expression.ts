@@ -4,7 +4,7 @@ import {
   PrefixExpressionParser,
   ParserException,
 } from "@/lang/parser/core";
-import { TokenType } from "@/lang/token/token";
+import { Token, TokenType } from "@/lang/token/token";
 import { parseExpressionList } from "@/lang/parser/utils/list-parsing";
 import { Identifier, SuperExpression } from "@/lang/ast";
 
@@ -35,56 +35,67 @@ export class SuperExpressionParser implements PrefixExpressionParser {
     );
 
     if (context.isCurrentToken(TokenType.LPAREN)) {
-      // Constructor call: super(args)
-      context.consumeCurrentToken(TokenType.LPAREN);
-
-      const args = parseExpressionList(
-        context,
-        this.expressionParser,
-        TokenType.RPAREN,
-        "super constructor argument"
-      );
-
-      context.consumeCurrentToken(
-        TokenType.RPAREN,
-        "Expected ')' after super arguments"
-      );
-
-      return new SuperExpression(superToken, null, args);
-    } else if (context.isCurrentToken(TokenType.DOT)) {
-      // Method call: super.method(args)
-      context.consumeCurrentToken(TokenType.DOT, "Expected '.' after 'super'");
-
-      const methodToken = context.consumeCurrentToken(
-        TokenType.IDENTIFIER,
-        "Expected method name after 'super.'"
-      );
-      const method = new Identifier(methodToken, methodToken.literal);
-
-      context.consumeCurrentToken(
-        TokenType.LPAREN,
-        "Expected '(' after super method name"
-      );
-
-      const args = parseExpressionList(
-        context,
-        this.expressionParser,
-        TokenType.RPAREN,
-        "super method argument"
-      );
-
-      context.consumeCurrentToken(
-        TokenType.RPAREN,
-        "Expected ')' after super method arguments"
-      );
-
-      return new SuperExpression(superToken, method, args);
-    } else {
-      throw new ParserException(
-        "Expected '(' or '.' after 'super'",
-        context.getCurrentToken()
-      );
+      return this.parseSuperConstructorCall(context, superToken);
     }
+
+    if (context.isCurrentToken(TokenType.DOT)) {
+      return this.parseSuperMethodCall(context, superToken);
+    }
+
+    throw new ParserException(
+      "Expected '(' or '.' after 'super'",
+      context.getCurrentToken()
+    );
+  }
+
+  private parseSuperMethodCall(context: ParsingContext, superToken: Token) {
+    context.consumeCurrentToken(TokenType.DOT, "Expected '.' after 'super'");
+
+    const methodToken = context.consumeCurrentToken(
+      TokenType.IDENTIFIER,
+      "Expected method name after 'super.'"
+    );
+    const method = new Identifier(methodToken, methodToken.literal);
+
+    context.consumeCurrentToken(
+      TokenType.LPAREN,
+      "Expected '(' after super method name"
+    );
+
+    const args = parseExpressionList(
+      context,
+      this.expressionParser,
+      TokenType.RPAREN,
+      "super method argument"
+    );
+
+    const endToken = context.consumeCurrentToken(
+      TokenType.RPAREN,
+      "Expected ')' after super method arguments"
+    );
+
+    return new SuperExpression(superToken, method, args, endToken);
+  }
+
+  private parseSuperConstructorCall(
+    context: ParsingContext,
+    superToken: Token
+  ) {
+    context.consumeCurrentToken(TokenType.LPAREN);
+
+    const args = parseExpressionList(
+      context,
+      this.expressionParser,
+      TokenType.RPAREN,
+      "super constructor argument"
+    );
+
+    const endToken = context.consumeCurrentToken(
+      TokenType.RPAREN,
+      "Expected ')' after super arguments"
+    );
+
+    return new SuperExpression(superToken, null, args, endToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {
