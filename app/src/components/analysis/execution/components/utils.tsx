@@ -1,5 +1,6 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { Eye, CheckCircle, Activity } from "lucide-react";
 
 export function parseDescriptionWithBadges(
   description: string
@@ -62,3 +63,32 @@ export function parseDescriptionWithBadges(
 
   return <span>{parts}</span>;
 }
+
+export const getStepTypeInfo = (stepType: string) => {
+  switch (stepType) {
+    case "before":
+      return {
+        label: "About to Execute",
+        icon: <Eye size={16} style={{ color: "var(--tokyo-yellow)" }} />,
+        color: "text-[var(--tokyo-yellow)]",
+        bgColor: "bg-[var(--tokyo-yellow)]/10",
+        borderColor: "border-[var(--tokyo-yellow)]/20",
+      };
+    case "after":
+      return {
+        label: "Just Completed",
+        icon: <CheckCircle size={16} style={{ color: "var(--tokyo-green)" }} />,
+        color: "text-[var(--tokyo-green)]",
+        bgColor: "bg-[var(--tokyo-green)]/10",
+        borderColor: "border-[var(--tokyo-green)]/20",
+      };
+    default:
+      return {
+        label: "Processing",
+        icon: <Activity size={16} style={{ color: "var(--tokyo-blue)" }} />,
+        color: "text-[var(--tokyo-blue)]",
+        bgColor: "bg-[var(--tokyo-blue)]/10",
+        borderColor: "border-[var(--tokyo-blue)]/20",
+      };
+  }
+};
