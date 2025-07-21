@@ -13,8 +13,12 @@ export class LetStatementParser implements Parser<LetStatement> {
     this.delegate = new AssignmentStatementParser(
       TokenType.LET,
       {
-        create: (token: Token, name: Identifier, value: Expression) =>
-          new LetStatement(token, name, value),
+        create: (
+          startToken: Token,
+          name: Identifier,
+          value: Expression,
+          endToken: Token
+        ) => new LetStatement(startToken, name, value, endToken),
       },
       expressionParser
     );
