@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BarChart3, X, Zap, Activity } from "lucide-react";
+import { BarChart3, Zap, Activity } from "lucide-react";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -13,7 +13,6 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-  DrawerClose,
 } from "@/components/ui/drawer";
 import LeftPanel from "./letft-panel";
 import AnalysisContent from "./ananlysis-panel";
@@ -193,95 +192,10 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
           </DrawerTrigger>
 
           <DrawerContent className="bg-gradient-to-br from-[var(--tokyo-bg)]/98 to-[var(--tokyo-bg-dark)]/98 backdrop-blur-xl max-w-full h-[85vh] max-h-[calc(100vh-2rem)] border-0 rounded-t-3xl shadow-2xl font-cascadia-code">
-            <DrawerHeader className="border-b border-[var(--tokyo-comment)]/20 p-4 flex-shrink-0 bg-gradient-to-r from-[var(--tokyo-bg-dark)]/50 to-[var(--tokyo-bg)]/50 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-[var(--tokyo-purple)]/20 to-[var(--tokyo-blue)]/20 border border-[var(--tokyo-purple)]/30">
-                    <BarChart3
-                      size={16}
-                      className="text-[var(--tokyo-purple)]"
-                    />
-                  </div>
-                  <div>
-                    <DrawerTitle className="text-lg font-semibold text-[var(--tokyo-fg)]">
-                      Code Analysis
-                    </DrawerTitle>
-                    <p className="text-sm text-[var(--tokyo-comment)] mt-0.5">
-                      Tokens, AST, and execution output
-                    </p>
-                  </div>
-                </div>
-
-                <DrawerClose asChild>
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="p-2 h-9 w-9 rounded-xl text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)]"
-                    >
-                      <X size={16} />
-                    </Button>
-                  </motion.div>
-                </DrawerClose>
-              </div>
-
-              {/* Enhanced Status indicators */}
-              <motion.div
-                className="flex gap-2 mt-3"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                {tokenProps.hasTokens && (
-                  <Badge
-                    variant="secondary"
-                    className="text-xs bg-[var(--tokyo-green)]/10 text-[var(--tokyo-green)] border-[var(--tokyo-green)]/30"
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--tokyo-green)] mr-1.5 animate-pulse" />
-                    {tokenProps.tokens.length} tokens
-                  </Badge>
-                )}
-                {tokenProps.isTokenizing && (
-                  <Badge
-                    variant="outline"
-                    className="text-xs bg-[var(--tokyo-yellow)]/10 text-[var(--tokyo-yellow)] border-[var(--tokyo-yellow)]/30"
-                  >
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                      className="w-1.5 h-1.5 rounded-full bg-[var(--tokyo-yellow)] mr-1.5"
-                    />
-                    Processing...
-                  </Badge>
-                )}
-                {tokenProps.error && (
-                  <Badge
-                    variant="destructive"
-                    className="text-xs bg-[var(--tokyo-red)]/10 text-[var(--tokyo-red)] border-[var(--tokyo-red)]/30"
-                  >
-                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--tokyo-red)] mr-1.5 animate-pulse" />
-                    Error
-                  </Badge>
-                )}
-                {!tokenProps.hasTokens &&
-                  !tokenProps.isTokenizing &&
-                  !tokenProps.error && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs bg-[var(--tokyo-blue)]/10 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30"
-                    >
-                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--tokyo-blue)] mr-1.5 animate-pulse" />
-                      Ready
-                    </Badge>
-                  )}
-              </motion.div>
+            <DrawerHeader className="border-b border-[var(--tokyo-comment)]/20 p-4 flex-shrink-0 bg-transparent backdrop-blur-sm">
+              <DrawerTitle className="text-lg font-semibold text-[var(--tokyo-fg)]">
+                Code Output
+              </DrawerTitle>
             </DrawerHeader>
 
             <div className="flex-1 min-h-0 overflow-hidden">

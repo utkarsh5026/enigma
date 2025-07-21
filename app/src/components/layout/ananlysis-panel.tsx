@@ -66,35 +66,33 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
   return (
     <Tabs defaultValue="output" className="h-full flex flex-col">
       {/* Analysis Tabs */}
-      <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
-        <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
-          <CustomTabTrigger
-            value="output"
-            icon={<Monitor size={16} />}
-            label="Output"
-          />
-          {!isPhone && (
-            <>
-              <CustomTabTrigger
-                value="tokens"
-                icon={<Terminal size={16} />}
-                label="Tokens"
-                badge={tokenProps.tokens.length}
-              />
-              <CustomTabTrigger
-                value="ast"
-                icon={<Braces size={16} />}
-                label="AST"
-              />
-              <CustomTabTrigger
-                value="execution"
-                icon={<ChevronsRight size={16} />}
-                label="Execution"
-              />
-            </>
-          )}
-        </TabsList>
-      </div>
+      {!isPhone && (
+        <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
+          <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
+            <CustomTabTrigger
+              value="output"
+              icon={<Monitor size={16} />}
+              label="Output"
+            />
+            <CustomTabTrigger
+              value="tokens"
+              icon={<Terminal size={16} />}
+              label="Tokens"
+              badge={tokenProps.tokens.length}
+            />
+            <CustomTabTrigger
+              value="ast"
+              icon={<Braces size={16} />}
+              label="AST"
+            />
+            <CustomTabTrigger
+              value="execution"
+              icon={<ChevronsRight size={16} />}
+              label="Execution"
+            />
+          </TabsList>
+        </div>
+      )}
 
       <TabsContent value="output" className="flex-1 min-h-0 m-0">
         <OutputPanel />
