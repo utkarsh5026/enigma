@@ -272,12 +272,11 @@ export default class Lexer {
    * @param literal The literal value of the token.
    * @returns A new Token object.
    */
-  private createTok(type: string, literal: string): Token {
-    return <Token>{
-      type,
-      literal,
-      position: { line: this.currLine, column: this.currColumn },
-    };
+  private createTok(type: TokenType, literal: string): Token {
+    return new Token(type, literal, {
+      line: this.currLine,
+      column: this.currColumn,
+    });
   }
 
   /**
