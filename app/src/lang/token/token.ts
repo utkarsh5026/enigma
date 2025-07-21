@@ -89,13 +89,30 @@ export interface Position {
 /**
  * Interface representing a token in the language.
  */
-export interface Token {
+export class Token {
   /** The type of the token. */
-  type: TokenType;
+  readonly type: TokenType;
   /** The literal string value of the token. */
-  literal: string;
+  readonly literal: string;
   /** The position of the token in the source code. */
-  position: Position;
+  readonly position: Position;
+
+  constructor(type: TokenType, literal: string, position: Position) {
+    this.type = type;
+    this.literal = literal;
+    this.position = position;
+  }
+
+  toString(): string {
+    return `Token(${this.type}, ${this.literal}, ${this.position.line}:${this.position.column})`;
+  }
+
+  start(): Position {
+    return {
+      ...this.position,
+      column: this.position.column - this.literal.length,
+    };
+  }
 }
 
 /**
