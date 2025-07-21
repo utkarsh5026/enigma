@@ -33,7 +33,7 @@ export class ReturnStatementParser implements Parser<ReturnStatement> {
       const endToken = context.consumeCurrentToken(TokenType.SEMICOLON);
       return new ReturnStatement(
         returnToken,
-        new NullLiteral(returnToken),
+        new NullLiteral(returnToken, returnToken),
         endToken
       );
     }

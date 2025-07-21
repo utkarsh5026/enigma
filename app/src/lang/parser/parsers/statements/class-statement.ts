@@ -146,7 +146,12 @@ export class ClassStatementParser implements Parser<ClassStatement> {
     const blockParser = new BlockStatementParser(this.statementParser);
     const body = blockParser.parse(context);
 
-    return new FunctionLiteral(constructorToken, parameters, body);
+    return new FunctionLiteral(
+      constructorToken,
+      parameters,
+      body,
+      body.endToken
+    );
   }
 
   /**
@@ -173,7 +178,12 @@ export class ClassStatementParser implements Parser<ClassStatement> {
     const blockParser = new BlockStatementParser(this.statementParser);
     const body = blockParser.parse(context);
 
-    const functionLiteral = new FunctionLiteral(nameToken, parameters, body);
+    const functionLiteral = new FunctionLiteral(
+      nameToken,
+      parameters,
+      body,
+      body.endToken
+    );
     return new MethodDefinition(methodName, functionLiteral);
   }
 
