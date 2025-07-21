@@ -130,6 +130,8 @@ export class LanguageEvaluator implements EvaluationContext {
       });
     }
 
+    this.addDuringStep(node, env, `Evaluating ${node.whatIam().name}`);
+
     let result: BaseObject;
 
     switch (node.constructor) {
@@ -382,6 +384,7 @@ export class LanguageEvaluator implements EvaluationContext {
         );
     }
 
+    this.addAfterStep(node, env, result, `Evaluated ${node.whatIam().name}`);
     return result;
   }
 
