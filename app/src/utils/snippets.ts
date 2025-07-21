@@ -2803,3 +2803,72 @@ export const getSnippetByName = (
 ): string => {
   return sampleCodeSnippets[name];
 };
+
+const createCategorizedExamples = () => {
+  const categoryConfig = {
+    beginner: {
+      emoji: "🌱",
+      name: "Beginner Friendly",
+      description: "Start your coding journey",
+    },
+    algorithms: {
+      emoji: "⚡",
+      name: "Algorithms",
+      description: "Sorting and searching",
+    },
+    dataStructures: {
+      emoji: "🏗️",
+      name: "Data Structures",
+      description: "Arrays, objects, and more",
+    },
+    games: {
+      emoji: "🎮",
+      name: "Games & Fun",
+      description: "Interactive programs",
+    },
+    mathematics: {
+      emoji: "🧮",
+      name: "Mathematics",
+      description: "Number theory and calculations",
+    },
+    advanced: {
+      emoji: "🚀",
+      name: "Advanced",
+      description: "Complex programming concepts",
+    },
+    objectOriented: {
+      emoji: "🏛️",
+      name: "Object-Oriented",
+      description: "Classes and inheritance",
+    },
+    realWorld: {
+      emoji: "🌍",
+      name: "Real World",
+      description: "Practical applications",
+    },
+    inheritance: {
+      emoji: "🧬",
+      name: "Inheritance",
+      description: "Advanced OOP concepts",
+    },
+  };
+
+  return Object.entries(snippetCategories).map(([categoryKey, examples]) => ({
+    key: categoryKey,
+    ...categoryConfig[categoryKey as keyof typeof categoryConfig],
+    examples: examples.map((exampleKey) => ({
+      key: exampleKey,
+      name: formatExampleName(exampleKey),
+    })),
+  }));
+};
+
+// Helper function to format example names nicely
+const formatExampleName = (key: string): string => {
+  return key
+    .replace(/([A-Z])/g, " $1") // Add space before capital letters
+    .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+    .trim();
+};
+
+export const categorizedExamples = createCategorizedExamples();
