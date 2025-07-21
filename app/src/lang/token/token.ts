@@ -110,7 +110,7 @@ export class Token {
   start(): Position {
     return {
       ...this.position,
-      column: this.position.column - this.literal.length,
+      column: Math.max(0, this.position.column - this.literal.length),
     };
   }
 }
