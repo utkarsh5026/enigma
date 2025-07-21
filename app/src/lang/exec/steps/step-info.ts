@@ -63,6 +63,7 @@ export interface StepStorage {
   nextStep(): EvaluationStep | null;
   previousStep(): EvaluationStep | null;
   goToStep(index: number): EvaluationStep | null;
+  getCurrentStepIndex(): number;
 }
 
 export class ExecutionState {

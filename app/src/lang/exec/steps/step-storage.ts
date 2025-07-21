@@ -196,4 +196,8 @@ export class DefaultStepStorage implements StepStorage {
         this.currentStepIndex === this.steps.length - 1;
     }
   }
+
+  public getCurrentStepIndex(): number {
+    return this.currentStepIndex;
+  }
 }
