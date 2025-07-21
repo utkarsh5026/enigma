@@ -215,108 +215,118 @@ const useEnigmaEditor = () => {
       // Define enhanced theme
       monaco.editor.defineTheme("enigma-enhanced", {
         base: "vs-dark",
-        inherit: true,
+        inherit: false, // Don't inherit to have full control
         rules: [
-          // Keywords with vibrant blue
-          { token: "keyword", foreground: "569cd6", fontStyle: "bold" },
+          // Tokyo Night Keywords - soft blue, not bold to reduce contrast
+          { token: "keyword", foreground: "7aa2f7" },
 
-          // Type keywords with teal
-          { token: "type.keyword", foreground: "4ec9b0", fontStyle: "italic" },
+          // Type keywords - soft teal/cyan
+          { token: "type.keyword", foreground: "7dcfff", fontStyle: "italic" },
 
-          // Built-in functions with yellow
-          {
-            token: "builtin.function",
-            foreground: "dcdcaa",
-            fontStyle: "bold",
-          },
+          // Built-in functions - warm yellow, gentle
+          { token: "builtin.function", foreground: "e0af68" },
 
-          // Enhanced identifiers
-          { token: "identifier", foreground: "d4d4d4" },
+          // Identifiers - main text color, soft
+          { token: "identifier", foreground: "a9b1d6" },
 
-          // Enhanced numbers with better distinction
-          { token: "number", foreground: "b5cea8" },
-          { token: "number.float", foreground: "9cdcfe" },
+          // Numbers - soft green
+          { token: "number", foreground: "9ece6a" },
+          { token: "number.float", foreground: "9ece6a" },
 
-          // Enhanced strings
-          { token: "string", foreground: "ce9178" },
-          { token: "string.fstring", foreground: "d7ba7d" },
-          { token: "string.char", foreground: "569cd6" },
-          { token: "string.escape", foreground: "d7ba7d", fontStyle: "bold" },
-          { token: "string.invalid", foreground: "f44747" },
+          // Strings - warm orange, easier on eyes
+          { token: "string", foreground: "ff9e64" },
+          { token: "string.fstring", foreground: "e0af68" },
+          { token: "string.char", foreground: "ff9e64" },
+          { token: "string.escape", foreground: "bb9af7" },
+          { token: "string.invalid", foreground: "f7768e" },
 
-          // Enhanced comments
-          { token: "comment", foreground: "6a9955", fontStyle: "italic" },
-          { token: "comment.line", foreground: "6a9955", fontStyle: "italic" },
+          // Comments - muted, low contrast
+          { token: "comment", foreground: "565f89", fontStyle: "italic" },
+          { token: "comment.line", foreground: "565f89", fontStyle: "italic" },
 
-          // Enhanced operators
-          { token: "operator", foreground: "d4d4d4" },
+          // Operators - subtle, not distracting
+          { token: "operator", foreground: "89ddff" },
 
-          // Enhanced delimiters
-          { token: "delimiter", foreground: "d4d4d4" },
-          { token: "delimiter.colon", foreground: "569cd6" },
-          { token: "delimiter.dot", foreground: "d4d4d4" },
-          { token: "delimiter.fstring", foreground: "c586c0" },
+          // Delimiters - very subtle
+          { token: "delimiter", foreground: "787c99" },
+          { token: "delimiter.colon", foreground: "89ddff" },
+          { token: "delimiter.dot", foreground: "a9b1d6" },
+          { token: "delimiter.fstring", foreground: "bb9af7" },
 
-          // Enhanced brackets
-          { token: "@brackets", foreground: "ffd700" },
+          // Brackets - gentle purple
+          { token: "@brackets", foreground: "9d7cd8" },
         ],
         colors: {
-          // VS Code Dark Theme colors
-          "editor.background": "#1e1e1e",
-          "editor.foreground": "#d4d4d4",
-          "editorCursor.foreground": "#aeafad",
-          "editor.lineHighlightBackground": "#2a2d2e",
-          "editor.selectionBackground": "#264f78",
-          "editor.inactiveSelectionBackground": "#3a3d41",
+          // Tokyo Night Background colors
+          "editor.background": "#1a1b26",
+          "editor.foreground": "#a9b1d6",
+          "editorCursor.foreground": "#c0caf5",
+          "editor.lineHighlightBackground": "#24283b",
+          "editor.selectionBackground": "#28344a",
+          "editor.inactiveSelectionBackground": "#202331",
 
-          // VS Code line numbers
-          "editorLineNumber.foreground": "#858585",
-          "editorLineNumber.activeForeground": "#c6c6c6",
+          // Tokyo Night line numbers
+          "editorLineNumber.foreground": "#3b4261",
+          "editorLineNumber.activeForeground": "#737aa2",
 
-          // VS Code gutter and guides
-          "editorGutter.background": "#1e1e1e",
-          "editorIndentGuide.background": "#404040",
-          "editorIndentGuide.activeBackground": "#707070",
-          "editorRuler.foreground": "#5a5a5a",
+          // Tokyo Night gutter and guides
+          "editorGutter.background": "#1a1b26",
+          "editorIndentGuide.background": "#2a2e42",
+          "editorIndentGuide.activeBackground": "#3b4261",
+          "editorRuler.foreground": "#2a2e42",
 
-          // VS Code scrollbar
-          "scrollbar.shadow": "#000000",
-          "scrollbarSlider.background": "#79797966",
-          "scrollbarSlider.hoverBackground": "#646464b3",
-          "scrollbarSlider.activeBackground": "#bfbfbf66",
+          // Tokyo Night scrollbar - subtle
+          "scrollbar.shadow": "#16161e",
+          "scrollbarSlider.background": "#2a2e4266",
+          "scrollbarSlider.hoverBackground": "#3b426166",
+          "scrollbarSlider.activeBackground": "#565f8999",
 
-          // VS Code find widget
-          "editorWidget.background": "#252526",
-          "editorWidget.border": "#454545",
-          "editorWidget.foreground": "#cccccc",
+          // Tokyo Night find widget
+          "editorWidget.background": "#16161e",
+          "editorWidget.border": "#2a2e42",
+          "editorWidget.foreground": "#a9b1d6",
 
-          // VS Code minimap
-          "minimap.background": "#1e1e1e",
-          "minimap.selectionHighlight": "#264f78",
-          "minimapSlider.background": "#79797966",
-          "minimapSlider.hoverBackground": "#646464b3",
-          "minimapSlider.activeBackground": "#bfbfbf66",
+          // Tokyo Night minimap
+          "minimap.background": "#1a1b26",
+          "minimap.selectionHighlight": "#28344a",
+          "minimapSlider.background": "#2a2e4266",
+          "minimapSlider.hoverBackground": "#3b426166",
+          "minimapSlider.activeBackground": "#565f8999",
 
-          // VS Code bracket matching
-          "editorBracketMatch.background": "#0064001a",
-          "editorBracketMatch.border": "#888888",
+          // Tokyo Night bracket matching - subtle
+          "editorBracketMatch.background": "#9d7cd820",
+          "editorBracketMatch.border": "#9d7cd8",
 
-          // VS Code selection and word highlighting
-          "editor.wordHighlightBackground": "#575757b8",
-          "editor.wordHighlightStrongBackground": "#004972b8",
-          "editor.selectionHighlightBackground": "#add6ff26",
+          // Tokyo Night selection and word highlighting - very subtle
+          "editor.wordHighlightBackground": "#2a2e4240",
+          "editor.wordHighlightStrongBackground": "#3b426140",
+          "editor.selectionHighlightBackground": "#28344a60",
 
-          // VS Code suggestion widget
-          "editorSuggestWidget.background": "#252526",
-          "editorSuggestWidget.border": "#454545",
-          "editorSuggestWidget.foreground": "#d4d4d4",
-          "editorSuggestWidget.selectedBackground": "#094771",
-          "editorSuggestWidget.highlightForeground": "#0097fb",
+          // Tokyo Night suggestion widget
+          "editorSuggestWidget.background": "#16161e",
+          "editorSuggestWidget.border": "#2a2e42",
+          "editorSuggestWidget.foreground": "#a9b1d6",
+          "editorSuggestWidget.selectedBackground": "#24283b",
+          "editorSuggestWidget.highlightForeground": "#7aa2f7",
 
-          // VS Code hover widget
-          "editorHoverWidget.background": "#252526",
-          "editorHoverWidget.border": "#454545",
-          "editorHoverWidget.foreground": "#cccccc",
+          // Tokyo Night hover widget
+          "editorHoverWidget.background": "#16161e",
+          "editorHoverWidget.border": "#2a2e42",
+          "editorHoverWidget.foreground": "#a9b1d6",
+
+          // Additional Tokyo Night improvements
+          "editorOverviewRuler.background": "#1a1b26",
+          "editorOverviewRuler.border": "#16161e",
+          "editorOverviewRuler.findMatchForeground": "#7aa2f7",
+          "editorOverviewRuler.rangeHighlightForeground": "#9ece6a",
+
+          // Focus border
+          focusBorder: "#7aa2f7",
+
+          // Error and warning colors
+          "editorError.foreground": "#f7768e",
+          "editorWarning.foreground": "#e0af68",
+          "editorInfo.foreground": "#7dcfff",
         },
       });
 
