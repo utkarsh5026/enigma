@@ -33,7 +33,7 @@ export class PropertyExpressionParser implements InfixExpressionParser {
 
     const property = new Identifier(propertyToken, propertyToken.literal);
 
-    return new PropertyExpression(dotToken, left, property);
+    return new PropertyExpression(dotToken, left, property, propertyToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {

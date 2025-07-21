@@ -56,11 +56,13 @@ export class AssignmentExpressionParser implements InfixExpressionParser {
       Precedence.LOWEST
     );
 
+    let endToken = value.endToken;
+
     if (context.isCurrentToken(TokenType.SEMICOLON)) {
-      context.consumeCurrentToken(TokenType.SEMICOLON);
+      endToken = context.consumeCurrentToken(TokenType.SEMICOLON);
     }
 
-    return new AssignmentExpression(assignToken, left, value);
+    return new AssignmentExpression(assignToken, left, value, endToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {

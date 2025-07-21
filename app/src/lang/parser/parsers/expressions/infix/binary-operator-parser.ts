@@ -46,7 +46,8 @@ export class BinaryOperatorParser implements InfixExpressionParser {
       operatorToken,
       left,
       operator as Operator,
-      right
+      right,
+      right.endToken
     );
   }
 

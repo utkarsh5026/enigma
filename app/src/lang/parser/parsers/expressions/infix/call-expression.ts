@@ -44,12 +44,13 @@ export class CallExpressionParser implements InfixExpressionParser {
       TokenType.RPAREN,
       "function argument"
     );
-    context.consumeCurrentToken(
+
+    const endToken = context.consumeCurrentToken(
       TokenType.RPAREN,
       "Expected ')' after function arguments"
     );
 
-    return new CallExpression(token, left, args);
+    return new CallExpression(token, left, args, endToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {
