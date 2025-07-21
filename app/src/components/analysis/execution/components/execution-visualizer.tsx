@@ -26,6 +26,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
     executeStep,
     goBackStep,
     setError,
+    stepCount,
   } = useExecutionControls(code);
 
   const [highlightedVariable, setHighlightedVariable] = useState<string | null>(
@@ -127,6 +128,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
           isHighlightingEnabled={isHighlightingEnabled}
           highlightedVariable={highlightedVariable}
           setHighlightedVariable={setHighlightedVariable}
+          stepCount={stepCount}
         />
       )}
 

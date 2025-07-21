@@ -1,6 +1,5 @@
 import type { ExecutionState } from "@/lang/exec/steps/step-info";
-import { ChevronRight } from "lucide-react";
-import { Database } from "lucide-react";
+import { ChevronRight, Database, Sparkles } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -19,89 +18,100 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
   highlightedVariable,
   setHighlightedVariable,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const variables = executionState?.currentStep?.envSnapshot.variables || [];
+  const newChanges = variables.some((v) => v.isNew);
+
+  if (variables.length === 0) {
+    return (
+      <div className="text-center py-3 text-xs text-[var(--tokyo-comment)]">
+        No variables declared yet
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-3">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger asChild>
-          <button className="flex items-center gap-2 text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] transition-colors w-full">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <button className="flex items-center justify-between w-full p-2 bg-[var(--tokyo-bg-highlight)]/30 hover:bg-[var(--tokyo-bg-highlight)]/50 rounded transition-colors text-sm">
+          <div className="flex items-center gap-2">
             <ChevronRight
-              size={16}
-              className={`transition-transform duration-200 ${
+              size={12}
+              className={`transition-transform duration-200 text-[var(--tokyo-comment)] ${
                 isOpen ? "rotate-90" : ""
               }`}
             />
-            <Database size={16} />
-            <span className="font-medium">
-              Variables (
-              {executionState?.currentStep?.envSnapshot.variables.length})
+            <Database size={12} className="text-[var(--tokyo-purple)]" />
+            <span className="font-medium text-[var(--tokyo-fg)]">
+              Variables ({variables.length})
             </span>
-            {executionState?.currentStep?.envSnapshot.variables.some(
-              (v) => v.isNew
-            ) && (
-              <span className="bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] text-xs px-2 py-1 rounded animate-in zoom-in-50">
-                New Changes
-              </span>
+            {newChanges && (
+              <div className="flex items-center gap-1 bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] text-xs px-1.5 py-0.5 rounded">
+                <Sparkles size={8} />
+                <span>New</span>
+              </div>
             )}
-          </button>
-        </CollapsibleTrigger>
+          </div>
+        </button>
+      </CollapsibleTrigger>
 
-        <CollapsibleContent className="space-y-3 overflow-hidden">
-          {executionState?.currentStep?.envSnapshot.variables.map(
-            (variable, index) => (
-              <div
-                key={variable.name}
-                className={`bg-[var(--tokyo-bg-highlight)]/30 rounded-lg p-4 border transition-all duration-200 ${
-                  variable.isNew
-                    ? "border-[var(--tokyo-green)]/30 bg-[var(--tokyo-green)]/5"
-                    : "border-[var(--tokyo-comment)]/30"
-                } ${
-                  highlightedVariable === variable.name
-                    ? "border-[var(--tokyo-blue)]/50 bg-[var(--tokyo-blue)]/5"
-                    : ""
-                }`}
-                style={{
-                  animationDelay: `${index * 50}ms`,
-                }}
-                onMouseEnter={() => setHighlightedVariable(variable.name)}
-                onMouseLeave={() => setHighlightedVariable(null)}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`text-xs px-2 py-1 rounded font-mono ${
-                        variable.isConstant
-                          ? "bg-[var(--tokyo-red)]/20 text-[var(--tokyo-red)]"
-                          : "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)]"
-                      }`}
-                    >
-                      {variable.isConstant ? "const" : "let"}
-                    </span>
-                    <span className="font-mono font-medium text-[var(--tokyo-fg)]">
-                      {variable.name}
-                    </span>
-                    <span className="text-xs text-[var(--tokyo-comment)]">
-                      {variable.type}
-                    </span>
-                  </div>
+      <CollapsibleContent className="space-y-2 mt-2">
+        {variables.map((variable) => (
+          <div
+            key={variable.name}
+            className={`group relative rounded border transition-all duration-200 cursor-pointer ${
+              variable.isNew
+                ? "border-[var(--tokyo-green)]/30 bg-[var(--tokyo-green)]/5"
+                : "border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-highlight)]/20"
+            } ${
+              highlightedVariable === variable.name
+                ? "border-[var(--tokyo-blue)]/50 bg-[var(--tokyo-blue)]/5"
+                : ""
+            } hover:border-[var(--tokyo-blue)]/30`}
+            onMouseEnter={() => setHighlightedVariable(variable.name)}
+            onMouseLeave={() => setHighlightedVariable(null)}
+          >
+            <div className="p-2">
+              {/* Header Row */}
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span
+                    className={`text-xs px-1.5 py-0.5 rounded font-mono font-medium ${
+                      variable.isConstant
+                        ? "bg-[var(--tokyo-red)]/20 text-[var(--tokyo-red)]"
+                        : "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)]"
+                    }`}
+                  >
+                    {variable.isConstant ? "const" : "let"}
+                  </span>
+                  <span className="font-mono font-medium text-[var(--tokyo-fg)] text-sm truncate">
+                    {variable.name}
+                  </span>
+                  <span className="text-xs text-[var(--tokyo-comment)] hidden sm:inline">
+                    {variable.type}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1">
                   {variable.isNew && (
-                    <span className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] px-2 py-1 rounded animate-in zoom-in-50">
+                    <span className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] px-1.5 py-0.5 rounded">
                       NEW
                     </span>
                   )}
                 </div>
-                <div className="bg-[var(--tokyo-bg)]/50 rounded p-3">
-                  <code className="text-[var(--tokyo-fg-dark)] font-mono">
-                    {variable.value}
-                  </code>
-                </div>
               </div>
-            )
-          )}
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
+
+              {/* Value Row */}
+              <div className="bg-[var(--tokyo-bg)]/60 rounded p-2 mt-1">
+                <code className="text-xs font-mono text-[var(--tokyo-cyan)] break-all leading-relaxed">
+                  {variable.value}
+                </code>
+              </div>
+            </div>
+          </div>
+        ))}
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 

@@ -24,75 +24,77 @@ const OutputVisualizer: React.FC<OutputVisualizerProps> = ({
   executionState,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const outputEntries = executionState.output || [];
 
   const getOutputIcon = (type: string) => {
     switch (type) {
       case "assignment":
-        return <Database size={14} style={{ color: "var(--tokyo-green)" }} />;
+        return <Database size={10} className="text-[var(--tokyo-green)]" />;
       case "operation":
-        return <Zap size={14} style={{ color: "var(--tokyo-blue)" }} />;
+        return <Zap size={10} className="text-[var(--tokyo-blue)]" />;
       case "error":
-        return <AlertCircle size={14} style={{ color: "var(--tokyo-red)" }} />;
+        return <AlertCircle size={10} className="text-[var(--tokyo-red)]" />;
       default:
-        return (
-          <Activity
-            size={14}
-            style={{
-              color: "var(--tokyo-fg-dark)",
-            }}
-          />
-        );
+        return <Activity size={10} className="text-[var(--tokyo-fg-dark)]" />;
     }
   };
 
+  if (outputEntries.length === 0) {
+    return (
+      <div className="text-center py-2 text-xs text-[var(--tokyo-comment)]">
+        No execution logs yet
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-3">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger asChild>
-          <button className="flex items-center gap-2 text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] transition-colors w-full">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger asChild>
+        <button className="flex items-center justify-between w-full p-2 bg-[var(--tokyo-bg-highlight)]/30 hover:bg-[var(--tokyo-bg-highlight)]/50 rounded transition-colors text-sm">
+          <div className="flex items-center gap-2">
             <ChevronRight
-              size={16}
-              className={`transition-transform duration-200 ${
+              size={12}
+              className={`transition-transform duration-200 text-[var(--tokyo-comment)] ${
                 isOpen ? "rotate-90" : ""
               }`}
             />
-            <Terminal size={16} />
-            <span className="font-medium">
-              Execution Log ({executionState.output.length})
+            <Terminal size={12} className="text-[var(--tokyo-orange)]" />
+            <span className="font-medium text-[var(--tokyo-fg)]">
+              Execution Log ({outputEntries.length})
             </span>
-          </button>
-        </CollapsibleTrigger>
+          </div>
+        </button>
+      </CollapsibleTrigger>
 
-        <CollapsibleContent className="space-y-2">
-          <ScrollArea className="h-96 w-full rounded-md">
-            <div className="space-y-2 p-1">
-              {executionState.output.map((entry, index) => (
-                <div
-                  key={`${entry.stepNumber}-${index}`}
-                  className="bg-[var(--tokyo-bg-highlight)]/30 rounded p-3 border border-[var(--tokyo-comment)]/20 animate-in slide-in-from-bottom-2"
-                  style={{
-                    animationDelay: `${index * 50}ms`,
-                  }}
-                >
-                  <div className="flex items-start gap-3">
-                    {getOutputIcon(entry.type)}
-                    <div className="flex-1">
-                      <div className="text-sm text-[var(--tokyo-fg-dark)] font-mono">
-                        {parseDescriptionWithBadges(entry.value)}
-                      </div>
-                      <div className="text-xs text-[var(--tokyo-comment)] mt-1">
-                        Step {entry.stepNumber} •{" "}
+      <CollapsibleContent className="mt-2">
+        <ScrollArea className="h-48 w-full rounded border border-[var(--tokyo-comment)]/20">
+          <div className="space-y-1 p-2">
+            {outputEntries.map((entry, index) => (
+              <div
+                key={`${entry.stepNumber}-${index}`}
+                className="bg-[var(--tokyo-bg-highlight)]/20 rounded p-2 border border-[var(--tokyo-comment)]/10 hover:border-[var(--tokyo-comment)]/20 transition-colors"
+              >
+                <div className="flex items-start gap-2">
+                  <div className="mt-0.5">{getOutputIcon(entry.type)}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs text-[var(--tokyo-fg-dark)] font-mono break-words leading-relaxed">
+                      {parseDescriptionWithBadges(entry.value)}
+                    </div>
+                    <div className="text-xs text-[var(--tokyo-comment)] mt-1 flex items-center gap-2">
+                      <span>Step {entry.stepNumber}</span>
+                      <span>•</span>
+                      <span>
                         {new Date(entry.timestamp).toLocaleTimeString()}
-                      </div>
+                      </span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </CollapsibleContent>
-      </Collapsible>
-    </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 
