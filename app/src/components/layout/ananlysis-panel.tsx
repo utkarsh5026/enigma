@@ -1,9 +1,14 @@
 import React from "react";
 
-import { Terminal, Braces, Monitor } from "lucide-react";
+import { Terminal, Braces, Monitor, ChevronsRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TokenDisplay, ASTDisplay, OutputPanel } from "@/components/analysis";
+import {
+  TokenDisplay,
+  ASTDisplay,
+  OutputPanel,
+  ExecutionVisualizer,
+} from "@/components/analysis";
 
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Token } from "@/lang/token/token";
@@ -51,13 +56,21 @@ interface TokenProps {
 interface AnalysisContentProps {
   tokenProps: TokenProps;
   code: string;
+  onHighlightCode?: (
+    line: number,
+    column: number,
+    endLine?: number,
+    endColumn?: number
+  ) => void;
 }
 
 const AnalysisContent: React.FC<AnalysisContentProps> = ({
   tokenProps,
   code,
+  onHighlightCode,
 }) => {
   const { isPhone } = useMobile();
+
   return (
     <Tabs defaultValue="output" className="h-full flex flex-col">
       {/* Analysis Tabs */}
@@ -80,11 +93,11 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               icon={<Braces size={16} />}
               label="AST"
             />
-            {/* <CustomTabTrigger
+            <CustomTabTrigger
               value="execution"
               icon={<ChevronsRight size={16} />}
               label="Execution"
-            /> */}
+            />
           </TabsList>
         </div>
       )}
@@ -105,17 +118,20 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
 
           <TabsContent value="ast" className="flex-1 min-h-0 m-0">
             <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
-              <ASTDisplay code={code} />
+              <ASTDisplay code={code} onHighlightCode={onHighlightCode} />
               <ScrollBar orientation="vertical" />
             </ScrollArea>
           </TabsContent>
 
-          {/* <TabsContent value="execution" className="flex-1 min-h-0 m-0">
+          <TabsContent value="execution" className="flex-1 min-h-0 m-0">
             <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
-              <ExecutionVisualizer code={code} />
+              <ExecutionVisualizer
+                code={code}
+                onHighlightCode={onHighlightCode}
+              />
               <ScrollBar orientation="vertical" />
             </ScrollArea>
-          </TabsContent> */}
+          </TabsContent>
         </>
       )}
     </Tabs>
