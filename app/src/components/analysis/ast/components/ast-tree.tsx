@@ -1,9 +1,11 @@
+// src/components/analysis/ast/components/ast-tree.tsx (Updated)
+
 import { AnimatePresence, motion } from "framer-motion";
 import ParserErrors from "./parser-errors";
 import AstNode from "./ast-node";
-import { Info } from "lucide-react";
 import { ParseError } from "@/lang/parser/core";
-import { Program } from "@/lang/ast/ast";
+import { Node, Program } from "@/lang/ast/ast";
+import AstStats from "./ast-stats";
 
 interface AstTreeProps {
   program: Program;
@@ -11,6 +13,7 @@ interface AstTreeProps {
   forceRefresh: number;
   nodeCount: number;
   highlightedNodes: Set<string>;
+  onNodeClick?: (node: Node) => void;
 }
 
 const AstTree: React.FC<AstTreeProps> = ({
@@ -19,6 +22,7 @@ const AstTree: React.FC<AstTreeProps> = ({
   forceRefresh,
   nodeCount,
   highlightedNodes,
+  onNodeClick,
 }) => {
   return (
     <div className="p-6">
@@ -42,57 +46,27 @@ const AstTree: React.FC<AstTreeProps> = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         className="relative"
-        key={forceRefresh} // Force re-render when refreshed
+        key={forceRefresh}
       >
         {/* Connection guide */}
         <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-tokyo-comment/30 to-transparent" />
 
         {/* Root node */}
-        <AstNode node={program} depth={0} path="root" isLast={true} />
+        <AstNode
+          node={program}
+          depth={0}
+          path="root"
+          isLast={true}
+          onNodeClick={onNodeClick}
+        />
       </motion.div>
 
-      {/* Legend and Statistics */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-8 space-y-4"
-      >
-        {/* Statistics */}
-        <div className="p-4 bg-tokyo-bg-highlight/30 rounded-lg border border-tokyo-comment">
-          <div className="flex items-center gap-2 mb-3">
-            <Info size={16} className="text-tokyo-blue" />
-            <span className="text-sm font-medium text-tokyo-fg">
-              AST Statistics
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-            <div className="flex flex-col">
-              <span className="text-tokyo-comment">Total Nodes</span>
-              <span className="text-tokyo-blue font-mono">{nodeCount}</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-tokyo-comment">Statements</span>
-              <span className="text-tokyo-green font-mono">
-                {program.getStatements().length || 0}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-tokyo-comment">Search Results</span>
-              <span className="text-tokyo-yellow font-mono">
-                {highlightedNodes.size}
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-tokyo-comment">Parser Errors</span>
-              <span className="text-tokyo-red font-mono">
-                {parserErrors?.length || 0}
-              </span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      <AstStats
+        nodeCount={nodeCount}
+        statementsLength={program.getStatements().length}
+        errorsLength={highlightedNodes.size}
+        parserErrorsLength={parserErrors.length}
+      />
     </div>
   );
 };
