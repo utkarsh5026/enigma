@@ -40,12 +40,12 @@ export class IndexExpressionParser implements InfixExpressionParser {
       Precedence.LOWEST
     );
 
-    context.consumeCurrentToken(
+    const endToken = context.consumeCurrentToken(
       TokenType.RBRACKET,
       "Expected ']' after index expression"
     );
 
-    return new IndexExpression(leftBracket, left, index);
+    return new IndexExpression(leftBracket, left, index, endToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {
