@@ -3,6 +3,8 @@ import { useCallback, useRef } from "react";
 import { editor } from "monaco-editor";
 import { Node } from "@/lang/ast";
 
+const HIGHLIGHT_CLASS = "ast-code-highlight";
+
 export interface HighlightPosition {
   line: number;
   column: number;
@@ -88,7 +90,7 @@ export const useEditorHighlighting = () => {
           actualEndColumn
         ),
         options: {
-          className: "ast-code-highlight",
+          className: HIGHLIGHT_CLASS,
           isWholeLine: false,
           minimap: {
             color: "#7aa2f7",
@@ -156,44 +158,9 @@ export const useEditorHighlighting = () => {
     (editor: editor.IStandaloneCodeEditor) => {
       editorRef.current = editor;
 
-      // Add the CSS for highlighting if it doesn't exist
       if (!document.getElementById("ast-highlight-styles")) {
         const style = document.createElement("style");
         style.id = "ast-highlight-styles";
-        style.textContent = `
-        .ast-code-highlight {
-          background: linear-gradient(90deg, 
-            rgba(122, 162, 247, 0.3) 0%, 
-            rgba(122, 162, 247, 0.2) 50%, 
-            rgba(122, 162, 247, 0.3) 100%) !important;
-          border: 2px solid rgba(122, 162, 247, 0.6) !important;
-          border-radius: 4px !important;
-          animation: astHighlightPulse 0.6s ease-in-out;
-          box-shadow: 0 0 10px rgba(122, 162, 247, 0.4) !important;
-        }
-        
-        .ast-glyph-highlight {
-          background-color: rgba(122, 162, 247, 0.5) !important;
-        }
-        
-        @keyframes astHighlightPulse {
-          0% { 
-            background: rgba(122, 162, 247, 0.6) !important;
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(122, 162, 247, 0.6) !important;
-          }
-          50% { 
-            background: rgba(122, 162, 247, 0.4) !important;
-            transform: scale(1.01);
-            box-shadow: 0 0 12px rgba(122, 162, 247, 0.5) !important;
-          }
-          100% { 
-            background: rgba(122, 162, 247, 0.3) !important;
-            transform: scale(1);
-            box-shadow: 0 0 10px rgba(122, 162, 247, 0.4) !important;
-          }
-        }
-      `;
         document.head.appendChild(style);
       }
     },
