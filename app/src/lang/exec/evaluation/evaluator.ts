@@ -298,8 +298,7 @@ export class LanguageEvaluator implements EvaluationContext {
       case literal.FunctionLiteral:
         result = this.functionEvaluator.evaluate(
           node as literal.FunctionLiteral,
-          env,
-          this
+          env
         );
         break;
 

@@ -1,11 +1,6 @@
 import { FunctionLiteral } from "@/lang/ast";
 import { FunctionObject } from "@/lang/exec/objects";
-import {
-  EvaluationContext,
-  NodeEvaluator,
-  Environment,
-  BaseObject,
-} from "@/lang/exec/core";
+import { NodeEvaluator, Environment, BaseObject } from "@/lang/exec/core";
 
 /**
  * 🔧 FunctionLiteralEvaluator - Executable Code Block Creator
@@ -22,18 +17,8 @@ import {
 export class FunctionLiteralEvaluator
   implements NodeEvaluator<FunctionLiteral>
 {
-  public evaluate(
-    node: FunctionLiteral,
-    env: Environment,
-    context: EvaluationContext
-  ): BaseObject {
+  public evaluate(node: FunctionLiteral, env: Environment): BaseObject {
     const functionObject = new FunctionObject(node.parameters, node.body, env);
-    context.addAfterStep(
-      node,
-      env,
-      functionObject,
-      `Function literal evaluated: ${functionObject.inspect()}`
-    );
     return functionObject;
   }
 }
