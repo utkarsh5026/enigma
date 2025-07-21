@@ -29,51 +29,22 @@ export class InfixExpressionEvaluator
     env: Environment,
     context: EvaluationContext
   ) {
-    context.addBeforeStep(
-      node,
-      env,
-      `Evaluating the left side of the infix expression`
-    );
     const left = context.evaluate(node.left, env);
     if (ObjectValidator.isError(left)) {
-      context.addAfterStep(
-        node,
-        env,
-        left,
-        `Error evaluating the left side of the infix expression: ${left.message}`
-      );
       return left;
     }
 
-    context.addBeforeStep(
-      node,
-      env,
-      `Evaluating the right side of the infix expression`
-    );
     const right = context.evaluate(node.right, env);
     if (ObjectValidator.isError(right)) {
-      context.addAfterStep(
-        node,
-        env,
-        right,
-        `Error evaluating the right side of the infix expression: ${right.message}`
-      );
       return right;
     }
 
-    context.addBeforeStep(node, env, `Evaluating the infix expression`);
     const result = this.evalInfixExpression(
       node.operator,
       left,
       right,
       context,
       node
-    );
-    context.addAfterStep(
-      node,
-      env,
-      result,
-      `Infix expression evaluated: ${result.inspect()}`
     );
     return result;
   }
