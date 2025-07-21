@@ -360,12 +360,14 @@ export class LanguageEvaluator implements EvaluationContext {
         );
     }
 
-    this.addAfterStep(
-      node,
-      env,
-      result,
-      `Evaluated ${node.whatIam().name} '${result.inspect()}'`
-    );
+    if (node instanceof ast.Expression) {
+      this.addAfterStep(
+        node,
+        env,
+        result,
+        `Evaluated ${node.whatIam().name} '${result.inspect()}'`
+      );
+    }
     return result;
   }
 
