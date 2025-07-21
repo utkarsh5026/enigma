@@ -1,13 +1,27 @@
 import React from "react";
-import { FileCode, Play, Loader2, Check } from "lucide-react";
+import { FileCode, Play, Loader2, Check, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import type { ExecutionState } from "@/lang/exec/steps/step-info";
+import StepControls from "./step-controls";
 
 interface EditorHeaderProps {
   code: string;
   isExecuting: boolean;
   executionSuccess: boolean;
   handleRunCode: () => void;
+  executionState: ExecutionState | null;
+  onPrepareExecution?: () => void;
+  onExecuteStep?: () => void;
+  onGoBackStep?: () => void;
+  onResetExecution?: () => void;
+  isStepMode?: boolean;
+  onToggleStepMode?: () => void;
 }
 
 const EditorHeader: React.FC<EditorHeaderProps> = ({
@@ -15,6 +29,13 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   isExecuting,
   executionSuccess,
   handleRunCode,
+  executionState,
+  onPrepareExecution,
+  onExecuteStep,
+  onGoBackStep,
+  onResetExecution,
+  isStepMode = false,
+  onToggleStepMode,
 }) => {
   return (
     <motion.div
@@ -41,55 +62,98 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           </div>
         </div>
 
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button
-            onClick={handleRunCode}
-            disabled={isExecuting || !code.trim()}
-            className={`
-                  px-6 py-2 rounded-xl font-medium text-sm
-                  transition-all duration-300 ease-in-out
-                  cursor-pointer
-                  flex items-center gap-2
-                  shadow-lg hover:shadow-xl
-                  border-0
-                  ${
-                    executionSuccess
-                      ? "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan text-white"
-                      : "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan hover:from-tokyo-green/90 hover:to-tokyo-cyan/90 text-white"
-                  }
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  disabled:hover:shadow-lg
-                  ${isExecuting ? "animate-pulse" : ""}
-                `}
-            title={
-              !code.trim()
-                ? "Enter some code to run"
-                : isExecuting
-                ? "Executing..."
-                : "Run your code"
-            }
-          >
-            {isExecuting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                <span>Running...</span>
-              </>
-            ) : executionSuccess ? (
-              <>
-                <Check
-                  size={16}
-                  className="animate-in zoom-in-50 duration-200"
-                />
-                <span>Success!</span>
-              </>
-            ) : (
-              <>
-                <Play size={16} />
-                <span>Run Code</span>
-              </>
+        {/* Execution Controls */}
+        <div className="flex items-center gap-2">
+          {/* Step Mode Toggle */}
+          {onToggleStepMode && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={onToggleStepMode}
+                  variant={isStepMode ? "default" : "outline"}
+                  size="sm"
+                  className={`px-3 py-1.5 text-xs ${
+                    isStepMode
+                      ? "bg-[var(--tokyo-blue)] text-white"
+                      : "border-[var(--tokyo-comment)]/30 text-[var(--tokyo-fg)]"
+                  }`}
+                >
+                  <Eye size={12} className="mr-1" />
+                  Debug
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">Toggle step-by-step execution mode</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+
+          {/* Step Controls (only show in step mode) */}
+          <AnimatePresence>
+            {isStepMode && onPrepareExecution && (
+              <StepControls
+                executionState={executionState}
+                onResetExecution={onResetExecution}
+                onPrepareExecution={onPrepareExecution}
+                onExecuteStep={onExecuteStep}
+                onGoBackStep={onGoBackStep}
+              />
             )}
-          </Button>
-        </motion.div>
+          </AnimatePresence>
+
+          {/* Regular Run Button */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={handleRunCode}
+              disabled={isExecuting || !code.trim() || isStepMode}
+              className={`
+                px-6 py-2 rounded-xl font-medium text-sm
+                transition-all duration-300 ease-in-out
+                cursor-pointer
+                flex items-center gap-2
+                shadow-lg hover:shadow-xl
+                border-0
+                ${
+                  executionSuccess
+                    ? "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan text-white"
+                    : "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan hover:from-tokyo-green/90 hover:to-tokyo-cyan/90 text-white"
+                }
+                disabled:opacity-50 disabled:cursor-not-allowed
+                disabled:hover:shadow-lg
+                ${isExecuting ? "animate-pulse" : ""}
+              `}
+              title={
+                isStepMode
+                  ? "Use debug controls for step execution"
+                  : !code.trim()
+                  ? "Enter some code to run"
+                  : isExecuting
+                  ? "Executing..."
+                  : "Run your code"
+              }
+            >
+              {isExecuting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  <span>Running...</span>
+                </>
+              ) : executionSuccess ? (
+                <>
+                  <Check
+                    size={16}
+                    className="animate-in zoom-in-50 duration-200"
+                  />
+                  <span>Success!</span>
+                </>
+              ) : (
+                <>
+                  <Play size={16} />
+                  <span>Run Code</span>
+                </>
+              )}
+            </Button>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   );
