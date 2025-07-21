@@ -95,12 +95,12 @@ export class Statement implements Node {
  */
 export class Expression implements Node {
   token: Token;
+  endToken: Token | null;
 
-  constructor(token: Token) {
+  constructor(token: Token, endToken: Token | null) {
     this.token = token;
+    this.endToken = endToken;
   }
-
-  expressionNode(): void {}
 
   tokenLiteral(): string {
     return this.token.literal;
@@ -118,10 +118,10 @@ export class Expression implements Node {
   }
 
   nodeRange(): { start: Position; end: Position } {
-    const literal = this.tokenLiteral();
-    const start = { column: literal.length, line: 0 };
-    const end = { column: literal.length, line: 0 };
-    return { start, end };
+    return {
+      start: this.token.start(),
+      end: this.endToken?.position ?? this.token.position,
+    };
   }
 }
 
