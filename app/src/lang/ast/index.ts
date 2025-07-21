@@ -1,6 +1,6 @@
 import { Program } from "./ast";
 import { AstValidator } from "./validate";
-import { Node, Expression, Identifier, Statement } from "./ast";
+import { Node, Expression, Statement } from "./ast";
 import {
   ClassStatement,
   ConstStatement,
@@ -24,6 +24,7 @@ import {
   IndexExpression,
   IfExpression,
   NewExpression,
+  Identifier,
 } from "./expressions";
 import {
   BooleanLiteral,

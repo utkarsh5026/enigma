@@ -1,4 +1,4 @@
-import { Identifier, Node } from "./ast";
+import { Node } from "./ast";
 import {
   InfixExpression,
   PrefixExpression,
@@ -7,6 +7,7 @@ import {
   CallExpression,
   AssignmentExpression,
   PropertyExpression,
+  Identifier,
 } from "./expressions";
 import {
   IntegerLiteral,
