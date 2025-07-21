@@ -63,7 +63,7 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
     <DropdownMenu open={showExamplesDropdown} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <motion.button
-          className={`flex items-center gap-2 rounded-lg bg-[var(--tokyo-bg-highlight)]/80 text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)] transition-colors border-none text-xs p-2 cursor-pointer`}
+          className={`flex items-center gap-2 rounded-lg bg-[var(--tokyo-blue)] text-white hover:bg-[var(--tokyo-purple)] transition-all duration-200 border border-[var(--tokyo-cyan)]/30 text-xs p-2 cursor-pointer shadow-lg shadow-[var(--tokyo-blue)]/20 hover:shadow-[var(--tokyo-purple)]/30 hover:shadow-xl`}
           whileHover={{ scale: isMobile ? 1.01 : 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
