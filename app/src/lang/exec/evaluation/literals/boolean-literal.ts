@@ -1,9 +1,4 @@
-import {
-  EvaluationContext,
-  NodeEvaluator,
-  Environment,
-  BaseObject,
-} from "@/lang/exec/core";
+import { NodeEvaluator, BaseObject } from "@/lang/exec/core";
 import { BooleanLiteral } from "@/lang/ast";
 import { BooleanObject } from "@/lang/exec/objects";
 
@@ -21,18 +16,8 @@ import { BooleanObject } from "@/lang/exec/objects";
  * - Used in assignments: let isReady = true
  */
 export class BooleanLiteralEvaluator implements NodeEvaluator<BooleanLiteral> {
-  public evaluate(
-    node: BooleanLiteral,
-    env: Environment,
-    context: EvaluationContext
-  ): BaseObject {
+  public evaluate(node: BooleanLiteral): BaseObject {
     const booleanObject = new BooleanObject(node.value);
-    context.addAfterStep(
-      node,
-      env,
-      booleanObject,
-      `Boolean literal evaluated: ${node.value}`
-    );
     return booleanObject;
   }
 }

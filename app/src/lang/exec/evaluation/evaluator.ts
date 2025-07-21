@@ -130,7 +130,11 @@ export class LanguageEvaluator implements EvaluationContext {
       });
     }
 
-    this.addDuringStep(node, env, `Evaluating ${node.whatIam().name}`);
+    this.addDuringStep(
+      node,
+      env,
+      `Evaluating ${node.whatIam().name} '${node.toString()}'`
+    );
 
     let result: BaseObject;
 
@@ -184,19 +188,11 @@ export class LanguageEvaluator implements EvaluationContext {
         break;
 
       case statement.BreakStatement:
-        result = this.breakEvaluator.evaluate(
-          node as statement.BreakStatement,
-          env,
-          this
-        );
+        result = this.breakEvaluator.evaluate();
         break;
 
       case statement.ContinueStatement:
-        result = this.continueEvaluator.evaluate(
-          node as statement.ContinueStatement,
-          env,
-          this
-        );
+        result = this.continueEvaluator.evaluate();
         break;
 
       case statement.ExpressionStatement:
@@ -257,28 +253,16 @@ export class LanguageEvaluator implements EvaluationContext {
         break;
 
       case literal.BooleanLiteral:
-        result = this.booleanEvaluator.evaluate(
-          node as literal.BooleanLiteral,
-          env,
-          this
-        );
+        result = this.booleanEvaluator.evaluate(node as literal.BooleanLiteral);
         break;
 
       // Literals
       case literal.StringLiteral:
-        result = this.stringEvaluator.evaluate(
-          node as literal.StringLiteral,
-          env,
-          this
-        );
+        result = this.stringEvaluator.evaluate(node as literal.StringLiteral);
         break;
 
       case literal.IntegerLiteral:
-        result = this.integerEvaluator.evaluate(
-          node as literal.IntegerLiteral,
-          env,
-          this
-        );
+        result = this.integerEvaluator.evaluate(node as literal.IntegerLiteral);
         break;
 
       case literal.ArrayLiteral:
@@ -305,11 +289,7 @@ export class LanguageEvaluator implements EvaluationContext {
         break;
 
       case literal.NullLiteral:
-        result = this.nullEvaluator.evaluate(
-          node as literal.NullLiteral,
-          env,
-          this
-        );
+        result = this.nullEvaluator.evaluate();
         break;
 
       case literal.FStringLiteral:
@@ -321,11 +301,7 @@ export class LanguageEvaluator implements EvaluationContext {
         break;
 
       case literal.FloatLiteral:
-        result = this.floatEvaluator.evaluate(
-          node as literal.FloatLiteral,
-          env,
-          this
-        );
+        result = this.floatEvaluator.evaluate(node as literal.FloatLiteral);
         break;
 
       // Special case for Identifier (from ast.ts)
@@ -384,7 +360,12 @@ export class LanguageEvaluator implements EvaluationContext {
         );
     }
 
-    this.addAfterStep(node, env, result, `Evaluated ${node.whatIam().name}`);
+    this.addAfterStep(
+      node,
+      env,
+      result,
+      `Evaluated ${node.whatIam().name} '${result.inspect()}'`
+    );
     return result;
   }
 

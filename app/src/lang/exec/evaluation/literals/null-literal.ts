@@ -1,9 +1,4 @@
-import {
-  EvaluationContext,
-  NodeEvaluator,
-  Environment,
-  BaseObject,
-} from "@/lang/exec/core";
+import type { NodeEvaluator, BaseObject } from "@/lang/exec/core";
 import { NullLiteral } from "@/lang/ast";
 import { NullObject } from "@/lang/exec/objects";
 
@@ -21,17 +16,7 @@ import { NullObject } from "@/lang/exec/objects";
  * - Default returns: functions that don't explicitly return anything
  */
 export class NullLiteralEvaluator implements NodeEvaluator<NullLiteral> {
-  public evaluate(
-    node: NullLiteral,
-    env: Environment,
-    context: EvaluationContext
-  ): BaseObject {
-    context.addAfterStep(
-      node,
-      env,
-      NullObject.INSTANCE,
-      `Null literal evaluated`
-    );
+  public evaluate(): BaseObject {
     return NullObject.INSTANCE;
   }
 }

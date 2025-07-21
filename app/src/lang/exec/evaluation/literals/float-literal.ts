@@ -1,8 +1,4 @@
-import {
-  Environment,
-  NodeEvaluator,
-  EvaluationContext,
-} from "@/lang/exec/core";
+import type { NodeEvaluator } from "@/lang/exec/core";
 import { FloatLiteral } from "@/lang/ast";
 import { FloatObject } from "@/lang/exec/objects";
 
@@ -20,20 +16,9 @@ import { FloatObject } from "@/lang/exec/objects";
  * - Mathematical constants: 3.141592653589793
  */
 export class FloatLiteralEvaluator implements NodeEvaluator<FloatLiteral> {
-  public evaluate(
-    node: FloatLiteral,
-    env: Environment,
-    context: EvaluationContext
-  ) {
-    context.addBeforeStep(node, env, `Evaluating float literal`);
+  public evaluate(node: FloatLiteral) {
     const value = node.value;
     const result = new FloatObject(value);
-    context.addAfterStep(
-      node,
-      env,
-      result,
-      `Float literal evaluated: ${result.inspect()}`
-    );
     return result;
   }
 }

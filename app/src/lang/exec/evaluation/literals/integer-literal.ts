@@ -1,10 +1,5 @@
-import {
-  EvaluationContext,
-  NodeEvaluator,
-  Environment,
-  BaseObject,
-} from "@/lang/exec/core";
-import { IntegerLiteral } from "@/lang/ast";
+import type { NodeEvaluator, BaseObject } from "@/lang/exec/core";
+import type { IntegerLiteral } from "@/lang/ast";
 import { IntegerObject } from "@/lang/exec/objects";
 
 /**
@@ -21,13 +16,8 @@ import { IntegerObject } from "@/lang/exec/objects";
  * - Array indices: arr[0], arr[5], arr[length-1]
  */
 export class IntegerLiteralEvaluator implements NodeEvaluator<IntegerLiteral> {
-  public evaluate(
-    node: IntegerLiteral,
-    env: Environment,
-    context: EvaluationContext
-  ): BaseObject {
+  public evaluate(node: IntegerLiteral): BaseObject {
     const integerObject = new IntegerObject(node.value);
-    context.addAfterStep(node, env, integerObject, `Integer literal evaluated`);
     return integerObject;
   }
 }
