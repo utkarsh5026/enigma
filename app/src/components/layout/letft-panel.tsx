@@ -32,10 +32,8 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     setExecutionSuccess(false);
 
     try {
-      // Clear console first
       consoleStore.clear();
 
-      // Add a small delay to show loading state for better UX
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const lexer = new Lexer(code);
@@ -80,7 +78,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      {/* Minimal Header - Desktop Only */}
       {!isMobile && (
         <motion.div
           className="shrink-0 border-b border-[var(--tokyo-comment)]/20 bg-gradient-to-r from-[var(--tokyo-bg)] to-[var(--tokyo-bg-dark)]/90 backdrop-blur-sm"
@@ -111,7 +108,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
               </div>
             </div>
 
-            {/* Run Button */}
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 onClick={handleRunCode}
@@ -164,7 +160,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
         </motion.div>
       )}
 
-      {/* Mobile Status Bar - Minimal */}
       {isMobile && code.length > 0 && (
         <motion.div
           className="shrink-0 px-3 py-2 bg-[var(--tokyo-bg-dark)]/50 border-b border-[var(--tokyo-comment)]/20 backdrop-blur-sm"
