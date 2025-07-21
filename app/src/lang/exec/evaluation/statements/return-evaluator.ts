@@ -29,13 +29,6 @@ export class ReturnStatementEvaluator
       return value;
     }
 
-    const returnValueObject = new ReturnValueObject(value);
-    context.addAfterStep(
-      node,
-      env,
-      returnValueObject,
-      `Return statement evaluated: ${returnValueObject.inspect()}`
-    );
-    return returnValueObject;
+    return new ReturnValueObject(value);
   }
 }
