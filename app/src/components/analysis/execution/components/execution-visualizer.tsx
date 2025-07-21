@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  AlertCircle,
-  Terminal,
-  RotateCcw,
-  Zap,
-  Eye,
-  MapPin,
-} from "lucide-react";
+import { AlertCircle, Terminal, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 import ExecutionControls from "./execution-controls";
-import VariablesDeclared from "./variables-declared";
-import OutputVisualizer from "./output-visualizer";
-import { parseDescriptionWithBadges } from "./utils";
 import { useExecutionControls } from "../hooks/use-execution";
-import { Badge } from "@/components/ui/badge";
-import { getStepTypeInfo } from "./utils";
+import ExecutionStep from "./execution-step";
 
 interface ExecutionVisualizerProps {
   code: string;
@@ -50,10 +39,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
     const { start, end } = executionState.currentStep.node.nodeRange();
     onHighlightCode(start.line, start.column, end.line, end.column);
   }, [executionState?.currentStep, onHighlightCode]);
-
-  const stepInfo = executionState?.currentStep
-    ? getStepTypeInfo(executionState.currentStep.stepType)
-    : null;
 
   const handleExecuteStep = () => {
     const result = executeStep();
@@ -137,149 +122,12 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
 
       {/* Main Content */}
       {!error && executionState && (
-        <div className="flex-1 overflow-auto p-6">
-          <div className="max-w-4xl mx-auto space-y-6">
-            {/* Current Step Card */}
-            <motion.div
-              layout
-              className="bg-[var(--tokyo-bg)]/50 border border-[var(--tokyo-comment)]/30 rounded-xl overflow-hidden backdrop-blur-sm"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              {/* Step Header */}
-              <div className="p-6 border-b border-[var(--tokyo-comment)]/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    {stepInfo && (
-                      <motion.div
-                        className={`p-2 rounded-lg ${stepInfo.bgColor} border ${stepInfo.borderColor}`}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                      >
-                        {stepInfo.icon}
-                      </motion.div>
-                    )}
-                    <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <h2 className="text-lg font-semibold text-[var(--tokyo-fg)]">
-                          {executionState.currentStep?.node.constructor.name ||
-                            "Ready to Execute"}
-                        </h2>
-                        {stepInfo && (
-                          <span
-                            className={`text-sm px-2 py-1 rounded ${stepInfo.bgColor} ${stepInfo.color}`}
-                          >
-                            {stepInfo.label}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[var(--tokyo-fg-dark)]">
-                        {executionState.currentStep?.description
-                          ? parseDescriptionWithBadges(
-                              executionState.currentStep.description
-                            )
-                          : "Click Step or Run to begin execution"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {executionState.currentStep && (
-                    <div className="text-right">
-                      <div className="flex items-center gap-2 mb-1">
-                        <MapPin
-                          size={14}
-                          className="text-[var(--tokyo-blue)]"
-                        />
-                        <span className="text-sm text-[var(--tokyo-fg-dark)]">
-                          Line {executionState.currentStep.node.position().line}
-                        </span>
-                      </div>
-                      <div className="text-xs text-[var(--tokyo-comment)] flex items-center gap-1">
-                        <span>
-                          Col{" "}
-                          {executionState.currentStep.node.position().column}
-                        </span>
-                        {isHighlightingEnabled && (
-                          <Badge className="bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] text-xs">
-                            Highlighted
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Step Content */}
-              {executionState.currentStep && (
-                <div className="p-6 space-y-6">
-                  {/* Code Location Indicator */}
-                  {executionState.currentStep.lineNumber &&
-                    isHighlightingEnabled && (
-                      <motion.div
-                        className="bg-[var(--tokyo-blue)]/10 border border-[var(--tokyo-blue)]/30 rounded-lg p-4"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.1 }}
-                      >
-                        <div className="flex items-center gap-3 mb-2">
-                          <Eye
-                            size={16}
-                            style={{ color: "var(--tokyo-blue)" }}
-                          />
-                          <span className="text-sm font-medium text-[var(--tokyo-blue)]">
-                            Code Location
-                          </span>
-                        </div>
-                        <div className="text-sm text-[var(--tokyo-fg-dark)]">
-                          Currently executing at{" "}
-                          <code className="bg-[var(--tokyo-bg-highlight)] px-2 py-1 rounded font-mono text-[var(--tokyo-cyan)]">
-                            Line {executionState.currentStep.lineNumber}, Column{" "}
-                            {executionState.currentStep.columnNumber}
-                          </code>
-                        </div>
-                        <div className="text-xs text-[var(--tokyo-comment)] mt-1">
-                          The corresponding code is highlighted in the editor
-                        </div>
-                      </motion.div>
-                    )}
-
-                  {/* Result Display */}
-                  {executionState.currentStep.result && (
-                    <motion.div
-                      className="bg-[var(--tokyo-bg-highlight)]/50 rounded-lg p-4 border border-[var(--tokyo-green)]/20"
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <div className="flex items-center gap-3 mb-3">
-                        <Zap
-                          size={16}
-                          style={{ color: "var(--tokyo-green)" }}
-                        />
-                        <span className="text-sm font-medium text-[var(--tokyo-green)]">
-                          Result
-                        </span>
-                      </div>
-                      <code className="text-lg font-mono text-[var(--tokyo-cyan)]">
-                        {executionState.currentStep.result.inspect()}
-                      </code>
-                    </motion.div>
-                  )}
-
-                  {/* Variables Section */}
-                  <VariablesDeclared
-                    executionState={executionState}
-                    highlightedVariable={highlightedVariable}
-                    setHighlightedVariable={setHighlightedVariable}
-                  />
-
-                  <OutputVisualizer executionState={executionState} />
-                </div>
-              )}
-            </motion.div>
-          </div>
-        </div>
+        <ExecutionStep
+          executionState={executionState}
+          isHighlightingEnabled={isHighlightingEnabled}
+          highlightedVariable={highlightedVariable}
+          setHighlightedVariable={setHighlightedVariable}
+        />
       )}
 
       {/* Error State - No Execution */}
