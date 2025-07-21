@@ -1,4 +1,4 @@
-import { RotateCcw, SkipForward, SkipBack, Eye } from "lucide-react";
+import { RotateCcw, SkipForward, SkipBack, Eye, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { ExecutionState } from "@/lang/exec/steps/step-info";
 import {
@@ -51,7 +51,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
               : "text-[var(--tokyo-green)] hover:text-[var(--tokyo-fg)]"
           )}
         >
-          <RotateCcw size={16} />
+          {executionState ? <RotateCcw size={16} /> : <Zap size={16} />}
           {executionState ? "Reset" : "Prepare"}
         </motion.button>
 

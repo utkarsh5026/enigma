@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AlertCircle,
   Terminal,
   RotateCcw,
   Zap,
-  Activity,
   Eye,
-  CheckCircle,
+  MapPin,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import ExecutionControls from "./execution-controls";
@@ -14,33 +13,63 @@ import VariablesDeclared from "./variables-declared";
 import OutputVisualizer from "./output-visualizer";
 import { parseDescriptionWithBadges } from "./utils";
 import { useExecutionControls } from "../hooks/use-execution";
+import { Badge } from "@/components/ui/badge";
+import { getStepTypeInfo } from "./utils";
 
 interface ExecutionVisualizerProps {
   code: string;
+  onHighlightCode?: (
+    line: number,
+    column: number,
+    endLine?: number,
+    endColumn?: number
+  ) => void;
 }
 
-const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({ code }) => {
+const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
+  code,
+  onHighlightCode,
+}) => {
   const {
     executionState,
-    isRunning,
-    autoRunSpeed,
     error,
     prepareExecution,
     executeStep,
     goBackStep,
-    startAutoRun,
-    stopAutoRun,
-    setAutoRunSpeed,
     setError,
   } = useExecutionControls(code);
 
   const [highlightedVariable, setHighlightedVariable] = useState<string | null>(
     null
   );
+  const [isHighlightingEnabled] = useState(!!onHighlightCode);
+
+  useEffect(() => {
+    if (!onHighlightCode || !executionState?.currentStep) return;
+
+    const { start, end } = executionState.currentStep.node.nodeRange();
+    onHighlightCode(start.line, start.column, end.line, end.column);
+  }, [executionState?.currentStep, onHighlightCode]);
 
   const stepInfo = executionState?.currentStep
     ? getStepTypeInfo(executionState.currentStep.stepType)
     : null;
+
+  const handleExecuteStep = () => {
+    const result = executeStep();
+    if (result && isHighlightingEnabled) {
+      console.log("Step executed with highlighting");
+    }
+    return result;
+  };
+
+  const handleGoBackStep = () => {
+    const result = goBackStep();
+    if (result && isHighlightingEnabled) {
+      console.log("Went back step with highlighting");
+    }
+    return result;
+  };
 
   return (
     <div className="w-full h-screen bg-[var(--tokyo-bg-dark)] text-[var(--tokyo-fg)] flex flex-col">
@@ -63,19 +92,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({ code }) => {
                   Step-by-step program execution
                 </p>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {executionState && (
-                <>
-                  <span className="text-sm text-[var(--tokyo-fg-dark)]">
-                    Step
-                  </span>
-                  <span className="bg-[var(--tokyo-bg-highlight)] px-3 py-1 rounded text-sm font-mono">
-                    {executionState.currentStepNumber}
-                  </span>
-                </>
-              )}
             </div>
           </div>
 
@@ -112,14 +128,9 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({ code }) => {
 
           <ExecutionControls
             prepareExecution={prepareExecution}
-            executeStep={executeStep}
-            goBackStep={goBackStep}
-            isRunning={isRunning}
+            executeStep={handleExecuteStep}
+            goBackStep={handleGoBackStep}
             executionState={executionState}
-            stopAutoRun={stopAutoRun}
-            startAutoRun={startAutoRun}
-            autoRunSpeed={autoRunSpeed}
-            setAutoRunSpeed={setAutoRunSpeed}
           />
         </div>
       </div>
@@ -174,11 +185,25 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({ code }) => {
 
                   {executionState.currentStep && (
                     <div className="text-right">
-                      <div className="text-sm text-[var(--tokyo-fg-dark)]">
-                        Line {executionState.currentStep.lineNumber}
+                      <div className="flex items-center gap-2 mb-1">
+                        <MapPin
+                          size={14}
+                          className="text-[var(--tokyo-blue)]"
+                        />
+                        <span className="text-sm text-[var(--tokyo-fg-dark)]">
+                          Line {executionState.currentStep.node.position().line}
+                        </span>
                       </div>
-                      <div className="text-xs text-[var(--tokyo-comment)]">
-                        Col {executionState.currentStep.columnNumber}
+                      <div className="text-xs text-[var(--tokyo-comment)] flex items-center gap-1">
+                        <span>
+                          Col{" "}
+                          {executionState.currentStep.node.position().column}
+                        </span>
+                        {isHighlightingEnabled && (
+                          <Badge className="bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] text-xs">
+                            Highlighted
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   )}
@@ -188,6 +213,37 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({ code }) => {
               {/* Step Content */}
               {executionState.currentStep && (
                 <div className="p-6 space-y-6">
+                  {/* Code Location Indicator */}
+                  {executionState.currentStep.lineNumber &&
+                    isHighlightingEnabled && (
+                      <motion.div
+                        className="bg-[var(--tokyo-blue)]/10 border border-[var(--tokyo-blue)]/30 rounded-lg p-4"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.1 }}
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <Eye
+                            size={16}
+                            style={{ color: "var(--tokyo-blue)" }}
+                          />
+                          <span className="text-sm font-medium text-[var(--tokyo-blue)]">
+                            Code Location
+                          </span>
+                        </div>
+                        <div className="text-sm text-[var(--tokyo-fg-dark)]">
+                          Currently executing at{" "}
+                          <code className="bg-[var(--tokyo-bg-highlight)] px-2 py-1 rounded font-mono text-[var(--tokyo-cyan)]">
+                            Line {executionState.currentStep.lineNumber}, Column{" "}
+                            {executionState.currentStep.columnNumber}
+                          </code>
+                        </div>
+                        <div className="text-xs text-[var(--tokyo-comment)] mt-1">
+                          The corresponding code is highlighted in the editor
+                        </div>
+                      </motion.div>
+                    )}
+
                   {/* Result Display */}
                   {executionState.currentStep.result && (
                     <motion.div
@@ -255,35 +311,6 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({ code }) => {
       )}
     </div>
   );
-};
-
-const getStepTypeInfo = (stepType: string) => {
-  switch (stepType) {
-    case "before":
-      return {
-        label: "About to Execute",
-        icon: <Eye size={16} style={{ color: "var(--tokyo-yellow)" }} />,
-        color: "text-[var(--tokyo-yellow)]",
-        bgColor: "bg-[var(--tokyo-yellow)]/10",
-        borderColor: "border-[var(--tokyo-yellow)]/20",
-      };
-    case "after":
-      return {
-        label: "Just Completed",
-        icon: <CheckCircle size={16} style={{ color: "var(--tokyo-green)" }} />,
-        color: "text-[var(--tokyo-green)]",
-        bgColor: "bg-[var(--tokyo-green)]/10",
-        borderColor: "border-[var(--tokyo-green)]/20",
-      };
-    default:
-      return {
-        label: "Processing",
-        icon: <Activity size={16} style={{ color: "var(--tokyo-blue)" }} />,
-        color: "text-[var(--tokyo-blue)]",
-        bgColor: "bg-[var(--tokyo-blue)]/10",
-        borderColor: "border-[var(--tokyo-blue)]/20",
-      };
-  }
 };
 
 export default ExecutionVisualizer;
