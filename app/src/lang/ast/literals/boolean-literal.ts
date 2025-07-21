@@ -5,8 +5,12 @@ import { Expression } from "../ast";
  * Represents a boolean expression in the AST.
  */
 export class BooleanLiteral extends Expression {
-  constructor(token: Token, public readonly value: boolean) {
-    super(token);
+  constructor(
+    token: Token,
+    public readonly value: boolean,
+    endToken: Token | null
+  ) {
+    super(token, endToken);
   }
 
   toString(): string {

@@ -1,13 +1,19 @@
-import { Expression, Identifier } from "../ast";
+import { Expression } from "../ast";
 import { BlockStatement } from "../statements";
 import { Token } from "@/lang/token/token";
+import { Identifier } from "../expressions";
 
 export class FunctionLiteral extends Expression {
   readonly parameters: Identifier[];
   readonly body: BlockStatement;
 
-  constructor(token: Token, parameters: Identifier[], body: BlockStatement) {
-    super(token);
+  constructor(
+    token: Token,
+    parameters: Identifier[],
+    body: BlockStatement,
+    endToken: Token | null
+  ) {
+    super(token, endToken);
     this.parameters = parameters;
     this.body = body;
   }

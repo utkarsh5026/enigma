@@ -5,8 +5,12 @@ import { Expression } from "../ast";
  * Represents a float literal in the AST.
  */
 export class FloatLiteral extends Expression {
-  constructor(token: Token, public readonly value: number) {
-    super(token);
+  constructor(
+    token: Token,
+    public readonly value: number,
+    endToken: Token | null
+  ) {
+    super(token, endToken);
   }
 
   public isWholeNumber(): boolean {

@@ -7,8 +7,12 @@ import { Expression } from "../ast";
 export class HashLiteral extends Expression {
   pairs: Map<string, Expression>;
 
-  constructor(token: Token, pairs: Map<string, Expression>) {
-    super(token);
+  constructor(
+    token: Token,
+    pairs: Map<string, Expression>,
+    endToken: Token | null
+  ) {
+    super(token, endToken);
     this.pairs = pairs;
   }
 

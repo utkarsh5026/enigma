@@ -7,8 +7,8 @@ import { Expression } from "../ast";
 export class StringLiteral extends Expression {
   value: string;
 
-  constructor(token: Token, value: string) {
-    super(token);
+  constructor(token: Token, value: string, endToken: Token | null) {
+    super(token, endToken);
     this.value = value;
   }
 

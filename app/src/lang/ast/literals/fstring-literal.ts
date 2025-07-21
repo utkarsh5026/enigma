@@ -9,9 +9,10 @@ export class FStringLiteral extends Expression {
   constructor(
     token: Token,
     public readonly actualStrings: string[],
-    public readonly expressions: Expression[]
+    public readonly expressions: Expression[],
+    endToken: Token | null
   ) {
-    super(token);
+    super(token, endToken);
   }
 
   toString(): string {

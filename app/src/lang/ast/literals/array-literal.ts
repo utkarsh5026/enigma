@@ -7,8 +7,8 @@ import { Expression } from "../ast";
 export class ArrayLiteral extends Expression {
   elements: Expression[];
 
-  constructor(token: Token, elements: Expression[]) {
-    super(token);
+  constructor(token: Token, elements: Expression[], endToken: Token | null) {
+    super(token, endToken);
     this.elements = elements;
   }
 

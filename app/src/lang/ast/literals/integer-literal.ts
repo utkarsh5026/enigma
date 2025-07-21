@@ -12,8 +12,8 @@ export class IntegerLiteral extends Expression {
    * @param token The token associated with this literal.
    * @param value The numeric value of the integer.
    */
-  constructor(token: Token, value: number) {
-    super(token);
+  constructor(token: Token, value: number, endToken: Token | null) {
+    super(token, endToken);
     this.value = value;
   }
 
