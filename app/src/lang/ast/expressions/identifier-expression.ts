@@ -16,7 +16,7 @@ export class Identifier extends Expression {
    * @param {string} value - The value of the identifier.
    */
   constructor(token: Token, value: string) {
-    super(token);
+    super(token, token);
     this.value = value;
   }
 
@@ -51,16 +51,5 @@ export class Identifier extends Expression {
       description:
         "An identifier is a name for a variable or function. It is used to reference a variable or function in the code.",
     };
-  }
-
-  /**
-   * Returns the range of the identifier.
-   * The value is the just the length of the identifier
-   */
-  nodeRange(): { start: Position; end: Position } {
-    const pos = this.position();
-    const start = { ...pos, column: pos.column - this.value.length };
-    const end = { ...pos, column: pos.column };
-    return { start, end };
   }
 }
