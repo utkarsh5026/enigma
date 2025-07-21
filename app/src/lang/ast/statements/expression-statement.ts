@@ -7,8 +7,8 @@ import { Expression, Statement } from "../ast";
 export class ExpressionStatement extends Statement {
   expression: Expression;
 
-  constructor(token: Token, expression: Expression) {
-    super(token);
+  constructor(startToken: Token, expression: Expression, endToken: Token) {
+    super(startToken, endToken);
     this.expression = expression;
   }
 

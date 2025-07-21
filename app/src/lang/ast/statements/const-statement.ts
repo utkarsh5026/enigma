@@ -9,8 +9,13 @@ export class ConstStatement extends Statement {
   readonly name: Identifier;
   readonly value: Expression;
 
-  constructor(token: Token, name: Identifier, value: Expression) {
-    super(token);
+  constructor(
+    startToken: Token,
+    name: Identifier,
+    value: Expression,
+    endToken: Token
+  ) {
+    super(startToken, endToken);
     this.name = name;
     this.value = value;
   }

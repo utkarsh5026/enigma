@@ -7,8 +7,8 @@ import { Statement } from "../ast";
 export class BlockStatement extends Statement {
   statements: Statement[];
 
-  constructor(token: Token, statements: Statement[]) {
-    super(token);
+  constructor(startToken: Token, statements: Statement[], endToken: Token) {
+    super(startToken, endToken);
     this.statements = statements;
   }
 

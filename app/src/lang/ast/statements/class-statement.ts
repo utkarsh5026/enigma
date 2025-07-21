@@ -1,5 +1,5 @@
 import { Token } from "@/lang/token/token";
-import { Statement, Identifier } from "@/lang/ast/ast";
+import { Statement, Identifier } from "@/lang/ast";
 import { FunctionLiteral } from "@/lang/ast/literals";
 
 /**
@@ -44,13 +44,14 @@ export class ClassStatement extends Statement {
   readonly methods: MethodDefinition[];
 
   constructor(
-    token: Token,
+    startToken: Token,
     name: Identifier,
     parentClass: Identifier | null,
     classConstructor: FunctionLiteral | null,
-    methods: MethodDefinition[]
+    methods: MethodDefinition[],
+    endToken: Token
   ) {
-    super(token);
+    super(startToken, endToken);
     this.name = name;
     this.parentClass = parentClass;
     this.classConstructor = classConstructor;

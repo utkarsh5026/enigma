@@ -9,8 +9,13 @@ export class WhileStatement extends Statement {
   readonly condition: Expression;
   readonly body: BlockStatement;
 
-  constructor(token: Token, condition: Expression, body: BlockStatement) {
-    super(token);
+  constructor(
+    startToken: Token,
+    condition: Expression,
+    body: BlockStatement,
+    endToken: Token
+  ) {
+    super(startToken, endToken);
     this.condition = condition;
     this.body = body;
   }

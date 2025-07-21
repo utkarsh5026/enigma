@@ -13,13 +13,14 @@ export class ForStatement extends Statement {
   readonly body: BlockStatement;
 
   constructor(
-    token: Token,
+    startToken: Token,
     initializer: Statement,
     condition: Expression,
     increment: Expression,
-    body: BlockStatement
+    body: BlockStatement,
+    endToken: Token
   ) {
-    super(token);
+    super(startToken, endToken);
     this.initializer = initializer;
     this.condition = condition;
     this.increment = increment;
