@@ -32,12 +32,12 @@ export class BreakStatementParser implements Parser<BreakStatement> {
       TokenType.BREAK,
       "Expected 'break' at start of break statement"
     );
-    context.consumeCurrentToken(
+    const endToken = context.consumeCurrentToken(
       TokenType.SEMICOLON,
       "Expected ';' after break statement"
     );
 
-    return new BreakStatement(breakToken);
+    return new BreakStatement(breakToken, endToken);
   }
 }
 
@@ -70,10 +70,11 @@ export class ContinueStatementParser implements Parser<ContinueStatement> {
       TokenType.CONTINUE,
       "Expected 'continue' at start of continue statement"
     );
-    context.consumeCurrentToken(
+
+    const endToken = context.consumeCurrentToken(
       TokenType.SEMICOLON,
       "Expected ';' after continue statement"
     );
-    return new ContinueStatement(continueToken);
+    return new ContinueStatement(continueToken, endToken);
   }
 }

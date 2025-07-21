@@ -5,9 +5,8 @@ import { Token } from "@/lang/token/token";
  * Represents a break statement in the AST.
  */
 export class BreakStatement extends Statement {
-  constructor(token: Token) {
-    super(token);
-    this.token = token;
+  constructor(startToken: Token, endToken: Token) {
+    super(startToken, endToken);
   }
 
   toString(): string {
@@ -27,8 +26,8 @@ export class BreakStatement extends Statement {
  * Represents a continue statement in the AST.
  */
 export class ContinueStatement extends Statement {
-  constructor(token: Token) {
-    super(token);
+  constructor(startToken: Token, endToken: Token) {
+    super(startToken, endToken);
   }
 
   toString(): string {
