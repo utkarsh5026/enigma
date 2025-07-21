@@ -328,9 +328,9 @@ export class LanguageEvaluator implements EvaluationContext {
         break;
 
       // Special case for Identifier (from ast.ts)
-      case ast.Identifier:
+      case expression.Identifier:
         result = this.identifierEvaluator.evaluate(
-          node as ast.Identifier,
+          node as expression.Identifier,
           env,
           this
         );
