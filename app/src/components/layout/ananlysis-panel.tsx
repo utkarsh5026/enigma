@@ -1,14 +1,9 @@
 import React from "react";
 
-import { Terminal, Braces, Monitor, ChevronsRight } from "lucide-react";
+import { Terminal, Braces, Monitor } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  ExecutionVisualizer,
-  TokenDisplay,
-  ASTDisplay,
-  OutputPanel,
-} from "@/components/analysis";
+import { TokenDisplay, ASTDisplay, OutputPanel } from "@/components/analysis";
 
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Token } from "@/lang/token/token";
@@ -85,11 +80,11 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
               icon={<Braces size={16} />}
               label="AST"
             />
-            <CustomTabTrigger
+            {/* <CustomTabTrigger
               value="execution"
               icon={<ChevronsRight size={16} />}
               label="Execution"
-            />
+            /> */}
           </TabsList>
         </div>
       )}
@@ -115,12 +110,12 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="execution" className="flex-1 min-h-0 m-0">
+          {/* <TabsContent value="execution" className="flex-1 min-h-0 m-0">
             <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
               <ExecutionVisualizer code={code} />
               <ScrollBar orientation="vertical" />
             </ScrollArea>
-          </TabsContent>
+          </TabsContent> */}
         </>
       )}
     </Tabs>
