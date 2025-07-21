@@ -18,33 +18,45 @@ const CodeToken: React.FC<CodeTokenProps> = ({
   setHoveredToken,
 }) => {
   return (
-    <pre
+    <div
       key={`line-${lineNum}`}
-      className="text-sm whitespace-pre-wrap overflow-x-auto p-2 border-l-2 border-l-tokyo-bg-highlight mb-1 font-source-code-pro bg-tokyo-bg-dark rounded-r"
+      className="relative text-sm overflow-x-auto p-2 border-l-2 border-l-tokyo-bg-highlight mb-1 font-source-code-pro bg-tokyo-bg-dark rounded-r min-h-[2rem]"
     >
-      <span className="mr-4 select-none text-tokyo-fg-dark w-8 inline-block text-right">
+      <span className="absolute left-2 top-2 select-none text-tokyo-fg-dark w-8 text-right">
         {lineNum}
       </span>
 
-      {lineTokens.map((token) => {
-        const category = getTokenCategory(token.type);
-        const shouldShow = !activeFilter || activeFilter === category;
+      <div className="ml-12 relative">
+        {lineTokens.map((token, index) => {
+          const category = getTokenCategory(token.type);
+          const shouldShow = !activeFilter || activeFilter === category;
+          const startPos = token.start();
 
-        return (
-          <Badge
-            variant="outline"
-            className={cn(
-              "rounded px-1.5 py-0.5 mx-0.5 shadow-sm",
-              !shouldShow && "opacity-30 scale-95"
-            )}
-            onMouseEnter={() => setHoveredToken(token)}
-            onMouseLeave={() => setHoveredToken(null)}
-          >
-            {token.literal || " "}
-          </Badge>
-        );
-      })}
-    </pre>
+          // Calculate the left position based on the token's start column
+          // Using ch units to align with character positions
+          const leftPosition = `${startPos.column}ch`;
+
+          return (
+            <Badge
+              key={`${lineNum}-${index}-${token.literal}-${token.position.column}`}
+              variant="outline"
+              className={cn(
+                "absolute rounded px-1.5 py-0.5 shadow-sm whitespace-nowrap",
+                !shouldShow && "opacity-30 scale-95"
+              )}
+              style={{
+                left: leftPosition,
+                top: "0",
+              }}
+              onMouseEnter={() => setHoveredToken(token)}
+              onMouseLeave={() => setHoveredToken(null)}
+            >
+              {token.literal || " "}
+            </Badge>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
