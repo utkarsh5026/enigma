@@ -39,7 +39,9 @@ export const useExecutionControls = (code: string) => {
 
       evaluator.evaluateProgram(program, new Environment());
       evaluator.getStepStorage().goToStep(0);
+
       console.dir(evaluator.getStepStorage().getSteps(), { depth: null });
+
       const initialState = evaluator.getCurrentExecutionState();
       setExecutionState(initialState);
 
@@ -52,18 +54,15 @@ export const useExecutionControls = (code: string) => {
   }, [program, parserErrors, code]);
 
   const executeStep = useCallback(() => {
-    console.log("executeStep");
     try {
       if (!evaluator) {
-        console.error("No evaluator found. Please prepare execution first.");
         setError("No evaluator found. Please prepare execution first.");
         return false;
       }
-
       evaluator.getStepStorage().nextStep();
-      console.log("currentStep", evaluator.getStepStorage().getCurrentStep());
+
       const newState = evaluator.getCurrentExecutionState();
-      console.dir(newState, { depth: null });
+
       setExecutionState({ ...newState });
 
       if (newState.isComplete) {
@@ -73,7 +72,6 @@ export const useExecutionControls = (code: string) => {
 
       return true;
     } catch (error) {
-      console.error("Error executing step:", error);
       const message = error instanceof Error ? error.message : String(error);
       setError(`Execution error: ${message}`);
       setIsRunning(false);
@@ -84,7 +82,6 @@ export const useExecutionControls = (code: string) => {
   const goBackStep = useCallback(() => {
     try {
       if (!evaluator) {
-        console.error("No evaluator found. Please prepare execution first.");
         setError("No evaluator found. Please prepare execution first.");
         return false;
       }
@@ -92,11 +89,6 @@ export const useExecutionControls = (code: string) => {
       evaluator.getStepStorage().previousStep();
       const newState = evaluator.getCurrentExecutionState();
       setExecutionState({ ...newState });
-
-      if (newState.isComplete) {
-        setIsRunning(false);
-        return false;
-      }
 
       return true;
     } catch (error) {
@@ -129,6 +121,26 @@ export const useExecutionControls = (code: string) => {
     setIsRunning(false);
   }, []);
 
+  // Enhanced step information extraction
+  const getStepLocationInfo = useCallback(() => {
+    if (!executionState?.currentStep) return null;
+
+    const step = executionState.currentStep;
+    return {
+      lineNumber: step.lineNumber,
+      columnNumber: step.columnNumber,
+      nodeType: step.node?.constructor.name,
+      stepType: step.stepType,
+      description: step.description,
+    };
+  }, [executionState]);
+
+  // Helper to check if we should highlight code
+  const shouldHighlightCode = useCallback(() => {
+    const stepInfo = getStepLocationInfo();
+    return stepInfo && stepInfo.lineNumber && stepInfo.columnNumber;
+  }, [getStepLocationInfo]);
+
   useEffect(() => {
     return () => {
       if (autoRunRef.current) clearInterval(autoRunRef.current);
@@ -147,5 +159,7 @@ export const useExecutionControls = (code: string) => {
     stopAutoRun,
     setAutoRunSpeed,
     setError,
+    getStepLocationInfo,
+    shouldHighlightCode,
   };
 };
