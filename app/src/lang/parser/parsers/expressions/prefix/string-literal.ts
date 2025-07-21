@@ -14,7 +14,7 @@ export class StringLiteralParser implements PrefixExpressionParser {
       TokenType.STRING,
       "Expected string literal"
     );
-    return new StringLiteral(token, token.literal);
+    return new StringLiteral(token, token.literal, token);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {
