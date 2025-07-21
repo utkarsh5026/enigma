@@ -49,18 +49,20 @@ export interface Node {
  * - while statements
  */
 export class Statement implements Node {
-  token: Token;
+  readonly startToken: Token;
+  readonly endToken: Token;
 
-  constructor(token: Token) {
-    this.token = token;
+  constructor(startToken: Token, endToken: Token) {
+    this.startToken = startToken;
+    this.endToken = endToken;
   }
 
   tokenLiteral(): string {
-    return this.token.literal;
+    return this.startToken.literal;
   }
 
   position(): Position {
-    return this.token.position;
+    return this.startToken.position;
   }
 
   whatIam(): { name: string; description: string } {
@@ -71,10 +73,10 @@ export class Statement implements Node {
   }
 
   nodeRange(): { start: Position; end: Position } {
-    const literal = this.tokenLiteral();
-    const start = { column: literal.length, line: 0 };
-    const end = { column: literal.length, line: 0 };
-    return { start, end };
+    return {
+      start: this.startToken.start(),
+      end: this.endToken.position,
+    };
   }
 }
 
