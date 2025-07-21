@@ -1,12 +1,11 @@
 import { NodeEvaluator } from "@/lang/exec/core";
-import { CallExpression } from "@/lang/ast";
+import { CallExpression, Identifier } from "@/lang/ast";
 import {
   EvaluationContext,
   Environment,
   BaseObject,
   ObjectValidator,
 } from "@/lang/exec/core";
-import { Identifier } from "@/lang/ast/ast";
 import { FrameType } from "@/lang/exec/debug";
 import { Position } from "@/lang/token/token";
 import { AstValidator } from "@/lang/ast";
