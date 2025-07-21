@@ -13,7 +13,6 @@ export const useAst = (code: string) => {
 
     setIsParsing(true);
     try {
-      // Add small delay to show loading state for better UX
       await new Promise((resolve) => setTimeout(resolve, 100));
       parse();
       setHasBeenParsed(true);
