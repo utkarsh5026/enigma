@@ -19,18 +19,6 @@ export class ExpressionEvaluator implements NodeEvaluator<ExpressionStatement> {
     env: Environment,
     context: EvaluationContext
   ): BaseObject {
-    context.addBeforeStep(
-      node,
-      env,
-      `Evaluating expression statement ${node.toString()}`
-    );
-    const result = context.evaluate(node.expression, env);
-    context.addAfterStep(
-      node,
-      env,
-      result,
-      `Expression statement evaluated: ${result.inspect()}`
-    );
-    return result;
+    return context.evaluate(node.expression, env);
   }
 }
