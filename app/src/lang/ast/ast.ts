@@ -22,7 +22,17 @@ export interface Node {
    */
   position(): Position;
 
+  /**
+   * Returns the name and description of the node.
+   * @returns {Object} The name and description of the node.
+   */
   whatIam(): { name: string; description: string };
+
+  /**
+   * Returns the type of the node.
+   * @returns {string} The type of the node.
+   */
+  nodeRange(): { start: Position; end: Position };
 }
 
 /**
@@ -58,6 +68,13 @@ export class Statement implements Node {
       name: "Statement",
       description: "A statement is a unit of code that performs an action.",
     };
+  }
+
+  nodeRange(): { start: Position; end: Position } {
+    const literal = this.tokenLiteral();
+    const start = { column: literal.length, line: 0 };
+    const end = { column: literal.length, line: 0 };
+    return { start, end };
   }
 }
 
@@ -96,6 +113,13 @@ export class Expression implements Node {
       name: "Expression",
       description: "An expression is a unit of code that evaluates to a value.",
     };
+  }
+
+  nodeRange(): { start: Position; end: Position } {
+    const literal = this.tokenLiteral();
+    const start = { column: literal.length, line: 0 };
+    const end = { column: literal.length, line: 0 };
+    return { start, end };
   }
 }
 
@@ -146,61 +170,11 @@ export class Program implements Node {
       description: "The root node of the AST.",
     };
   }
-}
 
-/**
- * Represents an identifier in the AST.
- */
-export class Identifier implements Expression {
-  /**
-   * The token associated with this identifier.
-   */
-  token: Token;
-
-  /**
-   * The value of the identifier.
-   */
-  value: string;
-
-  /**
-   * Creates a new Identifier instance.
-   * @param {Token} token - The token associated with this identifier.
-   * @param {string} value - The value of the identifier.
-   */
-  constructor(token: Token, value: string) {
-    this.token = token;
-    this.value = value;
-  }
-
-  /**
-   * Marker method to identify this node as an expression.
-   */
-  expressionNode() {}
-
-  /**
-   * Returns the literal value of the token associated with this identifier.
-   * @returns {string} The token's literal value.
-   */
-  tokenLiteral(): string {
-    return this.token.literal;
-  }
-
-  /**
-   * Returns a string representation of the identifier.
-   * @returns {string} The value of the identifier.
-   */
-  toString(): string {
-    return this.value;
-  }
-
-  position(): Position {
-    return this.token.position;
-  }
-
-  whatIam(): { name: string; description: string } {
-    return {
-      name: "Identifier",
-      description: "An identifier is a name for a variable or function.",
-    };
+  nodeRange(): { start: Position; end: Position } {
+    const literal = this.tokenLiteral();
+    const start = { column: literal.length, line: 0 };
+    const end = { column: literal.length, line: 0 };
+    return { start, end };
   }
 }
