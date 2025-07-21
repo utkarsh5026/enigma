@@ -2,6 +2,8 @@
 
 Welcome to the Enigma Language Explorer! ✨ This is an interactive playground where you can write code in Enigma (a programming language I created from scratch) and see how it's processed behind the scenes. It's my way of sharing the fascinating world of programming language design!
 
+![Profile Header](./images/home.png)
+
 ## 🧩 What is Enigma?
 
 * Enigma is a fun, expressive programming language I designed to combine my favorite features from several languages. Think JavaScript meets Ruby with a dash of functional programming goodness!
