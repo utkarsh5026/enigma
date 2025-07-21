@@ -4,6 +4,29 @@ import { Environment } from "@/lang/exec/core";
 import { ExecutionState } from "@/lang/exec/steps/step-info";
 import { useProgram } from "@/hooks/use-program";
 
+/**
+ * 🎮 Controls the execution of code in the editor
+ *
+ * 🔍 Provides step-by-step execution control, error handling, and code highlighting
+ *
+ * 🎯 Features:
+ * - Step forward/backward through code execution
+ * - Track execution state and progress
+ * - Handle parsing and runtime errors
+ * - Get current step location info
+ * - Control code highlighting
+ *
+ * 🚀 Usage:
+ * ```ts
+ * const {
+ *   executionState,
+ *   isRunning,
+ *   executeStep,
+ *   goBackStep,
+ *   // ...other controls
+ * } = useExecutionControls(code);
+ * ```
+ */
 export const useExecutionControls = (code: string) => {
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
