@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { BarChart3, Zap, Activity } from "lucide-react";
 import {
   ResizablePanelGroup,
@@ -14,7 +14,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import LeftPanel from "./letft-panel";
+import LeftPanel from "./left/letft-panel";
 import AnalysisContent from "./ananlysis-panel";
 import type { Token } from "@/lang/token/token";
 import { motion, AnimatePresence } from "framer-motion";
@@ -40,6 +40,39 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   handleCodeChange,
   tokenProps,
 }) => {
+  const [highlightFunction, setHighlightFunction] = useState<
+    | ((
+        line: number,
+        column: number,
+        endLine?: number,
+        endColumn?: number
+      ) => void)
+    | null
+  >(null);
+
+  // Handle when the editor's highlighting functionality becomes available
+  const handleHighlightingReady = useCallback(
+    (
+      highlightFn: (
+        line: number,
+        column: number,
+        endLine?: number,
+        endColumn?: number
+      ) => void
+    ) => {
+      setHighlightFunction(() => highlightFn);
+    },
+    []
+  );
+
+  const handleHighlightCode = useCallback(
+    (line: number, column: number, endLine?: number, endColumn?: number) => {
+      if (highlightFunction) {
+        highlightFunction(line, column, endLine, endColumn);
+      }
+    },
+    [highlightFunction]
+  );
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full">
       {/* Editor Panel */}
@@ -48,6 +81,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           code={code}
           onCodeChange={handleCodeChange}
           setActiveTab={() => {}}
+          onHighlightingReady={handleHighlightingReady}
         />
       </ResizablePanel>
 
@@ -59,7 +93,11 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
       {/* Analysis Panel */}
       <ResizablePanel defaultSize={35} minSize={30}>
         <div className="h-full flex flex-col bg-gradient-to-br from-[var(--tokyo-bg-dark)]/50 to-[var(--tokyo-bg)]/80">
-          <AnalysisContent tokenProps={tokenProps} code={code} />
+          <AnalysisContent
+            tokenProps={tokenProps}
+            code={code}
+            onHighlightCode={handleHighlightCode}
+          />
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
