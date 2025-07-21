@@ -174,9 +174,8 @@ export class Program implements Node {
   }
 
   nodeRange(): { start: Position; end: Position } {
-    const literal = this.tokenLiteral();
-    const start = { column: literal.length, line: 0 };
-    const end = { column: literal.length, line: 0 };
+    const start = this.statements[0].startToken.start();
+    const end = this.statements[this.statements.length - 1].endToken.position;
     return { start, end };
   }
 }
