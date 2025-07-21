@@ -1,4 +1,4 @@
-import { Token } from "@/lang/token/token";
+import { Position, Token } from "@/lang/token/token";
 import { Expression } from "../ast";
 
 /**
@@ -25,6 +25,14 @@ export class StringLiteral extends Expression {
       name: "StringLiteral",
       description:
         "A string literal is an expression that is used to represent a string value.",
+    };
+  }
+
+  nodeRange(): { start: Position; end: Position } {
+    const start = this.token.start();
+    return {
+      start: { ...start, column: start.column - 2 }, // quotations marks
+      end: this.endToken?.position ?? this.token.position,
     };
   }
 }
