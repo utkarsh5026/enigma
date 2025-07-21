@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { ChevronRight, Eye, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -15,13 +14,14 @@ import {
   hasChildren,
   getNodeSummary,
 } from "../utils/node-utils";
+import { Node } from "@/lang/ast";
 
 interface AstNodeProps {
-  node: any;
+  node: Node;
   depth: number;
   path: string;
   isLast?: boolean;
-  onNodeClick?: (node: any) => void;
+  onNodeClick?: (node: Node) => void;
   isHighlighted?: boolean;
 }
 
@@ -165,7 +165,8 @@ const AstNode: React.FC<AstNodeProps> = ({
                   className="text-xs text-tokyo-comment border-tokyo-comment/40 font-mono"
                 >
                   <MapPin size={10} className="mr-1" />
-                  {position.line}:{position.column}
+                  {position.start.line}:{position.start.column} -{" "}
+                  {position.end.line}:{position.end.column}
                 </Badge>
               )}
 

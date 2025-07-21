@@ -59,11 +59,11 @@ export class HashLiteralParser implements PrefixExpressionParser {
       pairs.set(pair.key, pair.value);
     });
 
-    context.consumeCurrentToken(
+    const rightBraceToken = context.consumeCurrentToken(
       TokenType.RBRACE,
       "Expected '}' at end of hash literal"
     );
-    return new HashLiteral(leftBraceToken, pairs);
+    return new HashLiteral(leftBraceToken, pairs, rightBraceToken);
   }
 
   /**

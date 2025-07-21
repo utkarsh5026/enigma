@@ -1,5 +1,4 @@
-import { Identifier } from "@/lang/ast/ast";
-import { BlockStatement } from "@/lang/ast";
+import { BlockStatement, Identifier } from "@/lang/ast";
 import { BaseObject, ObjectType, Environment } from "@/lang/exec/core";
 
 export class FunctionObject implements BaseObject {

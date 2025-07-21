@@ -12,16 +12,8 @@ export class TokenStream {
 
   constructor(lexer: Lexer) {
     this.lexer = lexer;
-    this.currentToken = {
-      type: TokenType.EOF,
-      literal: "",
-      position: { line: 0, column: 0 },
-    };
-    this.peekToken = {
-      type: TokenType.EOF,
-      literal: "",
-      position: { line: 0, column: 0 },
-    };
+    this.currentToken = new Token(TokenType.EOF, "", { line: 0, column: 0 });
+    this.peekToken = new Token(TokenType.EOF, "", { line: 0, column: 0 });
     this.advance();
     this.advance();
   }
