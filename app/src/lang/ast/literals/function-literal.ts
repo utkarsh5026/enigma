@@ -19,8 +19,7 @@ export class FunctionLiteral extends Expression {
   }
 
   toString(): string {
-    const statements = this.body.statements.map((s) => s.toString()).join("\n");
-    return `${this.functionSignature()} { \n${statements}\n}`;
+    return `${this.functionSignature()} {....}`;
   }
 
   functionSignature(): string {

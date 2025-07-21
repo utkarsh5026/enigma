@@ -20,7 +20,7 @@ export class FunctionObject implements BaseObject {
 
   inspect(): string {
     return `fn(${this.parameters.map((p) => p.toString()).join(", ")}) {
-      ${this.body.toString()}
+      ...
     }`;
   }
 
