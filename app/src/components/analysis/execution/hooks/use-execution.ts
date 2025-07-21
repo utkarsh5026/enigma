@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LanguageEvaluator } from "@/lang/exec/evaluation";
 import { Environment } from "@/lang/exec/core";
 import { ExecutionState } from "@/lang/exec/steps/step-info";
@@ -8,10 +8,9 @@ export const useExecutionControls = (code: string) => {
   const [executionState, setExecutionState] = useState<ExecutionState | null>(
     null
   );
+  const [stepCount, setStepCount] = useState<number>(0);
   const [evaluator, setEvaluator] = useState<LanguageEvaluator | null>(null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [autoRunSpeed, setAutoRunSpeed] = useState<number>(1000);
-  const autoRunRef = useRef<NodeJS.Timeout | null>(null);
   const { program, parserErrors, parse } = useProgram(code);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,9 +38,7 @@ export const useExecutionControls = (code: string) => {
 
       evaluator.evaluateProgram(program, new Environment());
       evaluator.getStepStorage().goToStep(0);
-
-      console.dir(evaluator.getStepStorage().getSteps(), { depth: null });
-
+      setStepCount(evaluator.getStepStorage().getSteps().length);
       const initialState = evaluator.getCurrentExecutionState();
       setExecutionState(initialState);
 
@@ -99,67 +96,34 @@ export const useExecutionControls = (code: string) => {
     }
   }, [evaluator]);
 
-  const startAutoRun = useCallback(() => {
-    if (autoRunRef.current) clearInterval(autoRunRef.current);
-    setIsRunning(true);
-
-    autoRunRef.current = setInterval(() => {
-      const hasMoreSteps = executeStep();
-      if (!hasMoreSteps && autoRunRef.current) {
-        clearInterval(autoRunRef.current);
-        autoRunRef.current = null;
-        setIsRunning(false);
-      }
-    }, autoRunSpeed);
-  }, [executeStep, autoRunSpeed]);
-
-  const stopAutoRun = useCallback(() => {
-    if (autoRunRef.current) {
-      clearInterval(autoRunRef.current);
-      autoRunRef.current = null;
-    }
-    setIsRunning(false);
-  }, []);
-
-  // Enhanced step information extraction
   const getStepLocationInfo = useCallback(() => {
     if (!executionState?.currentStep) return null;
 
-    const step = executionState.currentStep;
+    const { node, stepType, description } = executionState.currentStep;
     return {
-      lineNumber: step.lineNumber,
-      columnNumber: step.columnNumber,
-      nodeType: step.node?.constructor.name,
-      stepType: step.stepType,
-      description: step.description,
+      lineNumber: node.nodeRange().start.line,
+      columnNumber: node.nodeRange().start.column,
+      nodeType: node.whatIam().name,
+      stepType,
+      description,
     };
   }, [executionState]);
 
-  // Helper to check if we should highlight code
   const shouldHighlightCode = useCallback(() => {
     const stepInfo = getStepLocationInfo();
     return stepInfo && stepInfo.lineNumber && stepInfo.columnNumber;
   }, [getStepLocationInfo]);
 
-  useEffect(() => {
-    return () => {
-      if (autoRunRef.current) clearInterval(autoRunRef.current);
-    };
-  }, []);
-
   return {
     executionState,
     isRunning,
-    autoRunSpeed,
     error,
     prepareExecution,
     executeStep,
     goBackStep,
-    startAutoRun,
-    stopAutoRun,
-    setAutoRunSpeed,
     setError,
     getStepLocationInfo,
     shouldHighlightCode,
+    stepCount,
   };
 };
