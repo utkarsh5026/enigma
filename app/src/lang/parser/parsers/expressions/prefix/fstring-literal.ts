@@ -44,7 +44,8 @@ export class FStringLiteralParser implements PrefixExpressionParser {
     return new FStringLiteral(
       fStringToken,
       result.staticParts,
-      result.expressions
+      result.expressions,
+      fStringToken
     );
   }
 

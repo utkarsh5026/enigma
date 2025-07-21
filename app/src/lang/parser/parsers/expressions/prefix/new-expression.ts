@@ -50,12 +50,12 @@ export class NewExpressionParser implements PrefixExpressionParser {
       "constructor argument"
     );
 
-    context.consumeCurrentToken(
+    const endToken = context.consumeCurrentToken(
       TokenType.RPAREN,
       "Expected ')' after constructor arguments"
     );
 
-    return new NewExpression(newToken, className, args);
+    return new NewExpression(newToken, className, args, endToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {

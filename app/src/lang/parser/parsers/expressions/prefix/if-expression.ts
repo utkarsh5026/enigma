@@ -65,7 +65,15 @@ export class IfExpressionParser implements PrefixExpressionParser {
       alternative = elseBlock;
     }
 
-    return new IfExpression(ifToken, conditions, consequences, alternative);
+    const endToken =
+      alternative?.endToken ?? consequences[consequences.length - 1].endToken;
+    return new IfExpression(
+      ifToken,
+      conditions,
+      consequences,
+      alternative,
+      endToken
+    );
   }
 
   private parseIfBranch(

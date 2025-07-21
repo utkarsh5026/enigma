@@ -46,11 +46,11 @@ export class ArrayLiteralParser implements PrefixExpressionParser {
       "array element"
     );
 
-    context.consumeCurrentToken(
+    const endToken = context.consumeCurrentToken(
       TokenType.RBRACKET,
       "Array literal not closed should end with ]"
     );
-    return new ArrayLiteral(leftBracketToken, elements);
+    return new ArrayLiteral(leftBracketToken, elements, endToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {

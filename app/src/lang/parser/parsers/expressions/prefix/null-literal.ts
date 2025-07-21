@@ -12,7 +12,7 @@ export class NullLiteralParser implements PrefixExpressionParser {
   public parsePrefix(context: ParsingContext): Expression {
     const currToken = context.getCurrentToken();
     context.consumeCurrentToken(currToken.type);
-    return new NullLiteral(currToken);
+    return new NullLiteral(currToken, currToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {

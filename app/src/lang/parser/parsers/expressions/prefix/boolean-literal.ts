@@ -8,7 +8,7 @@ import { BooleanLiteral, Expression } from "@/lang/ast";
 
 export class BooleanLiteralParser implements PrefixExpressionParser {
   public parsePrefix(context: ParsingContext): Expression {
-    const currToken = context.getCurrentToken();
+    let currToken = context.getCurrentToken();
 
     if (!this.getHandledTokenTypes().has(currToken.type)) {
       throw new ParserException(
@@ -17,9 +17,13 @@ export class BooleanLiteralParser implements PrefixExpressionParser {
       );
     }
 
-    context.consumeCurrentToken(currToken.type);
+    currToken = context.consumeCurrentToken(currToken.type);
 
-    return new BooleanLiteral(currToken, currToken.type == TokenType.TRUE);
+    return new BooleanLiteral(
+      currToken,
+      currToken.type == TokenType.TRUE,
+      currToken
+    );
   }
 
   public getHandledTokenTypes(): Set<TokenType> {

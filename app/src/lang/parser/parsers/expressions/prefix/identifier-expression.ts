@@ -1,4 +1,4 @@
-import { Identifier } from "@/lang/ast/ast";
+import { Identifier } from "@/lang/ast/expressions";
 import { ParsingContext, PrefixExpressionParser } from "@/lang/parser/core";
 import { TokenType } from "@/lang/token/token";
 

@@ -22,7 +22,7 @@ export class ThisExpressionParser implements PrefixExpressionParser {
       TokenType.THIS,
       "Expected 'this' keyword"
     );
-    return new ThisExpression(thisToken);
+    return new ThisExpression(thisToken, thisToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {

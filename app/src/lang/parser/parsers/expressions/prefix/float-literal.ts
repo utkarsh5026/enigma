@@ -28,7 +28,7 @@ export class FloatLiteralParser implements PrefixExpressionParser {
 
     try {
       const value = this.parseFloatValue(floatToken.literal);
-      return new FloatLiteral(floatToken, value);
+      return new FloatLiteral(floatToken, value, floatToken);
     } catch (e) {
       throw new ParserException(
         "Invalid float literal: " + floatToken.literal + " - " + e,

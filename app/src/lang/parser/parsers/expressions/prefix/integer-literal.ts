@@ -18,7 +18,7 @@ export class IntegerLiteralParser implements PrefixExpressionParser {
 
     try {
       const value = parseInt(intToken.literal);
-      return new IntegerLiteral(intToken, value);
+      return new IntegerLiteral(intToken, value, intToken);
     } catch {
       throw new ParserException(
         "Invalid integer literal: " + intToken.literal,

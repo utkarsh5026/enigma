@@ -52,7 +52,12 @@ export class FunctionalLiteralParser implements PrefixExpressionParser {
     const blockParser = new BlockStatementParser(this.statementParser);
     const block = blockParser.parse(context);
 
-    return new FunctionLiteral(functionToken, parameters, block);
+    return new FunctionLiteral(
+      functionToken,
+      parameters,
+      block,
+      block.endToken
+    );
   }
 
   /**

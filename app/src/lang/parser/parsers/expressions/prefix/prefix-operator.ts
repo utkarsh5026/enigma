@@ -43,7 +43,7 @@ export class PrefixOperatorParser implements PrefixExpressionParser {
       Precedence.PREFIX
     );
 
-    return new PrefixExpression(operatorToken, operator, right);
+    return new PrefixExpression(operatorToken, operator, right, right.endToken);
   }
 
   public getHandledTokenTypes(): Set<TokenType> {
