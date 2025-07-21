@@ -73,9 +73,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
     }
   };
 
-  const lineCount = code.split("\n").length;
-  const charCount = code.length;
-
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {!isMobile && (
@@ -99,11 +96,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                   <span className="font-medium text-sm text-[var(--tokyo-fg)]">
                     main.enigma
                   </span>
-                  <div className="flex items-center gap-3 text-xs text-[var(--tokyo-comment)]">
-                    <span>{lineCount} lines</span>
-                    <span>•</span>
-                    <span>{charCount} chars</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -115,13 +107,14 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 className={`
                   px-6 py-2 rounded-xl font-medium text-sm
                   transition-all duration-300 ease-in-out
+                  cursor-pointer
                   flex items-center gap-2
                   shadow-lg hover:shadow-xl
                   border-0
                   ${
                     executionSuccess
-                      ? "bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] text-white"
-                      : "bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] hover:from-[var(--tokyo-green)]/90 hover:to-[var(--tokyo-cyan)]/90 text-white"
+                      ? "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan text-white"
+                      : "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan hover:from-tokyo-green/90 hover:to-tokyo-cyan/90 text-white"
                   }
                   disabled:opacity-50 disabled:cursor-not-allowed
                   disabled:hover:shadow-lg
@@ -174,11 +167,6 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 main.enigma
               </span>
             </div>
-            <div className="flex items-center gap-3 text-xs text-[var(--tokyo-comment)]">
-              <span>{lineCount}L</span>
-              <span>•</span>
-              <span>{charCount}C</span>
-            </div>
           </div>
         </motion.div>
       )}
@@ -215,8 +203,8 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 disabled={isExecuting || !code.trim()}
                 className={`
                   relative w-16 h-16 rounded-full
-                  bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)]
-                  hover:from-[var(--tokyo-green)]/90 hover:to-[var(--tokyo-cyan)]/90
+                  bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan
+                  hover:from-tokyo-green/90 hover:to-tokyo-cyan/90
                   text-white border-0
                   shadow-2xl hover:shadow-3xl
                   transition-all duration-300
