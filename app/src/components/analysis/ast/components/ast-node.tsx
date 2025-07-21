@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getMinimalNodeStyle, getNodeIcon } from "../node-info";
+import { getMinimalNodeStyle, getNodeIcon } from "../utils/node-info";
 import { motion } from "framer-motion";
 import {
   getSimpleProperties,
