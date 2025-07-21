@@ -46,7 +46,7 @@ export class WhileStatementParser implements Parser<WhileStatement> {
     );
 
     const body = this.parseLoopBody(context);
-    return new WhileStatement(whileToken, condition, body);
+    return new WhileStatement(whileToken, condition, body, body.endToken);
   }
 
   private parseLoopBody(context: ParsingContext): BlockStatement {

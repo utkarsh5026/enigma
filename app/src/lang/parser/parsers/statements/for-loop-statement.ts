@@ -64,7 +64,14 @@ export class ForStatementParser implements Parser<ForStatement> {
     );
 
     const body = this.parseLoopBody(context);
-    return new ForStatement(forToken, init, condition, update, body);
+    return new ForStatement(
+      forToken,
+      init,
+      condition,
+      update,
+      body,
+      body.endToken
+    );
   }
 
   private parseLoopBody(context: ParsingContext): BlockStatement {

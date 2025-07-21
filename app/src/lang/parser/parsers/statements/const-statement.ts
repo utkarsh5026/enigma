@@ -14,8 +14,12 @@ export class ConstStatementParser implements Parser<ConstStatement> {
     this.delegate = new AssignmentStatementParser(
       TokenType.CONST,
       {
-        create: (token: Token, name: Identifier, value: Expression) =>
-          new ConstStatement(token, name, value),
+        create: (
+          startToken: Token,
+          name: Identifier,
+          value: Expression,
+          endToken: Token
+        ) => new ConstStatement(startToken, name, value, endToken),
       },
       expressionParser
     );

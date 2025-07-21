@@ -47,11 +47,12 @@ export class ExpressionStatementParser implements Parser<ExpressionStatement> {
       Precedence.LOWEST
     );
 
+    let endToken = expression.token;
     if (context.isCurrentToken(TokenType.SEMICOLON)) {
-      context.consumeCurrentToken(TokenType.SEMICOLON);
+      endToken = context.consumeCurrentToken(TokenType.SEMICOLON);
     }
 
-    return new ExpressionStatement(token, expression);
+    return new ExpressionStatement(token, expression, endToken);
   }
 
   /**
@@ -79,7 +80,7 @@ export class ExpressionStatementParser implements Parser<ExpressionStatement> {
       Precedence.LOWEST
     );
 
-    context.consumeCurrentToken(
+    const endToken = context.consumeCurrentToken(
       TokenType.SEMICOLON,
       "Expected ';' after compound statement"
     );
@@ -87,7 +88,7 @@ export class ExpressionStatementParser implements Parser<ExpressionStatement> {
     const infixExpr = new InfixExpression(operatorToken, left, operator, right);
     const assignExpr = new AssignmentExpression(operatorToken, left, infixExpr);
 
-    return new ExpressionStatement(startToken, assignExpr);
+    return new ExpressionStatement(startToken, assignExpr, endToken);
   }
 
   /**

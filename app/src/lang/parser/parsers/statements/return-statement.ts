@@ -30,8 +30,12 @@ export class ReturnStatementParser implements Parser<ReturnStatement> {
     );
 
     if (context.isCurrentToken(TokenType.SEMICOLON)) {
-      context.consumeCurrentToken(TokenType.SEMICOLON);
-      return new ReturnStatement(returnToken, new NullLiteral(returnToken));
+      const endToken = context.consumeCurrentToken(TokenType.SEMICOLON);
+      return new ReturnStatement(
+        returnToken,
+        new NullLiteral(returnToken),
+        endToken
+      );
     }
 
     const returnValue = this.expressionParser.parseExpression(
@@ -39,10 +43,10 @@ export class ReturnStatementParser implements Parser<ReturnStatement> {
       Precedence.LOWEST
     );
 
-    context.consumeCurrentToken(
+    const endToken = context.consumeCurrentToken(
       TokenType.SEMICOLON,
       "Expected ';' after return value"
     );
-    return new ReturnStatement(returnToken, returnValue);
+    return new ReturnStatement(returnToken, returnValue, endToken);
   }
 }

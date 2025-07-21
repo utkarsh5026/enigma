@@ -55,7 +55,7 @@ export class ClassStatementParser implements Parser<ClassStatement> {
       "Expected '{' to start class body"
     );
     const bodyResult = this.parseClassBody(context);
-    context.consumeCurrentToken(
+    const rBraceToken = context.consumeCurrentToken(
       TokenType.RBRACE,
       "Expected '}' to end class body"
     );
@@ -65,7 +65,8 @@ export class ClassStatementParser implements Parser<ClassStatement> {
       className,
       parentClass,
       bodyResult.constructor,
-      bodyResult.methods
+      bodyResult.methods,
+      rBraceToken
     );
   }
 

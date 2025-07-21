@@ -8,7 +8,12 @@ import { Expression, Identifier, Statement } from "@/lang/ast";
 import { Token, TokenType } from "@/lang/token/token";
 
 interface StatementFactory<T extends Statement> {
-  create(token: Token, name: Identifier, value: Expression): T;
+  create(
+    startToken: Token,
+    name: Identifier,
+    value: Expression,
+    endToken: Token
+  ): T;
 }
 
 export class AssignmentStatementParser<T extends Statement>
@@ -48,8 +53,16 @@ export class AssignmentStatementParser<T extends Statement>
       Precedence.LOWEST
     );
 
-    context.consumeCurrentToken(TokenType.SEMICOLON);
+    const endToken = context.consumeCurrentToken(
+      TokenType.SEMICOLON,
+      "Expected ';' after assignment"
+    );
 
-    return this.statementFactory.create(keywordToken, identifier, value);
+    return this.statementFactory.create(
+      keywordToken,
+      identifier,
+      value,
+      endToken
+    );
   }
 }

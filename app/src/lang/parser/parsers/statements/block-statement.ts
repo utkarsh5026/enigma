@@ -36,10 +36,11 @@ export class BlockStatementParser implements Parser<BlockStatement> {
       }
     }
 
-    context.consumeCurrentToken(
+    const rBraceToken = context.consumeCurrentToken(
       TokenType.RBRACE,
       "Expected '}' at end of block"
     );
-    return new BlockStatement(lBraceToken, stmts);
+
+    return new BlockStatement(lBraceToken, stmts, rBraceToken);
   }
 }
