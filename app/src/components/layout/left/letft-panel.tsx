@@ -1,17 +1,15 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useCallback } from "react";
 import { Code } from "lucide-react";
 import EnigmaEditor, {
   EnigmaEditorRef,
 } from "@/components/editor/components/enigma-editor";
 import { useMobile } from "@/hooks/use-mobile";
-import { consoleStore } from "@/stores/console-stores";
-import Lexer from "@/lang/lexer/lexer";
-import { LanguageParser } from "@/lang/parser";
-import { LanguageEvaluator } from "@/lang/exec/evaluation/evaluator";
-import { ObjectValidator, Environment } from "@/lang/exec/core";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import MobileFloatingRunButton from "./mobile-floating-button";
 import EditorHeader from "./editor-header";
+import { useCodeExecution } from "@/components/analysis/execution/hooks/use-code-execution";
+import { useDebug } from "@/components/analysis/execution/hooks/use-debug";
+import { editor } from "monaco-editor";
 
 interface LeftPanelProps {
   code: string;
@@ -34,71 +32,60 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   onHighlightingReady,
 }) => {
   const { isMobile } = useMobile();
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [executionSuccess, setExecutionSuccess] = useState(false);
 
   const editorRef = useRef<EnigmaEditorRef>(null);
 
-  const handleRunCode = async () => {
-    if (isExecuting) return;
+  const {
+    isStepMode,
+    setIsStepMode,
+    prepareExecution,
+    executeStep,
+    goBackStep,
+    resetExecution,
+    executionError,
+    getStepLocationInfo,
+    clearAllOverlays,
+    clearExecutionHighlight,
+    setDirectOverlayEditor,
+    setupScrollListener,
+    executionState,
+  } = useDebug(code);
 
-    setIsExecuting(true);
-    setExecutionSuccess(false);
+  const { isExecuting, executionSuccess, handleRunCode } = useCodeExecution({
+    code,
+    setActiveTab,
+    beforeExecution: () => {
+      clearAllOverlays();
+      clearExecutionHighlight();
+    },
+  });
 
-    try {
-      consoleStore.clear();
-
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const lexer = new Lexer(code);
-      const parser = new LanguageParser(lexer);
-      const ast = parser.parseProgram();
-
-      if (parser.getErrors().length > 0) {
-        parser.getErrors().forEach((error) => {
-          consoleStore.addEntry(error.message, "error");
-        });
-        setActiveTab("output");
-        return;
+  const handleHighlightingReady = useCallback(
+    (
+      highlightFn: (
+        line: number,
+        column: number,
+        endLine?: number,
+        endColumn?: number
+      ) => void
+    ) => {
+      if (onHighlightingReady) {
+        onHighlightingReady(highlightFn);
       }
+    },
+    [onHighlightingReady]
+  );
 
-      const evaluator = LanguageEvaluator.withSourceCode(code, true);
-      const result = evaluator.evaluateProgram(ast, new Environment());
+  const handleEditorMount = useCallback(
+    (editor: editor.IStandaloneCodeEditor) => {
+      setDirectOverlayEditor(editor);
 
-      if (!ObjectValidator.isError(result)) {
-        consoleStore.addEntry("✅ Code executed successfully", "success");
-        setExecutionSuccess(true);
-        setTimeout(() => setExecutionSuccess(false), 2000);
-      } else {
-        consoleStore.addEntry(result.inspect(), "error");
-      }
-
-      setActiveTab("output");
-    } catch (error) {
-      consoleStore.addEntry(
-        `❌ Execution failed: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`,
-        "error"
-      );
-      setActiveTab("output");
-    } finally {
-      setIsExecuting(false);
-    }
-  };
-
-  const handleHighlightingReady = (
-    highlightFn: (
-      line: number,
-      column: number,
-      endLine?: number,
-      endColumn?: number
-    ) => void
-  ) => {
-    if (onHighlightingReady) {
-      onHighlightingReady(highlightFn);
-    }
-  };
+      setTimeout(() => {
+        setupScrollListener();
+      }, 100);
+    },
+    [setDirectOverlayEditor, setupScrollListener]
+  );
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
@@ -108,6 +95,13 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
           isExecuting={isExecuting}
           executionSuccess={executionSuccess}
           handleRunCode={handleRunCode}
+          executionState={executionState}
+          onPrepareExecution={prepareExecution}
+          onExecuteStep={executeStep}
+          onGoBackStep={goBackStep}
+          onResetExecution={resetExecution}
+          isStepMode={isStepMode}
+          onToggleStepMode={() => setIsStepMode(!isStepMode)}
         />
       )}
 
@@ -119,6 +113,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
             onCodeChange={onCodeChange}
             ref={editorRef}
             onHighlightingReady={handleHighlightingReady}
+            onEditorMount={handleEditorMount}
           />
         </div>
 
@@ -130,6 +125,55 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
             handleRunCode={handleRunCode}
           />
         )}
+
+        <AnimatePresence>
+          {isStepMode && executionState?.currentStep && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="absolute top-4 right-4 bg-[var(--tokyo-green)]/90 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-[var(--tokyo-green)]/30 max-w-sm"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  <span className="font-semibold">
+                    {executionState.currentStep.node?.constructor?.name ||
+                      "Unknown"}
+                  </span>
+                </div>
+                {executionState.currentStep.result && (
+                  <div className="text-[var(--tokyo-green)]/70 text-xs">
+                    Result: {executionState.currentStep.result.inspect()}
+                  </div>
+                )}
+                {getStepLocationInfo() && (
+                  <div className="text-[var(--tokyo-green)]/70 text-xs">
+                    Line {getStepLocationInfo()?.lineNumber}, Col{" "}
+                    {getStepLocationInfo()?.columnNumber}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Execution Error Indicator */}
+        <AnimatePresence>
+          {executionError && isStepMode && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="absolute bottom-4 right-4 bg-[var(--tokyo-red)]/90 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-[var(--tokyo-red)]/30 max-w-md"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+                <span className="truncate">{executionError}</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {!code.trim() && (
           <motion.div
@@ -160,7 +204,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
               <p className="text-sm text-[var(--tokyo-comment)] leading-relaxed">
                 {isMobile
                   ? "Write your Enigma code and tap the run button to execute it"
-                  : "Write your Enigma code in the editor above, then click Run to see the magic happen"}
+                  : "Write Enigma code, then use Debug mode for step-by-step execution with live value overlays and highlighting"}
               </p>
             </div>
           </motion.div>
