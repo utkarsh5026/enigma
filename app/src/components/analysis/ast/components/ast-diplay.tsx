@@ -1,3 +1,5 @@
+// src/components/analysis/ast/components/ast-diplay.tsx (Updated)
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +11,8 @@ import {
   RefreshCw,
   Loader2,
   Zap,
+  Eye,
+  MapPin,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -22,17 +26,26 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
+import { Node } from "@/lang/ast";
 
 interface ASTDisplayProps {
   code: string;
+  onHighlightCode?: (
+    line: number,
+    column: number,
+    endLine?: number,
+    endColumn?: number
+  ) => void;
 }
 
-const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
+const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(
     new Set()
   );
+  const [activeHighlightedNode, setActiveHighlightedNode] = useState<any>(null);
+
   const { program, parserErrors, parse, isParsing, hasBeenParsed, canParse } =
     useAst(code);
 
@@ -116,6 +129,30 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
 
     searchInNode(program, "root");
     setHighlightedNodes(matches);
+  };
+
+  // Handle node click for code highlighting
+  const handleNodeClick = (node: Node) => {
+    if (!node || !node.position || !onHighlightCode) return;
+
+    const { start, end } = node.nodeRange();
+
+    // Call the highlighting function passed from parent
+    onHighlightCode(start.line, start.column, end.line, end.column);
+
+    // Update the active highlighted node for visual feedback
+    setActiveHighlightedNode(node);
+
+    setTimeout(() => {
+      setActiveHighlightedNode(null);
+    }, 3000);
+
+    console.log("AST Node clicked:", {
+      type: node.whatIam?.()?.name || "Unknown",
+      position: node.position(),
+      value: node.toString?.() || "",
+      tokenLiteral: node.tokenLiteral?.() || "",
+    });
   };
 
   // Debounced search effect
@@ -202,6 +239,13 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
                       {nodeCount} nodes
                     </Badge>
 
+                    {onHighlightCode && (
+                      <Badge className="bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border border-[var(--tokyo-blue)]/30 text-xs px-2 py-1 flex items-center gap-1">
+                        <Eye size={10} />
+                        Click to highlight
+                      </Badge>
+                    )}
+
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
@@ -258,6 +302,25 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
               )}
             </div>
           </div>
+
+          {/* Active highlight indicator */}
+          <AnimatePresence>
+            {activeHighlightedNode && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-3 p-2 rounded-lg bg-[var(--tokyo-blue)]/10 border border-[var(--tokyo-blue)]/30 flex items-center gap-2"
+              >
+                <MapPin size={14} className="text-[var(--tokyo-blue)]" />
+                <span className="text-sm text-[var(--tokyo-blue)] font-medium">
+                  Highlighting:{" "}
+                  {activeHighlightedNode.whatIam?.()?.name || "Node"} at line{" "}
+                  {activeHighlightedNode.position?.()?.line || "?"}
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Search - Only show when we have a program */}
           <AnimatePresence>
@@ -343,6 +406,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code }) => {
                 forceRefresh={0}
                 nodeCount={nodeCount}
                 highlightedNodes={highlightedNodes}
+                onNodeClick={onHighlightCode ? handleNodeClick : undefined}
               />
             </motion.div>
           )}
