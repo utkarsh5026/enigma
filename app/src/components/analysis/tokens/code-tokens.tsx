@@ -1,4 +1,4 @@
-import { Terminal, Code, Play } from "lucide-react";
+import { Terminal, Play } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Token } from "@/lang/token/token";
 import React, { useState } from "react";
@@ -26,11 +26,6 @@ const CodeTokens: React.FC<CodeTokensProps> = ({
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-medium text-tokyo-fg flex items-center">
-        <Code className="mr-2 text-tokyo-purple" size={18} />
-        Source Code Tokenization
-      </h3>
-
       <div className="rounded-lg p-4 border border-tokyo-bg-highlight/30 bg-tokyo-bg-dark/40">
         {isTokenizing ? (
           <motion.div

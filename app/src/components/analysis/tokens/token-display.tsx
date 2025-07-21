@@ -6,7 +6,6 @@ import {
   Play,
   RotateCcw,
   AlertCircle,
-  CheckCircle2,
   Loader2,
   Zap,
 } from "lucide-react";
@@ -19,7 +18,6 @@ import {
 } from "@/components/ui/tooltip";
 import { getTokenCategory, getCategoryIcon } from "./tokens-info";
 import CodeTokens from "./code-tokens";
-import TokenBadge from "./token-badge";
 
 interface TokenDisplayProps {
   tokens: Token[];
@@ -200,7 +198,6 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({
             </div>
           </div>
 
-          {/* Status Indicators */}
           <AnimatePresence>
             {showCodeChanged && (
               <motion.div
@@ -212,20 +209,6 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({
                 <AlertCircle size={16} className="text-[var(--tokyo-orange)]" />
                 <span className="text-sm text-[var(--tokyo-orange)] font-medium">
                   Code changed - click tokenize to update
-                </span>
-              </motion.div>
-            )}
-
-            {hasTokens && !showCodeChanged && !isTokenizing && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-[var(--tokyo-green)]/10 border border-[var(--tokyo-green)]/30"
-              >
-                <CheckCircle2 size={16} className="text-[var(--tokyo-green)]" />
-                <span className="text-sm text-[var(--tokyo-green)] font-medium">
-                  Tokens up to date
                 </span>
               </motion.div>
             )}
@@ -313,21 +296,6 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({
       <div className="flex-1 overflow-auto">
         <div className="p-4 space-y-4">
           <AnimatePresence mode="wait">
-            {tokens.length > 0 && (
-              <motion.div
-                key="token-badge"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <TokenBadge
-                  tokens={tokens}
-                  uniqueCategories={uniqueCategories}
-                  activeFilter={activeFilter}
-                />
-              </motion.div>
-            )}
-
             <motion.div
               key="tokens-content"
               initial={{ opacity: 0, y: 10 }}
