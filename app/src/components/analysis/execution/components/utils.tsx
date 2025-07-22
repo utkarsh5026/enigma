@@ -37,7 +37,7 @@ export function parseDescriptionWithBadges(
         <Badge
           key={`badge-${match.index}`}
           variant="secondary"
-          className="mx-1 bg-tokyo-blue/20 text-tokyo-blue font-mono font-bold border-none text-sm"
+          className="mx-1 bg-tokyo-blue/20 text-tokyo-blue font-mono font-bold border-none text-xs"
         >
           {match[1]}
         </Badge>
@@ -47,7 +47,7 @@ export function parseDescriptionWithBadges(
         <Badge
           key={`badge-${match.index}`}
           variant="secondary"
-          className="mx-1 bg-tokyo-green/20 text-tokyo-green font-mono font-bold border-none text-sm"
+          className="mx-1 bg-tokyo-green/20 text-tokyo-green font-mono font-bold border-none text-xs"
         >
           {match[1]}
         </Badge>
