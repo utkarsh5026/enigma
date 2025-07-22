@@ -97,10 +97,18 @@ export class Token {
   /** The position of the token in the source code. */
   readonly position: Position;
 
-  constructor(type: TokenType, literal: string, position: Position) {
+  readonly endPosition?: Position;
+
+  constructor(
+    type: TokenType,
+    literal: string,
+    position: Position,
+    endPosition?: Position
+  ) {
     this.type = type;
     this.literal = literal;
     this.position = position;
+    this.endPosition = endPosition;
   }
 
   toString(): string {
@@ -110,7 +118,30 @@ export class Token {
   start(): Position {
     return {
       ...this.position,
-      column: Math.max(0, this.position.column - this.literal.length),
+    };
+  }
+
+  end(): Position {
+    if (this.endPosition) return this.endPosition;
+    const lines = this.literal.split("\n");
+
+    if (lines.length === 1) {
+      return {
+        line: this.position.line,
+        column: this.position.column + this.literal.length,
+      };
+    } else {
+      return {
+        line: this.position.line + lines.length - 1,
+        column: lines[lines.length - 1].length,
+      };
+    }
+  }
+
+  range(): { start: Position; end: Position } {
+    return {
+      start: this.start(),
+      end: this.end(),
     };
   }
 }
