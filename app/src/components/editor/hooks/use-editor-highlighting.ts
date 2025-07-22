@@ -6,11 +6,16 @@ import { Node } from "@/lang/ast";
 const HIGHLIGHT_CLASS = "ast-code-highlight";
 
 export interface HighlightPosition {
-  line: number;
-  column: number;
-  endLine?: number;
-  endColumn?: number;
+  startLine: number;
+  startColumn: number;
+  endLine: number;
+  endColumn: number;
 }
+
+export type HightLightFn = (
+  position: HighlightPosition,
+  duration?: number
+) => void;
 
 export const useEditorHighlighting = () => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -18,13 +23,8 @@ export const useEditorHighlighting = () => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const highlightRange = useCallback(
-    (
-      startLine: number,
-      startColumn: number,
-      endLine?: number,
-      endColumn?: number,
-      duration: number = 3000
-    ) => {
+    (position: HighlightPosition, duration: number = 3000) => {
+      const { startLine, startColumn, endLine, endColumn } = position;
       if (!editorRef.current) {
         console.warn("Editor not available for highlighting");
         return;
@@ -174,8 +174,16 @@ export const useEditorHighlighting = () => {
         return;
       }
 
-      const { line, column } = node.position();
-      highlightRange(line, column, undefined, undefined, duration);
+      const { start, end } = node.nodeRange();
+      highlightRange(
+        {
+          startLine: start.line,
+          startColumn: start.column,
+          endLine: end.line,
+          endColumn: end.column,
+        },
+        duration
+      );
     },
     [highlightRange]
   );
