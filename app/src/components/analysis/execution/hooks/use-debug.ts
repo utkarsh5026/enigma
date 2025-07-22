@@ -95,12 +95,10 @@ export const useDebug = (code: string) => {
 
         if (shouldShowOverlay) {
           try {
-            const overlayId = addValueOverlay(node, value, {
-              duration: isStepMode ? 0 : 4000, // Persistent in step mode
+            addValueOverlay(node, value, {
+              duration: isStepMode ? 0 : 4000,
               persistent: isStepMode,
             });
-
-            console.log("✅ Added overlay:", overlayId);
           } catch (error) {
             console.error("❌ Error adding overlay:", error);
           }
