@@ -122,7 +122,12 @@ export class Token {
   }
 
   end(): Position {
-    if (this.endPosition) return this.endPosition;
+    if (this.endPosition)
+      return {
+        ...this.endPosition,
+        column: this.endPosition.column + 1,
+      };
+
     const lines = this.literal.split("\n");
 
     if (lines.length === 1) {
