@@ -123,10 +123,9 @@ export const useDebug = (code: string) => {
   }, [originalGoBackStep, clearAllOverlays, clearExecutionHighlight]);
 
   const resetExecution = useCallback(() => {
-    clearAllOverlays();
-    clearExecutionHighlight();
+    prepareExecution();
     setError(null);
-  }, [clearAllOverlays, clearExecutionHighlight, setError]);
+  }, [prepareExecution, setError]);
 
   useEffect(() => {
     if (!isStepMode) {
