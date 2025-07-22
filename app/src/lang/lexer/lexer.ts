@@ -1,4 +1,4 @@
-import { lookupIdentifier, Token, TokenType } from "../token/token";
+import { lookupIdentifier, Position, Token, TokenType } from "../token/token";
 
 /**
  * Lexer class for tokenizing input strings.
@@ -17,8 +17,10 @@ export default class Lexer {
    * Creates a new Lexer instance.
    * @param input The input string to be tokenized.
    */
-  constructor(input: string) {
+  constructor(input: string, currLine?: number, currColumn?: number) {
     this.input = input;
+    this.currLine = currLine ?? 1;
+    this.currColumn = currColumn ?? -1;
     this.readCurrChar();
   }
 
@@ -56,6 +58,9 @@ export default class Lexer {
     let token: Token;
     this.skipWhitespace();
     this.skipComments();
+
+    console.log("Token: ", this.currCh, this.currLine, this.currColumn);
+
     switch (this.currCh) {
       case "=":
         token = this.handleDoubleLiteral(TokenType.EQ, TokenType.ASSIGN);
@@ -180,13 +185,15 @@ export default class Lexer {
         token = this.createTok(TokenType.DOT, this.currCh);
         break;
 
-      case '"':
-        token = this.createTok(TokenType.STRING, this.readString());
+      case '"': {
+        token = this.readString();
         break;
+      }
 
-      case "'":
-        token = this.createTok(TokenType.STRING, this.readString("'"));
+      case "'": {
+        token = this.readString("'");
         break;
+      }
 
       case "\0":
         token = this.createTok(TokenType.EOF, "");
@@ -210,7 +217,19 @@ export default class Lexer {
     this.currCh = "";
     this.readCurrChar();
     this.currLine = 1;
-    this.currColumn = 1;
+    this.currColumn = 0;
+  }
+
+  /**
+   *  Creates a token with the START position, not current position
+   */
+  private createTokAtPosition(
+    type: TokenType,
+    literal: string,
+    startPosition: Position,
+    endPosition?: Position
+  ): Token {
+    return new Token(type, literal, startPosition, endPosition);
   }
 
   /**
@@ -283,8 +302,11 @@ export default class Lexer {
    * Reads a string literal from the input.
    * @returns The string literal without quotes.
    */
-  private readString(quoteChar: string = '"'): string {
+  private readString(quoteChar: string = '"'): Token {
     const result = [];
+    const startLine = this.currLine;
+    const startColumn = this.currColumn;
+
     while (true) {
       this.readCurrChar();
       if (this.currCh === "\0") throw new Error("Unterminated string");
@@ -299,7 +321,15 @@ export default class Lexer {
       result.push(this.currCh);
     }
 
-    return result.join("");
+    const endLine = this.currLine;
+    const endColumn = this.currColumn;
+
+    return this.createTokAtPosition(
+      TokenType.STRING,
+      result.join(""),
+      { line: startLine, column: startColumn },
+      { line: endLine, column: endColumn }
+    );
   }
 
   /**
@@ -307,30 +337,56 @@ export default class Lexer {
    * @returns A token representing an identifier, number, or illegal character.
    */
   private handleIdentifier(): Token {
+    const startLine = this.currLine;
+    const startColumn = this.currColumn;
+
     if (Lexer.isLetter(this.currCh)) {
       const literal = this.readIdentifier();
       if (literal === "f" && this.peekChar() == '"') {
         this.readCurrChar();
         const fstr = this.readFString();
-        return this.createTok(TokenType.F_STRING, fstr);
+        return this.createTokAtPosition(
+          TokenType.F_STRING,
+          fstr,
+          { line: startLine, column: startColumn },
+          { line: this.currLine, column: this.currColumn }
+        );
       }
 
       const identType = lookupIdentifier(literal);
-      return this.createTok(identType, literal);
+      return this.createTokAtPosition(identType, literal, {
+        line: startLine,
+        column: startColumn,
+      });
     }
 
     if (Lexer.isDigit(this.currCh)) {
       const result = this.readNumber();
       const tokenType = result.isFloat ? TokenType.FLOAT : TokenType.INT;
-      return this.createTok(tokenType, result.numberStr);
+      return this.createTokAtPosition(
+        tokenType,
+        result.numberStr,
+        { line: startLine, column: startColumn },
+        { line: this.currLine, column: this.currColumn }
+      );
     }
 
     if (this.currCh == "." && Lexer.isDigit(this.peekChar())) {
       const result = this.readNumber();
-      return this.createTok(TokenType.FLOAT, result.numberStr);
+      return this.createTokAtPosition(
+        TokenType.FLOAT,
+        result.numberStr,
+        { line: startLine, column: startColumn },
+        { line: this.currLine, column: this.currColumn }
+      );
     }
 
-    return this.createTok(TokenType.ILLEGAL, this.currCh);
+    return this.createTokAtPosition(
+      TokenType.ILLEGAL,
+      this.currCh,
+      { line: startLine, column: startColumn },
+      { line: this.currLine, column: this.currColumn }
+    );
   }
 
   /**
@@ -424,13 +480,26 @@ export default class Lexer {
     defaultTokType: TokenType,
     peekChar: string = "="
   ): Token {
+    const startLine = this.currLine;
+    const startColumn = this.currColumn;
+
     const curr = this.currCh;
     if (this.peekChar() === peekChar) {
       this.readCurrChar();
-      return this.createTok(tokTypeIfDouble, curr + peekChar);
+      return this.createTokAtPosition(
+        tokTypeIfDouble,
+        curr + peekChar,
+        { line: startLine, column: startColumn },
+        { line: this.currLine, column: this.currColumn }
+      );
     }
 
-    return this.createTok(defaultTokType, curr);
+    return this.createTokAtPosition(
+      defaultTokType,
+      curr,
+      { line: startLine, column: startColumn },
+      { line: this.currLine, column: this.currColumn }
+    );
   }
 
   /**
@@ -441,6 +510,13 @@ export default class Lexer {
     this.position = this.position - steps;
     this.readPosition = this.readPosition - steps;
     this.currCh = this.input[this.position];
+
+    if (this.currCh === "\n") {
+      this.currLine--;
+      this.currColumn = this.input.slice(0, this.position).split("\n").length;
+    } else {
+      this.currColumn--;
+    }
   }
 
   /**
