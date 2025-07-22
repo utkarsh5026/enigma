@@ -29,10 +29,14 @@ export class StringLiteral extends Expression {
   }
 
   nodeRange(): { start: Position; end: Position } {
-    const start = this.token.start();
+    const { start, end } = this.token.range();
+
     return {
-      start: { ...start, column: start.column - 2 }, // quotations marks
-      end: this.endToken?.position ?? this.token.position,
+      start,
+      end: {
+        ...end,
+        column: end.column + 1,
+      },
     };
   }
 }
