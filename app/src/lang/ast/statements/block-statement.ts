@@ -13,7 +13,10 @@ export class BlockStatement extends Statement {
   }
 
   toString(): string {
-    return this.statements.map((s) => s.toString()).join("");
+    return `{${this.statements
+      .map((s) => s.toString())
+      .join(" ")
+      .substring(0, 12)}...}`;
   }
 
   whatIam() {
