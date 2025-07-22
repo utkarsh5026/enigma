@@ -8,7 +8,7 @@ import {
 import ToolBar from "./editor-toolbar";
 import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
-import { DesktopLayout, MobileLayout } from "./responsive-layouts";
+import { DesktopLayout, MobileLayout } from "./layouts";
 import { useTokens } from "@/hooks/use-tokens";
 
 const Enigma: React.FC = () => {
