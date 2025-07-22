@@ -74,17 +74,51 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
 
             {/* Result */}
             {step.result && (
-              <div className="bg-[var(--tokyo-green)]/10 p-2 rounded border border-[var(--tokyo-green)]/20">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{
+                  scale: [0.8, 1.1, 1],
+                  opacity: 1,
+                  boxShadow: [
+                    "0 0 0 rgba(34, 197, 94, 0)",
+                    "0 0 20px rgba(34, 197, 94, 0.3)",
+                    "0 0 0 rgba(34, 197, 94, 0)",
+                  ],
+                }}
+                transition={{
+                  duration: 0.6,
+                  ease: "easeOut",
+                  times: [0, 0.6, 1],
+                }}
+                className="bg-[var(--tokyo-green)]/10 p-2 rounded border border-[var(--tokyo-green)]/20"
+              >
                 <div className="flex items-center gap-1 mb-1">
-                  <Zap size={12} className="text-[var(--tokyo-green)]" />
+                  <motion.div
+                    animate={{
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.2,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <Zap size={12} className="text-[var(--tokyo-green)]" />
+                  </motion.div>
                   <span className="text-xs font-medium text-[var(--tokyo-green)]">
                     Result
                   </span>
                 </div>
-                <div className="text-xs text-[var(--tokyo-fg)] font-mono">
+                <motion.div
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.3 }}
+                  className="text-xs text-[var(--tokyo-fg)] font-mono"
+                >
                   {step.result.inspect()}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             )}
           </div>
 
