@@ -118,10 +118,7 @@ export class Expression implements Node {
   }
 
   nodeRange(): { start: Position; end: Position } {
-    return {
-      start: this.token.start(),
-      end: this.endToken?.position ?? this.token.position,
-    };
+    return this.token.range();
   }
 }
 
