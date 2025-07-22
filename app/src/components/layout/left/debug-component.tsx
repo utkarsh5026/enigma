@@ -10,6 +10,7 @@ import {
 import { ChevronDown, ChevronRight, Layers, MapPin, Zap } from "lucide-react";
 import { useState } from "react";
 import { parseDescriptionWithBadges } from "@/components/analysis/execution/components/utils";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface DebugComponentProps {
   executionState: ExecutionState;
@@ -144,7 +145,6 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
             </CollapsibleContent>
           </Collapsible>
 
-          {/* Environment Variables */}
           {step.envSnapshot && step.envSnapshot.variables.length > 0 && (
             <Collapsible
               open={showEnvironment}
@@ -159,37 +159,40 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
                 Variables ({step.envSnapshot.variables.length})
               </CollapsibleTrigger>
               <CollapsibleContent className="mt-2">
-                <div className="space-y-1 max-h-24 overflow-y-auto">
-                  {step.envSnapshot.variables.map((variable, index) => (
-                    <div
-                      key={index}
-                      className="text-xs bg-[var(--tokyo-purple)]/10 p-1 rounded border border-[var(--tokyo-purple)]/20"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-[var(--tokyo-fg)]">
-                          {variable.name}
-                        </span>
-                        <span className="text-[var(--tokyo-comment)]">=</span>
-                        <span className="font-mono text-[var(--tokyo-green)] truncate flex-1">
-                          {variable.value}
-                        </span>
-                        {variable.isConstant && (
-                          <Badge className="text-xs bg-[var(--tokyo-orange)]/20 text-[var(--tokyo-orange)] border-[var(--tokyo-orange)]/30">
-                            const
-                          </Badge>
-                        )}
-                        {variable.isNew && (
-                          <Badge className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] border-[var(--tokyo-green)]/30">
-                            new
-                          </Badge>
-                        )}
+                <ScrollArea className="h-32 overflow-auto">
+                  <div className="flex flex-col gap-1">
+                    {step.envSnapshot.variables.map((variable, index) => (
+                      <div
+                        key={index}
+                        className="text-xs bg-[var(--tokyo-purple)]/10 p-1 rounded border border-[var(--tokyo-purple)]/20"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-[var(--tokyo-fg)]">
+                            {variable.name}
+                          </span>
+                          <span className="text-[var(--tokyo-comment)]">=</span>
+                          <span className="font-mono text-[var(--tokyo-green)] truncate flex-1">
+                            {variable.value}
+                          </span>
+                          {variable.isConstant && (
+                            <Badge className="text-xs bg-[var(--tokyo-orange)]/20 text-[var(--tokyo-orange)] border-[var(--tokyo-orange)]/30">
+                              const
+                            </Badge>
+                          )}
+                          {variable.isNew && (
+                            <Badge className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] border-[var(--tokyo-green)]/30">
+                              new
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-[var(--tokyo-comment)] text-xs mt-0.5">
+                          {variable.type}
+                        </div>
                       </div>
-                      <div className="text-[var(--tokyo-comment)] text-xs mt-0.5">
-                        {variable.type}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                  <ScrollBar orientation="vertical" />
+                </ScrollArea>
               </CollapsibleContent>
             </Collapsible>
           )}
