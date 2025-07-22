@@ -4,6 +4,7 @@ import GetStarted from "./get-started";
 import InteractiveDevelopment from "./interactive-development";
 import CoreFeatures from "./core-features";
 import Welcome from "./welcome";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface IntroModalProps {
   isOpen: boolean;
@@ -119,7 +120,7 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="px-6 py-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+        <ScrollArea className="px-6 py-6 h-[calc(90vh-200px)]">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -131,7 +132,7 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
               {steps[currentStep].content}
             </motion.div>
           </AnimatePresence>
-        </div>
+        </ScrollArea>
 
         {/* Navigation */}
         <div className="px-6 py-4 border-t border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)]/50 flex items-center justify-between">
