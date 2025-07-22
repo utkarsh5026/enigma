@@ -87,8 +87,7 @@ export const useDebug = (code: string) => {
           value !== "null" &&
           value !== "undefined" &&
           value !== "" &&
-          value !== "NaN" &&
-          value !== node.toString();
+          value !== "NaN";
 
         const shouldShowOverlay =
           (isExpression || isEvaluation) && hasMeaningfulValue;

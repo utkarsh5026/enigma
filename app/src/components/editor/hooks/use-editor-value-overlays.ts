@@ -246,12 +246,10 @@ export const useDirectValueOverlays = () => {
       }
 
       try {
-        const range = node.nodeRange();
-        if (!range?.start || !range?.end) {
-          console.error("❌ Invalid node range:", range);
-          return null;
-        }
+        // Clear all existing overlays before adding new one
+        clearAllOverlays();
 
+        const range = node.nodeRange();
         const { scrollToView = false, centerInView = true } = options;
         if (scrollToView) {
           scrollToNode(node, {
@@ -306,14 +304,13 @@ export const useDirectValueOverlays = () => {
           ]
         );
 
-        // Store for cleanup
         activeOverlaysRef.current.set(overlayId, {
           element: overlayElement,
           decorations: decorationIds,
         });
 
         if (!options.persistent) {
-          const duration = options.duration || 4000;
+          const duration = options.duration || 2000;
           setTimeout(() => {
             removeOverlay(overlayId);
           }, duration);
@@ -323,7 +320,7 @@ export const useDirectValueOverlays = () => {
         return null;
       }
     },
-    [scrollToNode]
+    [scrollToNode, removeOverlay, clearAllOverlays] // Added clearAllOverlays to dependencies
   );
 
   const updateScrollPosition = useCallback(() => {
