@@ -10,19 +10,13 @@ import EditorHeader from "./editor-header";
 import { useCodeExecution } from "@/components/analysis/execution/hooks/use-code-execution";
 import { useDebug } from "@/components/analysis/execution/hooks/use-debug";
 import { editor } from "monaco-editor";
+import type { HightLightFn } from "@/components/editor/hooks/use-editor-highlighting";
 
 interface LeftPanelProps {
   code: string;
   onCodeChange: (code: string) => void;
   setActiveTab: (tab: string) => void;
-  onHighlightingReady?: (
-    highlightFn: (
-      line: number,
-      column: number,
-      endLine?: number,
-      endColumn?: number
-    ) => void
-  ) => void;
+  onHighlightingReady?: (highlightFn: HightLightFn) => void;
 }
 
 const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -61,14 +55,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   });
 
   const handleHighlightingReady = useCallback(
-    (
-      highlightFn: (
-        line: number,
-        column: number,
-        endLine?: number,
-        endColumn?: number
-      ) => void
-    ) => {
+    (highlightFn: HightLightFn) => {
       if (onHighlightingReady) {
         onHighlightingReady(highlightFn);
       }
@@ -132,7 +119,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="absolute top-4 right-4 bg-[var(--tokyo-green)]/90 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-[var(--tokyo-green)]/30 max-w-sm"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-[var(--tokyo-green)]/10 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-[var(--tokyo-green)]/30 max-w-[calc(100%-1rem)] sm:max-w-sm z-10"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
