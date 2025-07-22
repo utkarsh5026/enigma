@@ -96,8 +96,8 @@ export const useDebug = (code: string) => {
         if (shouldShowOverlay) {
           try {
             addValueOverlay(node, value, {
-              duration: isStepMode ? 0 : 4000,
-              persistent: isStepMode,
+              duration: 0,
+              persistent: false,
             });
           } catch (error) {
             console.error("❌ Error adding overlay:", error);
@@ -114,7 +114,6 @@ export const useDebug = (code: string) => {
     clearExecutionHighlight,
     highlightCurrentExecution,
     addValueOverlay,
-    isStepMode,
   ]);
 
   const goBackStep = useCallback(() => {
