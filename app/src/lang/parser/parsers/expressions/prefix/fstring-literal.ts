@@ -3,7 +3,7 @@ import {
   ParsingContext,
   ParserException,
 } from "@/lang/parser/core";
-import { TokenType } from "@/lang/token/token";
+import { Token, TokenType } from "@/lang/token/token";
 import { FStringLiteral, Expression } from "@/lang/ast";
 import Lexer from "@/lang/lexer/lexer";
 import { LanguageParser } from "@/lang/parser/parser";
@@ -174,13 +174,56 @@ export class FStringLiteralParser implements PrefixExpressionParser {
       );
     }
 
-    // Parse the expression using a new parser instance
-    const expression = this.parseExpressionFromString(expressionText.trim());
+    // Calculate the position within the f-string where this expression starts
+    const fStringToken = context.getCurrentToken();
+    const expressionStartPos = this.calculateExpressionPosition(
+      content,
+      startPos,
+      fStringToken
+    );
+
+    // Parse the expression using a new parser instance with correct positioning
+    const expression = this.parseExpressionFromString(
+      expressionText.trim(),
+      expressionStartPos.line,
+      expressionStartPos.column
+    );
 
     return {
       expression,
       endPosition: pos,
     };
+  }
+
+  /**
+   * 📍 Calculates the absolute position of an expression within the f-string
+   *
+   * @param content The full f-string content
+   * @param expressionStart The character position where the expression starts
+   * @param fStringToken The original f-string token
+   * @returns The calculated line and column position
+   */
+  private calculateExpressionPosition(
+    content: string,
+    expressionStart: number,
+    fStringToken: Token
+  ) {
+    let { line, column } = fStringToken.start();
+
+    // Count newlines and calculate column position up to the expression start
+    for (let i = 0; i < expressionStart; i++) {
+      if (content[i] === "\n") {
+        line++;
+        column = 0;
+      } else {
+        column++;
+      }
+    }
+
+    // Add 1 more for the opening brace '{'
+    column++;
+
+    return { line, column };
   }
 
   /**
@@ -191,11 +234,17 @@ export class FStringLiteralParser implements PrefixExpressionParser {
    * etc.)
    *
    * @param expressionText The expression text to parse
+   * @param startLine The line where the expression starts (relative to f-string)
+   * @param startColumn The column where the expression starts (relative to f-string)
    * @return Parsed expression
    */
-  private parseExpressionFromString(expressionText: string) {
+  private parseExpressionFromString(
+    expressionText: string,
+    startLine?: number,
+    startColumn?: number
+  ) {
     try {
-      const lexer = new Lexer(expressionText);
+      const lexer = new Lexer(expressionText, startLine, startColumn);
       const parser = new LanguageParser(lexer);
       const expression = parser.parseExpression();
 
