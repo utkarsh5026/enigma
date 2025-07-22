@@ -1,5 +1,5 @@
 import React from "react";
-import { FileCode, Play, Loader2, Check, Eye } from "lucide-react";
+import { FileCode, Play, Loader2, Check, Bug, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -53,13 +53,6 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           >
             <FileCode size={16} className="text-[var(--tokyo-purple)]" />
           </motion.div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-sm text-[var(--tokyo-fg)]">
-                main.enigma
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* Execution Controls */}
@@ -74,16 +67,29 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                   size="sm"
                   className={`px-3 py-1.5 text-xs ${
                     isStepMode
-                      ? "bg-[var(--tokyo-blue)] text-white"
-                      : "border-[var(--tokyo-comment)]/30 text-[var(--tokyo-fg)]"
+                      ? "bg-[var(--tokyo-red)] hover:bg-[var(--tokyo-red)]/80 text-white border-[var(--tokyo-red)]"
+                      : "border-[var(--tokyo-comment)]/30 text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-blue)]/10 hover:border-[var(--tokyo-blue)]/50"
                   }`}
                 >
-                  <Eye size={12} className="mr-1" />
-                  Debug
+                  {isStepMode ? (
+                    <>
+                      <XCircle size={12} className="mr-1" />
+                      Close Debugging
+                    </>
+                  ) : (
+                    <>
+                      <Bug size={12} className="mr-1" />
+                      Debug
+                    </>
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p className="text-xs">Toggle step-by-step execution mode</p>
+                <p className="text-xs">
+                  {isStepMode
+                    ? "Exit step-by-step debugging mode"
+                    : "Enter step-by-step debugging mode"}
+                </p>
               </TooltipContent>
             </Tooltip>
           )}
