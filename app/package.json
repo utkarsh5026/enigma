@@ -68,7 +68,7 @@
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/src",
-      "<rootDir>/test"
+      "<rootDir>/tests"
     ],
     "testMatch": [
       "**/__tests__/**/*.ts",
