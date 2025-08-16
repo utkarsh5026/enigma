@@ -59,7 +59,6 @@ export default class Lexer {
     this.skipWhitespace();
     this.skipComments();
 
-    console.log("Token: ", this.currCh, this.currLine, this.currColumn);
 
     switch (this.currCh) {
       case "=":
