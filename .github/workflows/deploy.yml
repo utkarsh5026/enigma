@@ -34,3 +34,6 @@ jobs:
 
       - name: Build
         run: cd app && npm run build
+
+      - name: Test
+        run: cd app && npm test
