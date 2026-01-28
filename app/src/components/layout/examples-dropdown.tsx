@@ -42,7 +42,7 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
   const { isMobile } = useMobile();
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set(["beginner"])
-  ); // Start with beginner expanded
+  );
 
   const toggleCategory = (categoryKey: string) => {
     const newExpanded = new Set(expandedCategories);
@@ -63,18 +63,18 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
     <DropdownMenu open={showExamplesDropdown} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <motion.button
-          className={`flex items-center gap-2 rounded-lg bg-[var(--tokyo-blue)] text-white hover:bg-[var(--tokyo-purple)] transition-all duration-200 border border-[var(--tokyo-cyan)]/30 text-xs p-2 cursor-pointer shadow-lg shadow-[var(--tokyo-blue)]/20 hover:shadow-[var(--tokyo-purple)]/30 hover:shadow-xl`}
+          className={`flex cursor-pointer items-center gap-2 rounded-lg border border-(--tokyo-cyan)/30 bg-tokyo-blue p-2 text-xs text-white shadow-(--tokyo-blue)/20 shadow-lg transition-all duration-200 hover:bg-tokyo-purple hover:shadow-(--tokyo-purple)/30 hover:shadow-xl`}
           whileHover={{ scale: isMobile ? 1.01 : 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
           {!isMobile && <FileCode size={14} />}
-          <span className={isMobile ? "truncate flex-1 text-left" : ""}>
+          <span className={isMobile ? "flex-1 truncate text-left" : ""}>
             {selectedExample ? "Examples" : "Load Example"}
           </span>
           {!isMobile && (
             <ChevronRight
               size={isMobile ? 14 : 16}
-              className={`transition-transform duration-200 flex-shrink-0 ${
+              className={`shrink-0 transition-transform duration-200 ${
                 showExamplesDropdown ? "rotate-90" : ""
               }`}
             />
@@ -83,7 +83,7 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className={`bg-[var(--tokyo-bg-dark)]/95 backdrop-blur-md border border-[var(--tokyo-comment)]/30 font-cascadia-code ${
+        className={`font border border-tokyo-comment/30 bg-(--tokyo-bg-dark)/95 font-family-mono backdrop-blur-md ${
           isMobile
             ? "w-[90vw] max-w-sm" // Responsive width for mobile
             : "w-80"
@@ -93,7 +93,7 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
         sideOffset={4}
       >
         <DropdownMenuLabel
-          className={`text-[var(--tokyo-fg-dark)] flex items-center gap-2 ${
+          className={`flex items-center gap-2 text-tokyo-fg-dark ${
             isMobile ? "px-3 py-2" : "px-2 py-1"
           }`}
         >
@@ -103,10 +103,10 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
           </span>
         </DropdownMenuLabel>
 
-        <DropdownMenuSeparator className="bg-[var(--tokyo-comment)]/20" />
+        <DropdownMenuSeparator className="bg-(--tokyo-comment)/20" />
 
         <div
-          className="max-h-[60vh] w-full overflow-y-auto scrollbar-hide"
+          className="scrollbar-hide max-h-[60vh] w-full overflow-y-auto"
           style={{
             scrollbarWidth: "none" /* Firefox */,
             msOverflowStyle: "none" /* IE and Edge */,
@@ -121,22 +121,22 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
             <div key={category.key}>
               {/* Category Header */}
               <div
-                className={`flex items-center gap-2 cursor-pointer px-2 py-2 hover:bg-[var(--tokyo-bg-highlight)]/30 border-l-2 border-transparent hover:border-[var(--tokyo-blue)]/50 transition-colors ${
+                className={`flex cursor-pointer items-center gap-2 border-l-2 border-transparent px-2 py-2 font-family-mono transition-colors hover:border-(--tokyo-blue)/50 hover:bg-(--tokyo-bg-highlight)/30 ${
                   isMobile ? "px-3 py-3" : "px-2 py-2"
                 }`}
                 onClick={() => toggleCategory(category.key)}
               >
                 <span className="text-lg">{category.emoji}</span>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div
-                    className={`font-medium text-[var(--tokyo-fg)] ${
+                    className={`font-family-mono font-medium text-tokyo-fg ${
                       isMobile ? "text-sm" : "text-xs"
                     }`}
                   >
                     {category.name}
                   </div>
                   <div
-                    className={`text-[var(--tokyo-fg-dark)] ${
+                    className={`text-tokyo-fg-dark ${
                       isMobile ? "text-xs" : "text-xs"
                     } truncate`}
                   >
@@ -145,7 +145,7 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
                 </div>
                 <ChevronDown
                   size={14}
-                  className={`transition-transform duration-200 text-[var(--tokyo-fg-dark)] ${
+                  className={`text-tokyo-fg-dark transition-transform duration-200 ${
                     expandedCategories.has(category.key) ? "rotate-180" : ""
                   }`}
                 />
@@ -153,30 +153,30 @@ const ExamplesDropdown: React.FC<ExamplesDropdownProps> = ({
 
               {/* Category Examples */}
               {expandedCategories.has(category.key) && (
-                <div className="ml-6 border-l border-[var(--tokyo-comment)]/20">
+                <div className="ml-6 border-l border-(--tokyo-comment)/20">
                   {category.examples.map((example) => (
                     <DropdownMenuItem
                       key={example.key}
-                      className={`flex items-center gap-2 cursor-pointer ml-2 ${
-                        isMobile ? "px-3 py-2 min-h-[36px]" : "px-2 py-1.5"
+                      className={`ml-2 flex cursor-pointer items-center gap-2 ${
+                        isMobile ? "min-h-9 px-3 py-2" : "px-2 py-1.5"
                       } ${
                         selectedExample === example.key
-                          ? "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-l-2 border-[var(--tokyo-blue)]"
-                          : "text-[var(--tokyo-fg-dark)] hover:bg-[var(--tokyo-bg-highlight)]/30 hover:text-[var(--tokyo-fg)] font-cascadia-code"
+                          ? "border-l-2 border-tokyo-blue bg-(--tokyo-blue)/20 text-tokyo-blue"
+                          : "font-cascadia-code text-tokyo-fg-dark hover:bg-(--tokyo-bg-highlight)/30 hover:text-tokyo-fg"
                       }`}
                       onClick={() => handleExampleClick(example.key)}
                     >
                       <span
                         className={`${
-                          isMobile ? "text-xs flex-1" : "text-xs"
+                          isMobile ? "flex-1 text-xs" : "text-xs"
                         } truncate`}
                       >
                         {example.name}
                       </span>
                       {selectedExample === example.key && (
                         <div
-                          className={`ml-auto rounded-full bg-[var(--tokyo-blue)] animate-pulse ${
-                            isMobile ? "w-1.5 h-1.5" : "w-1 h-1"
+                          className={`ml-auto animate-pulse rounded-full bg-tokyo-blue ${
+                            isMobile ? "h-1.5 w-1.5" : "h-1 w-1"
                           }`}
                         />
                       )}

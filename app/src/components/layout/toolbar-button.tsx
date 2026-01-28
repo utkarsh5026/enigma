@@ -39,16 +39,7 @@ const EditorToolbarButton = ({
       </TooltipTrigger>
       <TooltipContent
         side={isMobile ? "top" : "bottom"}
-        className={`
-          bg-[var(--tokyo-bg-dark)]/95 backdrop-blur-md
-          border border-[var(--tokyo-comment)]/30
-          text-[var(--tokyo-fg)]
-          font-medium
-          font-mono
-          shadow-xl
-          ${isMobile ? "text-xs" : "text-sm"}
-          ${disabled ? "opacity-80" : ""}
-        `}
+        className={`border border-tokyo-comment/30 bg-(--tokyo-bg-dark)/95 font-mono font-medium text-tokyo-fg shadow-xl backdrop-blur-md ${isMobile ? "text-xs" : "text-sm"} ${disabled ? "opacity-80" : ""} `}
         sideOffset={isMobile ? 8 : 6}
       >
         <div className="flex items-center gap-1">
@@ -77,37 +68,26 @@ const ButtonContent: React.FC<ButtonContentProps> = ({
     <motion.button
       whileHover={disabled ? {} : { scale: 1.05, y: -1 }}
       whileTap={disabled ? {} : { scale: 0.95 }}
-      className={`
-        relative group
-        ${
-          isPhone
-            ? "p-2 rounded-xl min-w-[36px] min-h-[36px]"
-            : "p-2.5 rounded-xl min-w-[40px] min-h-[40px]"
-        } 
-        transition-all duration-300 ease-out
-        flex items-center justify-center 
-        ${
-          disabled
-            ? "opacity-40 cursor-not-allowed"
-            : "cursor-pointer hover:shadow-lg hover:shadow-[var(--tokyo-purple)]/20"
-        }
-        ${className}
-        border border-transparent
-        hover:border-[var(--tokyo-comment)]/20
-        backdrop-blur-sm
-        overflow-hidden
-      `}
+      className={`group relative ${
+        isPhone
+          ? "min-h-9 min-w-9 rounded-xl p-2"
+          : "min-h-10 min-w-10 rounded-xl p-2.5"
+      } flex items-center justify-center transition-all duration-300 ease-out ${
+        disabled
+          ? "cursor-not-allowed opacity-40"
+          : "cursor-pointer hover:shadow-(--tokyo-purple)/20 hover:shadow-lg"
+      } ${className} overflow-hidden border border-transparent backdrop-blur-sm hover:border-(--tokyo-comment)/20`}
       onClick={handleClick}
       disabled={disabled}
       aria-disabled={disabled}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--tokyo-bg-highlight)]/0 to-[var(--tokyo-bg-highlight)]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-(--tokyo-bg-highlight)/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      <div className="relative z-10 text-[var(--tokyo-comment)] group-hover:text-[var(--tokyo-fg)] transition-colors duration-300">
+      <div className="relative z-10 text-tokyo-comment transition-colors duration-300 group-hover:text-tokyo-fg">
         {React.isValidElement(icon) ? React.cloneElement(icon) : icon}
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-500" />
+      <div className="absolute inset-0 bg-white/5 opacity-0 transition-all duration-500 group-hover:opacity-100" />
     </motion.button>
   );
 };

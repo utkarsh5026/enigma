@@ -24,7 +24,7 @@ const GetStarted: React.FC<GetStartedProps> = ({
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] rounded-full mb-4 shadow-2xl"
+          className="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-[var(--tokyo-green)] shadow-2xl"
         >
           <svg
             width="32"
@@ -36,7 +36,7 @@ const GetStarted: React.FC<GetStartedProps> = ({
             <polygon points="5,3 19,12 5,21" />
           </svg>
         </motion.div>
-        <h3 className="text-xl font-bold text-[var(--tokyo-fg)] mb-2">
+        <h3 className="mb-2 text-xl font-bold text-[var(--tokyo-fg)]">
           Start Coding Right Away!
         </h3>
         <p className="text-[var(--tokyo-comment)]">
@@ -44,9 +44,9 @@ const GetStarted: React.FC<GetStartedProps> = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-3">
-          <h4 className="font-semibold text-[var(--tokyo-fg)] flex items-center gap-2">
+          <h4 className="flex items-center gap-2 font-semibold text-[var(--tokyo-fg)]">
             <svg
               width="16"
               height="16"
@@ -90,7 +90,7 @@ const GetStarted: React.FC<GetStartedProps> = ({
         </div>
 
         <div className="space-y-3">
-          <h4 className="font-semibold text-[var(--tokyo-fg)] flex items-center gap-2">
+          <h4 className="flex items-center gap-2 font-semibold text-[var(--tokyo-fg)]">
             <svg
               width="16"
               height="16"
@@ -117,7 +117,7 @@ const GetStarted: React.FC<GetStartedProps> = ({
                 transition={{ delay: 0.1 + index * 0.1 }}
                 className="flex items-center gap-2 text-sm text-[var(--tokyo-comment)]"
               >
-                <div className="w-1.5 h-1.5 bg-[var(--tokyo-green)] rounded-full" />
+                <div className="h-1.5 w-1.5 rounded-full bg-[var(--tokyo-green)]" />
                 {tip}
               </motion.div>
             ))}
@@ -125,10 +125,10 @@ const GetStarted: React.FC<GetStartedProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 pt-4">
+      <div className="flex flex-col gap-3 pt-4 sm:flex-row">
         <button
           onClick={onClose}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] hover:opacity-90 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2"
+          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--tokyo-green)] px-6 py-3 font-medium text-white transition-all duration-200 hover:opacity-90"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <polygon points="5,3 19,12 5,21" />
@@ -137,7 +137,7 @@ const GetStarted: React.FC<GetStartedProps> = ({
         </button>
         <button
           onClick={() => setCurrentStep(0)}
-          className="px-6 py-3 border border-[var(--tokyo-comment)] text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-dark)] rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2"
+          className="flex items-center justify-center gap-2 rounded-lg border border-[var(--tokyo-comment)] px-6 py-3 font-medium text-[var(--tokyo-fg)] transition-all duration-200 hover:bg-[var(--tokyo-bg-dark)]"
         >
           <svg
             width="16"

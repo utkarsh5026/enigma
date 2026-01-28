@@ -172,22 +172,22 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="w-full h-full overflow-hidden flex flex-col bg-[var(--tokyo-bg)]"
+      className="flex h-full w-full flex-col overflow-hidden bg-tokyo-bg"
     >
       {/* Header */}
-      <div className="shrink-0 border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-dark)]/80 backdrop-blur-sm">
+      <div className="shrink-0 border-b border-(--tokyo-comment)/20 bg-tokyo-bg-dark/80 backdrop-blur-sm">
         <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <motion.div
-                className="p-2.5 rounded-lg bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] shadow-lg"
+                className="rounded-lg bg-[var(--tokyo-blue)] p-2.5 shadow-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <GitBranch size={18} className="text-white" />
               </motion.div>
               <div>
-                <h2 className="text-lg font-semibold text-[var(--tokyo-fg)] font-mono">
+                <h2 className="font-mono text-lg font-semibold text-[var(--tokyo-fg)]">
                   AST Parser
                 </h2>
                 <p className="text-sm text-[var(--tokyo-comment)]">
@@ -209,7 +209,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                       <Button
                         onClick={parse}
                         disabled={isParsing || !canParse}
-                        className="bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] hover:from-[var(--tokyo-green)]/90 hover:to-[var(--tokyo-cyan)]/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-[var(--tokyo-green)]/20"
+                        className="flex items-center gap-2 rounded-lg bg-[var(--tokyo-green)] px-4 py-2 text-white shadow-lg transition-all hover:bg-[var(--tokyo-green)]/90 hover:shadow-[var(--tokyo-green)]/20"
                       >
                         {isParsing ? (
                           <Loader2 size={16} className="animate-spin" />
@@ -235,12 +235,12 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                     animate={{ opacity: 1, x: 0 }}
                     className="flex items-center gap-2"
                   >
-                    <Badge className="bg-[var(--tokyo-cyan)]/20 text-[var(--tokyo-cyan)] border border-[var(--tokyo-cyan)]/30 text-xs px-2 py-1">
+                    <Badge className="border border-[var(--tokyo-cyan)]/30 bg-[var(--tokyo-cyan)]/20 px-2 py-1 text-xs text-[var(--tokyo-cyan)]">
                       {nodeCount} nodes
                     </Badge>
 
                     {onHighlightCode && (
-                      <Badge className="bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border border-[var(--tokyo-blue)]/30 text-xs px-2 py-1 flex items-center gap-1">
+                      <Badge className="flex items-center gap-1 border border-[var(--tokyo-blue)]/30 bg-[var(--tokyo-blue)]/20 px-2 py-1 text-xs text-[var(--tokyo-blue)]">
                         <Eye size={10} />
                         Click to highlight
                       </Badge>
@@ -253,11 +253,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                           size="sm"
                           onClick={parse}
                           disabled={isParsing}
-                          className="h-9 w-9 p-0 rounded-md border border-transparent bg-[var(--tokyo-bg)] text-[var(--tokyo-comment)] 
-                                   hover:text-[var(--tokyo-green)] hover:bg-[var(--tokyo-bg-highlight)] hover:border-[var(--tokyo-border)]
-                                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-[var(--tokyo-comment)] disabled:hover:bg
-                                   transition-all duration-200 ease-in-out shadow-sm hover:shadow-md
-                                   active:scale-95 transform"
+                          className="disabled:hover:bg h-9 w-9 transform rounded-md border border-transparent bg-[var(--tokyo-bg)] p-0 text-[var(--tokyo-comment)] shadow-sm transition-all duration-200 ease-in-out hover:border-[var(--tokyo-border)] hover:bg-[var(--tokyo-bg-highlight)] hover:text-[var(--tokyo-green)] hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:text-[var(--tokyo-comment)]"
                         >
                           {isParsing ? (
                             <Loader2
@@ -269,8 +265,8 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                           )}
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent className="bg-[var(--tokyo-bg-dark)] border-[var(--tokyo-border)] text-[var(--tokyo-fg)] shadow-lg">
-                        <p className="text-xs font-medium font-cascadia-code">
+                      <TooltipContent className="border-[var(--tokyo-border)] bg-[var(--tokyo-bg-dark)] text-[var(--tokyo-fg)] shadow-lg">
+                        <p className="font-cascadia-code text-xs font-medium">
                           Re-parse code
                         </p>
                       </TooltipContent>
@@ -282,7 +278,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                           variant="ghost"
                           size="sm"
                           onClick={() => setIsExpanded(!isExpanded)}
-                          className="h-8 px-2 text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)] transition-all"
+                          className="h-8 px-2 text-[var(--tokyo-comment)] transition-all hover:bg-[var(--tokyo-bg-highlight)] hover:text-[var(--tokyo-fg)]"
                         >
                           {isExpanded ? (
                             <Minimize2 size={14} />
@@ -310,10 +306,10 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-3 p-2 rounded-lg bg-[var(--tokyo-blue)]/10 border border-[var(--tokyo-blue)]/30 flex items-center gap-2"
+                className="mb-3 flex items-center gap-2 rounded-lg border border-[var(--tokyo-blue)]/30 bg-[var(--tokyo-blue)]/10 p-2"
               >
                 <MapPin size={14} className="text-[var(--tokyo-blue)]" />
-                <span className="text-sm text-[var(--tokyo-blue)] font-medium">
+                <span className="text-sm font-medium text-[var(--tokyo-blue)]">
                   Highlighting:{" "}
                   {activeHighlightedNode.whatIam?.()?.name || "Node"} at line{" "}
                   {activeHighlightedNode.position?.()?.line || "?"}
@@ -334,13 +330,13 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                 <div className="relative flex-1">
                   <Search
                     size={14}
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--tokyo-comment)]"
+                    className="absolute top-1/2 left-3 -translate-y-1/2 transform text-[var(--tokyo-comment)]"
                   />
                   <Input
                     placeholder="Search AST nodes..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 h-8 text-sm bg-[var(--tokyo-bg-highlight)]/60 border-[var(--tokyo-comment)]/30 text-[var(--tokyo-fg)] focus:border-[var(--tokyo-blue)] transition-colors"
+                    className="h-8 border-[var(--tokyo-comment)]/30 bg-[var(--tokyo-bg-highlight)]/60 pl-9 text-sm text-[var(--tokyo-fg)] transition-colors focus:border-[var(--tokyo-blue)]"
                   />
                 </div>
 
@@ -349,7 +345,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                   >
-                    <Badge className="bg-[var(--tokyo-yellow)]/20 text-[var(--tokyo-yellow)] border border-[var(--tokyo-yellow)]/30 text-xs px-2 py-1">
+                    <Badge className="border border-[var(--tokyo-yellow)]/30 bg-[var(--tokyo-yellow)]/20 px-2 py-1 text-xs text-[var(--tokyo-yellow)]">
                       {highlightedNodes.size} matches
                     </Badge>
                   </motion.div>
@@ -364,7 +360,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => setSearchTerm("")}
-                      className="h-8 px-2 text-xs text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)] transition-all"
+                      className="h-8 px-2 text-xs text-[var(--tokyo-comment)] transition-all hover:bg-[var(--tokyo-bg-highlight)] hover:text-[var(--tokyo-fg)]"
                     >
                       Clear
                     </Button>

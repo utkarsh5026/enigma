@@ -29,13 +29,13 @@ const CustomTabTrigger: React.FC<TabTriggerProps> = ({
 }) => (
   <TabsTrigger
     value={value}
-    className="py-2 px-4 text-sm font-medium relative transition-colors border-b-2 border-transparent data-[state=active]:border-[var(--tokyo-blue)] data-[state=active]:text-[var(--tokyo-blue)] data-[state=active]:bg-transparent text-[var(--tokyo-fg-dark)] hover:text-[var(--tokyo-fg)] bg-transparent rounded-none"
+    className="relative rounded-none border-b-2 border-transparent bg-transparent px-4 py-2 text-sm font-medium text-tokyo-fg-dark transition-colors hover:text-tokyo-fg data-[state=active]:border-tokyo-blue data-[state=active]:bg-transparent data-[state=active]:text-tokyo-blue"
   >
     <div className="flex items-center gap-2">
       {icon}
       <span>{label}</span>
       {badge !== undefined && badge > 0 && (
-        <Badge className="ml-1 text-xs bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)] border-[var(--tokyo-blue)]/30">
+        <Badge className="ml-1 border-(--tokyo-blue)/30 bg-(--tokyo-blue)/20 text-xs text-tokyo-blue">
           {badge}
         </Badge>
       )}
@@ -72,11 +72,14 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
   const { isPhone } = useMobile();
 
   return (
-    <Tabs defaultValue="output" className="h-full flex flex-col">
+    <Tabs
+      defaultValue="output"
+      className="flex h-full max-h-full flex-col overflow-hidden rounded-2xl border-2"
+    >
       {/* Analysis Tabs */}
       {!isPhone && (
-        <div className="shrink-0 border-b border-[var(--tokyo-comment)]/40 bg-[var(--tokyo-bg-dark)]/50 backdrop-blur-sm">
-          <TabsList className="w-full justify-start bg-transparent p-0 h-auto rounded-none">
+        <div className="shrink-0 rounded-2xl border-b border-tokyo-comment/40 bg-(--tokyo-bg-dark)/50 backdrop-blur-sm">
+          <TabsList className="h-auto w-full justify-start rounded-2xl bg-transparent p-0">
             <CustomTabTrigger
               value="output"
               icon={<Monitor size={16} />}
@@ -102,29 +105,29 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({
         </div>
       )}
 
-      <TabsContent value="output" className="flex-1 min-h-0 m-0">
+      <TabsContent value="output" className="m-0 min-h-0 flex-1">
         <OutputPanel />
       </TabsContent>
 
       {/* Tab Content */}
       {!isPhone && (
         <>
-          <TabsContent value="tokens" className="flex-1 min-h-0 m-0">
-            <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+          <TabsContent value="tokens" className="m-0 min-h-0 flex-1">
+            <ScrollArea className="h-full bg-(--tokyo-bg-dark)/30 p-4">
               <TokenDisplay code={code} {...tokenProps} />
               <ScrollBar orientation="vertical" />
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="ast" className="flex-1 min-h-0 m-0">
-            <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30 p-4">
+          <TabsContent value="ast" className="m-0 min-h-0 flex-1">
+            <ScrollArea className="h-full bg-(--tokyo-bg-dark)/30 p-4">
               <ASTDisplay code={code} onHighlightCode={onHighlightCode} />
               <ScrollBar orientation="vertical" />
             </ScrollArea>
           </TabsContent>
 
-          <TabsContent value="execution" className="flex-1 min-h-0 m-0">
-            <ScrollArea className="h-full bg-[var(--tokyo-bg-dark)]/30">
+          <TabsContent value="execution" className="m-0 min-h-0 flex-1">
+            <ScrollArea className="h-full bg-(--tokyo-bg-dark)/30">
               <ExecutionVisualizer
                 code={code}
                 onHighlightCode={onHighlightCode}

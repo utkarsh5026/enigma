@@ -1,95 +1,93 @@
 .direct-value-overlay {
-position: absolute;
-background: linear-gradient(135deg, #7fb654 0%, #65b0e6 100%);
-color: white;
-padding: 4px 8px;
-border-radius: 6px;
-font-family: 'Cascadia Code', 'Fira Code', 'Monaco', monospace;
-font-size: 12px;
-font-weight: 600;
-box-shadow:
+  position: absolute;
+  background: #7fb654;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-family: "Cascadia Code", "Fira Code", "Monaco", monospace;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.3),
     0 1px 3px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
-border: 1px solid rgba(255, 255, 255, 0.2);
-white-space: nowrap;
-z-index: 1001;
-pointer-events: none;
-transform-origin: bottom center;
-animation: directOverlayAppear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+  z-index: 1001;
+  pointer-events: none;
+  transform-origin: bottom center;
+  animation: directOverlayAppear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .direct-value-overlay::before {
-content: '';
-position: absolute;
-top: 100%;
-left: 50%;
-transform: translateX(-50%);
-width: 0;
-height: 0;
-border-left: 6px solid transparent;
-border-right: 6px solid transparent;
-border-top: 6px solid #7dcfff;
-filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #7dcfff;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 @keyframes directOverlayAppear {
-0% {
+  0% {
     opacity: 0;
     transform: translateY(10px) scale(0.8);
-}
+  }
 
-60% {
+  60% {
     opacity: 1;
     transform: translateY(-5px) scale(1.05);
-}
+  }
 
-100% {
+  100% {
     opacity: 1;
     transform: translateY(-8px) scale(1);
-}
+  }
 }
 
 .execution-highlight {
-background: rgba(122, 162, 247, 0.15) !important;
-border: 2px solid rgba(122, 162, 247, 0.6) !important;
-border-radius: 4px !important;
-animation: executionPulse 1.5s ease-in-out infinite;
+  background: rgba(122, 162, 247, 0.15) !important;
+  border: 2px solid rgba(122, 162, 247, 0.6) !important;
+  border-radius: 4px !important;
+  animation: executionPulse 1.5s ease-in-out infinite;
 }
 
 .execution-highlight-current {
-background: rgba(158, 206, 106, 0.2) !important;
-border: 2px solid rgba(158, 206, 106, 0.8) !important;
-border-radius: 4px !important;
-animation: currentExecutionGlow 2s ease-in-out infinite;
+  background: rgba(158, 206, 106, 0.2) !important;
+  border: 2px solid rgba(158, 206, 106, 0.8) !important;
+  border-radius: 4px !important;
+  animation: currentExecutionGlow 2s ease-in-out infinite;
 }
 
 @keyframes executionPulse {
-
-0%,
-100% {
+  0%,
+  100% {
     background: rgba(122, 162, 247, 0.15) !important;
     border-color: rgba(122, 162, 247, 0.6) !important;
-}
+  }
 
-50% {
+  50% {
     background: rgba(122, 162, 247, 0.25) !important;
     border-color: rgba(122, 162, 247, 0.8) !important;
-}
+  }
 }
 
 @keyframes currentExecutionGlow {
-
-0%,
-100% {
+  0%,
+  100% {
     background: rgba(158, 206, 106, 0.2) !important;
     border-color: rgba(158, 206, 106, 0.8) !important;
     box-shadow: 0 0 0 rgba(158, 206, 106, 0.4);
-}
+  }
 
-50% {
+  50% {
     background: rgba(158, 206, 106, 0.3) !important;
     border-color: rgba(158, 206, 106, 1) !important;
     box-shadow: 0 0 8px rgba(158, 206, 106, 0.6);
-}
+  }
 }

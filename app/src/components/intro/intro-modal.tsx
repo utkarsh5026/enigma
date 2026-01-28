@@ -67,16 +67,16 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-4xl max-h-[90vh] m-4 bg-gradient-to-br from-[var(--tokyo-bg)] to-[var(--tokyo-bg-dark)] rounded-2xl border border-[var(--tokyo-comment)]/30 shadow-2xl overflow-hidden z-[50]"
+        className="relative z-[50] m-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-[var(--tokyo-comment)]/30 bg-[var(--tokyo-bg)] shadow-2xl"
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)]/50">
+        <div className="border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)]/50 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <motion.div
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="w-8 h-8 bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] rounded-lg flex items-center justify-center"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--tokyo-blue)]"
               >
                 <svg
                   width="20"
@@ -94,14 +94,14 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
                 <h2 className="text-2xl font-bold text-[var(--tokyo-fg)]">
                   {steps[currentStep].title}
                 </h2>
-                <p className="text-[var(--tokyo-comment)] text-lg">
+                <p className="text-lg text-[var(--tokyo-comment)]">
                   {steps[currentStep].subtitle}
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--tokyo-bg-highlight)]/50 transition-colors text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)]"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--tokyo-comment)] transition-colors hover:bg-[var(--tokyo-bg-highlight)]/50 hover:text-[var(--tokyo-fg)]"
               title="Close"
             >
               <svg
@@ -120,7 +120,7 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content */}
-        <ScrollArea className="px-6 py-6 h-[calc(90vh-200px)]">
+        <ScrollArea className="h-[calc(90vh-200px)] px-6 py-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -135,13 +135,13 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
         </ScrollArea>
 
         {/* Navigation */}
-        <div className="px-6 py-4 border-t border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)]/50 flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)]/50 px-6 py-4">
           <div className="flex space-x-1">
             {steps.map((_, index) => (
               <motion.button
                 key={index}
                 onClick={() => setCurrentStep(index)}
-                className={`w-2 h-2 rounded-full transition-colors ${
+                className={`h-2 w-2 rounded-full transition-colors ${
                   index === currentStep
                     ? "bg-[var(--tokyo-blue)]"
                     : "bg-[var(--tokyo-comment)]"
@@ -156,7 +156,7 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
             {currentStep > 0 && (
               <button
                 onClick={prevStep}
-                className="px-4 py-2 border border-[var(--tokyo-comment)] text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)] rounded-lg transition-colors"
+                className="rounded-lg border border-[var(--tokyo-comment)] px-4 py-2 text-[var(--tokyo-fg)] transition-colors hover:bg-[var(--tokyo-bg-highlight)]"
               >
                 Previous
               </button>
@@ -164,7 +164,7 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
             {currentStep < steps.length - 1 && (
               <button
                 onClick={nextStep}
-                className="px-4 py-2 bg-[var(--tokyo-blue)] hover:bg-[var(--tokyo-blue)]/80 text-white rounded-lg transition-colors flex items-center gap-1"
+                className="flex items-center gap-1 rounded-lg bg-[var(--tokyo-blue)] px-4 py-2 text-white transition-colors hover:bg-[var(--tokyo-blue)]/80"
               >
                 Next
                 <svg

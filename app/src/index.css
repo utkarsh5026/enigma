@@ -1,120 +1,134 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --radius: 0.5rem;
+
+  /* Clean neutral palette */
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.15 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.15 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --tokyo-bg: #16161e;
-  
-  /* Tokyo Night Theme Colors */
-  --tokyo-bg: #1a1b26;
-  --tokyo-bg-dark: #16161e;
-  --tokyo-bg-highlight: #292e42;
-  --tokyo-fg: #a9b1d6;
-  --tokyo-fg-dark: #787c99;
-  --tokyo-comment: #565f89;
-  --tokyo-cyan: #7dcfff;
-  --tokyo-green: #9ece6a;
-  --tokyo-orange: #ff9e64;
-  --tokyo-red: #f7768e;
-  --tokyo-yellow: #e0af68;
-  --tokyo-blue: #7aa2f7;
-  --tokyo-purple: #9d7cd8;
-  
+  --popover-foreground: oklch(0.15 0 0);
+  --primary: oklch(0.25 0 0);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.25 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.5 0 0);
+  --accent: oklch(0.96 0 0);
+  --accent-foreground: oklch(0.25 0 0);
+  --destructive: oklch(0.55 0.2 25);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0.7 0 0);
+
+  /* Simplified chart colors - monochrome with one accent */
+  --chart-1: oklch(0.35 0 0);
+  --chart-2: oklch(0.5 0 0);
+  --chart-3: oklch(0.65 0 0);
+  --chart-4: oklch(0.8 0 0);
+  --chart-5: oklch(0.45 0 0);
+
+  /* Sidebar - consistent with main palette */
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.15 0 0);
+  --sidebar-primary: oklch(0.25 0 0);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.96 0 0);
+  --sidebar-accent-foreground: oklch(0.25 0 0);
+  --sidebar-border: oklch(0.9 0 0);
+  --sidebar-ring: oklch(0.7 0 0);
+
+  /* Tokyo Night Theme Colors - Muted & Minimal */
+  --tokyo-bg: #1e1e24;
+  --tokyo-bg-dark: #18181c;
+  --tokyo-bg-highlight: #2a2a32;
+  --tokyo-fg: #b8bcc8;
+  --tokyo-fg-dark: #8a8d9a;
+  --tokyo-comment: #6b6e7a;
+  --tokyo-cyan: #8ac4d4;
+  --tokyo-green: #a3b87a;
+  --tokyo-orange: #d4a373;
+  --tokyo-red: #d4868c;
+  --tokyo-yellow: #c9b87a;
+  --tokyo-blue: #8aa4d4;
+  --tokyo-purple: #a78bba;
+
   /* Font families */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-family-mono: "Source Code Pro", "Cascadia Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-family-mono:
+    "Source Code Pro", "Cascadia Code", ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --background: oklch(0.12 0 0);
+  --foreground: oklch(0.93 0 0);
+  --card: oklch(0.16 0 0);
+  --card-foreground: oklch(0.93 0 0);
+  --popover: oklch(0.16 0 0);
+  --popover-foreground: oklch(0.93 0 0);
+  --primary: oklch(0.93 0 0);
+  --primary-foreground: oklch(0.12 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.93 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.6 0 0);
+  --accent: oklch(0.22 0 0);
+  --accent-foreground: oklch(0.93 0 0);
+  --destructive: oklch(0.65 0.2 25);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-  
-  /* Tokyo Night Theme Colors - same in dark mode */
-  --tokyo-bg: #1a1b26;
-  --tokyo-bg-dark: #16161e;
-  --tokyo-bg-highlight: #292e42;
-  --tokyo-fg: #a9b1d6;
-  --tokyo-fg-dark: #787c99;
-  --tokyo-comment: #565f89;
-  --tokyo-cyan: #7dcfff;
-  --tokyo-green: #9ece6a;
-  --tokyo-orange: #ff9e64;
-  --tokyo-red: #f7768e;
-  --tokyo-yellow: #e0af68;
-  --tokyo-blue: #7aa2f7;
-  --tokyo-purple: #9d7cd8;
-  
-  /* Font families - same in dark mode */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ring: oklch(0.5 0 0);
+
+  /* Simplified chart colors - monochrome */
+  --chart-1: oklch(0.85 0 0);
+  --chart-2: oklch(0.7 0 0);
+  --chart-3: oklch(0.55 0 0);
+  --chart-4: oklch(0.4 0 0);
+  --chart-5: oklch(0.75 0 0);
+
+  /* Sidebar - consistent with main palette */
+  --sidebar: oklch(0.14 0 0);
+  --sidebar-foreground: oklch(0.93 0 0);
+  --sidebar-primary: oklch(0.93 0 0);
+  --sidebar-primary-foreground: oklch(0.12 0 0);
+  --sidebar-accent: oklch(0.22 0 0);
+  --sidebar-accent-foreground: oklch(0.93 0 0);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.5 0 0);
+
+  /* Tokyo Night Theme Colors - Muted & Minimal */
+  --tokyo-bg: #1e1e24;
+  --tokyo-bg-dark: #18181c;
+  --tokyo-bg-highlight: #2a2a32;
+  --tokyo-fg: #b8bcc8;
+  --tokyo-fg-dark: #8a8d9a;
+  --tokyo-comment: #6b6e7a;
+  --tokyo-cyan: #8ac4d4;
+  --tokyo-green: #a3b87a;
+  --tokyo-orange: #d4a373;
+  --tokyo-red: #d4868c;
+  --tokyo-yellow: #c9b87a;
+  --tokyo-blue: #8aa4d4;
+  --tokyo-purple: #a78bba;
+
+  /* Font families */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: "Roboto Mono", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco,  "Liberation Mono", "Courier New", monospace;
+  --font-mono:
+    "Roboto Mono", Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco,
+    "Liberation Mono", "Courier New", monospace;
 }
-
-
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -152,7 +166,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  
+
   /* Tokyo Night Theme Colors */
   --color-tokyo-bg: var(--tokyo-bg);
   --color-tokyo-bg-dark: var(--tokyo-bg-dark);
@@ -167,14 +181,11 @@
   --color-tokyo-yellow: var(--tokyo-yellow);
   --color-tokyo-blue: var(--tokyo-blue);
   --color-tokyo-purple: var(--tokyo-purple);
-  
+
   /* Font families */
   --font-family-sans: var(--font-sans);
   --font-family-serif: var(--font-serif);
   --font-family-mono: var(--font-family-mono);
-  --font-cascadia-code: "Cascadia Code", var(--font-family-mono);
-  --font-fira-code: "Fira Code", var(--font-family-mono);
-  --font-source-code-pro: "Source Code Pro", var(--font-family-mono);
 }
 
 @layer base {

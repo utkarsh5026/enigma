@@ -4,7 +4,7 @@ export const highlightSyntax = (code: string) => {
   const lines = code.split("\n");
 
   return (
-    <pre className="font-source-code-pro font-semibold text-sm whitespace-pre overflow-x-auto">
+    <pre className="font-source-code-pro overflow-x-auto text-sm font-semibold whitespace-pre">
       {lines.map((line, lineIndex) => {
         // Process line for syntax highlighting
         const result = [];
@@ -134,7 +134,7 @@ export const highlightSyntax = (code: string) => {
         return (
           <div
             key={`line-${lineIndex}`}
-            className="leading-relaxed font-['JetBrains Mono']"
+            className="font-['JetBrains Mono'] leading-relaxed"
           >
             {result}
           </div>

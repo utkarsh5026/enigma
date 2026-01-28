@@ -20,9 +20,7 @@ import {
  * - Boolean conversion: !0, !null, !"", ![]
  * - Sign flipping: -positiveNumber, -(-5)
  */
-export class IndexExpressionEvaluator
-  implements NodeEvaluator<IndexExpression>
-{
+export class IndexExpressionEvaluator implements NodeEvaluator<IndexExpression> {
   public evaluate(
     node: IndexExpression,
     env: Environment,

@@ -18,7 +18,7 @@ const MobileFloatingRunButton: React.FC<MobileFloatingButtonProps> = ({
 }) => {
   return (
     <motion.div
-      className="absolute bottom-4 right-4 z-10"
+      className="absolute right-4 bottom-4 z-10"
       initial={{ scale: 0, rotate: -180 }}
       animate={{ scale: 1, rotate: 0 }}
       transition={{
@@ -33,35 +33,24 @@ const MobileFloatingRunButton: React.FC<MobileFloatingButtonProps> = ({
         whileTap={{ scale: 0.95 }}
         className="relative"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] rounded-full blur-lg opacity-50 animate-pulse" />
+        <div className="absolute inset-0 animate-pulse rounded-full bg-tokyo-green opacity-50 blur-lg" />
 
         <Button
           onClick={handleRunCode}
           disabled={isExecuting || !canRunCode}
-          className={`
-                  relative w-16 h-16 rounded-full
-                  bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan
-                  hover:from-tokyo-green/90 hover:to-tokyo-cyan/90
-                  text-white border-0
-                  shadow-2xl hover:shadow-3xl
-                  transition-all duration-300
-                  flex items-center justify-center
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  ${isExecuting ? "animate-pulse" : ""}
-                  ${!canRunCode ? "opacity-30" : ""}
-                `}
+          className={`hover:shadow-3xl relative flex h-16 w-16 items-center justify-center rounded-full border-0 bg-tokyo-green text-white shadow-2xl transition-all duration-300 hover:bg-tokyo-green/90 disabled:cursor-not-allowed disabled:opacity-50 ${isExecuting ? "animate-pulse" : ""} ${!canRunCode ? "opacity-30" : ""} `}
           title={
             !canRunCode
               ? "Enter some code to run"
               : isExecuting
-              ? "Executing..."
-              : "Run your code"
+                ? "Executing..."
+                : "Run your code"
           }
         >
           {isExecuting ? (
             <Loader2 size={24} className="animate-spin" />
           ) : executionSuccess ? (
-            <Check size={24} className="animate-in zoom-in-50 duration-200" />
+            <Check size={24} className="animate-in duration-200 zoom-in-50" />
           ) : (
             <Play size={24} className="ml-1" />
           )}

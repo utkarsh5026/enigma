@@ -75,7 +75,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   );
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl">
       {!isMobile && (
         <EditorHeader
           code={code}
@@ -93,7 +93,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
       )}
 
       {/* Editor Area */}
-      <div className="flex-1 overflow-hidden relative">
+      <div className="relative flex-1 overflow-hidden">
         <div className="h-full w-full">
           <EnigmaEditor
             code={code}
@@ -126,10 +126,10 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="absolute bottom-4 right-4 bg-[var(--tokyo-red)]/90 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-[var(--tokyo-red)]/30 max-w-md"
+              className="absolute right-4 bottom-4 max-w-md rounded-lg border border-(--tokyo-red)/30 bg-(--tokyo-red)/90 px-3 py-2 text-xs font-medium text-white backdrop-blur-sm"
             >
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
+                <div className="h-2 w-2 rounded-full bg-white"></div>
                 <span className="truncate">{executionError}</span>
               </div>
             </motion.div>
@@ -138,12 +138,12 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
 
         {!code.trim() && (
           <motion.div
-            className="absolute inset-0 bg-[var(--tokyo-bg)]/80 backdrop-blur-sm flex items-center justify-center pointer-events-none z-5"
+            className="pointer-events-none absolute inset-0 z-5 flex items-center justify-center bg-(--tokyo-bg)/80 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="text-center max-w-sm mx-auto px-6">
+            <div className="mx-auto max-w-sm px-6 text-center">
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
@@ -155,14 +155,14 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 }}
                 className="mb-4"
               >
-                <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[var(--tokyo-purple)]/20 to-[var(--tokyo-blue)]/20 border border-[var(--tokyo-purple)]/30 flex items-center justify-center">
-                  <Code size={24} className="text-[var(--tokyo-purple)]" />
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-(--tokyo-purple)/30 bg-(--tokyo-purple)/20">
+                  <Code size={24} className="text-tokyo-purple" />
                 </div>
               </motion.div>
-              <h3 className="text-lg font-medium text-[var(--tokyo-fg)] mb-2">
+              <h3 className="mb-2 text-lg font-medium text-tokyo-fg">
                 Start Coding
               </h3>
-              <p className="text-sm text-[var(--tokyo-comment)] leading-relaxed">
+              <p className="text-sm leading-relaxed text-tokyo-comment">
                 {isMobile
                   ? "Write your Enigma code and tap the run button to execute it"
                   : "Write Enigma code, then use Debug mode for step-by-step execution with live value overlays and highlighting"}

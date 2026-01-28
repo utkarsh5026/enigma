@@ -24,7 +24,7 @@ interface TabButtonProps {
 
 const TabButton: React.FC<TabButtonProps> = ({ tab, isActive, onClick }) => (
   <button
-    className={`px-3 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm font-medium relative transition-colors whitespace-nowrap ${
+    className={`relative px-3 py-3 text-xs font-medium whitespace-nowrap transition-colors sm:px-6 sm:py-4 sm:text-sm ${
       isActive ? "text-tokyo-green" : "text-tokyo-fg-dark hover:text-tokyo-fg"
     }`}
     onClick={() => onClick(tab.id)}
@@ -35,7 +35,7 @@ const TabButton: React.FC<TabButtonProps> = ({ tab, isActive, onClick }) => (
       <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
     </span>
     {isActive && (
-      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-tokyo-green/80 to-tokyo-green/20"></span>
+      <span className="absolute bottom-0 left-0 h-0.5 w-full bg-tokyo-green/50"></span>
     )}
   </button>
 );
@@ -80,23 +80,23 @@ const LanguageGuide: React.FC = () => {
   };
 
   return (
-    <ScrollArea className="w-full py-4 sm:py-8 relative max-h-screen">
-      <div className="relative z-10 mb-8 sm:mb-12 text-center px-4">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-tokyo-green via-tokyo-blue to-tokyo-purple text-transparent bg-clip-text text-center sm:text-left">
+    <ScrollArea className="relative max-h-screen w-full py-4 sm:py-8">
+      <div className="relative z-10 mb-8 px-4 text-center sm:mb-12">
+        <div className="mb-4 flex flex-col items-center justify-center gap-3 sm:mb-6 sm:flex-row sm:gap-4">
+          <h1 className="text-center text-2xl font-bold text-tokyo-green sm:text-left sm:text-3xl lg:text-4xl">
             Enigma Programming Language
           </h1>
         </div>
-        <p className="text-tokyo-fg text-sm sm:text-base lg:text-lg max-w-3xl mx-auto leading-relaxed px-2">
+        <p className="mx-auto max-w-3xl px-2 text-sm leading-relaxed text-tokyo-fg sm:text-base lg:text-lg">
           A dynamically-typed language with first-class functions, closures, and
           a clean, expressive syntax. Designed for readability and productivity.
         </p>
       </div>
 
       {/* Navigation tabs */}
-      <div className="mb-6 sm:mb-10 border-b border-tokyo-comment/40">
+      <div className="mb-6 border-b border-tokyo-comment/40 sm:mb-10">
         <div className="overflow-x-auto">
-          <div className="flex justify-center sm:justify-center min-w-max px-4">
+          <div className="flex min-w-max justify-center px-4 sm:justify-center">
             {tabs.map((tab) => (
               <TabButton
                 key={tab.id}
@@ -109,7 +109,7 @@ const LanguageGuide: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10 px-4">
+      <div className="relative z-10 mx-auto max-w-4xl px-4">
         {renderTabContent()}
       </div>
       <ScrollBar orientation="vertical" />

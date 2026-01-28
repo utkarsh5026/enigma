@@ -39,13 +39,13 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
   return (
     <div className="space-y-4">
       {/* Main Controls */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex flex-wrap items-center gap-3">
         <motion.button
           onClick={prepareExecution}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className={cn(
-            "bg-[var(--tokyo-bg-highlight)] hover:bg-[var(--tokyo-comment)] text-[var(--tokyo-fg)] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors",
+            "flex items-center gap-2 rounded-lg bg-[var(--tokyo-bg-highlight)] px-4 py-2 text-[var(--tokyo-fg)] transition-colors hover:bg-[var(--tokyo-comment)]",
             executionState
               ? "text-[var(--tokyo-red)]"
               : "text-[var(--tokyo-green)] hover:text-[var(--tokyo-fg)]"
@@ -60,7 +60,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-[var(--tokyo-bg-highlight)] hover:bg-[var(--tokyo-comment)] text-[var(--tokyo-fg)] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:text-[var(--tokyo-fg)]"
+              className="flex items-center gap-2 rounded-lg bg-[var(--tokyo-bg-highlight)] px-4 py-2 text-[var(--tokyo-fg)] transition-colors hover:bg-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] disabled:cursor-not-allowed disabled:opacity-50"
               onClick={handleGoBackStep}
               disabled={!executionState}
             >
@@ -68,7 +68,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
               Back
             </motion.button>
           </TooltipTrigger>
-          <TooltipContent className="bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg)] font-cascadia-code">
+          <TooltipContent className="font-cascadia-code bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg)]">
             <p className="text-xs text-[var(--tokyo-fg)]">
               Go back one execution step
               {isHighlightingEnabled && " (with code highlighting)"}
@@ -81,7 +81,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-[var(--tokyo-green)]/80 hover:bg-[var(--tokyo-green)]/10 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors cursor-pointer hover:text-[var(--tokyo-green)] hover:shadow-sm hover:shadow-[var(--tokyo-green)]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex cursor-pointer items-center gap-2 rounded-lg bg-[var(--tokyo-green)]/80 px-4 py-2 text-white transition-colors hover:bg-[var(--tokyo-green)]/10 hover:text-[var(--tokyo-green)] hover:shadow-[var(--tokyo-green)]/20 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
               onClick={executeStep}
               disabled={!executionState || executionState.isComplete}
             >
@@ -92,7 +92,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
               )}
             </motion.button>
           </TooltipTrigger>
-          <TooltipContent className="bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg)] font-cascadia-code">
+          <TooltipContent className="font-cascadia-code bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg)]">
             <p className="text-xs text-tokyo-green">
               Execute next step
               {isHighlightingEnabled &&
@@ -104,12 +104,12 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
       </div>
 
       {executionState?.currentStep && (
-        <div className="bg-[var(--tokyo-bg-highlight)]/30 rounded-lg p-3 border border-[var(--tokyo-comment)]/20">
+        <div className="rounded-lg border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-highlight)]/30 p-3">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-4">
               <span className="text-[var(--tokyo-fg-dark)]">
                 Node:{" "}
-                <span className="text-[var(--tokyo-fg)] font-mono">
+                <span className="font-mono text-[var(--tokyo-fg)]">
                   {executionState.currentStep.node.whatIam().name}
                 </span>
               </span>
@@ -117,7 +117,7 @@ const ExecutionControls: React.FC<ExecutionControlsProps> = ({
               {executionState.currentStep.lineNumber && (
                 <span className="text-[var(--tokyo-fg-dark)]">
                   Position:{" "}
-                  <span className="text-[var(--tokyo-cyan)] font-mono">
+                  <span className="font-mono text-[var(--tokyo-cyan)]">
                     {executionState.currentStep.node.position().line}:
                     {executionState.currentStep.node.position().column}
                   </span>

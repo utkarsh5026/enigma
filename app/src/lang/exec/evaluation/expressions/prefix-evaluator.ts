@@ -22,9 +22,7 @@ import type { Position } from "@/lang/token/token";
  * - Boolean conversion: !0, !null, !"", ![]
  * - Sign flipping: -positiveNumber, -(-5)
  */
-export class PrefixExpressionEvaluator
-  implements NodeEvaluator<PrefixExpression>
-{
+export class PrefixExpressionEvaluator implements NodeEvaluator<PrefixExpression> {
   public evaluate(
     node: PrefixExpression,
     env: Environment,

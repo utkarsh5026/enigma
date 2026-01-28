@@ -23,7 +23,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col font-family-mono">
+    <div className="flex h-screen w-screen flex-col font-family-mono">
       <Router>
         <Routes>
           <Route path="/guide" element={<LanguageGuide />} />

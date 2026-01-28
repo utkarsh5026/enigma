@@ -9,7 +9,7 @@ const Welcome = () => {
         transition={{ delay: 0.2 }}
         className="text-center"
       >
-        <div className="relative mx-auto w-24 h-24 mb-6">
+        <div className="relative mx-auto mb-6 h-24 w-24">
           {/* Animated logo */}
           <motion.div
             animate={{
@@ -20,9 +20,9 @@ const Welcome = () => {
               repeat: Infinity,
               ease: "linear",
             }}
-            className="absolute inset-0 bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] rounded-2xl opacity-20"
+            className="absolute inset-0 rounded-2xl bg-tokyo-blue opacity-20"
           />
-          <div className="relative bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] rounded-2xl p-6 shadow-2xl">
+          <div className="relative rounded-2xl bg-tokyo-blue p-6 shadow-2xl">
             <svg
               width="48"
               height="48"
@@ -45,7 +45,7 @@ const Welcome = () => {
               repeat: Infinity,
               ease: "easeInOut",
             }}
-            className="absolute -top-1 -right-1 w-6 h-6 bg-[var(--tokyo-green)] rounded-full flex items-center justify-center"
+            className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-tokyo-green"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
               <polygon points="12,2 15.09,8.26 22,9 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9 8.91,8.26" />
@@ -54,15 +54,13 @@ const Welcome = () => {
         </div>
       </motion.div>
 
-      <div className="text-center space-y-4">
-        <h3 className="text-2xl font-bold text-[var(--tokyo-fg)]">
-          What is Enigma?
-        </h3>
-        <div className="space-y-3 text-[var(--tokyo-fg-dark)] leading-relaxed">
+      <div className="space-y-4 text-center">
+        <h3 className="text-2xl font-bold text-tokyo-fg">What is Enigma?</h3>
+        <div className="space-y-3 leading-relaxed text-tokyo-fg-dark">
           <p>
-            <strong className="text-[var(--tokyo-blue)]">Enigma</strong> is a
-            modern, educational programming language designed to help you
-            understand how programming languages work under the hood.
+            <strong className="text-tokyo-blue">Enigma</strong> is a modern,
+            educational programming language designed to help you understand how
+            programming languages work under the hood.
           </p>
           <p>
             This interactive environment lets you write code and see exactly how
@@ -75,7 +73,7 @@ const Welcome = () => {
       <div className="grid grid-cols-2 gap-4">
         <motion.div
           whileHover={{ scale: 1.05 }}
-          className="bg-[var(--tokyo-bg-dark)]/50 rounded-lg p-4 border border-[var(--tokyo-comment)]/20"
+          className="rounded-lg border border-(--tokyo-comment)/20 bg-(--tokyo-bg-dark)/50 p-4"
         >
           <svg
             width="20"
@@ -89,16 +87,14 @@ const Welcome = () => {
             <polyline points="16,18 22,12 16,6" />
             <polyline points="8,6 2,12 8,18" />
           </svg>
-          <h4 className="font-semibold text-[var(--tokyo-fg)] mb-1">
-            Learn by Doing
-          </h4>
-          <p className="text-xs text-[var(--tokyo-comment)]">
+          <h4 className="mb-1 font-semibold text-tokyo-fg">Learn by Doing</h4>
+          <p className="text-xs text-tokyo-comment">
             Write real code and see how it's interpreted
           </p>
         </motion.div>
         <motion.div
           whileHover={{ scale: 1.05 }}
-          className="bg-[var(--tokyo-bg-dark)]/50 rounded-lg p-4 border border-[var(--tokyo-comment)]/20"
+          className="rounded-lg border border-(--tokyo-comment)/20 bg-(--tokyo-bg-dark)/50 p-4"
         >
           <svg
             width="20"
@@ -112,10 +108,8 @@ const Welcome = () => {
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-4-8-11-8z" />
             <circle cx="12" cy="12" r="3" />
           </svg>
-          <h4 className="font-semibold text-[var(--tokyo-fg)] mb-1">
-            Visual Debugging
-          </h4>
-          <p className="text-xs text-[var(--tokyo-comment)]">
+          <h4 className="mb-1 font-semibold text-tokyo-fg">Visual Debugging</h4>
+          <p className="text-xs text-tokyo-comment">
             Step through execution with live value overlays
           </p>
         </motion.div>

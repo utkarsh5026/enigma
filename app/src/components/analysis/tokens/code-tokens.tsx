@@ -26,7 +26,7 @@ const CodeTokens: React.FC<CodeTokensProps> = ({
 
   return (
     <div className="space-y-3">
-      <div className="rounded-lg p-4 border border-tokyo-bg-highlight/30 bg-tokyo-bg-dark/40">
+      <div className="rounded-lg border border-tokyo-bg-highlight/30 bg-tokyo-bg-dark/40 p-4">
         {isTokenizing ? (
           <motion.div
             className="flex flex-col items-center justify-center py-12 text-tokyo-blue"
@@ -34,9 +34,9 @@ const CodeTokens: React.FC<CodeTokensProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-tokyo-blue border-t-transparent mb-4" />
+            <div className="mb-4 h-8 w-8 animate-spin rounded-full border-2 border-tokyo-blue border-t-transparent" />
             <p className="text-lg font-medium">Tokenizing your code...</p>
-            <p className="text-tokyo-fg-dark text-sm mt-1">
+            <p className="mt-1 text-sm text-tokyo-fg-dark">
               This may take a moment for complex code
             </p>
           </motion.div>
@@ -73,7 +73,7 @@ const CodeTokens: React.FC<CodeTokensProps> = ({
               <>
                 <Play size={40} className="mb-3 opacity-50" />
                 <p className="text-lg font-medium">Ready to tokenize!</p>
-                <p className="text-tokyo-fg-dark text-sm mt-1">
+                <p className="mt-1 text-sm text-tokyo-fg-dark">
                   Click the "Tokenize Code" button above to analyze your code
                 </p>
               </>
@@ -81,7 +81,7 @@ const CodeTokens: React.FC<CodeTokensProps> = ({
               <>
                 <Terminal size={40} className="mb-3 opacity-50" />
                 <p className="text-lg font-medium">No code to tokenize</p>
-                <p className="text-tokyo-fg-dark text-sm mt-1">
+                <p className="mt-1 text-sm text-tokyo-fg-dark">
                   Enter some code in the editor, then click tokenize to see the
                   analysis
                 </p>

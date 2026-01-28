@@ -26,9 +26,9 @@ const CodeToken: React.FC<CodeTokenProps> = ({
   return (
     <div
       key={`line-${lineNum}`}
-      className="relative text-sm p-2 border-l-2 border-l-tokyo-bg-highlight mb-1 font-source-code-pro bg-tokyo-bg-dark rounded-r min-h-[2rem]"
+      className="font-source-code-pro relative mb-1 min-h-[2rem] rounded-r border-l-2 border-l-tokyo-bg-highlight bg-tokyo-bg-dark p-2 text-sm"
     >
-      <span className="absolute left-2 top-2 select-none text-tokyo-fg-dark w-8 text-right">
+      <span className="absolute top-2 left-2 w-8 text-right text-tokyo-fg-dark select-none">
         {lineNum}
       </span>
 
@@ -67,8 +67,8 @@ const CodeToken: React.FC<CodeTokenProps> = ({
               <Badge
                 variant="outline"
                 className={cn(
-                  "rounded px-1.5 py-0.5 shadow-sm whitespace-nowrap transition-all duration-200",
-                  !shouldShow && "opacity-30 scale-95",
+                  "rounded px-1.5 py-0.5 whitespace-nowrap shadow-sm transition-all duration-200",
+                  !shouldShow && "scale-95 opacity-30",
                   "hover:scale-105 hover:shadow-md"
                 )}
                 onMouseEnter={() => setHoveredToken(token)}

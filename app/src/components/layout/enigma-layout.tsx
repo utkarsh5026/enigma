@@ -6,7 +6,6 @@ import {
   categorizedExamples,
 } from "@/utils/snippets";
 import ToolBar from "./editor-toolbar";
-import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
 import { DesktopLayout, MobileLayout } from "./layouts";
 import { useTokens } from "@/hooks/use-tokens";
@@ -79,7 +78,7 @@ const Enigma: React.FC = () => {
 
   return (
     <motion.div
-      className="h-screen w-screen flex flex-col bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)] overflow-hidden"
+      className="flex h-screen w-screen flex-col overflow-hidden bg-tokyo-bg-dark text-tokyo-fg"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -89,14 +88,14 @@ const Enigma: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.8, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
-            className="bg-tokyo-green/90 text-white rounded-lg px-3 py-2 text-xs shadow-lg backdrop-blur-sm border border-tokyo-green/30"
+            className="rounded-lg border border-tokyo-green/30 bg-tokyo-green/90 px-3 py-2 text-xs text-white shadow-lg backdrop-blur-sm"
           >
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <div className="h-2 w-2 animate-pulse rounded-full bg-white"></div>
               <span className="font-medium">AST ↔ Code Linking Active</span>
             </div>
             {highlightingStats.totalHighlights > 0 && (
-              <div className="text-tokyo-green/20 text-xs mt-1">
+              <div className="mt-1 text-xs text-tokyo-green/20">
                 {highlightingStats.totalHighlights} highlights used
               </div>
             )}
@@ -112,7 +111,7 @@ const Enigma: React.FC = () => {
         categorizedExamples={categorizedExamples}
       />
 
-      <motion.div className="flex-1 min-h-0">
+      <motion.div className="min-h-0 flex-1">
         {isMobile ? (
           <MobileLayout
             code={code}
@@ -127,8 +126,6 @@ const Enigma: React.FC = () => {
           />
         )}
       </motion.div>
-
-      <StatusBar tokens={tokens.length} />
     </motion.div>
   );
 };

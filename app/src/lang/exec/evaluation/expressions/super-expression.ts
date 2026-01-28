@@ -26,9 +26,7 @@ import { AstValidator } from "@/lang/ast/validate";
  * 3. Find method in parent class of execution context
  * 4. Call method with current instance as 'this'
  */
-export class SuperExpressionEvaluator
-  implements NodeEvaluator<SuperExpression>
-{
+export class SuperExpressionEvaluator implements NodeEvaluator<SuperExpression> {
   // 🔑 Reserved environment variable to track current class context
   private static readonly CLASS_CONTEXT_VAR = "__class_context__";
   private static readonly THIS_VARIABLE = "this";

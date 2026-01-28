@@ -52,11 +52,11 @@ const ConsoleHeader: React.FC<ConsoleHeaderProps> = ({
   showCopyConfirmation,
 }: ConsoleHeaderProps) => {
   return (
-    <div className="bg-[var(--tokyo-bg)] border-b border-[var(--tokyo-comment)]/10 px-4 py-2.5 flex items-center justify-between min-h-[44px]">
+    <div className="flex min-h-[44px] items-center justify-between border-b border-[var(--tokyo-comment)]/10 bg-[var(--tokyo-bg)] px-4 py-2.5">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2.5">
           <Terminal size={14} className="text-[var(--tokyo-green)]" />
-          <span className="font-medium text-[var(--tokyo-fg)] text-sm">
+          <span className="text-sm font-medium text-[var(--tokyo-fg)]">
             Console
           </span>
         </div>
@@ -64,7 +64,7 @@ const ConsoleHeader: React.FC<ConsoleHeaderProps> = ({
         {entries.length > 0 && (
           <Badge
             variant="secondary"
-            className="bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg-dark)] text-xs border border-[var(--tokyo-comment)]/20"
+            className="border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-highlight)] text-xs text-[var(--tokyo-fg-dark)]"
           >
             {filteredEntries.length}
             {entries.length !== filteredEntries.length &&
@@ -78,10 +78,10 @@ const ConsoleHeader: React.FC<ConsoleHeaderProps> = ({
               <button
                 key={type}
                 onClick={() => setFilter(type)}
-                className={`px-2 py-1 text-xs rounded transition-all duration-200 ${
+                className={`rounded px-2 py-1 text-xs transition-all duration-200 ${
                   filter === type
-                    ? "bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg)] border border-[var(--tokyo-comment)]/20"
-                    : "text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)]/50"
+                    ? "border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-fg)]"
+                    : "text-[var(--tokyo-comment)] hover:bg-[var(--tokyo-bg-highlight)]/50 hover:text-[var(--tokyo-fg)]"
                 }`}
               >
                 {type} {entryCounts[type] > 0 && `(${entryCounts[type]})`}
@@ -97,14 +97,14 @@ const ConsoleHeader: React.FC<ConsoleHeaderProps> = ({
           <div className="relative">
             <Search
               size={12}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 text-[var(--tokyo-comment)]"
+              className="absolute top-1/2 left-2 -translate-y-1/2 transform text-[var(--tokyo-comment)]"
             />
             <input
               type="text"
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-32 h-7 pl-7 pr-2 bg-[var(--tokyo-bg-highlight)] border border-[var(--tokyo-comment)]/20 rounded text-xs text-[var(--tokyo-fg)] placeholder-[var(--tokyo-comment)] focus:outline-none focus:border-[var(--tokyo-blue)]/50"
+              className="h-7 w-32 rounded border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-highlight)] pr-2 pl-7 text-xs text-[var(--tokyo-fg)] placeholder-[var(--tokyo-comment)] focus:border-[var(--tokyo-blue)]/50 focus:outline-none"
             />
           </div>
         )}

@@ -20,10 +20,10 @@ const OutputPanel: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--tokyo-bg-dark)] border border-[var(--tokyo-comment)]/20 rounded-md overflow-hidden font-mono">
+    <div className="flex h-full flex-col overflow-hidden rounded-md border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-dark)] font-mono">
       {/* Terminal Header */}
       <div
-        className={`shrink-0 bg-[var(--tokyo-bg)] border-b border-[var(--tokyo-comment)]/20 ${
+        className={`shrink-0 border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)] ${
           isPhone ? "px-2 py-1.5" : "px-3 py-2"
         }`}
       >
@@ -52,7 +52,7 @@ const OutputPanel: React.FC = () => {
             onClick={handleClear}
             className={`${
               isPhone ? "h-7 w-7" : "h-6 w-6"
-            } p-0 text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)]`}
+            } p-0 text-[var(--tokyo-comment)] hover:bg-[var(--tokyo-bg-highlight)] hover:text-[var(--tokyo-fg)]`}
             title="Clear terminal"
           >
             <X size={isPhone ? 14 : 12} />
@@ -61,9 +61,9 @@ const OutputPanel: React.FC = () => {
       </div>
 
       {/* Terminal Content */}
-      <div className="flex-1 min-h-0 bg-[var(--tokyo-bg-dark)]">
+      <div className="min-h-0 flex-1 bg-[var(--tokyo-bg-dark)]">
         <ScrollArea className="h-full">
-          <div className={`${isPhone ? "p-2 space-y-1" : "p-4 space-y-1"}`}>
+          <div className={`${isPhone ? "space-y-1 p-2" : "space-y-1 p-4"}`}>
             {entries.length === 0 ? (
               <EmptyTerminalState isMobile={isMobile} isPhone={isPhone} />
             ) : (
@@ -138,14 +138,14 @@ const TerminalEntry: React.FC<TerminalEntryProps> = ({
       }`}
     >
       <span
-        className={`${getTerminalColor(entry.type)} font-bold min-w-0 shrink-0`}
+        className={`${getTerminalColor(entry.type)} min-w-0 shrink-0 font-bold`}
       >
         {getTerminalPrefix(entry.type)}
       </span>
       <span
         className={`${getTerminalColor(
           entry.type
-        )} whitespace-pre-wrap break-words`}
+        )} break-words whitespace-pre-wrap`}
       >
         {entry.content}
       </span>

@@ -20,8 +20,8 @@ const ParserErrors: React.FC<ParserErrorsProps> = ({ errors }) => {
   if (errors.length === 0) return null;
 
   return (
-    <Collapsible className="mb-6 border border-[var(--tokyo-red)] rounded-md overflow-hidden">
-      <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-[var(--tokyo-bg-dark)] hover:bg-[var(--tokyo-bg-highlight)] text-[var(--tokyo-red)] transition-colors focus:outline-none">
+    <Collapsible className="mb-6 overflow-hidden rounded-md border border-[var(--tokyo-red)]">
+      <CollapsibleTrigger className="flex w-full items-center justify-between bg-[var(--tokyo-bg-dark)] p-3 text-[var(--tokyo-red)] transition-colors hover:bg-[var(--tokyo-bg-highlight)] focus:outline-none">
         <div className="flex items-center">
           <AlertTriangle size={16} className="mr-2" />
           <h3 className="font-medium">Parser Errors ({errors.length})</h3>
@@ -30,14 +30,14 @@ const ParserErrors: React.FC<ParserErrorsProps> = ({ errors }) => {
       </CollapsibleTrigger>
 
       <CollapsibleContent>
-        <div className="bg-[var(--tokyo-bg)] p-3 border-t border-[var(--tokyo-red)]/30">
+        <div className="border-t border-[var(--tokyo-red)]/30 bg-[var(--tokyo-bg)] p-3">
           <ul className="space-y-2 text-sm">
             {errors.map((error, index) => (
               <li
                 key={index}
                 className="flex items-start text-[var(--tokyo-red)]/90"
               >
-                <span className="font-mono bg-[var(--tokyo-bg-highlight)] px-1.5 py-0.5 rounded mr-2 text-xs">
+                <span className="mr-2 rounded bg-[var(--tokyo-bg-highlight)] px-1.5 py-0.5 font-mono text-xs">
                   Ln {error.line}, Col {error.column}
                 </span>
                 <span className="opacity-90">{error.message}</span>

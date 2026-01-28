@@ -20,9 +20,7 @@ import { AstValidator } from "@/lang/ast/validate";
  * 3. Look up property in instance or method in class
  * 4. Return property value or bound method
  */
-export class PropertyExpressionEvaluator
-  implements NodeEvaluator<PropertyExpression>
-{
+export class PropertyExpressionEvaluator implements NodeEvaluator<PropertyExpression> {
   evaluate(
     node: PropertyExpression,
     env: Environment,

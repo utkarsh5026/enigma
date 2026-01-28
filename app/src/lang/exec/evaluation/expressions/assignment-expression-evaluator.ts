@@ -16,9 +16,7 @@ import { HashObject, ArrayObject } from "@/lang/exec/objects";
  * 2. Array index assignment: array[0] = value
  * 3. Hash key assignment: hash["key"] = value
  */
-export class AssignmentExpressionEvaluator
-  implements NodeEvaluator<AssignmentExpression>
-{
+export class AssignmentExpressionEvaluator implements NodeEvaluator<AssignmentExpression> {
   public evaluate(
     node: AssignmentExpression,
     env: Environment,

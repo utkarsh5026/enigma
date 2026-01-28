@@ -117,7 +117,7 @@ const EnigmaConsole: React.FC<EnigmaConsoleProps> = ({
 
   return (
     <motion.div
-      className="bg-transparent border-t border-[var(--tokyo-comment)]/20 flex flex-col"
+      className="flex flex-col border-t border-[var(--tokyo-comment)]/20 bg-transparent"
       initial={{ height: 0 }}
       animate={{ height: isMinimized ? 44 : 280 }}
       exit={{ height: 0 }}
@@ -149,14 +149,14 @@ const EnigmaConsole: React.FC<EnigmaConsoleProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="flex-1 overflow-hidden relative"
+            className="relative flex-1 overflow-hidden"
           >
             <ScrollArea
               className="h-full font-mono text-xs"
               onScroll={handleScroll}
               ref={scrollRef}
             >
-              <div className="p-4 space-y-1">
+              <div className="space-y-1 p-4">
                 {filteredEntries.length === 0 ? (
                   <EmptyConsole entries={entries} />
                 ) : (
@@ -178,7 +178,7 @@ const EnigmaConsole: React.FC<EnigmaConsoleProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   onClick={scrollToBottom}
-                  className="absolute bottom-4 right-4 p-2 bg-[var(--tokyo-bg-highlight)] hover:bg-[var(--tokyo-bg-highlight)]/70 text-[var(--tokyo-blue)] rounded border border-[var(--tokyo-comment)]/20 transition-all duration-200"
+                  className="absolute right-4 bottom-4 rounded border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-highlight)] p-2 text-[var(--tokyo-blue)] transition-all duration-200 hover:bg-[var(--tokyo-bg-highlight)]/70"
                   title="Scroll to bottom"
                 >
                   <ArrowDown size={12} />
