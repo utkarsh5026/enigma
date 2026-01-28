@@ -1,6 +1,6 @@
 .direct-value-overlay {
 position: absolute;
-background: linear-gradient(135deg, #7fb654 0%, #65b0e6 100%);
+background: #7fb654;
 color: white;
 padding: 4px 8px;
 border-radius: 6px;

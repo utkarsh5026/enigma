@@ -90,7 +90,7 @@ const GettingStarted = () => {
 
   return (
     <Card className="bg-[var(--tokyo-bg-dark)]/60 border-[var(--tokyo-comment)]/50 backdrop-blur-xl overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--tokyo-yellow)]/5 to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[var(--tokyo-yellow)]/5 pointer-events-none"></div>
       <CardHeader className="pb-2 relative p-4 sm:p-6">
         <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-[var(--tokyo-yellow)]/10 rounded-full filter blur-3xl"></div>
         <CardTitle className="text-lg sm:text-xl font-bold text-[var(--tokyo-fg)] flex items-center gap-2">
@@ -130,7 +130,7 @@ puts(message);  // Outputs: Hello, World!`)}
           ))}
         </ul>
 
-        <div className="bg-gradient-to-br from-tokyo-bg-dark to-tokyo-bg-dark/60 rounded-xl p-4 sm:p-6 border border-tokyo-comment/50 backdrop-blur-md flex flex-col sm:flex-row items-start gap-3 sm:gap-4 relative overflow-hidden">
+        <div className="bg-tokyo-bg-dark rounded-xl p-4 sm:p-6 border border-tokyo-comment/50 backdrop-blur-md flex flex-col sm:flex-row items-start gap-3 sm:gap-4 relative overflow-hidden">
           <div className="absolute -top-10 -left-10 w-16 h-16 sm:w-20 sm:h-20 bg-tokyo-yellow/20 rounded-full filter blur-2xl"></div>
           <div className="absolute -bottom-10 -right-10 w-16 h-16 sm:w-20 sm:h-20 bg-tokyo-yellow/10 rounded-full filter blur-2xl"></div>
           <div className="text-tokyo-yellow bg-tokyo-yellow/10 p-2 rounded-lg flex-shrink-0">

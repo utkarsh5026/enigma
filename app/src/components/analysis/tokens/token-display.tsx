@@ -79,7 +79,7 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <motion.div
-                className="p-2.5 rounded-lg bg-gradient-to-br from-[var(--tokyo-cyan)] to-[var(--tokyo-blue)] shadow-lg"
+                className="p-2.5 rounded-lg bg-[var(--tokyo-cyan)] shadow-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -108,7 +108,7 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({
                       <Button
                         onClick={handleTokenize}
                         disabled={!codeHasContent || isTokenizing}
-                        className="bg-gradient-to-r from-[var(--tokyo-cyan)] to-[var(--tokyo-blue)] hover:from-[var(--tokyo-cyan)]/90 hover:to-[var(--tokyo-blue)]/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-[var(--tokyo-cyan)]/20"
+                        className="bg-[var(--tokyo-cyan)] hover:bg-[var(--tokyo-cyan)]/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-[var(--tokyo-cyan)]/20"
                       >
                         {isTokenizing ? (
                           <Loader2 size={16} className="animate-spin" />

@@ -15,7 +15,7 @@ const ReferenceCard: React.FC = () => {
         <div key={category} className="relative">
           <div className="ml-2 sm:ml-4">
             <h3 className="text-base sm:text-lg font-medium text-tokyo-fg mb-3 sm:mb-4 flex items-center">
-              <span className="bg-gradient-to-r from-tokyo-green to-tokyo-blue bg-clip-text text-transparent">
+              <span className="text-tokyo-green">
                 {category}
               </span>
             </h3>
@@ -23,7 +23,7 @@ const ReferenceCard: React.FC = () => {
               {nodeTypes.map((nodeType) => (
                 <div
                   key={nodeType}
-                  className="bg-gradient-to-br from-tokyo-bg-dark to-tokyo-bg-dark/70 border-none rounded-lg p-3 sm:p-4 backdrop-blur-sm hover:border-tokyo-comment/70 transition-colors duration-300 relative overflow-hidden group"
+                  className="bg-tokyo-bg-dark border-none rounded-lg p-3 sm:p-4 backdrop-blur-sm hover:border-tokyo-comment/70 transition-colors duration-300 relative overflow-hidden group"
                 >
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-2 sm:mb-2.5">
@@ -35,12 +35,12 @@ const ReferenceCard: React.FC = () => {
                         {nodeType}
                       </Badge>
                     </div>
-                    <p className="text-[var(--tokyo-fg)] text-xs sm:text-sm mb-2 sm:mb-3 leading-relaxed">
+                    <p className="text-tokyo-fg text-xs sm:text-sm mb-2 sm:mb-3 leading-relaxed">
                       {nodeDescriptions[nodeType]}
                     </p>
                     {nodeExamples[nodeType] && (
                       <div className="bg-tokyo-bg-dark/80 rounded-md p-2 sm:p-3 text-xs font-mono border border-tokyo-comment/30 backdrop-blur-sm">
-                        <ScrollArea className="h-[80px] sm:h-[100px]" dir="ltr">
+                        <ScrollArea className="h-20 sm:h-25" dir="ltr">
                           <div className="text-xs sm:text-sm">
                             {highlightSyntax(nodeExamples[nodeType])}
                           </div>
@@ -127,7 +127,7 @@ const SyntaxReference = () => {
 
   return (
     <div>
-      <div className="mb-6 sm:mb-8 bg-gradient-to-br from-tokyo-bg-dark to-tokyo-bg-dark/60 rounded-xl p-4 sm:p-6 border-none backdrop-blur-md relative overflow-hidden">
+      <div className="mb-6 sm:mb-8 bg-tokyo-bg-dark rounded-xl p-4 sm:p-6 border-none backdrop-blur-md relative overflow-hidden">
         <h2 className="text-lg sm:text-xl font-bold text-tokyo-fg mb-2 sm:mb-3 relative z-10">
           Syntax Reference
         </h2>
@@ -140,7 +140,7 @@ const SyntaxReference = () => {
 
       <ReferenceCard />
 
-      <div className="mt-8 sm:mt-10 bg-gradient-to-br from-[var(--tokyo-bg-dark)]/80 to-[var(--tokyo-bg-dark)]/60 rounded-xl p-4 sm:p-6 border border-[var(--tokyo-comment)]/50 backdrop-blur-md">
+      <div className="mt-8 sm:mt-10 bg-[var(--tokyo-bg-dark)]/70 rounded-xl p-4 sm:p-6 border border-[var(--tokyo-comment)]/50 backdrop-blur-md">
         <h3 className="text-base sm:text-lg font-medium text-[var(--tokyo-fg)] mb-2 sm:mb-3">
           Understanding AST Nodes
         </h3>

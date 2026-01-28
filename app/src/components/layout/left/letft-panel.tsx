@@ -75,7 +75,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
   );
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden rounded-2xl">
       {!isMobile && (
         <EditorHeader
           code={code}
@@ -126,7 +126,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="absolute bottom-4 right-4 bg-[var(--tokyo-red)]/90 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-[var(--tokyo-red)]/30 max-w-md"
+              className="absolute bottom-4 right-4 bg-(--tokyo-red)/90 text-white px-3 py-2 rounded-lg text-xs font-medium backdrop-blur-sm border border-(--tokyo-red)/30 max-w-md"
             >
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -138,7 +138,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
 
         {!code.trim() && (
           <motion.div
-            className="absolute inset-0 bg-[var(--tokyo-bg)]/80 backdrop-blur-sm flex items-center justify-center pointer-events-none z-5"
+            className="absolute inset-0 bg-(--tokyo-bg)/80 backdrop-blur-sm flex items-center justify-center pointer-events-none z-5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -155,14 +155,14 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
                 }}
                 className="mb-4"
               >
-                <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[var(--tokyo-purple)]/20 to-[var(--tokyo-blue)]/20 border border-[var(--tokyo-purple)]/30 flex items-center justify-center">
-                  <Code size={24} className="text-[var(--tokyo-purple)]" />
+                <div className="w-16 h-16 mx-auto rounded-full bg-(--tokyo-purple)/20 border border-(--tokyo-purple)/30 flex items-center justify-center">
+                  <Code size={24} className="text-tokyo-purple" />
                 </div>
               </motion.div>
-              <h3 className="text-lg font-medium text-[var(--tokyo-fg)] mb-2">
+              <h3 className="text-lg font-medium text-tokyo-fg mb-2">
                 Start Coding
               </h3>
-              <p className="text-sm text-[var(--tokyo-comment)] leading-relaxed">
+              <p className="text-sm text-tokyo-comment leading-relaxed">
                 {isMobile
                   ? "Write your Enigma code and tap the run button to execute it"
                   : "Write Enigma code, then use Debug mode for step-by-step execution with live value overlays and highlighting"}

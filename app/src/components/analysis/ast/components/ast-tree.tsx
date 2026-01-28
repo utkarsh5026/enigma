@@ -49,7 +49,7 @@ const AstTree: React.FC<AstTreeProps> = ({
         key={forceRefresh}
       >
         {/* Connection guide */}
-        <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-tokyo-comment/30 to-transparent" />
+        <div className="absolute left-0 top-0 bottom-0 w-px bg-tokyo-comment/30" />
 
         {/* Root node */}
         <AstNode

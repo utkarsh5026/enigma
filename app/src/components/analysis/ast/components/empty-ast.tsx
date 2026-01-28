@@ -38,22 +38,22 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute inset-0 bg-gradient-to-r from-[var(--tokyo-blue)]/20 via-[var(--tokyo-purple)]/20 to-[var(--tokyo-cyan)]/20 rounded-full blur-2xl"
+          className="absolute inset-0 bg-(--tokyo-blue)/20 rounded-full blur-2xl"
         />
 
         {/* Icon container */}
         <motion.div
           whileHover={{ scale: 1.05, rotate: 5 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="relative bg-gradient-to-br from-[var(--tokyo-bg-highlight)] to-[var(--tokyo-bg-dark)] p-8 rounded-2xl border border-[var(--tokyo-comment)]/30 shadow-2xl"
+          className="relative bg-tokyo-bg-highlight p-8 rounded-2xl border border-tokyo-comment/30 shadow-2xl"
         >
-          <GitBranch size={64} className="text-[var(--tokyo-blue)]" />
+          <GitBranch size={64} className="text-tokyo-blue" />
 
           {/* Floating elements */}
           <motion.div
             animate={{ y: [-2, 2, -2] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-2 -right-2 bg-[var(--tokyo-green)] rounded-full p-1.5"
+            className="absolute -top-2 -right-2 bg-tokyo-green rounded-full p-1.5"
           >
             <Code2 size={12} className="text-white" />
           </motion.div>
@@ -67,13 +67,13 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
         transition={{ duration: 0.6, delay: 0.4 }}
         className="max-w-2xl flex flex-col items-center justify-center"
       >
-        <h3 className="text-2xl lg:text-3xl font-bold text-[var(--tokyo-fg)] mb-4 bg-gradient-to-r from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] bg-clip-text">
+        <h3 className="text-2xl lg:text-3xl font-bold text-tokyo-fg mb-4">
           Ready to Parse Your Code?
         </h3>
 
-        <p className="text-[var(--tokyo-comment)] text-lg leading-relaxed mb-8">
+        <p className="text-tokyo-comment text-lg leading-relaxed mb-8">
           Write some Enigma code in the editor, then hit the{" "}
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] rounded font-mono text-sm">
+          <span className="inline-flex items-center gap-1 px-2 py-1 bg-(--tokyo-green)/20 text-tokyo-green rounded font-mono text-sm">
             <Zap size={12} />
             Parse Code
           </span>{" "}
@@ -110,12 +110,12 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 1.2 }}
-        className="mt-8 p-6 bg-gradient-to-r from-[var(--tokyo-blue)]/10 to-[var(--tokyo-purple)]/10 rounded-2xl border border-[var(--tokyo-blue)]/20 backdrop-blur-sm"
+        className="mt-8 p-6 bg-(--tokyo-blue)/10 rounded-2xl border border-(--tokyo-blue)/20 backdrop-blur-sm"
       >
-        <p className="text-sm text-[var(--tokyo-fg-dark)] mb-2">
+        <p className="text-sm text-tokyo-fg-dark mb-2">
           💡 The AST shows how your code is structured internally
         </p>
-        <p className="text-xs text-[var(--tokyo-comment)]">
+        <p className="text-xs text-tokyo-comment">
           Perfect for understanding parsing, debugging, and learning language
           design
         </p>

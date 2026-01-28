@@ -20,9 +20,9 @@ const Welcome = () => {
               repeat: Infinity,
               ease: "linear",
             }}
-            className="absolute inset-0 bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] rounded-2xl opacity-20"
+            className="absolute inset-0 bg-[var(--tokyo-blue)] rounded-2xl opacity-20"
           />
-          <div className="relative bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] rounded-2xl p-6 shadow-2xl">
+          <div className="relative bg-[var(--tokyo-blue)] rounded-2xl p-6 shadow-2xl">
             <svg
               width="48"
               height="48"

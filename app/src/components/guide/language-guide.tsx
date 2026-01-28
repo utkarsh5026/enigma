@@ -35,7 +35,7 @@ const TabButton: React.FC<TabButtonProps> = ({ tab, isActive, onClick }) => (
       <span className="sm:hidden">{tab.label.split(" ")[0]}</span>
     </span>
     {isActive && (
-      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-tokyo-green/80 to-tokyo-green/20"></span>
+      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-tokyo-green/50"></span>
     )}
   </button>
 );
@@ -83,7 +83,7 @@ const LanguageGuide: React.FC = () => {
     <ScrollArea className="w-full py-4 sm:py-8 relative max-h-screen">
       <div className="relative z-10 mb-8 sm:mb-12 text-center px-4">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-tokyo-green via-tokyo-blue to-tokyo-purple text-transparent bg-clip-text text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-tokyo-green text-center sm:text-left">
             Enigma Programming Language
           </h1>
         </div>

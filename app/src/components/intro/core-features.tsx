@@ -107,7 +107,7 @@ const CoreFeatures = () => {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[var(--tokyo-blue)]/10 to-[var(--tokyo-purple)]/10 rounded-lg p-4 border border-[var(--tokyo-blue)]/20">
+      <div className="bg-[var(--tokyo-blue)]/10 rounded-lg p-4 border border-[var(--tokyo-blue)]/20">
         <h4 className="font-semibold text-[var(--tokyo-fg)] mb-2 flex items-center gap-2">
           <svg
             width="16"

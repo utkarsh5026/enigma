@@ -33,15 +33,15 @@ const MobileFloatingRunButton: React.FC<MobileFloatingButtonProps> = ({
         whileTap={{ scale: 0.95 }}
         className="relative"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] rounded-full blur-lg opacity-50 animate-pulse" />
+        <div className="absolute inset-0 bg-tokyo-green rounded-full blur-lg opacity-50 animate-pulse" />
 
         <Button
           onClick={handleRunCode}
           disabled={isExecuting || !canRunCode}
           className={`
                   relative w-16 h-16 rounded-full
-                  bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan
-                  hover:from-tokyo-green/90 hover:to-tokyo-cyan/90
+                  bg-tokyo-green
+                  hover:bg-tokyo-green/90
                   text-white border-0
                   shadow-2xl hover:shadow-3xl
                   transition-all duration-300
@@ -54,8 +54,8 @@ const MobileFloatingRunButton: React.FC<MobileFloatingButtonProps> = ({
             !canRunCode
               ? "Enter some code to run"
               : isExecuting
-              ? "Executing..."
-              : "Run your code"
+                ? "Executing..."
+                : "Run your code"
           }
         >
           {isExecuting ? (

@@ -6,7 +6,6 @@ import {
   categorizedExamples,
 } from "@/utils/snippets";
 import ToolBar from "./editor-toolbar";
-import StatusBar from "./status-bar";
 import { useMobile } from "@/hooks/use-mobile";
 import { DesktopLayout, MobileLayout } from "./layouts";
 import { useTokens } from "@/hooks/use-tokens";
@@ -79,7 +78,7 @@ const Enigma: React.FC = () => {
 
   return (
     <motion.div
-      className="h-screen w-screen flex flex-col bg-[var(--tokyo-bg)] text-[var(--tokyo-fg)] overflow-hidden"
+      className="h-screen w-screen flex flex-col bg-tokyo-bg-dark text-tokyo-fg overflow-hidden"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -127,8 +126,6 @@ const Enigma: React.FC = () => {
           />
         )}
       </motion.div>
-
-      <StatusBar tokens={tokens.length} />
     </motion.div>
   );
 };

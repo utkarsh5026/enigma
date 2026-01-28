@@ -1,5 +1,5 @@
 import React from "react";
-import { FileCode, Play, Loader2, Check, Bug, XCircle } from "lucide-react";
+import { Play, Loader2, Check, Bug, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -39,19 +39,17 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
 }) => {
   return (
     <motion.div
-      className="shrink-0 border-b border-[var(--tokyo-comment)]/20 bg-gradient-to-r from-[var(--tokyo-bg)] to-[var(--tokyo-bg-dark)]/90 backdrop-blur-sm"
+      className="shrink-0 border-b border-(--tokyo-comment)/20 bg-tokyo-bg backdrop-blur-sm"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-center justify-between px-4 py-3">
-        {/* File Info */}
         <div className="flex items-center gap-3">
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="p-2 rounded-lg bg-gradient-to-br from-[var(--tokyo-purple)]/20 to-[var(--tokyo-blue)]/20 border border-[var(--tokyo-purple)]/30"
+            className=""
           >
-            <FileCode size={16} className="text-[var(--tokyo-purple)]" />
           </motion.div>
         </div>
 
@@ -65,11 +63,10 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                   onClick={onToggleStepMode}
                   variant={isStepMode ? "default" : "outline"}
                   size="sm"
-                  className={`px-3 py-1.5 text-xs ${
-                    isStepMode
-                      ? "bg-[var(--tokyo-red)] hover:bg-[var(--tokyo-red)]/80 text-white border-[var(--tokyo-red)]"
-                      : "border-[var(--tokyo-comment)]/30 text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-blue)]/10 hover:border-[var(--tokyo-blue)]/50"
-                  }`}
+                  className={`px-3 py-1.5 text-xs ${isStepMode
+                    ? "bg-tokyo-red hover:bg-(--tokyo-red)/80 text-white border-tokyo-red"
+                    : "border-tokyo-comment/30 text-tokyo-fg hover:bg-(--tokyo-blue)/10 hover:border-(--tokyo-blue)/50"
+                    }`}
                 >
                   {isStepMode ? (
                     <>
@@ -119,10 +116,9 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                 flex items-center gap-2
                 shadow-lg hover:shadow-xl
                 border-0
-                ${
-                  executionSuccess
-                    ? "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan text-white"
-                    : "bg-gradient-to-r from-tokyo-green/10 to-tokyo-cyan hover:from-tokyo-green/90 hover:to-tokyo-cyan/90 text-white"
+                ${executionSuccess
+                  ? "bg-tokyo-green text-white"
+                  : "bg-tokyo-green hover:bg-tokyo-green/90 text-white"
                 }
                 disabled:opacity-50 disabled:cursor-not-allowed
                 disabled:hover:shadow-lg
@@ -132,10 +128,10 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                 isStepMode
                   ? "Use debug controls for step execution"
                   : !code.trim()
-                  ? "Enter some code to run"
-                  : isExecuting
-                  ? "Executing..."
-                  : "Run your code"
+                    ? "Enter some code to run"
+                    : isExecuting
+                      ? "Executing..."
+                      : "Run your code"
               }
             >
               {isExecuting ? (

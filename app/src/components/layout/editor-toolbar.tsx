@@ -37,18 +37,17 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
   return (
     <motion.div
-      className="border-b border-[var(--tokyo-comment)]/20 bg-gradient-to-r from-[var(--tokyo-bg)] via-[var(--tokyo-bg-dark)]/90 to-[var(--tokyo-bg)] backdrop-blur-md relative overflow-hidden"
+      className="border-b border-(--tokyo-comment)/20 bg-tokyo-bg backdrop-blur-md relative overflow-hidden"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--tokyo-purple)]/5 to-transparent" />
+      <div className="absolute inset-0 bg-(--tokyo-purple)/5" />
 
       <div
-        className={`relative z-10 flex items-center justify-between ${
-          isPhone ? "px-3 py-2" : "px-4 py-3"
-        }`}
+        className={`relative z-10 flex items-center justify-between ${isPhone ? "px-3 py-2" : "px-4 py-3"
+          }`}
       >
         {/* Brand Section */}
         <div className="flex items-center gap-3 min-w-0">
@@ -58,12 +57,11 @@ const ToolBar: React.FC<ToolBarProps> = ({
             whileTap={{ scale: 0.95 }}
           >
             {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] rounded-xl blur-sm opacity-50" />
+            <div className="absolute inset-0 bg-tokyo-blue rounded-xl blur-sm opacity-50" />
 
             <div
-              className={`relative rounded-xl bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] shadow-lg ${
-                isPhone ? "p-2" : "p-2.5"
-              }`}
+              className={`relative rounded-xl bg-tokyo-blue shadow-lg ${isPhone ? "p-2" : "p-2.5"
+                }`}
             >
               <Terminal size={isPhone ? 16 : 20} className="text-white" />
             </div>
@@ -71,9 +69,8 @@ const ToolBar: React.FC<ToolBarProps> = ({
 
           <div className="min-w-0 flex-1">
             <motion.h1
-              className={`font-bold bg-gradient-to-r from-[var(--tokyo-fg)] to-[var(--tokyo-blue)] bg-clip-text text-transparent ${
-                isPhone ? "text-base" : "text-xl"
-              }`}
+              className={`font-bold text-[var(--tokyo-fg)] ${isPhone ? "text-base" : "text-xl"
+                }`}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -111,7 +108,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
           </motion.div>
 
           {/* Subtle divider */}
-          <div className="w-px h-5 bg-gradient-to-b from-transparent via-[var(--tokyo-comment)]/30 to-transparent" />
+          <div className="w-px h-5 bg-[var(--tokyo-comment)]/30" />
 
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -144,7 +141,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
       </div>
 
       {/* Bottom gradient line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--tokyo-purple)]/50 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-[var(--tokyo-purple)]/50" />
     </motion.div>
   );
 };

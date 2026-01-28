@@ -67,7 +67,7 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-4xl max-h-[90vh] m-4 bg-gradient-to-br from-[var(--tokyo-bg)] to-[var(--tokyo-bg-dark)] rounded-2xl border border-[var(--tokyo-comment)]/30 shadow-2xl overflow-hidden z-[50]"
+        className="relative w-full max-w-4xl max-h-[90vh] m-4 bg-[var(--tokyo-bg)] rounded-2xl border border-[var(--tokyo-comment)]/30 shadow-2xl overflow-hidden z-[50]"
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)]/50">
@@ -76,7 +76,7 @@ const IntroModal: React.FC<IntroModalProps> = ({ isOpen, onClose }) => {
               <motion.div
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="w-8 h-8 bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] rounded-lg flex items-center justify-center"
+                className="w-8 h-8 bg-[var(--tokyo-blue)] rounded-lg flex items-center justify-center"
               >
                 <svg
                   width="20"

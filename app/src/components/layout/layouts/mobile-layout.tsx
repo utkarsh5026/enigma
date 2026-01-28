@@ -70,7 +70,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
 
       {/* Enhanced Mobile Analysis Button */}
       <motion.div
-        className="shrink-0 p-3 bg-gradient-to-r from-[var(--tokyo-bg-dark)]/95 to-[var(--tokyo-bg)]/95 backdrop-blur-md border-t border-[var(--tokyo-comment)]/20"
+        className="shrink-0 p-3 bg-(--tokyo-bg-dark)/95 backdrop-blur-md border-t border-(--tokyo-comment)/20"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
@@ -79,19 +79,19 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
           <DrawerTrigger asChild>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
-                className="w-full relative overflow-hidden bg-gradient-to-r from-[var(--tokyo-purple)]/10 to-[var(--tokyo-blue)]/10 hover:from-[var(--tokyo-purple)]/20 hover:to-[var(--tokyo-blue)]/20 text-[var(--tokyo-fg)] border border-[var(--tokyo-comment)]/30 hover:border-[var(--tokyo-purple)]/50 transition-all duration-300 touch-manipulation active:scale-95"
+                className="w-full relative overflow-hidden bg-(--tokyo-purple)/10 hover:bg-(--tokyo-purple)/20 text-tokyo-fg border border-tokyo-comment/30 hover:border-(--tokyo-purple)/50 transition-all duration-300 touch-manipulation active:scale-95"
                 size="lg"
                 variant="outline"
               >
                 {/* Background glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--tokyo-purple)]/5 to-[var(--tokyo-blue)]/5 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-(--tokyo-purple)/5 opacity-0 hover:opacity-100 transition-opacity duration-300" />
 
                 <div className="relative z-10 flex items-center justify-between w-full">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                       <BarChart3
                         size={18}
-                        className="text-[var(--tokyo-purple)]"
+                        className="text-tokyo-purple"
                       />
                       <span className="font-medium">Analysis & Output</span>
                     </div>
@@ -108,7 +108,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                             damping: 20,
                           }}
                         >
-                          <Badge className="bg-[var(--tokyo-purple)]/20 text-[var(--tokyo-purple)] border-[var(--tokyo-purple)]/30 text-xs px-2 py-0.5">
+                          <Badge className="bg-(--tokyo-purple)/20 text-tokyo-purple border-(--tokyo-purple)/30 text-xs px-2 py-0.5">
                             {statusInfo.count}
                           </Badge>
                         </motion.div>
@@ -128,7 +128,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                       >
                         <Activity
                           size={14}
-                          className="text-[var(--tokyo-yellow)]"
+                          className="text-tokyo-yellow"
                         />
                       </motion.div>
                     )}
@@ -149,9 +149,9 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
             </motion.div>
           </DrawerTrigger>
 
-          <DrawerContent className="bg-gradient-to-br from-[var(--tokyo-bg)]/98 to-[var(--tokyo-bg-dark)]/98 backdrop-blur-xl max-w-full h-[85vh] max-h-[calc(100vh-2rem)] border-0 rounded-t-3xl shadow-2xl font-cascadia-code">
-            <DrawerHeader className="border-b border-[var(--tokyo-comment)]/20 p-4 flex-shrink-0 bg-transparent backdrop-blur-sm">
-              <DrawerTitle className="text-lg font-semibold text-[var(--tokyo-fg)]">
+          <DrawerContent className="bg-(--tokyo-bg)/98 backdrop-blur-xl max-w-full h-[85vh] max-h-[calc(100vh-2rem)] border-0 rounded-t-3xl shadow-2xl font-cascadia-code">
+            <DrawerHeader className="border-b border-(--tokyo-comment)/20 p-4 shrink-0 bg-transparent backdrop-blur-sm">
+              <DrawerTitle className="text-lg font-semibold text-tokyo-fg">
                 Code Output
               </DrawerTitle>
             </DrawerHeader>

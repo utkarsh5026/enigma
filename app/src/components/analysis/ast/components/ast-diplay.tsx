@@ -180,7 +180,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <motion.div
-                className="p-2.5 rounded-lg bg-gradient-to-br from-[var(--tokyo-blue)] to-[var(--tokyo-purple)] shadow-lg"
+                className="p-2.5 rounded-lg bg-[var(--tokyo-blue)] shadow-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -209,7 +209,7 @@ const ASTDisplay: React.FC<ASTDisplayProps> = ({ code, onHighlightCode }) => {
                       <Button
                         onClick={parse}
                         disabled={isParsing || !canParse}
-                        className="bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] hover:from-[var(--tokyo-green)]/90 hover:to-[var(--tokyo-cyan)]/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-[var(--tokyo-green)]/20"
+                        className="bg-[var(--tokyo-green)] hover:bg-[var(--tokyo-green)]/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-[var(--tokyo-green)]/20"
                       >
                         {isParsing ? (
                           <Loader2 size={16} className="animate-spin" />

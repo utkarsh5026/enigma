@@ -52,22 +52,22 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   );
   return (
     <ResizablePanelGroup direction="horizontal" className="h-full">
-      <ResizablePanel defaultSize={65} minSize={40}>
+      <ResizablePanel defaultSize={65} minSize={40} className="m-4">
         <LeftPanel
           code={code}
           onCodeChange={handleCodeChange}
-          setActiveTab={() => {}}
+          setActiveTab={() => { }}
           onHighlightingReady={handleHighlightingReady}
         />
       </ResizablePanel>
 
       <ResizableHandle
         withHandle
-        className="bg-[var(--tokyo-comment)]/10 hover:bg-[var(--tokyo-purple)]/20 transition-colors duration-200"
+        className="bg-(--tokyo-comment)/10 hover:bg-(--tokyo-purple)/20 transition-colors duration-200"
       />
 
       <ResizablePanel defaultSize={35} minSize={30}>
-        <div className="h-full flex flex-col bg-gradient-to-br from-[var(--tokyo-bg-dark)]/50 to-[var(--tokyo-bg)]/80">
+        <div className="h-full flex flex-col bg-tokyo-bg-dark/60 m-4">
           <AnalysisContent
             tokenProps={tokenProps}
             code={code}

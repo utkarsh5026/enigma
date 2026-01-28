@@ -24,7 +24,7 @@ const GetStarted: React.FC<GetStartedProps> = ({
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] rounded-full mb-4 shadow-2xl"
+          className="inline-flex items-center justify-center w-20 h-20 bg-[var(--tokyo-green)] rounded-full mb-4 shadow-2xl"
         >
           <svg
             width="32"
@@ -128,7 +128,7 @@ const GetStarted: React.FC<GetStartedProps> = ({
       <div className="flex flex-col sm:flex-row gap-3 pt-4">
         <button
           onClick={onClose}
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-[var(--tokyo-green)] to-[var(--tokyo-cyan)] hover:opacity-90 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2"
+          className="flex-1 px-6 py-3 bg-[var(--tokyo-green)] hover:opacity-90 text-white rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <polygon points="5,3 19,12 5,21" />

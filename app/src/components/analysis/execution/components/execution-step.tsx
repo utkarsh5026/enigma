@@ -82,7 +82,7 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
         {/* Compact Progress Bar */}
         <div className="h-1 bg-[var(--tokyo-bg-highlight)] rounded-full overflow-hidden mb-4">
           <motion.div
-            className="h-full bg-gradient-to-r from-[var(--tokyo-blue)] to-[var(--tokyo-cyan)] rounded-full"
+            className="h-full bg-[var(--tokyo-blue)] rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${(stepNumber / stepCount) * 100}%` }}
             transition={{ duration: 0.3 }}

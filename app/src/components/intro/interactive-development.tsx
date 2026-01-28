@@ -142,7 +142,7 @@ const InteractiveDevelopment = () => {
         ))}
       </div>
 
-      <div className="bg-gradient-to-r from-[var(--tokyo-green)]/10 to-[var(--tokyo-blue)]/10 rounded-lg p-4 border border-[var(--tokyo-green)]/20">
+      <div className="bg-[var(--tokyo-green)]/10 rounded-lg p-4 border border-[var(--tokyo-green)]/20">
         <h4 className="font-semibold text-[var(--tokyo-fg)] mb-2 flex items-center gap-2">
           <svg
             width="16"
