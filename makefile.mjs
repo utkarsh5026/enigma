@@ -72,10 +72,60 @@ const tasks = {
     category: "Quality",
     action: runPreCommit,
   },
+  test: {
+    description: "Run all tests",
+    category: "Testing",
+    action: () => runNpmCommand("test"),
+  },
+  "test-watch": {
+    description: "Run tests in watch mode",
+    category: "Testing",
+    action: () => runNpmCommand("test:watch"),
+  },
+  validate: {
+    description: "Run lint, typecheck, and format-check",
+    category: "Quality",
+    action: runValidate,
+  },
+  ci: {
+    description: "Run all CI checks (validate + test + build)",
+    category: "Quality",
+    action: runCI,
+  },
+  update: {
+    description: "Update dependencies",
+    category: "Maintenance",
+    action: () => runCommand("npm", ["update"]),
+  },
+  outdated: {
+    description: "Check for outdated dependencies",
+    category: "Maintenance",
+    action: () => runCommand("npm", ["outdated"]),
+  },
+  audit: {
+    description: "Run security audit",
+    category: "Maintenance",
+    action: () => runCommand("npm", ["audit"]),
+  },
+  "audit-fix": {
+    description: "Fix security vulnerabilities",
+    category: "Maintenance",
+    action: () => runCommand("npm", ["audit", "fix"]),
+  },
   clean: {
     description: "Remove node_modules and dist",
     category: "Maintenance",
     action: cleanProject,
+  },
+  "clean-cache": {
+    description: "Clear build caches",
+    category: "Maintenance",
+    action: cleanCache,
+  },
+  "fresh-install": {
+    description: "Clean and reinstall dependencies",
+    category: "Maintenance",
+    action: runFreshInstall,
   },
 };
 
@@ -200,6 +250,100 @@ async function cleanProject() {
   }
 
   console.log(chalk.green("✓ Done!"));
+}
+
+async function cleanCache() {
+  console.log(chalk.cyan("Clearing caches..."));
+
+  const cachePaths = [
+    join(APP_DIR, ".cache"),
+    join(APP_DIR, ".vite"),
+    join(APP_DIR, "node_modules/.vite"),
+  ];
+
+  for (const path of cachePaths) {
+    if (existsSync(path)) {
+      console.log(chalk.dim(`  Removing ${path}...`));
+      await rm(path, { recursive: true, force: true });
+    }
+  }
+
+  console.log(chalk.green("✓ Caches cleared!"));
+}
+
+async function runValidate() {
+  console.log(chalk.bold.cyan("Running validation checks..."));
+  console.log();
+
+  const checks = [
+    { name: "ESLint", fn: () => runNpmCommand("lint") },
+    { name: "TypeScript", fn: runTypeCheck },
+    { name: "Format Check", fn: () => runNpmCommand("format:check") },
+  ];
+
+  for (const check of checks) {
+    try {
+      console.log(chalk.bold.yellow(`\n▶ Running ${check.name}...`));
+      console.log(chalk.dim("─".repeat(50)));
+      await check.fn();
+    } catch (error) {
+      console.log();
+      console.log(chalk.bold.red(`✗ ${check.name} failed!`));
+      console.log(chalk.red(`Error: ${error.message}`));
+      console.log();
+      console.log(chalk.dim("Fix the issues above and try again."));
+      process.exit(1);
+    }
+  }
+
+  console.log();
+  console.log(chalk.bold.green("═".repeat(50)));
+  console.log(chalk.bold.green("✓ All validation checks passed!"));
+  console.log(chalk.bold.green("═".repeat(50)));
+  console.log();
+}
+
+async function runCI() {
+  console.log(chalk.bold.cyan("Running CI checks..."));
+  console.log();
+
+  const checks = [
+    { name: "ESLint", fn: () => runNpmCommand("lint") },
+    { name: "TypeScript", fn: runTypeCheck },
+    { name: "Format Check", fn: () => runNpmCommand("format:check") },
+    { name: "Tests", fn: () => runNpmCommand("test") },
+    { name: "Build", fn: () => runNpmCommand("build") },
+  ];
+
+  for (const check of checks) {
+    try {
+      console.log(chalk.bold.yellow(`\n▶ Running ${check.name}...`));
+      console.log(chalk.dim("─".repeat(50)));
+      await check.fn();
+    } catch (error) {
+      console.log();
+      console.log(chalk.bold.red(`✗ ${check.name} failed!`));
+      console.log(chalk.red(`Error: ${error.message}`));
+      console.log();
+      console.log(chalk.dim("Fix the issues above and try again."));
+      process.exit(1);
+    }
+  }
+
+  console.log();
+  console.log(chalk.bold.green("═".repeat(50)));
+  console.log(chalk.bold.green("✓ All CI checks passed!"));
+  console.log(chalk.bold.green("═".repeat(50)));
+  console.log();
+}
+
+async function runFreshInstall() {
+  console.log(chalk.bold.cyan("Running fresh install..."));
+  console.log();
+
+  await cleanProject();
+  console.log();
+  await runNpmInstall();
 }
 
 function showHelp() {
