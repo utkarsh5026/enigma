@@ -14,9 +14,7 @@ import { NodeEvaluator, Environment, BaseObject } from "@/lang/exec/core";
  * - Multi-parameter: function(a, b, c) { return a + b + c; }
  * - No parameters: function() { return "Hello World"; }
  */
-export class FunctionLiteralEvaluator
-  implements NodeEvaluator<FunctionLiteral>
-{
+export class FunctionLiteralEvaluator implements NodeEvaluator<FunctionLiteral> {
   public evaluate(node: FunctionLiteral, env: Environment): BaseObject {
     const functionObject = new FunctionObject(node.parameters, node.body, env);
     return functionObject;

@@ -99,11 +99,11 @@ const EnigmaEditor = forwardRef<EnigmaEditorRef, EnhancedEnigmaEditorProps>(
     if (!isReady) {
       return (
         <div
-          className={`h-full w-full flex items-center justify-center bg-[var(--tokyo-bg-dark)] ${className}`}
+          className={`flex h-full w-full items-center justify-center bg-[var(--tokyo-bg-dark)] ${className}`}
         >
           <div className="flex flex-col items-center space-y-4">
             <Loader2 className="h-8 w-8 animate-spin text-[var(--tokyo-purple)]" />
-            <p className="text-[var(--tokyo-fg-dark)] text-sm">
+            <p className="text-sm text-[var(--tokyo-fg-dark)]">
               Loading Editor...
             </p>
           </div>
@@ -115,13 +115,13 @@ const EnigmaEditor = forwardRef<EnigmaEditorRef, EnhancedEnigmaEditorProps>(
       <div className={`relative h-full w-full ${className}`}>
         {/* Enhanced Loading Overlay */}
         {isLoading && (
-          <div className="absolute inset-0 bg-[var(--tokyo-bg-dark)] flex items-center justify-center z-50 transition-opacity duration-300">
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-[var(--tokyo-bg-dark)] transition-opacity duration-300">
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
-                <Code2 className="h-12 w-12 text-[var(--tokyo-purple)] animate-pulse" />
-                <Zap className="h-6 w-6 text-[var(--tokyo-yellow)] absolute -top-1 -right-1 animate-bounce" />
+                <Code2 className="h-12 w-12 animate-pulse text-[var(--tokyo-purple)]" />
+                <Zap className="absolute -top-1 -right-1 h-6 w-6 animate-bounce text-[var(--tokyo-yellow)]" />
               </div>
-              <p className="text-[var(--tokyo-fg-dark)] text-sm font-medium">
+              <p className="text-sm font-medium text-[var(--tokyo-fg-dark)]">
                 Initializing Enhanced Editor...
               </p>
               <div className="text-xs text-[var(--tokyo-comment)]">
@@ -132,7 +132,7 @@ const EnigmaEditor = forwardRef<EnigmaEditorRef, EnhancedEnigmaEditorProps>(
         )}
 
         {/* Enhanced Editor with Debug Support */}
-        <div className="h-full w-full relative">
+        <div className="relative h-full w-full">
           <CustomEditor
             code={code}
             onCodeChange={onCodeChange}
@@ -142,7 +142,7 @@ const EnigmaEditor = forwardRef<EnigmaEditorRef, EnhancedEnigmaEditorProps>(
 
           {/* Debug overlay indicator */}
           {!isLoading && (
-            <div className="absolute top-2 right-2 text-xs text-[var(--tokyo-comment)]/50 pointer-events-none">
+            <div className="pointer-events-none absolute top-2 right-2 text-xs text-[var(--tokyo-comment)]/50">
               Enhanced Debug Mode
             </div>
           )}

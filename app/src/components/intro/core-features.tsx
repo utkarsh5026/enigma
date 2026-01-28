@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 const CoreFeatures = () => {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {[
           {
             icon: (
@@ -89,26 +89,26 @@ const CoreFeatures = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-[var(--tokyo-bg-dark)]/30 rounded-lg p-4 border border-[var(--tokyo-comment)]/20 hover:border-[var(--tokyo-blue)]/30 transition-colors"
+            className="rounded-lg border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-dark)]/30 p-4 transition-colors hover:border-[var(--tokyo-blue)]/30"
           >
-            <div className="flex items-center gap-2 mb-2">
+            <div className="mb-2 flex items-center gap-2">
               <div className={feature.color}>{feature.icon}</div>
               <h4 className="font-semibold text-[var(--tokyo-fg)]">
                 {feature.title}
               </h4>
             </div>
-            <p className="text-xs text-[var(--tokyo-comment)] mb-3">
+            <p className="mb-3 text-xs text-[var(--tokyo-comment)]">
               {feature.desc}
             </p>
-            <div className="bg-[var(--tokyo-bg)] rounded p-2 font-mono text-xs text-[var(--tokyo-fg)]">
+            <div className="rounded bg-[var(--tokyo-bg)] p-2 font-mono text-xs text-[var(--tokyo-fg)]">
               {feature.example}
             </div>
           </motion.div>
         ))}
       </div>
 
-      <div className="bg-[var(--tokyo-blue)]/10 rounded-lg p-4 border border-[var(--tokyo-blue)]/20">
-        <h4 className="font-semibold text-[var(--tokyo-fg)] mb-2 flex items-center gap-2">
+      <div className="rounded-lg border border-[var(--tokyo-blue)]/20 bg-[var(--tokyo-blue)]/10 p-4">
+        <h4 className="mb-2 flex items-center gap-2 font-semibold text-[var(--tokyo-fg)]">
           <svg
             width="16"
             height="16"
@@ -121,10 +121,10 @@ const CoreFeatures = () => {
           </svg>
           Object-Oriented Programming
         </h4>
-        <p className="text-sm text-[var(--tokyo-comment)] mb-3">
+        <p className="mb-3 text-sm text-[var(--tokyo-comment)]">
           Full OOP support with classes, inheritance, and polymorphism:
         </p>
-        <div className="bg-[var(--tokyo-bg)] rounded p-3 font-mono text-xs text-[var(--tokyo-fg)]">
+        <div className="rounded bg-[var(--tokyo-bg)] p-3 font-mono text-xs text-[var(--tokyo-fg)]">
           {`class Animal {
   constructor(name) {
     this.name = name

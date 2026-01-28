@@ -58,15 +58,15 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
   };
 
   return (
-    <div className="w-full h-screen bg-[var(--tokyo-bg-dark)] text-[var(--tokyo-fg)] flex flex-col">
+    <div className="flex h-screen w-full flex-col bg-[var(--tokyo-bg-dark)] text-[var(--tokyo-fg)]">
       {/* Header Controls */}
       <div className="shrink-0 border-b border-[var(--tokyo-comment)]/30 bg-[var(--tokyo-bg)]/80 backdrop-blur-sm">
         <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <motion.div className="relative" whileHover={{ scale: 1.05 }}>
-                <div className="absolute inset-0 bg-[var(--tokyo-blue)]/20 rounded-lg blur-sm" />
-                <div className="relative bg-[var(--tokyo-blue)] p-2 rounded-lg">
+                <div className="absolute inset-0 rounded-lg bg-[var(--tokyo-blue)]/20 blur-sm" />
+                <div className="relative rounded-lg bg-[var(--tokyo-blue)] p-2">
                   <Terminal size={20} className="text-white" />
                 </div>
               </motion.div>
@@ -84,7 +84,7 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
           {/* Error Display */}
           {error && (
             <motion.div
-              className="mb-4 bg-[var(--tokyo-red)]/10 border border-[var(--tokyo-red)]/30 rounded-lg p-4"
+              className="mb-4 rounded-lg border border-[var(--tokyo-red)]/30 bg-[var(--tokyo-red)]/10 p-4"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
             >
@@ -95,14 +95,14 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
                   className="mt-0.5 flex-shrink-0"
                 />
                 <div>
-                  <h3 className="font-medium text-[var(--tokyo-red)] mb-1">
+                  <h3 className="mb-1 font-medium text-[var(--tokyo-red)]">
                     Execution Error
                   </h3>
                   <p className="text-sm text-[var(--tokyo-fg-dark)]">{error}</p>
                 </div>
                 <motion.button
                   onClick={() => setError(null)}
-                  className="ml-auto text-[var(--tokyo-red)] hover:text-[var(--tokyo-red)]/80 transition-colors"
+                  className="ml-auto text-[var(--tokyo-red)] transition-colors hover:text-[var(--tokyo-red)]/80"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -134,24 +134,24 @@ const ExecutionVisualizer: React.FC<ExecutionVisualizerProps> = ({
 
       {/* Error State - No Execution */}
       {error && !executionState && (
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="text-center max-w-md">
+        <div className="flex flex-1 items-center justify-center p-6">
+          <div className="max-w-md text-center">
             <AlertCircle
               size={48}
               style={{ color: "var(--tokyo-red)" }}
               className="mx-auto mb-4"
             />
-            <h2 className="text-xl font-semibold text-[var(--tokyo-fg)] mb-2">
+            <h2 className="mb-2 text-xl font-semibold text-[var(--tokyo-fg)]">
               Cannot Execute Code
             </h2>
-            <p className="text-[var(--tokyo-fg-dark)] mb-6">
+            <p className="mb-6 text-[var(--tokyo-fg-dark)]">
               Fix the error above and click Reset to try again.
             </p>
             <motion.button
               onClick={prepareExecution}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-[var(--tokyo-blue)] hover:bg-[var(--tokyo-blue)]/80 text-white px-6 py-3 rounded-lg flex items-center gap-2 mx-auto transition-colors"
+              className="mx-auto flex items-center gap-2 rounded-lg bg-[var(--tokyo-blue)] px-6 py-3 text-white transition-colors hover:bg-[var(--tokyo-blue)]/80"
             >
               <RotateCcw size={16} />
               Try Again

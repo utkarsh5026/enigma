@@ -18,7 +18,7 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="flex flex-col items-center justify-center p-8 lg:p-12 text-center min-h-full"
+      className="flex min-h-full flex-col items-center justify-center p-8 text-center lg:p-12"
     >
       {/* Main Icon with enhanced animations */}
       <motion.div
@@ -38,14 +38,14 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute inset-0 bg-(--tokyo-blue)/20 rounded-full blur-2xl"
+          className="absolute inset-0 rounded-full bg-(--tokyo-blue)/20 blur-2xl"
         />
 
         {/* Icon container */}
         <motion.div
           whileHover={{ scale: 1.05, rotate: 5 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="relative bg-tokyo-bg-highlight p-8 rounded-2xl border border-tokyo-comment/30 shadow-2xl"
+          className="relative rounded-2xl border border-tokyo-comment/30 bg-tokyo-bg-highlight p-8 shadow-2xl"
         >
           <GitBranch size={64} className="text-tokyo-blue" />
 
@@ -53,7 +53,7 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
           <motion.div
             animate={{ y: [-2, 2, -2] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-2 -right-2 bg-tokyo-green rounded-full p-1.5"
+            className="absolute -top-2 -right-2 rounded-full bg-tokyo-green p-1.5"
           >
             <Code2 size={12} className="text-white" />
           </motion.div>
@@ -65,15 +65,15 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.4 }}
-        className="max-w-2xl flex flex-col items-center justify-center"
+        className="flex max-w-2xl flex-col items-center justify-center"
       >
-        <h3 className="text-2xl lg:text-3xl font-bold text-tokyo-fg mb-4">
+        <h3 className="mb-4 text-2xl font-bold text-tokyo-fg lg:text-3xl">
           Ready to Parse Your Code?
         </h3>
 
-        <p className="text-tokyo-comment text-lg leading-relaxed mb-8">
+        <p className="mb-8 text-lg leading-relaxed text-tokyo-comment">
           Write some Enigma code in the editor, then hit the{" "}
-          <span className="inline-flex items-center gap-1 px-2 py-1 bg-(--tokyo-green)/20 text-tokyo-green rounded font-mono text-sm">
+          <span className="inline-flex items-center gap-1 rounded bg-(--tokyo-green)/20 px-2 py-1 font-mono text-sm text-tokyo-green">
             <Zap size={12} />
             Parse Code
           </span>{" "}
@@ -92,7 +92,7 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
               onClick={onParse}
               disabled={isParsing || !canParse}
               size="lg"
-              className="bg-tokyo-green/50  text-white px-8 py-3 rounded-xl flex items-center gap-3 transition-all shadow-xl  disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold cursor-pointer hover:bg-tokyo-green/20 hover:shadow-tokyo-green/20 hover:text-tokyo-green hover:shadow-md"
+              className="flex cursor-pointer items-center gap-3 rounded-xl bg-tokyo-green/50 px-8 py-3 text-lg font-semibold text-white shadow-xl transition-all hover:bg-tokyo-green/20 hover:text-tokyo-green hover:shadow-md hover:shadow-tokyo-green/20 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isParsing ? (
                 <Loader2 size={20} className="animate-spin" />
@@ -110,9 +110,9 @@ const EmptyAst: React.FC<EmptyAstProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 1.2 }}
-        className="mt-8 p-6 bg-(--tokyo-blue)/10 rounded-2xl border border-(--tokyo-blue)/20 backdrop-blur-sm"
+        className="mt-8 rounded-2xl border border-(--tokyo-blue)/20 bg-(--tokyo-blue)/10 p-6 backdrop-blur-sm"
       >
-        <p className="text-sm text-tokyo-fg-dark mb-2">
+        <p className="mb-2 text-sm text-tokyo-fg-dark">
           💡 The AST shows how your code is structured internally
         </p>
         <p className="text-xs text-tokyo-comment">

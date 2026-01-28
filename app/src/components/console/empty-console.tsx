@@ -13,19 +13,19 @@ const EmptyConsole: React.FC<EmptyConsoleProps> = ({ entries }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="text-center py-12"
+      className="py-12 text-center"
     >
-      <div className="max-w-sm mx-auto">
+      <div className="mx-auto max-w-sm">
         <Terminal
           size={24}
-          className="text-[var(--tokyo-comment)] mx-auto mb-3"
+          className="mx-auto mb-3 text-[var(--tokyo-comment)]"
         />
-        <p className="text-[var(--tokyo-comment)] text-sm mb-1">
+        <p className="mb-1 text-sm text-[var(--tokyo-comment)]">
           {entries.length === 0
             ? "Console is empty"
             : `No entries match filter`}
         </p>
-        <p className="text-[var(--tokyo-comment)]/70 text-xs">
+        <p className="text-xs text-[var(--tokyo-comment)]/70">
           {entries.length === 0
             ? "Run code with print statements to see output here"
             : "Try adjusting your search or filter criteria"}

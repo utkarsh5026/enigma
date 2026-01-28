@@ -24,7 +24,7 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
 
   if (variables.length === 0) {
     return (
-      <div className="text-center py-3 text-xs text-[var(--tokyo-comment)]">
+      <div className="py-3 text-center text-xs text-[var(--tokyo-comment)]">
         No variables declared yet
       </div>
     );
@@ -33,11 +33,11 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
-        <button className="flex items-center justify-between w-full p-2 bg-[var(--tokyo-bg-highlight)]/30 hover:bg-[var(--tokyo-bg-highlight)]/50 rounded transition-colors text-sm">
+        <button className="flex w-full items-center justify-between rounded bg-[var(--tokyo-bg-highlight)]/30 p-2 text-sm transition-colors hover:bg-[var(--tokyo-bg-highlight)]/50">
           <div className="flex items-center gap-2">
             <ChevronRight
               size={12}
-              className={`transition-transform duration-200 text-[var(--tokyo-comment)] ${
+              className={`text-[var(--tokyo-comment)] transition-transform duration-200 ${
                 isOpen ? "rotate-90" : ""
               }`}
             />
@@ -46,7 +46,7 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
               Variables ({variables.length})
             </span>
             {newChanges && (
-              <div className="flex items-center gap-1 bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] text-xs px-1.5 py-0.5 rounded">
+              <div className="flex items-center gap-1 rounded bg-[var(--tokyo-green)]/20 px-1.5 py-0.5 text-xs text-[var(--tokyo-green)]">
                 <Sparkles size={8} />
                 <span>New</span>
               </div>
@@ -55,11 +55,11 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
         </button>
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="space-y-2 mt-2">
+      <CollapsibleContent className="mt-2 space-y-2">
         {variables.map((variable) => (
           <div
             key={variable.name}
-            className={`group relative rounded border transition-all duration-200 cursor-pointer ${
+            className={`group relative cursor-pointer rounded border transition-all duration-200 ${
               variable.isNew
                 ? "border-[var(--tokyo-green)]/30 bg-[var(--tokyo-green)]/5"
                 : "border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-highlight)]/20"
@@ -73,10 +73,10 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
           >
             <div className="p-2">
               {/* Header Row */}
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="mb-1 flex items-center justify-between">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
                   <span
-                    className={`text-xs px-1.5 py-0.5 rounded font-mono font-medium ${
+                    className={`rounded px-1.5 py-0.5 font-mono text-xs font-medium ${
                       variable.isConstant
                         ? "bg-[var(--tokyo-red)]/20 text-[var(--tokyo-red)]"
                         : "bg-[var(--tokyo-blue)]/20 text-[var(--tokyo-blue)]"
@@ -84,17 +84,17 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
                   >
                     {variable.isConstant ? "const" : "let"}
                   </span>
-                  <span className="font-mono font-medium text-[var(--tokyo-fg)] text-sm truncate">
+                  <span className="truncate font-mono text-sm font-medium text-[var(--tokyo-fg)]">
                     {variable.name}
                   </span>
-                  <span className="text-xs text-[var(--tokyo-comment)] hidden sm:inline">
+                  <span className="hidden text-xs text-[var(--tokyo-comment)] sm:inline">
                     {variable.type}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-1">
                   {variable.isNew && (
-                    <span className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] px-1.5 py-0.5 rounded">
+                    <span className="rounded bg-[var(--tokyo-green)]/20 px-1.5 py-0.5 text-xs text-[var(--tokyo-green)]">
                       NEW
                     </span>
                   )}
@@ -102,8 +102,8 @@ const VariablesDeclared: React.FC<VariablesDeclaredProps> = ({
               </div>
 
               {/* Value Row */}
-              <div className="bg-[var(--tokyo-bg)]/60 rounded p-2 mt-1">
-                <code className="text-xs font-mono text-[var(--tokyo-cyan)] break-all leading-relaxed">
+              <div className="mt-1 rounded bg-[var(--tokyo-bg)]/60 p-2">
+                <code className="font-mono text-xs leading-relaxed break-all text-[var(--tokyo-cyan)]">
                   {variable.value}
                 </code>
               </div>

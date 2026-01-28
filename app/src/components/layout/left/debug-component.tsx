@@ -34,10 +34,10 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="absolute top-2 right-2 sm:top-4 sm:right-4 max-w-[calc(100%-1rem)] sm:max-w-md z-10"
+      className="absolute top-2 right-2 z-10 max-w-[calc(100%-1rem)] sm:top-4 sm:right-4 sm:max-w-md"
     >
-      <Card className="bg-[var(--tokyo-bg)]/95 text-white border border-[var(--tokyo-green)]/30 backdrop-blur-sm">
-        <div className="p-3 space-y-3">
+      <Card className="border border-[var(--tokyo-green)]/30 bg-[var(--tokyo-bg)]/95 text-white backdrop-blur-sm">
+        <div className="space-y-3 p-3">
           {/* Main Info */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -47,9 +47,9 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
             </div>
 
             {/* Badges for step type and phase */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-wrap gap-2">
               {step.depth > 0 && (
-                <Badge className="text-xs bg-[var(--tokyo-purple)]/20 text-[var(--tokyo-purple)] border-[var(--tokyo-purple)]/30">
+                <Badge className="border-[var(--tokyo-purple)]/30 bg-[var(--tokyo-purple)]/20 text-xs text-[var(--tokyo-purple)]">
                   Depth: {step.depth}
                 </Badge>
               )}
@@ -90,9 +90,9 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
                   ease: "easeOut",
                   times: [0, 0.6, 1],
                 }}
-                className="bg-[var(--tokyo-green)]/10 p-2 rounded border border-[var(--tokyo-green)]/20"
+                className="rounded border border-[var(--tokyo-green)]/20 bg-[var(--tokyo-green)]/10 p-2"
               >
-                <div className="flex items-center gap-1 mb-1">
+                <div className="mb-1 flex items-center gap-1">
                   <motion.div
                     animate={{
                       rotate: [0, 10, -10, 0],
@@ -114,7 +114,7 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
                   initial={{ x: -10, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.3, duration: 0.3 }}
-                  className="text-xs text-[var(--tokyo-fg)] font-mono"
+                  className="font-mono text-xs text-[var(--tokyo-fg)]"
                 >
                   {step.result.inspect()}
                 </motion.div>
@@ -124,7 +124,7 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
 
           {/* Collapsible Details */}
           <Collapsible open={showDetails} onOpenChange={setShowDetails}>
-            <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] transition-colors">
+            <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[var(--tokyo-comment)] transition-colors hover:text-[var(--tokyo-fg)]">
               {showDetails ? (
                 <ChevronDown size={12} />
               ) : (
@@ -132,7 +132,7 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
               )}
               More Details
             </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-2 mt-2">
+            <CollapsibleContent className="mt-2 space-y-2">
               {/* Node Path */}
               {step.nodePath && (
                 <div className="text-xs">
@@ -152,17 +152,17 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
                       Call Stack ({executionState.callStack.length})
                     </span>
                   </div>
-                  <div className="space-y-1 max-h-20 overflow-y-auto">
+                  <div className="max-h-20 space-y-1 overflow-y-auto">
                     {executionState.callStack.slice(-3).map((frame, index) => (
                       <div
                         key={index}
-                        className="text-xs bg-[var(--tokyo-blue)]/10 p-1 rounded border border-[var(--tokyo-blue)]/20"
+                        className="rounded border border-[var(--tokyo-blue)]/20 bg-[var(--tokyo-blue)]/10 p-1 text-xs"
                       >
                         <span className="font-mono text-[var(--tokyo-fg)]">
                           {frame.functionName}({frame.args.join(", ")})
                         </span>
                         {frame.isActive && (
-                          <Badge className="ml-1 text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] border-[var(--tokyo-green)]/30">
+                          <Badge className="ml-1 border-[var(--tokyo-green)]/30 bg-[var(--tokyo-green)]/20 text-xs text-[var(--tokyo-green)]">
                             active
                           </Badge>
                         )}
@@ -184,7 +184,7 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
               open={showEnvironment}
               onOpenChange={setShowEnvironment}
             >
-              <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[var(--tokyo-comment)] hover:text-[var(--tokyo-fg)] transition-colors">
+              <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[var(--tokyo-comment)] transition-colors hover:text-[var(--tokyo-fg)]">
                 {showEnvironment ? (
                   <ChevronDown size={12} />
                 ) : (
@@ -198,28 +198,28 @@ export const DebugComponent: React.FC<DebugComponentProps> = ({
                     {step.envSnapshot.variables.map((variable, index) => (
                       <div
                         key={index}
-                        className="text-xs bg-[var(--tokyo-purple)]/10 p-1 rounded border border-[var(--tokyo-purple)]/20"
+                        className="rounded border border-[var(--tokyo-purple)]/20 bg-[var(--tokyo-purple)]/10 p-1 text-xs"
                       >
                         <div className="flex items-center gap-2">
                           <span className="font-mono text-[var(--tokyo-fg)]">
                             {variable.name}
                           </span>
                           <span className="text-[var(--tokyo-comment)]">=</span>
-                          <span className="font-mono text-[var(--tokyo-green)] truncate flex-1">
+                          <span className="flex-1 truncate font-mono text-[var(--tokyo-green)]">
                             {variable.value}
                           </span>
                           {variable.isConstant && (
-                            <Badge className="text-xs bg-[var(--tokyo-orange)]/20 text-[var(--tokyo-orange)] border-[var(--tokyo-orange)]/30">
+                            <Badge className="border-[var(--tokyo-orange)]/30 bg-[var(--tokyo-orange)]/20 text-xs text-[var(--tokyo-orange)]">
                               const
                             </Badge>
                           )}
                           {variable.isNew && (
-                            <Badge className="text-xs bg-[var(--tokyo-green)]/20 text-[var(--tokyo-green)] border-[var(--tokyo-green)]/30">
+                            <Badge className="border-[var(--tokyo-green)]/30 bg-[var(--tokyo-green)]/20 text-xs text-[var(--tokyo-green)]">
                               new
                             </Badge>
                           )}
                         </div>
-                        <div className="text-[var(--tokyo-comment)] text-xs mt-0.5">
+                        <div className="mt-0.5 text-xs text-[var(--tokyo-comment)]">
                           {variable.type}
                         </div>
                       </div>

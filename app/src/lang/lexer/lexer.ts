@@ -59,7 +59,6 @@ export default class Lexer {
     this.skipWhitespace();
     this.skipComments();
 
-
     switch (this.currCh) {
       case "=":
         token = this.handleDoubleLiteral(TokenType.EQ, TokenType.ASSIGN);

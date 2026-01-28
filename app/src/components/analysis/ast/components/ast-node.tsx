@@ -60,7 +60,7 @@ const AstNode: React.FC<AstNodeProps> = ({
       {depth > 0 && (
         <>
           <div
-            className="absolute left-0 -top-2 border-l border-tokyo-comment/50"
+            className="absolute -top-2 left-0 border-l border-tokyo-comment/50"
             style={{
               height: isLast ? "14px" : "calc(100% + 16px)",
               left: `${(depth - 1) * 24 + 12}px`,
@@ -81,16 +81,11 @@ const AstNode: React.FC<AstNodeProps> = ({
         style={{ marginLeft: depth > 0 ? `${depth * 24}px` : 0 }}
       >
         <motion.div
-          className={`
-            relative rounded-md border backdrop-blur-sm transition-all duration-200
-          `}
+          className={`relative rounded-md border backdrop-blur-sm transition-all duration-200`}
         >
           {/* Main content */}
           <div
-            className={`
-              px-3 py-2 flex items-center justify-between rounded-md
-              ${hasExpandableChildren ? "hover:bg-tokyo-bg-highlight/30" : ""}
-            `}
+            className={`flex items-center justify-between rounded-md px-3 py-2 ${hasExpandableChildren ? "hover:bg-tokyo-bg-highlight/30" : ""} `}
             onClick={onNodeClick && position ? handleNodeClick : undefined}
           >
             <div className="flex items-center gap-2">
@@ -119,21 +114,21 @@ const AstNode: React.FC<AstNodeProps> = ({
 
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className={`font-medium text-sm ${style.text}`}>
+                  <span className={`text-sm font-medium ${style.text}`}>
                     {nodeType}
                   </span>
                 </TooltipTrigger>
                 <TooltipContent
                   side="top"
-                  className="max-w-xs bg-tokyo-bg-dark font-family-mono p-4"
+                  className="max-w-xs bg-tokyo-bg-dark p-4 font-family-mono"
                 >
                   <div className="space-y-2">
-                    <p className="font-medium text-xs text-tokyo-fg">
+                    <p className="text-xs font-medium text-tokyo-fg">
                       {getNodeSummary(nodeType, node)}
                     </p>
                     <p className="text-xs text-tokyo-fg-dark">{description}</p>
                     {position && (
-                      <div className="text-xs text-tokyo-blue bg-tokyo-blue/10 px-2 py-1 rounded">
+                      <div className="rounded bg-tokyo-blue/10 px-2 py-1 text-xs text-tokyo-blue">
                         Click to highlight code at line {position.start.line},{" "}
                         column {position.end.column}
                       </div>
@@ -144,13 +139,13 @@ const AstNode: React.FC<AstNodeProps> = ({
 
               {/* Simple properties */}
               {Object.keys(simpleProps).length > 0 && (
-                <div className="flex gap-1 ml-2">
+                <div className="ml-2 flex gap-1">
                   {Object.entries(simpleProps)
                     .slice(0, 2)
                     .map(([key, value]) => (
                       <Badge
                         key={key}
-                        className="text-xs bg-tokyo-bg-highlight/60 text-tokyo-fg border-tokyo-comment/40 font-mono"
+                        className="border-tokyo-comment/40 bg-tokyo-bg-highlight/60 font-mono text-xs text-tokyo-fg"
                       >
                         {key}: {value}
                       </Badge>
@@ -162,7 +157,7 @@ const AstNode: React.FC<AstNodeProps> = ({
               {position && (
                 <Badge
                   variant="outline"
-                  className="text-xs text-tokyo-comment border-tokyo-comment/40 font-mono"
+                  className="border-tokyo-comment/40 font-mono text-xs text-tokyo-comment"
                 >
                   <MapPin size={10} className="mr-1" />
                   {position.start.line}:{position.start.column} -{" "}
@@ -172,7 +167,7 @@ const AstNode: React.FC<AstNodeProps> = ({
 
               {/* Click indicator */}
               {onNodeClick && position && (
-                <div className="transition-colors text-tokyo-comment/60">
+                <div className="text-tokyo-comment/60 transition-colors">
                   <Eye size={12} />
                 </div>
               )}
@@ -192,10 +187,10 @@ const AstNode: React.FC<AstNodeProps> = ({
           {/* Expanded content */}
           {expanded && hasExpandableChildren && (
             <div className="border-t border-tokyo-comment/30 bg-tokyo-bg-dark/30">
-              <div className="p-3 space-y-3">
+              <div className="space-y-3 p-3">
                 {Object.entries(complexProps).map(([key, value]) => (
                   <div key={key} className="space-y-2">
-                    <div className="text-xs text-tokyo-comment font-medium uppercase tracking-wide">
+                    <div className="text-xs font-medium tracking-wide text-tokyo-comment uppercase">
                       {key}
                       {Array.isArray(value) && (
                         <span className="ml-2 text-tokyo-fg-dark">

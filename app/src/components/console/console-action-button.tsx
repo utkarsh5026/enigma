@@ -40,15 +40,15 @@ const ConsoleActionButton: React.FC<ConsoleActionButtonProps> = ({
           size="sm"
           onClick={onClick}
           disabled={disabled}
-          className={`h-8 w-8 p-0 rounded transition-all duration-200 ${getVariantClasses()} ${
-            disabled ? "opacity-50 cursor-not-allowed" : ""
+          className={`h-8 w-8 rounded p-0 transition-all duration-200 ${getVariantClasses()} ${
+            disabled ? "cursor-not-allowed opacity-50" : ""
           }`}
         >
           {children}
         </Button>
       </TooltipTrigger>
-      <TooltipContent className="bg-[var(--tokyo-bg-highlight)] border border-tokyo-comment">
-        <p className="text-xs text-tokyo-fg font-mono">{tooltip}</p>
+      <TooltipContent className="border border-tokyo-comment bg-[var(--tokyo-bg-highlight)]">
+        <p className="font-mono text-xs text-tokyo-fg">{tooltip}</p>
       </TooltipContent>
     </Tooltip>
   );

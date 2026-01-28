@@ -46,11 +46,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
     >
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className=""
-          >
-          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} className=""></motion.div>
         </div>
 
         {/* Execution Controls */}
@@ -63,10 +59,11 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                   onClick={onToggleStepMode}
                   variant={isStepMode ? "default" : "outline"}
                   size="sm"
-                  className={`px-3 py-1.5 text-xs ${isStepMode
-                    ? "bg-tokyo-red hover:bg-(--tokyo-red)/80 text-white border-tokyo-red"
-                    : "border-tokyo-comment/30 text-tokyo-fg hover:bg-(--tokyo-blue)/10 hover:border-(--tokyo-blue)/50"
-                    }`}
+                  className={`px-3 py-1.5 text-xs ${
+                    isStepMode
+                      ? "border-tokyo-red bg-tokyo-red text-white hover:bg-(--tokyo-red)/80"
+                      : "border-tokyo-comment/30 text-tokyo-fg hover:border-(--tokyo-blue)/50 hover:bg-(--tokyo-blue)/10"
+                  }`}
                 >
                   {isStepMode ? (
                     <>
@@ -109,21 +106,11 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
             <Button
               onClick={handleRunCode}
               disabled={isExecuting || !code.trim() || isStepMode}
-              className={`
-                px-6 py-2 rounded-xl font-medium text-sm
-                transition-all duration-300 ease-in-out
-                cursor-pointer
-                flex items-center gap-2
-                shadow-lg hover:shadow-xl
-                border-0
-                ${executionSuccess
+              className={`flex cursor-pointer items-center gap-2 rounded-xl border-0 px-6 py-2 text-sm font-medium shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl ${
+                executionSuccess
                   ? "bg-tokyo-green text-white"
-                  : "bg-tokyo-green hover:bg-tokyo-green/90 text-white"
-                }
-                disabled:opacity-50 disabled:cursor-not-allowed
-                disabled:hover:shadow-lg
-                ${isExecuting ? "animate-pulse" : ""}
-              `}
+                  : "bg-tokyo-green text-white hover:bg-tokyo-green/90"
+              } disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-lg ${isExecuting ? "animate-pulse" : ""} `}
               title={
                 isStepMode
                   ? "Use debug controls for step execution"
@@ -143,7 +130,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                 <>
                   <Check
                     size={16}
-                    className="animate-in zoom-in-50 duration-200"
+                    className="animate-in duration-200 zoom-in-50"
                   />
                   <span>Success!</span>
                 </>

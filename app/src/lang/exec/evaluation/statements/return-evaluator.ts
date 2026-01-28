@@ -8,9 +8,7 @@ import {
   BaseObject,
 } from "@/lang/exec/core";
 
-export class ReturnStatementEvaluator
-  implements NodeEvaluator<ReturnStatement>
-{
+export class ReturnStatementEvaluator implements NodeEvaluator<ReturnStatement> {
   public evaluate(
     node: ReturnStatement,
     env: Environment,

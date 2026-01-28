@@ -40,7 +40,7 @@ const StepControls: React.FC<StepControlsProps> = ({
             disabled={isExecuting}
             size="sm"
             variant="outline"
-            className="px-2 py-1.5 border-[var(--tokyo-comment)]/30 text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)]"
+            className="border-[var(--tokyo-comment)]/30 px-2 py-1.5 text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)]"
           >
             {executionState ? <RotateCcw size={12} /> : <Zap size={12} />}
           </Button>
@@ -62,7 +62,7 @@ const StepControls: React.FC<StepControlsProps> = ({
               }
               size="sm"
               variant="outline"
-              className="px-2 py-1.5 border-[var(--tokyo-comment)]/30 text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)]"
+              className="border-[var(--tokyo-comment)]/30 px-2 py-1.5 text-[var(--tokyo-fg)] hover:bg-[var(--tokyo-bg-highlight)]"
             >
               <SkipBack size={12} />
             </Button>
@@ -80,7 +80,7 @@ const StepControls: React.FC<StepControlsProps> = ({
               onClick={onExecuteStep}
               disabled={!executionState || executionState.isComplete}
               size="sm"
-              className="px-2 py-1.5 bg-[var(--tokyo-green)]/80 hover:bg-[var(--tokyo-green)]/70 text-white"
+              className="bg-[var(--tokyo-green)]/80 px-2 py-1.5 text-white hover:bg-[var(--tokyo-green)]/70"
             >
               <SkipForward size={12} />
             </Button>

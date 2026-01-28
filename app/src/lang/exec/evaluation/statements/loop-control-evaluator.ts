@@ -20,9 +20,7 @@ export class BreakStatementEvaluator implements NodeEvaluator<BreakStatement> {
  * This evaluator handles the evaluation of continue statements.
  * It's like a conductor who leads a symphony!
  */
-export class ContinueStatementEvaluator
-  implements NodeEvaluator<ContinueStatement>
-{
+export class ContinueStatementEvaluator implements NodeEvaluator<ContinueStatement> {
   evaluate(): BaseObject {
     return ContinueObject.INSTANCE;
   }

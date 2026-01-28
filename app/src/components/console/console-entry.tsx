@@ -19,18 +19,18 @@ const ConsoleEntry: React.FC<ConsoleEntryProps> = ({ entry, index }) => {
         duration: 0.2,
         delay: index * 0.01,
       }}
-      className={`group flex items-start gap-3 p-2.5 rounded transition-all duration-200 hover:bg-[var(--tokyo-bg-highlight)]/50 ${getEntryStyle(
+      className={`group flex items-start gap-3 rounded p-2.5 transition-all duration-200 hover:bg-[var(--tokyo-bg-highlight)]/50 ${getEntryStyle(
         entry.type
       )}`}
     >
-      <div className="flex-shrink-0 mt-0.5">{getEntryIcon(entry.type)}</div>
+      <div className="mt-0.5 flex-shrink-0">{getEntryIcon(entry.type)}</div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          <span className="text-xs text-[var(--tokyo-comment)] font-mono">
+      <div className="min-w-0 flex-1">
+        <div className="mb-0.5 flex items-center gap-2">
+          <span className="font-mono text-xs text-[var(--tokyo-comment)]">
             {new Date(entry.timestamp).toLocaleTimeString()}
           </span>
-          <span className="text-xs text-[var(--tokyo-comment)]/70 uppercase tracking-wide">
+          <span className="text-xs tracking-wide text-[var(--tokyo-comment)]/70 uppercase">
             {entry.type}
           </span>
         </div>
@@ -40,7 +40,7 @@ const ConsoleEntry: React.FC<ConsoleEntryProps> = ({ entry, index }) => {
       </div>
 
       {/* Minimal entry actions */}
-      <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <div className="flex-shrink-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
         <Button
           variant="ghost"
           size="sm"
@@ -70,12 +70,12 @@ const getEntryIcon = (type: ConsoleEntry["type"]) => {
   switch (type) {
     case "error":
       return (
-        <AlertCircle size={12} className="text-[var(--tokyo-red)] mt-0.5" />
+        <AlertCircle size={12} className="mt-0.5 text-[var(--tokyo-red)]" />
       );
     case "info":
-      return <Info size={12} className="text-[var(--tokyo-blue)] mt-0.5" />;
+      return <Info size={12} className="mt-0.5 text-[var(--tokyo-blue)]" />;
     default:
-      return <Zap size={12} className="text-[var(--tokyo-comment)] mt-0.5" />;
+      return <Zap size={12} className="mt-0.5 text-[var(--tokyo-comment)]" />;
   }
 };
 

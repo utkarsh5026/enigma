@@ -47,16 +47,16 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
 
   return (
     <ScrollArea className="flex-1">
-      <div className="p-4 space-y-4">
+      <div className="space-y-4 p-4">
         {/* Compact Progress Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex items-center justify-between mb-4"
+          className="mb-4 flex items-center justify-between"
         >
           <div className="flex items-center gap-2">
-            <div className={`p-1.5 rounded-lg bg-[var(--${status.color})]/10`}>
+            <div className={`rounded-lg p-1.5 bg-[var(--${status.color})]/10`}>
               <status.icon
                 size={14}
                 className={`text-[var(--${status.color})]`}
@@ -80,9 +80,9 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
         </motion.div>
 
         {/* Compact Progress Bar */}
-        <div className="h-1 bg-[var(--tokyo-bg-highlight)] rounded-full overflow-hidden mb-4">
+        <div className="mb-4 h-1 overflow-hidden rounded-full bg-[var(--tokyo-bg-highlight)]">
           <motion.div
-            className="h-full bg-[var(--tokyo-blue)] rounded-full"
+            className="h-full rounded-full bg-[var(--tokyo-blue)]"
             initial={{ width: 0 }}
             animate={{ width: `${(stepNumber / stepCount) * 100}%` }}
             transition={{ duration: 0.3 }}
@@ -94,18 +94,18 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
           {currentStep && (
             <motion.div
               key={stepNumber}
-              className="bg-[var(--tokyo-bg)]/60 border border-[var(--tokyo-comment)]/20 rounded-lg overflow-hidden"
+              className="overflow-hidden rounded-lg border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg)]/60"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
               {/* Compact Header with Node Info */}
-              <div className="p-3 border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-dark)]/40">
-                <div className="flex items-center justify-between mb-2">
+              <div className="border-b border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-dark)]/40 p-3">
+                <div className="mb-2 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Code2 size={16} className="text-[var(--tokyo-blue)]" />
-                    <span className="font-semibold text-[var(--tokyo-fg)] text-sm">
+                    <span className="text-sm font-semibold text-[var(--tokyo-fg)]">
                       {currentStep.node.constructor.name}
                     </span>
                   </div>
@@ -117,13 +117,13 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
                         size={10}
                         className="text-[var(--tokyo-comment)]"
                       />
-                      <span className="text-[var(--tokyo-cyan)] font-mono">
+                      <span className="font-mono text-[var(--tokyo-cyan)]">
                         {currentStep.lineNumber}:{currentStep.columnNumber}
                       </span>
                       {isHighlightingEnabled && (
                         <Eye
                           size={10}
-                          className="text-[var(--tokyo-green)] ml-1"
+                          className="ml-1 text-[var(--tokyo-green)]"
                         />
                       )}
                     </div>
@@ -132,30 +132,30 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
 
                 {/* Node Content using toString() */}
                 {currentStep.description && (
-                  <div className="text-xs bg-[var(--tokyo-bg-highlight)]/50 rounded px-2 py-1 font-mono text-[var(--tokyo-fg-dark)] break-all">
+                  <div className="rounded bg-[var(--tokyo-bg-highlight)]/50 px-2 py-1 font-mono text-xs break-all text-[var(--tokyo-fg-dark)]">
                     {parseDescriptionWithBadges(currentStep.description)}
                   </div>
                 )}
               </div>
 
               {/* Compact Content */}
-              <div className="p-3 space-y-3">
+              <div className="space-y-3 p-3">
                 {/* Result - More Compact */}
                 {currentStep.result && (
                   <motion.div
-                    className="bg-[var(--tokyo-green)]/5 border border-[var(--tokyo-green)]/20 rounded p-3"
+                    className="rounded border border-[var(--tokyo-green)]/20 bg-[var(--tokyo-green)]/5 p-3"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="mb-2 flex items-center gap-2">
                       <Zap size={12} className="text-[var(--tokyo-green)]" />
                       <span className="text-xs font-medium text-[var(--tokyo-green)]">
                         Result
                       </span>
                     </div>
-                    <div className="bg-[var(--tokyo-bg-dark)]/60 rounded p-2">
-                      <code className="text-sm font-mono text-[var(--tokyo-cyan)] break-all">
+                    <div className="rounded bg-[var(--tokyo-bg-dark)]/60 p-2">
+                      <code className="font-mono text-sm break-all text-[var(--tokyo-cyan)]">
                         {currentStep.result.inspect()}
                       </code>
                     </div>
@@ -191,12 +191,12 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
         {/* Compact Completion State */}
         {isCompleted && (
           <motion.div
-            className="text-center py-4"
+            className="py-4 text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--tokyo-green)]/10 border border-[var(--tokyo-green)]/20 rounded-full text-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--tokyo-green)]/20 bg-[var(--tokyo-green)]/10 px-4 py-2 text-sm">
               <CheckCircle size={14} className="text-[var(--tokyo-green)]" />
               <span className="font-medium text-[var(--tokyo-green)]">
                 Completed
@@ -208,11 +208,11 @@ const ExecutionStep: React.FC<ExecutionStepProps> = ({
         {/* Compact Empty State */}
         {!currentStep && !isCompleted && (
           <motion.div
-            className="text-center py-6"
+            className="py-6 text-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--tokyo-blue)]/10 border border-[var(--tokyo-blue)]/20 rounded-full text-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--tokyo-blue)]/20 bg-[var(--tokyo-blue)]/10 px-4 py-2 text-sm">
               <Play size={14} className="text-[var(--tokyo-blue)]" />
               <span className="font-medium text-[var(--tokyo-blue)]">
                 Ready to Execute

@@ -16,9 +16,9 @@ interface StatementFactory<T extends Statement> {
   ): T;
 }
 
-export class AssignmentStatementParser<T extends Statement>
-  implements Parser<T>
-{
+export class AssignmentStatementParser<
+  T extends Statement,
+> implements Parser<T> {
   constructor(
     private expectedTokenType: TokenType,
     private statementFactory: StatementFactory<T>,

@@ -21,9 +21,7 @@ import { EvaluationContext } from "@/lang/exec/core";
  * This evaluator focuses purely on infix operations and delegates everything
  * else.
  */
-export class InfixExpressionEvaluator
-  implements NodeEvaluator<InfixExpression>
-{
+export class InfixExpressionEvaluator implements NodeEvaluator<InfixExpression> {
   public evaluate(
     node: InfixExpression,
     env: Environment,

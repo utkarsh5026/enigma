@@ -111,26 +111,26 @@ const InteractiveDevelopment = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.15 }}
-            className="bg-[var(--tokyo-bg-dark)]/30 rounded-lg p-4 border border-[var(--tokyo-comment)]/20"
+            className="rounded-lg border border-[var(--tokyo-comment)]/20 bg-[var(--tokyo-bg-dark)]/30 p-4"
           >
             <div className="flex items-start gap-4">
               <div
-                className={`p-2 rounded-lg ${tool.bgColor} flex-shrink-0 mt-1`}
+                className={`rounded-lg p-2 ${tool.bgColor} mt-1 flex-shrink-0`}
               >
                 <div className={tool.textColor}>{tool.icon}</div>
               </div>
               <div className="flex-1">
-                <h4 className="font-semibold text-[var(--tokyo-fg)] mb-1">
+                <h4 className="mb-1 font-semibold text-[var(--tokyo-fg)]">
                   {tool.title}
                 </h4>
-                <p className="text-sm text-[var(--tokyo-comment)] mb-3">
+                <p className="mb-3 text-sm text-[var(--tokyo-comment)]">
                   {tool.description}
                 </p>
                 <div className="flex flex-wrap gap-1">
                   {tool.features.map((feature) => (
                     <span
                       key={feature}
-                      className={`text-xs px-2 py-1 rounded ${tool.bgColor} ${tool.textColor} border border-current/30`}
+                      className={`rounded px-2 py-1 text-xs ${tool.bgColor} ${tool.textColor} border border-current/30`}
                     >
                       {feature}
                     </span>
@@ -142,8 +142,8 @@ const InteractiveDevelopment = () => {
         ))}
       </div>
 
-      <div className="bg-[var(--tokyo-green)]/10 rounded-lg p-4 border border-[var(--tokyo-green)]/20">
-        <h4 className="font-semibold text-[var(--tokyo-fg)] mb-2 flex items-center gap-2">
+      <div className="rounded-lg border border-[var(--tokyo-green)]/20 bg-[var(--tokyo-green)]/10 p-4">
+        <h4 className="mb-2 flex items-center gap-2 font-semibold text-[var(--tokyo-fg)]">
           <svg
             width="16"
             height="16"
