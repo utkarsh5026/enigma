@@ -4,6 +4,7 @@
 ![Node Version](https://img.shields.io/badge/node-20.x-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![SonarQube Cloud](https://sonarcloud.io/images/project_badges/sonarcloud-dark.svg)](https://sonarcloud.io/summary/new_code?id=utkarsh5026_enigma)
 
 An interactive playground for a programming language I built from scratch to understand how the tools we use every day actually work under the hood.
 
