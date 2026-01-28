@@ -1,69 +1,111 @@
-# 🚀 Enigma Language Explorer
+# Enigma Language Explorer
 
-Welcome to the Enigma Language Explorer! ✨ This is an interactive playground where you can write code in Enigma (a programming language I created from scratch) and see how it's processed behind the scenes. It's my way of sharing the fascinating world of programming language design!
+![CI](https://github.com/utkarsh5026/enigma/workflows/CI/badge.svg)
+![Node Version](https://img.shields.io/badge/node-20.x-brightgreen)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+An interactive playground for a programming language I built from scratch to understand how the tools we use every day actually work under the hood.
 
 ![Profile Header](./images/home.png)
 
-## 🧩 What is Enigma?
+## Why I Built This
 
-* Enigma is a fun, expressive programming language I designed to combine my favorite features from several languages. Think JavaScript meets Ruby with a dash of functional programming goodness!
+Every developer uses programming languages, but how many of us really understand what happens when we write `let x = 5`? I wanted to demystify the fundamentals that power everything we do as programmers.
 
-### ✨ Language Features
+This project taught me how lexers tokenize code, how parsers build abstract syntax trees, and how interpreters execute programs. These concepts aren't just academic - they're the foundation of every tool we use, from TypeScript to Babel to ESLint. By building Enigma, I learned how all those tools work internally.
 
-- 🔄 **Dynamic typing** with variables and constants (`let` and `const`)
-- 🎯 **First-class functions** and powerful closures
-- 🔀 **Rich control flow** (if/elif/else, while loops, for loops)
-- 📦 **Built-in data structures** (arrays and hash maps)
-- 🧠 **Higher-order functions** for functional programming patterns
-- 🔧 **Clean, readable syntax** that feels natural to write
+The result is both a functioning programming language and an educational tool that visualizes each step of the compilation process. You can write code and watch it transform from text to tokens to an AST to actual execution.
 
-### 🌟 Code Examples
+## What is Enigma?
 
-#### ⭐ Fibonacci Sequence
+Enigma is a dynamically-typed programming language with:
 
-```
-// Fibonacci function in Enigma
+- **First-class functions and closures** - Functions are values you can pass around
+- **Rich control flow** - if/elif/else, while loops, for loops with break/continue
+- **Built-in data structures** - Arrays and hash maps
+- **Higher-order functions** - Map, filter, reduce patterns
+- **Clean syntax** - Inspired by JavaScript and Ruby
+
+### Quick Example
+
+```javascript
+// Fibonacci with closures
 let fibonacci = fn(n) {
-  if (n < 2) {
-    return n;
-  } else {
-    return fibonacci(n - 1) + fibonacci(n - 2);
-  }
+  if (n < 2) { return n; }
+  return fibonacci(n - 1) + fibonacci(n - 2);
 };
 
-// Calculate 10th Fibonacci number
-let result = fibonacci(10);  // 55
-```
-
-#### 🔄 Higher-Order Functions
-
-```
-// Map implementation
+// Higher-order functions
 let map = fn(arr, f) {
   let result = [];
-  let i = 0;
-  
-  while (i < len(arr)) {
+  for (let i = 0; i < len(arr); i = i + 1) {
     result[i] = f(arr[i]);
-    i = i + 1;
   }
-  
   return result;
 };
 
-// Use our map function
 let numbers = [1, 2, 3, 4, 5];
 let doubled = map(numbers, fn(x) { return x * 2; });
-// doubled is now [2, 4, 6, 8, 10]
 ```
 
-#### 🧠 Closures
+## 🔍 Interactive Features
+
+The playground includes:
+
+- **Token Analyzer** - See how code gets broken into tokens
+- **AST Visualizer** - Explore the tree structure of your program
+- **Execution Stepper** - Watch your code execute step by step
+- **Language Guide** - Learn Enigma's syntax and features
+
+## How It Works
+
+Enigma follows the classic three-stage compilation pipeline:
+
+### Lexical Analysis
+
+The lexer scans your code character by character and groups them into tokens:
+
+```javascript
+let x = 5 + 10;
+// Becomes: [LET, IDENTIFIER("x"), ASSIGN, INT(5), PLUS, INT(10), SEMICOLON]
+```
+
+### Syntax Analysis
+
+The parser takes tokens and builds an Abstract Syntax Tree (AST) that represents the program's structure:
 
 ```
-// Counter factory using closures
+// 5 + (10 * 2) becomes:
+//        +
+//       / \
+//      5   *
+//         / \
+//        10  2
+```
+
+### Evaluation
+
+The interpreter walks the AST and executes your program, managing variables, function calls, and control flow.
+
+## More Examples
+
+### Working with Data
+
+```javascript
+let person = {
+  name: "Alice",
+  skills: ["programming", "design"],
+};
+
+let firstSkill = person["skills"][0]; // "programming"
+```
+
+### Closures in Action
+
+```javascript
 let makeCounter = fn() {
-  let count = 0;  // This variable is captured in the closure
-  
+  let count = 0;
   return fn() {
     count = count + 1;
     return count;
@@ -71,284 +113,63 @@ let makeCounter = fn() {
 };
 
 let counter = makeCounter();
-counter();  // returns 1
-counter();  // returns 2
-counter();  // returns 3
+counter();  // 1
+counter();  // 2
 ```
 
-#### 📦 Data Structures
+### Recursive Algorithms
 
-```
-// Working with arrays and hashes
-let person = {
-  "name": "Alice",
-  "age": 30,
-  "skills": ["programming", "design", "communication"]
-};
-
-// Access nested data
-let skills = person["skills"];
-let firstSkill = skills[0];  // "programming"
-
-// Add new skill
-person["skills"][3] = "leadership";
-```
-
-## 🛠️ Interactive Explorer Features
-
-The Enigma Language Explorer includes:
-
-- 🔍 **Token Analyzer**: Watch how your code gets broken down into tokens
-- 🌳 **AST Visualizer**: See the beautiful tree structure of your code
-- 📚 **Language Guide**: Learn all about Enigma's syntax and features
-- 🌙 **Tokyo Night Theme**: Because coding is better with style!
-
-## 💭 Language Design Philosophy
-
-I designed Enigma with some specific principles in mind:
-
-### 🧠 Simplicity and Expressiveness
-
-I wanted a language that's easy to learn but still powerful enough to express complex ideas. I believe that code should be readable and reflect how we think about problems.
-
-```
-// The elegance of while loops with simple syntax
-let countdown = fn(n) {
-  while (n > 0) {
-    puts(n);
-    n = n - 1;
-  }
-  puts("Liftoff! 🚀");
-};
-
-countdown(5);
-```
-
-### 🧩 First-Class Functions
-
-Functions are values that can be passed around, returned, and assigned - just like any other data type. This enables powerful composition patterns:
-
-```
-// Function composition
-let compose = fn(f, g) {
-  return fn(x) {
-    return f(g(x));
-  };
-};
-
-let addOne = fn(x) { return x + 1; };
-let double = fn(x) { return x * 2; };
-
-// Create a new function that doubles then adds one
-let doubleThenAddOne = compose(addOne, double);
-doubleThenAddOne(5);  // Returns 11
-```
-
-### 🏗️ Flexible Data Structures
-
-Enigma has convenient syntax for working with collections of data:
-
-```
-// Working with arrays
-let fibonacci = [0, 1, 1, 2, 3, 5, 8, 13, 21];
-let first3 = fibonacci[0:3];  // Slicing
-
-// Hash map with nested structures
-let classroom = {
-  "students": [
-    {"name": "Alex", "grade": 92},
-    {"name": "Jordan", "grade": 88},
-    {"name": "Taylor", "grade": 95}
-  ],
-  "subject": "Computer Science",
-  "average": fn(students) {
-    // Calculate average grade
-    let sum = 0;
-    let count = len(students);
-  
-    let i = 0;
-    while (i < count) {
-      sum = sum + students[i]["grade"];
-      i = i + 1;
-    }
-  
-    return sum / count;
-  }
-};
-
-// Call the function stored in the hash
-let avgGrade = classroom["average"](classroom["students"]);
-```
-
-## 🧰 Behind the Scenes: How Enigma Works
-
-Enigma follows the classic language implementation pipeline:
-
-### 📝 Lexical Analysis (Lexing)
-
-The lexer breaks your code into tokens - the smallest meaningful units of the language:
-
-```
-let x = 5 + 10;
-
-// Gets tokenized as:
-// [LET, IDENTIFIER("x"), ASSIGN, INT(5), PLUS, INT(10), SEMICOLON]
-```
-
-### 🌳 Syntax Analysis (Parsing)
-
-The parser converts tokens into an Abstract Syntax Tree (AST) that represents the structure of your program:
-
-```
-// The expression 5 + (10 * 2) becomes:
-//        +
-//       / \
-//      5  *
-//        / \
-//       10  2
-```
-
-### 🔄 Evaluation
-
-The evaluator walks through the AST and executes your program according to the language rules.
-
-## 🌟 More Enigma Language Examples
-
-### 🔁 Loop Control Flow
-
-```
-// For loop with break and continue
-let findPrimes = fn(max) {
-  let primes = [];
-  
-  for (let i = 2; i <= max; i = i + 1) {
-    let isPrime = true;
-  
-    for (let j = 2; j * j <= i; j = j + 1) {
-      if (i % j == 0) {
-        isPrime = false;
-        break;  // Skip remaining factors
-      }
-    }
-  
-    if (isPrime) {
-      primes[len(primes)] = i;
-    }
-  }
-  
-  return primes;
-};
-
-let primeList = findPrimes(50);
-```
-
-### 🧮 Recursive Problem Solving
-
-```
-// Calculate factorial recursively
-let factorial = fn(n) {
-  if (n <= 1) {
-    return 1;
-  }
-  return n * factorial(n - 1);
-};
-
-// Quick sort implementation
+```javascript
 let quickSort = fn(arr) {
-  if (len(arr) < 2) {
-    return arr;
-  }
-  
+  if (len(arr) < 2) { return arr; }
+
   let pivot = arr[0];
   let less = [];
   let greater = [];
-  
-  let i = 1;
-  while (i < len(arr)) {
+
+  for (let i = 1; i < len(arr); i = i + 1) {
     if (arr[i] <= pivot) {
       less[len(less)] = arr[i];
     } else {
       greater[len(greater)] = arr[i];
     }
-    i = i + 1;
   }
-  
+
   return concat(quickSort(less), [pivot], quickSort(greater));
 };
 ```
 
-### 📊 Data Processing
+## What I Learned
 
-```
-// Working with structured data
-let students = [
-  {"name": "Alice", "scores": [88, 92, 95]},
-  {"name": "Bob", "scores": [75, 80, 85]},
-  {"name": "Charlie", "scores": [90, 92, 98]}
-];
+Building Enigma taught me several key insights:
 
-// Calculate average scores
-let calculateAverages = fn(studentList) {
-  let results = {};
-  
-  let i = 0;
-  while (i < len(studentList)) {
-    let student = studentList[i];
-    let scores = student["scores"];
-    let sum = 0;
-  
-    let j = 0;
-    while (j < len(scores)) {
-      sum = sum + scores[j];
-      j = j + 1;
-    }
-  
-    let avg = sum / len(scores);
-    results[student["name"]] = avg;
-    i = i + 1;
-  }
-  
-  return results;
-};
+**Small syntax decisions matter** - The choice between `fn` and `function` affects how your code reads. Every keyword, operator, and symbol shapes the developer experience.
 
-let averages = calculateAverages(students);
-```
+**Error messages are critical** - A good error message can save hours of debugging. Bad ones make users give up. I learned to prioritize clear, actionable error messages.
 
-## 🚀 Future Language Features
+**The parser is where the magic happens** - Converting a flat stream of tokens into a hierarchical tree structure requires careful design. Operator precedence, associativity, and recursive descent parsing became second nature.
 
-I'm constantly evolving Enigma with new features. Here are some I'm excited about:
+**Closures are harder than they look** - Implementing closures correctly required understanding scope chains, environment management, and how functions capture their context.
 
-- 🧵 **String interpolation**: `f"Hello, {name}!"`
-- 🧪 **Pattern matching**: For elegant data destructuring
-- 📦 **Module system**: For better code organization
-- 🔄 **Async/await**: For handling asynchronous operations
-- 🧠 **Type inference**: Adding optional type hints
+## Resources That Helped
 
-## 🌈 Language Design Insights
+If you want to build your own language, these resources are invaluable:
 
-Creating a programming language has been an incredible learning journey. Some insights I've gained:
+- "Writing An Interpreter In Go" by Thorsten Ball
+- "Crafting Interpreters" by Robert Nystrom
 
-- 🧩 Small syntax decisions have big implications for readability and expressiveness
-- 🔍 Error messages are as important as the language features themselves
-- 🌉 The space between parser and evaluator is where most of the magic happens
-- 🧠 Closures are surprisingly tricky to implement correctly, but so powerful once working
+## 🚀 Future Plans
 
-## 📚 Learning Resources
+Features I'm considering adding:
 
-If you're curious about building your own language, these resources helped me immensely:
+- Pattern matching for elegant data destructuring
+- Module system for better code organization
+- Optional type hints with inference
 
-- 📘 "Writing An Interpreter In Go" by Thorsten Ball
-- 📗 "Crafting Interpreters" by Robert Nystrom
-- 🧪 The "Let's Build A Simple Interpreter" blog series
+## License
 
-## 🙏 Acknowledgments
-
-This project wouldn't exist without the amazing work of those who've shared their knowledge about language design. Special thanks to the programming language design community for inspiration!
-
-## 📜 License
-
-This project is available under the MIT License. Feel free to use, explore, and build upon it.
+MIT License - Feel free to explore, learn, and build upon this project.
 
 ---
 
-Enjoy exploring Enigma! If you create something cool with it or have ideas for improvement, I'd love to hear from you. Happy coding! 💻✨
+If you're curious about how programming languages work, I hope Enigma helps demystify the process. The best way to understand something is to build it yourself.
